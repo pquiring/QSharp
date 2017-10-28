@@ -140,7 +140,7 @@ namespace QSharpCompiler
                     ln += ",type.Kind=" + type.Kind;
                     ln += ",type.TypeKind=" + type.TypeKind;
                 }
-                ln += ",tostring=" + node.ToString().Replace("\r\n", "");
+                ln += ",tostring=" + node.ToString().Replace("\r\n", "").Replace("\n", "");
                 Console.WriteLine(ln);
                 printTokens(file, node.ChildTokens(), lvl);
                 printNodes(file, node.ChildNodes(), lvl+1);
@@ -1044,7 +1044,7 @@ namespace QSharpCompiler
                 case SyntaxKind.SimpleMemberAccessExpression:
                     SyntaxNode left = GetChildNode(node, 1);
                     SyntaxNode right = GetChildNode(node, 2);
-                    if (isStatic(right)) {
+                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression) {
                         expressionNode(left, ob);
                         ob.Append("::");
                         expressionNode(right, ob);
@@ -1054,6 +1054,9 @@ namespace QSharpCompiler
                         ob.Append(")->");
                         expressionNode(right, ob);
                     }
+                    break;
+                case SyntaxKind.BaseExpression:
+                    ob.Append(cls.name);
                     break;
                 case SyntaxKind.ObjectCreationExpression:
                     invokeNode(node, ob, true);
