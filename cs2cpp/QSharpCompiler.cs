@@ -676,6 +676,10 @@ namespace QSharpCompiler
                         //assume it's OmittedArraySizeExpression
                         type.arrays++;
                         break;
+                    case SyntaxKind.PointerType:
+                        type.ptr = true;
+                        variableDeclaration(child, type);
+                        break;
                     case SyntaxKind.PredefinedType:
                     case SyntaxKind.IdentifierName:
                     case SyntaxKind.QualifiedName:
@@ -974,6 +978,36 @@ namespace QSharpCompiler
                 case SyntaxKind.Block:
                     blockNode(node, false, false);
                     break;
+                case SyntaxKind.FixedStatement:
+                    method.inFixedBlock = true;
+                    method.Append("{\r\n");
+                    foreach(var child in node.ChildNodes()) {
+                        switch (child.Kind()) {
+                            case SyntaxKind.VariableDeclaration:
+                                Type type = new Type();
+                                SyntaxNode equals = variableDeclaration(child, type);
+                                method.Append(type.GetTypeDecl());
+                                method.Append(" ");
+                                method.Append(type.name);
+                                if (equals != null) {
+                                    method.Append(" = ");
+                                    SyntaxNode equalsChild = GetChildNode(equals);
+                                    if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
+                                        arrayInitNode(equalsChild, method, type.type, type.arrays);
+                                    } else {
+                                        expressionNode(equalsChild, method);
+                                    }
+                                }
+                                method.Append(".get()->data();\r\n");
+                                break;
+                            case SyntaxKind.Block:
+                                blockNode(child, false, false);
+                                break;
+                        }
+                    }
+                    method.Append("}\r\n");
+                    method.inFixedBlock = false;
+                    break;
             }
         }
 
@@ -1032,13 +1066,15 @@ namespace QSharpCompiler
                     ob.Append("false");
                     break;
                 case SyntaxKind.StringLiteralExpression:
-                    ob.Append("std::make_shared<String>(\"");
-                    ob.Append(file.model.GetConstantValue(node).Value.ToString().Replace("\r", "\\r").Replace("\n", "\\n"));
-                    ob.Append("\")");
+                    ob.Append("std::make_shared<String>(");
+                    ob.Append("\"");
+                    outString(file.model.GetConstantValue(node).Value.ToString(), ob);
+                    ob.Append("\"");
+                    ob.Append(")");
                     break;
                 case SyntaxKind.CharacterLiteralExpression:
                     ob.Append("\'");
-                    ob.Append(file.model.GetConstantValue(node).Value.ToString());
+                    outString(file.model.GetConstantValue(node).Value.ToString(), ob);
                     ob.Append("\'");
                     break;
                 case SyntaxKind.SimpleMemberAccessExpression:
@@ -1109,6 +1145,12 @@ namespace QSharpCompiler
                 case SyntaxKind.GreaterThanOrEqualExpression:
                     binaryNode(node, ob, ">=");
                     break;
+                case SyntaxKind.EqualsExpression:
+                    binaryNode(node, ob, "==");
+                    break;
+                case SyntaxKind.NotEqualsExpression:
+                    binaryNode(node, ob, "!=");
+                    break;
                 case SyntaxKind.LogicalNotExpression:
                     ob.Append("!");
                     expressionNode(GetChildNode(node), ob);
@@ -1145,7 +1187,22 @@ namespace QSharpCompiler
                 case SyntaxKind.ThisExpression:
                     ob.Append("$this");
                     break;
+                case SyntaxKind.PointerIndirectionExpression:
+                    ob.Append("*");
+                    expressionNode(GetChildNode(node), ob);
+                    break;
+                case SyntaxKind.PointerMemberAccessExpression:
+                    SyntaxNode ptrleft = GetChildNode(node, 1);
+                    SyntaxNode ptrright = GetChildNode(node, 2);
+                    expressionNode(ptrleft, ob);
+                    ob.Append("->");
+                    expressionNode(ptrright, ob);
+                    break;
             }
+        }
+
+        private void outString(String ch, OutputBuffer ob) {
+            ob.Append(ch.Replace("\0", "\\0").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t"));
         }
 
         private void arrayInitNode(SyntaxNode node, OutputBuffer ob, String type, int dims) {
@@ -1407,6 +1464,7 @@ namespace QSharpCompiler
         public bool weakRef;
         public bool array;
         public int arrays;  //# of dimensions
+        public bool ptr;  //unsafe pointer
         public void setPrimative() {
             switch (type) {
                 case "void": primative = true; break;
@@ -1464,6 +1522,7 @@ namespace QSharpCompiler
                 else
                     sb.Append("std::shared_ptr<" + ConvertType() + ">");
             }
+            if (ptr) sb.Append("*");
             for(int a=0;a<arrays;a++) {
                 sb.Append(">>");
             }
@@ -1535,6 +1594,7 @@ namespace QSharpCompiler
         public String basector;
         public List<Type> args = new List<Type>();
         public Class cls;
+        public bool inFixedBlock;
         public string GetArgs() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
