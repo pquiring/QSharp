@@ -18,6 +18,7 @@ namespace QSharpCompiler
         public static string hppFile;
         public ArrayList files = new ArrayList();
         public static bool debug = false;
+        public static bool debugAll = false;
         public static string version = "0.0.1";
         public static bool library;
         public static bool classlib;
@@ -30,25 +31,38 @@ namespace QSharpCompiler
         {
             if (args.Length < 3) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_in_folder src_out_file.cpp header_out_file.hpp [--library | --main=class] [--ref=dll ...]");
+                Console.WriteLine("Usage : cs2cpp cs_in_folder src_out_file.cpp header_out_file.hpp [--library | --main=class] [--ref=dll ...] [--debug[=all]]");
                 return;
             }
             if (args.Length > 3) {
                 for(int a=3;a<args.Length;a++) {
-                    if (args[a] == "--library") {
+                    int idx = args[a].IndexOf("=");
+                    String arg = "";
+                    String value = "";
+                    if (idx == -1) {
+                        arg = args[a];
+                        value = "";
+                    } else {
+                        arg = args[a].Substring(0, idx);
+                        value = args[a].Substring(idx + 1);
+                    }
+                    if (arg == "--library") {
                         library = true;
                     }
-                    if (args[a] == "--classlib") {
+                    if (arg == "--classlib") {
                         classlib = true;
                     }
-                    if (args[a].StartsWith("--main=")) {
-                        main = args[a].Substring(7).Replace(".", "::");
+                    if (arg == "--main") {
+                        main = value.Replace(".", "::");
                     }
-                    if (args[a].StartsWith("--ref=")) {
-                        refs.Add(args[a].Substring(6));
+                    if (arg == "--ref") {
+                        refs.Add(value);
                     }
-                    if (args[a] == "--debug") {
+                    if (arg == "--debug") {
                         debug = true;
+                        if (value == "all") {
+                            debugAll = true;
+                        }
                     }
                 }
             }
@@ -137,10 +151,13 @@ namespace QSharpCompiler
                 }
                 if (type != null) {
                     ln += ",type=" + type.ToString();
+                    ln += ",static=" + type.IsStatic;
                     ln += ",type.Kind=" + type.Kind;
                     ln += ",type.TypeKind=" + type.TypeKind;
                 }
-                ln += ",tostring=" + node.ToString().Replace("\r\n", "").Replace("\n", "");
+                if (debugAll) {
+                    ln += ",tostring=" + node.ToString().Replace("\r\n", "").Replace("\n", "");
+                }
                 Console.WriteLine(ln);
                 printTokens(file, node.ChildTokens(), lvl);
                 printNodes(file, node.ChildNodes(), lvl+1);
@@ -177,6 +194,7 @@ namespace QSharpCompiler
         private List<string> usings = new List<string>();
         private Source file;
         private Class cls;
+        private Class NoClass = new Class();  //for classless delegates
         private Method method;
         private Field field;
         private int finallyCount = 0;
@@ -190,6 +208,7 @@ namespace QSharpCompiler
             openOutput(Program.hppFile);
             writeForward();
             while (sortClasses()) {};
+            writeDelegates();
             writeClasses();
             closeOutput();
             openOutput(Program.cppFile);
@@ -263,6 +282,21 @@ namespace QSharpCompiler
                 }
             }
             return moved;
+        }
+
+        private void writeDelegates() {
+            StringBuilder sb = new StringBuilder();
+            foreach(var dgate in NoClass.methods) {
+                if (dgate.Namespace.Length > 0) {
+                    sb.Append("namespace ");
+                    sb.Append(dgate.Namespace);
+                    sb.Append("{\r\n");
+                }
+                sb.Append(dgate.GetDeclaration());
+                if (dgate.Namespace.Length > 0) sb.Append("}\r\n");
+            }
+            byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
+            fs.Write(bytes, 0, bytes.Length);
         }
 
         private void writeClasses() {
@@ -349,6 +383,7 @@ namespace QSharpCompiler
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 foreach(var method in cls.methods) {
+                    if (method.isDelegate) continue;
                     sb.Append(method.GetTypeDecl());
                     sb.Append(" ");
                     sb.Append(cls.name);
@@ -451,6 +486,10 @@ namespace QSharpCompiler
                         usings.Add(Using);
                     }
                     break;
+                case SyntaxKind.DelegateDeclaration:
+                    cls = NoClass;
+                    methodNode(node, false, true);
+                    break;
             }
         }
 
@@ -479,10 +518,13 @@ namespace QSharpCompiler
                         if (!cls.omitConstructors) ctorNode(child);
                         break;
                     case SyntaxKind.DestructorDeclaration:
-                        if (!cls.omitMethods) methodNode(child, true);
+                        if (!cls.omitMethods) methodNode(child, true, false);
                         break;
                     case SyntaxKind.MethodDeclaration:
-                        if (!cls.omitMethods) methodNode(child, false);
+                        if (!cls.omitMethods) methodNode(child, false, false);
+                        break;
+                    case SyntaxKind.DelegateDeclaration:
+                        if (!cls.omitMethods) methodNode(child, false, true);
                         break;
                     case SyntaxKind.BaseList:
                         baseListNode(child);
@@ -680,9 +722,10 @@ namespace QSharpCompiler
                     case SyntaxKind.PredefinedType:
                     case SyntaxKind.IdentifierName:
                     case SyntaxKind.QualifiedName:
-                        ITypeSymbol symbol1 = file.model.GetTypeInfo(child).Type;
-                        if (symbol1 != null) {
-                            type.type = symbol1.ToString().Replace(".", "::");
+                        ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
+                        if (typesym != null) {
+                            type.type = typesym.ToString().Replace(".", "::");
+                            type.typekind = typesym.TypeKind.ToString();
                         }
                         type.setPrimative();
                         break;
@@ -758,13 +801,18 @@ namespace QSharpCompiler
             cls.methods.Add(method);
         }
 
-        private void methodNode(SyntaxNode node, bool dtor) {
+        private void methodNode(SyntaxNode node, bool dtor, bool isDelegate) {
             method = new Method();
             method.cls = cls;
             if (dtor) {
-                method.name = "~" + cls.name;
                 method.Virtual = true;
                 method.Public = true;
+            } else if (isDelegate) {
+                method.isDelegate = true;
+                method.Namespace = Namespace;
+            }
+            if (dtor) {
+                method.name = "~" + cls.name;
             } else {
                 method.name = file.model.GetDeclaredSymbol(node).Name;
             }
@@ -780,11 +828,20 @@ namespace QSharpCompiler
                     case SyntaxKind.IdentifierName:
                     case SyntaxKind.QualifiedName:
                         ISymbol symbol = file.model.GetSymbolInfo(child).Symbol;
-                        if (symbol == null) {
-                            Console.WriteLine("Error:Symbol not found for:" + child);
+                        ISymbol declsymbol = file.model.GetDeclaredSymbol(child);
+                        if (symbol == null && declsymbol == null) {
+                            Console.WriteLine("Error(methodNode):Symbol not found for:" + child);
                             Environment.Exit(0);
                         }
-                        method.type = symbol.ToString().Replace(".", "::");
+                        if (symbol != null) {
+                            method.type = symbol.ToString().Replace(".", "::");
+                        } else {
+                            method.type = declsymbol.ToString().Replace(".", "::");
+                        }
+                        ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
+                        if (typesym != null) {
+                            method.typekind = typesym.TypeKind.ToString();
+                        }
                         method.setPrimative();
                         break;
                     case SyntaxKind.ParameterList:
@@ -829,6 +886,10 @@ namespace QSharpCompiler
                     ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                     if (symbol != null) {
                         type.type = symbol.ToString().Replace(".", "::");
+                    }
+                    ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
+                    if (typesym != null) {
+                        type.typekind = typesym.TypeKind.ToString();
                     }
                     type.setPrimative();
                     break;
@@ -1018,6 +1079,10 @@ namespace QSharpCompiler
                     type = new Type();
                     type.type = node.ToString().Replace(".", "::");
                     ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
+                    ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
+                    if (typesym != null) {
+                        type.typekind = typesym.TypeKind.ToString();
+                    }
                     if (symbol != null && symbol.ToString() == "System.Array.Length") {
                         ob.Append("size()");
                     } else {
@@ -1219,6 +1284,31 @@ namespace QSharpCompiler
                     ob.Append("->");
                     expressionNode(ptrright, ob);
                     break;
+                case SyntaxKind.ParenthesizedLambdaExpression:
+                    // ParameterList, Block
+                    SyntaxNode plist = GetChildNode(node, 1);
+                    SyntaxNode pblock = GetChildNode(node, 2);
+                    ob.Append("[&]");
+                    //output parameter list
+                    bool first = true;
+                    ob.Append("(");
+                    foreach(var param in plist.ChildNodes()) {
+                        switch (param.Kind()) {
+                            case SyntaxKind.Parameter:
+                                SyntaxNode par = GetChildNode(param);
+                                Type ptype = new Type();
+                                parameterNode(par, ptype);
+                                ptype.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
+                                if (!first) ob.Append(","); else first = false;
+                                ob.Append(ptype.GetTypeDecl());
+                                ob.Append(" ");
+                                ob.Append(ptype.name);
+                                break;
+                        }
+                    }
+                    ob.Append(")");
+                    blockNode(pblock, false, false);
+                    break;
             }
         }
 
@@ -1260,13 +1350,17 @@ namespace QSharpCompiler
             if (symbol != null) {
                 return symbol.IsStatic;
             }
+            ISymbol declsymbol = file.model.GetDeclaredSymbol(node);
+            if (declsymbol != null) {
+                return declsymbol.IsStatic;
+            }
             ISymbol type = file.model.GetTypeInfo(node).Type;
             if (type != null) {
                 return type.IsStatic;
             }
-            Console.WriteLine("Error:Symbol not found for:" + node.ToString());
-            Environment.Exit(0);
-            return true;
+            Console.WriteLine("Warning(isStatic):Symbol not found for:" + node.ToString());
+//            Environment.Exit(0);
+            return false;
         }
 
         private bool isClass(SyntaxNode node) {
@@ -1492,6 +1586,7 @@ namespace QSharpCompiler
     class Type : Flags {
         public string name;
         public string type;
+        public string typekind;
         public bool primative;
         public bool weakRef;
         public bool array;
@@ -1512,7 +1607,7 @@ namespace QSharpCompiler
                 case "char": primative = true; break;
                 case "float": primative = true; break;
                 case "double": primative = true; break;
-                default: primative = false; break;
+                default: primative = typekind == "Delegate"; break;
             }
         }
         public string ConvertType() {
@@ -1623,6 +1718,8 @@ namespace QSharpCompiler
         public bool isMethod() {return true;}
 
         public bool ctor;
+        public bool isDelegate;
+        public string Namespace;  //if classless delegate only
         public String basector;
         public List<Type> args = new List<Type>();
         public Class cls;
@@ -1640,14 +1737,22 @@ namespace QSharpCompiler
             sb.Append(")");
             return sb.ToString();
         }
-        public string GetPureVirtual() {
-            if (Abstract)
-                return " = 0";
-            else
-                return "";
-        }
         public string GetDeclaration() {
-            return GetFlags(false) + " " + GetTypeDecl() + " " + name + GetArgs() + GetPureVirtual() + ";\r\n";
+            StringBuilder sb = new StringBuilder();
+            if (!isDelegate) sb.Append(GetFlags(false));
+            sb.Append(" ");
+            if (isDelegate) sb.Append("typedef std::function<");
+            sb.Append(GetTypeDecl());
+            sb.Append(" ");
+            if (!isDelegate) sb.Append(name);
+            sb.Append(GetArgs());
+            if (isDelegate) {
+                sb.Append(">");
+                sb.Append(name);
+            }
+            if (Abstract) sb.Append("=0");
+            sb.Append(";\r\n");
+            return sb.ToString();
         }
     }
 }
