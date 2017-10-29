@@ -53,6 +53,12 @@ class String;
 class Object;
 }
 
+template<typename T>
+std::function<T> $checkDelegate(std::function<T> func) {
+  if (!func) $npe();
+  return func;
+}
+
 inline int $hash(Qt::Core::Object *obj) {
   union {Qt::Core::Object* ptr; int hash;} u;
   u.ptr = obj;

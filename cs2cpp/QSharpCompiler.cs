@@ -18,7 +18,8 @@ namespace QSharpCompiler
         public static string hppFile;
         public ArrayList files = new ArrayList();
         public static bool debug = false;
-        public static bool debugAll = false;
+        public static bool debugToString = false;
+        public static bool debugTokens = false;
         public static string version = "0.0.1";
         public static bool library;
         public static bool classlib;
@@ -31,7 +32,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 3) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_in_folder src_out_file.cpp header_out_file.hpp [--library | --main=class] [--ref=dll ...] [--debug[=all]]");
+                Console.WriteLine("Usage : cs2cpp cs_in_folder src_out_file.cpp header_out_file.hpp [--library | --main=class] [--ref=dll ...] [--debug[=tokens,tostring,all]]");
                 return;
             }
             if (args.Length > 3) {
@@ -60,8 +61,10 @@ namespace QSharpCompiler
                     }
                     if (arg == "--debug") {
                         debug = true;
-                        if (value == "all") {
-                            debugAll = true;
+                        switch (value) {
+                            case "all": debugToString = true; debugTokens = true; break;
+                            case "tokens": debugTokens = true; break;
+                            case "tostring": debugToString = true; break;
                         }
                     }
                 }
@@ -155,11 +158,11 @@ namespace QSharpCompiler
                     ln += ",type.Kind=" + type.Kind;
                     ln += ",type.TypeKind=" + type.TypeKind;
                 }
-                if (debugAll) {
-                    ln += ",tostring=" + node.ToString().Replace("\r\n", "").Replace("\n", "");
+                if (debugToString) {
+                    ln += ",tostring=" + node.ToString().Replace("\r", "").Replace("\n", "");
                 }
                 Console.WriteLine(ln);
-                printTokens(file, node.ChildTokens(), lvl);
+                if (debugTokens) printTokens(file, node.ChildTokens(), lvl);
                 printNodes(file, node.ChildNodes(), lvl+1);
                 idx++;
             }
@@ -1368,6 +1371,14 @@ namespace QSharpCompiler
             return (type.TypeKind.ToString() == "Class");
         }
 
+        private bool isDelegate(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) {
+                return false;
+            }
+            return type.TypeKind == TypeKind.Delegate;
+        }
+
         private void binaryNode(SyntaxNode node, OutputBuffer ob, string op) {
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(op);
@@ -1480,7 +1491,13 @@ namespace QSharpCompiler
                 ob.Append(file.model.GetConstantValue(str).Value.ToString());
                 return;
             }
+            if (isDelegate(id)) {
+                ob.Append("$checkDelegate(");
+            }
             expressionNode(id, ob);
+            if (isDelegate(id)) {
+                ob.Append(")");
+            }
             if (New) {
                 ob.Append("::$new");
             }
