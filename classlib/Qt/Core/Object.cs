@@ -7,6 +7,7 @@ namespace Qt.Core {
         "public: inline double $mod(double x, double y) {return ::fmod(x, y);}\r\n"
     )]
     public class Object {
+        public override string ToString() {return "Object";}
         ~Object() {}
     }
 }

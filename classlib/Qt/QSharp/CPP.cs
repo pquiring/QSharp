@@ -73,6 +73,7 @@ namespace Qt.QSharp {
         public static float ReturnFloat(string s) {return 0;}
         public static double ReturnDouble(string s) {return 0;}
         public static Object ReturnObject(string s) {return null;}
+        public static string ReturnString(string s) {return null;}
         public static byte[] ReturnByteArray(string s) {return null;}
         public static char[] ReturnCharArray(string s) {return null;}
     }

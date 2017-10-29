@@ -1116,7 +1116,11 @@ namespace QSharpCompiler
                     expressionNode(GetChildNode(node), ob);
                     break;
                 case SyntaxKind.AddExpression:
-                    binaryNode(node, ob, "+");
+                    ob.Append("$add(");
+                    expressionNode(GetChildNode(node, 1), ob);
+                    ob.Append(",");
+                    expressionNode(GetChildNode(node, 2), ob);
+                    ob.Append(")");
                     break;
                 case SyntaxKind.SubtractExpression:
                     binaryNode(node, ob, "-");

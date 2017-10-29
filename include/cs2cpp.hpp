@@ -48,4 +48,62 @@ template<typename T> T* $deref(std::shared_ptr<T> x) {
   return x.get();
 }
 
+namespace Qt::Core {
+class String;
+class Object;
+}
+
+//$add
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
+
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::Object> y);
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, int32 y);
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, int64 y);
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, uint32 y);
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, uint64 y);
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, float y);
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, double y);
+
+extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::Object> x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $add(int32 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $add(int64 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $add(uint32 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $add(uint64 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $add(float x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $add(double x, std::shared_ptr<Qt::Core::String> s2);
+
+inline int8 $add(int8 x,int8 y) {return x + y;}
+inline int16 $add(int16 x,int16 y) {return x + y;}
+inline int32 $add(int32 x,int32 y) {return x + y;}
+inline int64 $add(int64 x,int64 y) {return x + y;}
+
+inline uint8 $add(uint8 x,uint8 y) {return x + y;}
+inline uint16 $add(uint16 x,uint16 y) {return x + y;}
+inline uint32 $add(uint32 x,uint32 y) {return x + y;}
+inline uint64 $add(uint64 x,uint64 y) {return x + y;}
+
+inline float $add(float x,float y) {return x + y;}
+inline double $add(double x,double y) {return x + y;}
+
+//mixed numericals
+inline float $add(float x,int32 y) {return x + y;}
+inline float $add(int32 x,float y) {return x + y;}
+inline float $add(float x,int64 y) {return x + y;}
+inline float $add(int64 x,float y) {return x + y;}
+
+inline float $add(float x,uint32 y) {return x + y;}
+inline float $add(uint32 x,float y) {return x + y;}
+inline float $add(float x,uint64 y) {return x + y;}
+inline float $add(uint64 x,float y) {return x + y;}
+
+inline double $add(double x,int32 y) {return x + y;}
+inline double $add(int32 x,double y) {return x + y;}
+inline double $add(double x,int64 y) {return x + y;}
+inline double $add(int64 x,double y) {return x + y;}
+
+inline double $add(double x,uint32 y) {return x + y;}
+inline double $add(uint32 x,double y) {return x + y;}
+inline double $add(double x,uint64 y) {return x + y;}
+inline double $add(uint64 x,double y) {return x + y;}
+
 #endif
