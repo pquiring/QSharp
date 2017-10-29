@@ -15,6 +15,8 @@
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
 #include <QtGui/QOpenGLFunctions>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QMouseEvent>
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>

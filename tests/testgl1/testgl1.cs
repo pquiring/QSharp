@@ -69,6 +69,30 @@ public class TriangleWindow : OpenGLWindow
         Update();
     }
 
+    public override void KeyPressed(int key) {
+        Console.WriteLine("KeyPressed");
+    }
+
+    public override void KeyReleased(int key) {
+        Console.WriteLine("KeyReleased");
+    }
+
+    public override void KeyTyped(char key) {
+        Console.WriteLine("KeyTyped");
+    }
+
+    public override void MousePressed(int x, int y, int button) {
+        Console.WriteLine("MousePressed");
+    }
+
+    public override void MouseReleased(int x, int y, int button) {
+        Console.WriteLine("MouseReleased");
+    }
+
+    public override void MouseMoved(int x, int y, int button) {
+        Console.WriteLine("MouseMoved");
+    }
+
     public static void Main(string[] args)
     {
         GuiApplication app = new GuiApplication();

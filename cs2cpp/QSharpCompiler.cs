@@ -349,11 +349,6 @@ namespace QSharpCompiler
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 foreach(var method in cls.methods) {
-//                    if (method.Virtual) Console.WriteLine("virtual:" + cls.name + "::" + method.name);
-//                    if (method.Abstract) Console.WriteLine("abstract:" + cls.name + "::" + method.name);
-//                    if (method.Override) Console.WriteLine("override:" + cls.name + "::" + method.name);
-//                    if (method.Definition) Console.WriteLine("definition:" + cls.name + "::" + method.name);
-//                    if (method.Sealed) Console.WriteLine("sealed:" + cls.name + "::" + method.name);
                     sb.Append(method.GetTypeDecl());
                     sb.Append(" ");
                     sb.Append(cls.name);
@@ -375,6 +370,8 @@ namespace QSharpCompiler
                 }
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.nonClassCPP != null) sb.Append(cls.nonClassCPP);
+                string fn = "src/" + cls.name + ".cpp";
+                if (File.Exists(fn)) sb.Append("#include \"" + fn + "\"\r\n");
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
