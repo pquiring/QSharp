@@ -155,7 +155,7 @@ namespace QSharpCompiler
                 for(int a=0;a<lvl+2;a++) {
                   Console.Write("  ");
                 }
-                Console.WriteLine("token[" + lvl + "][" + idx + "]=" + token + ":" + token.Kind() + ":hash=" + token.GetHashCode());
+                Console.WriteLine("token[" + lvl + "][" + idx + "]=" + token + ":" + token.Kind());
                 idx++;
             }
         }
@@ -1132,7 +1132,10 @@ namespace QSharpCompiler
                     binaryNode(node, ob, "/");
                     break;
                 case SyntaxKind.ModuloExpression:
-                    modNode(node, ob, "%");  //C++ does not support float % -- must use a special function
+                    modNode(node, ob, "%");
+                    break;
+                case SyntaxKind.ModuloAssignmentExpression:
+                    modAssignNode(node, ob, "%");
                     break;
                 case SyntaxKind.LessThanExpression:
                     binaryNode(node, ob, "<");
@@ -1151,6 +1154,23 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.NotEqualsExpression:
                     binaryNode(node, ob, "!=");
+                    break;
+                case SyntaxKind.AddAssignmentExpression:
+                    expressionNode(GetChildNode(node, 1), ob);
+                    ob.Append("= $add(");
+                    expressionNode(GetChildNode(node, 1), ob);
+                    ob.Append(",");
+                    expressionNode(GetChildNode(node, 2), ob);
+                    ob.Append(")");
+                    break;
+                case SyntaxKind.SubtractAssignmentExpression:
+                    binaryNode(node, ob, "-=");
+                    break;
+                case SyntaxKind.MultiplyAssignmentExpression:
+                    binaryNode(node, ob, "*=");
+                    break;
+                case SyntaxKind.DivideAssignmentExpression:
+                    binaryNode(node, ob, "/=");
                     break;
                 case SyntaxKind.LogicalNotExpression:
                     ob.Append("!");
@@ -1260,8 +1280,19 @@ namespace QSharpCompiler
             expressionNode(GetChildNode(node, 2), ob);
         }
 
+        //C++ does not support float % -- must use a special function
         private void modNode(SyntaxNode node, OutputBuffer ob, string op) {
             ob.Append("$mod(");
+            expressionNode(GetChildNode(node, 1), ob);
+            ob.Append(",");
+            expressionNode(GetChildNode(node, 2), ob);
+            ob.Append(")");
+        }
+
+        //C++ does not support float % -- must use a special function
+        private void modAssignNode(SyntaxNode node, OutputBuffer ob, string op) {
+            expressionNode(GetChildNode(node, 1), ob);
+            ob.Append("= $mod(");
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(",");
             expressionNode(GetChildNode(node, 2), ob);

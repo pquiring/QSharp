@@ -53,6 +53,12 @@ class String;
 class Object;
 }
 
+inline int $hash(Qt::Core::Object *obj) {
+  union {Qt::Core::Object* ptr; int hash;} u;
+  u.ptr = obj;
+  return u.hash;
+}
+
 //$add
 extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
 

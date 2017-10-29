@@ -11,18 +11,70 @@ namespace Qt.Core {
     public class String : Object {
         public String() {}
         public String(char[] str, int idx, int length) {
-            CPP.Add("$q->append((const QChar*)str->data(),length);");
+            CPP.Add("$q->append((const QChar*)$deref(str)->data(),length);");
         }
         public String(byte[] utf8, int idx, int length) {
-            CPP.Add("$q->append(QByteArray((const char*)utf8->data()+idx,length));");
+            CPP.Add("$q->append(QByteArray((const char*)$deref(utf8)->data()+idx,length));");
         }
-        public String(string s) {}
+        public String(string s) {
+            Append(s);
+        }
         public static implicit operator String(string s) {
             return new String(s);
         }
 
+        public String Append(String s) {
+            CPP.Add("$q->append(*$deref(s)->$q);");
+            return this;
+        }
+        public String Append(char ch) {
+            CPP.Add("$q->append((QChar)ch);");
+            return this;
+        }
+        public String Append(int v) {
+            String s = Int32.ToString(v);
+            Append(s);
+            return this;
+        }
+        public String Append(uint v) {
+            String s = UInt32.ToString(v);
+            Append(s);
+            return this;
+        }
+        public String Append(long v) {
+            String s = Int64.ToString(v);
+            Append(s);
+            return this;
+        }
+        public String Append(ulong v) {
+            String s = UInt64.ToString(v);
+            Append(s);
+            return this;
+        }
+        public String Append(float v) {
+            String s = Float.ToString(v);
+            Append(s);
+            return this;
+        }
+        public String Append(double v) {
+            String s = Double.ToString(v);
+            Append(s);
+            return this;
+        }
+
+        public bool Equals(String s) {
+            return CPP.ReturnBool("$q->compare(*$deref(s)->$q) == 0");
+        }
+
+        public bool EqualsIgnoreCase(String s) {
+            return CPP.ReturnBool("$q->compare(*$deref(s)->$q, Qt::CaseInsensitive) == 0");
+        }
+
         public int IndexOf(char ch) {
             return CPP.ReturnInt("$q->indexOf((QChar)ch)");
+        }
+        public int LastIndexOf(char ch) {
+            return CPP.ReturnInt("$q->lastIndexOf((QChar)ch)");
         }
 
         public char[] ToCharArray() {
