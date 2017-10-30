@@ -20,9 +20,11 @@ namespace Qt.Core {
             Append(s);
         }
         public static implicit operator String(string s) {
+            //convert builtin string to Qt.Core.String
             return new String(s);
         }
 
+        public int Length {get{return CPP.ReturnInt("$q->length()");}}
         public String Append(String s) {
             CPP.Add("$q->append(*$deref(s)->$q);");
             return this;

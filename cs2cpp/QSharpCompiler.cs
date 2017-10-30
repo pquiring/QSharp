@@ -137,26 +137,27 @@ namespace QSharpCompiler
                 for(int a=0;a<lvl;a++) {
                   Console.Write("  ");
                 }
-                ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
-                ITypeSymbol type = file.model.GetTypeInfo(node).Type;
-                Object value = file.model.GetConstantValue(node).Value;
-                ISymbol decl = file.model.GetDeclaredSymbol(node);
                 String ln = "node[" + lvl + "][" + idx + "]=" + node.Kind();
-                if (value != null) {
-                  ln += ",constant=" + value;
-                }
+                ISymbol decl = file.model.GetDeclaredSymbol(node);
                 if (decl != null) {
                   ln += ",declsymbol=" + decl.Name;
                 }
+                ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                 if (symbol != null) {
                     ln += ",symbol=" + symbol;
+                    ln += ",name=" + symbol.Name;
                     ln += ",static=" + symbol.IsStatic;
                 }
+                ITypeSymbol type = file.model.GetTypeInfo(node).Type;
                 if (type != null) {
                     ln += ",type=" + type.ToString();
                     ln += ",static=" + type.IsStatic;
                     ln += ",type.Kind=" + type.Kind;
                     ln += ",type.TypeKind=" + type.TypeKind;
+                }
+                Object value = file.model.GetConstantValue(node).Value;
+                if (value != null) {
+                  ln += ",constant=" + value;
                 }
                 if (debugToString) {
                     ln += ",tostring=" + node.ToString().Replace("\r", "").Replace("\n", "");
@@ -517,6 +518,9 @@ namespace QSharpCompiler
                     case SyntaxKind.FieldDeclaration:
                         if (!cls.omitFields) fieldNode(child);
                         break;
+                    case SyntaxKind.PropertyDeclaration:
+                        if (!cls.omitFields) propertyNode(child);
+                        break;
                     case SyntaxKind.ConstructorDeclaration:
                         if (!cls.omitConstructors) ctorNode(child);
                         break;
@@ -595,6 +599,55 @@ namespace QSharpCompiler
                                 expressionNode(GetChildNode(equals), field);
                             }
                             field.Append(";\r\n");
+                        }
+                        break;
+                }
+            }
+            cls.fields.Add(field);
+        }
+
+        private void propertyNode(SyntaxNode node) {
+            // type, AccessorList -> {GetAccessorDeclaration, SetAccessorDeclaration}
+            field = new Field();
+            field.Property = true;
+            ISymbol symbol = file.model.GetDeclaredSymbol(node);
+            field.name = symbol.Name;
+            field.Public = true;
+            variableDeclaration(node, field);
+            IEnumerable<SyntaxNode> nodes = node.ChildNodes();
+            foreach(var child in nodes) {
+                switch (child.Kind()) {
+                    case SyntaxKind.AccessorList:
+                        foreach(var tter in child.ChildNodes()) {
+                            switch (tter.Kind()) {
+                                case SyntaxKind.GetAccessorDeclaration:
+                                    SyntaxNode getBlock = GetChildNode(tter);
+                                    if (getBlock != null) {
+                                        methodNode(tter, false, false);
+                                        method.type = field.type;
+                                        method.primative = field.primative;
+                                        method.name = "get_" + field.name;
+                                    } else {
+                                        field.get_Property = true;
+                                    }
+                                    break;
+                                case SyntaxKind.SetAccessorDeclaration:
+                                    SyntaxNode setBlock = GetChildNode(tter);
+                                    if (setBlock != null) {
+                                        methodNode(tter, false, false);
+                                        Type arg = new Type();
+                                        arg.type = field.type;
+                                        arg.primative = field.primative;
+                                        arg.name = "value";
+                                        method.args.Add(arg);
+                                        method.name = "set_" + field.name;
+                                        method.type = "void";
+                                        method.primative = true;
+                                    } else {
+                                        field.set_Property = true;
+                                    }
+                                    break;
+                            }
                         }
                         break;
                 }
@@ -728,7 +781,7 @@ namespace QSharpCompiler
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
                             type.type = typesym.ToString().Replace(".", "::");
-                            type.typekind = typesym.TypeKind.ToString();
+                            type.typekind = typesym.TypeKind;
                         }
                         type.setPrimative();
                         break;
@@ -843,7 +896,7 @@ namespace QSharpCompiler
                         }
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
-                            method.typekind = typesym.TypeKind.ToString();
+                            method.typekind = typesym.TypeKind;
                         }
                         method.setPrimative();
                         break;
@@ -892,7 +945,7 @@ namespace QSharpCompiler
                     }
                     ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
                     if (typesym != null) {
-                        type.typekind = typesym.TypeKind.ToString();
+                        type.typekind = typesym.TypeKind;
                     }
                     type.setPrimative();
                     break;
@@ -1084,13 +1137,24 @@ namespace QSharpCompiler
                     ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                     ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
                     if (typesym != null) {
-                        type.typekind = typesym.TypeKind.ToString();
+                        type.typekind = typesym.TypeKind;
                     }
-                    if (symbol != null && symbol.ToString() == "System.Array.Length") {
-                        ob.Append("size()");
-                    } else {
-                        ob.Append(type.ConvertType());
-                        cls.addUsage(type.type);
+                    String sym = "";
+                    if (symbol != null) {
+                        sym = symbol.ToString();
+                    }
+                    switch (sym) {
+                        case "System.Array.Length":
+                            ob.Append("size()");
+                            break;
+                        case "string.Length":
+                        case "Qt.Core.String.Length":  //BUG : property
+                            ob.Append("get_Length()");
+                            break;
+                        default:
+                            ob.Append(type.ConvertType());
+                            cls.addUsage(type.type);
+                            break;
                     }
                     break;
                 case SyntaxKind.VariableDeclaration:
@@ -1603,7 +1667,7 @@ namespace QSharpCompiler
     class Type : Flags {
         public string name;
         public string type;
-        public string typekind;
+        public TypeKind typekind;
         public bool primative;
         public bool weakRef;
         public bool array;
@@ -1624,7 +1688,7 @@ namespace QSharpCompiler
                 case "char": primative = true; break;
                 case "float": primative = true; break;
                 case "double": primative = true; break;
-                default: primative = typekind == "Delegate"; break;
+                default: primative = typekind == TypeKind.Delegate; break;
             }
         }
         public string ConvertType() {
@@ -1684,6 +1748,9 @@ namespace QSharpCompiler
 
     class Field : Type, OutputBuffer
     {
+        public bool Property;
+        public bool get_Property;
+        public bool set_Property;
         public StringBuilder src = new StringBuilder();
         public void Append(string s) {
             src.Append(s);

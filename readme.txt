@@ -21,7 +21,7 @@ cygwin/make
 Notes:
  - uses std::shared_ptr<> to implement memory management
  - NullPointerExceptions are checked
- - not all C# features are supported (reflection, properties, etc.)
+ - not all C# features are supported (reflection, properties, operators, etc.)
  - classlib is a work in progress
 
 Compiling:
