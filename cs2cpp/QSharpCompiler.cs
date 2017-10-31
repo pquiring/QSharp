@@ -118,6 +118,8 @@ namespace QSharpCompiler
 
         void addFile(string file)
         {
+            if (file.IndexOf("AssemblyInfo") != -1) return;
+            Console.WriteLine("AddFile:" + file);
             string src = System.IO.File.ReadAllText(file);
             Source node = new Source();
             node.csFile = file;
@@ -140,43 +142,48 @@ namespace QSharpCompiler
                 String ln = "node[" + lvl + "][" + idx + "]=" + node.Kind();
                 ISymbol decl = file.model.GetDeclaredSymbol(node);
                 if (decl != null) {
-                    ln += ",declsymbol=" + decl.Name;
+                    ln += ",DeclSymbol=" + decl.Name;
                 } else {
-                    ln += ",declsymbol=null";
+                    ln += ",DeclSymbol=null";
                 }
                 ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                 if (symbol != null) {
-                    ln += ",symbol=" + symbol;
-                    ln += ",kind=" + symbol.Kind;
-                    ln += ",name=" + symbol.Name;
-                    ln += ",static=" + symbol.IsStatic;
+                    ln += ",Symbol=" + symbol;
+                    ln += ",Symbol.Kind=" + symbol.Kind;
+                    ln += ",Symbol.Name=" + symbol.Name;
+                    ln += ",Symbol.IsStatic=" + symbol.IsStatic;
+                    ITypeSymbol containing = symbol.ContainingType;
+                    if (containing != null) {
+                        ln += ",Symbol.ContainingType.TypeKind=" + containing.TypeKind;
+                    }
                 } else {
                     ln += ",symbol=null";
                 }
                 ITypeSymbol type = file.model.GetTypeInfo(node).Type;
                 if (type != null) {
-                    ln += ",type=" + type.ToString();
-                    ln += ",static=" + type.IsStatic;
-                    ln += ",type.Kind=" + type.Kind;
-                    ln += ",type.TypeKind=" + type.TypeKind;
-                    ln += ",orgDef=" + type.OriginalDefinition;
-                    ln += ",special=" + type.SpecialType;
+                    ln += ",Type=" + type.ToString();
+                    ln += ",Type.IsStatic=" + type.IsStatic;
+                    ln += ",Type.Kind=" + type.Kind;
+                    ln += ",Type.TypeKind=" + type.TypeKind;
+                    ln += ",Type.OrgDef=" + type.OriginalDefinition;
+                    ln += ",Type.SpecialType=" + type.SpecialType;
                     INamedTypeSymbol baseType = type.BaseType;
                     if (baseType != null) {
-                        ln += ",baseType=" + baseType;
-                        ln += ",baseType.TypeKind=" + baseType.TypeKind;
-                        ln += ",orgDef=" + baseType.OriginalDefinition;
-                        ln += ",special=" + baseType.SpecialType;
+                        ln += ",Type.BaseType=" + baseType;
+                        ln += ",Type.BaseType.Name=" + baseType.Name;
+                        ln += ",Type.BaseType.TypeKind=" + baseType.TypeKind;
+                        ln += ",Type.BaseType.OrgDef=" + baseType.OriginalDefinition;
+                        ln += ",Type.BaseType.SpecialType=" + baseType.SpecialType;
                     }
                 } else {
-                    ln += ",type=null";
+                    ln += ",Type=null";
                 }
                 Object value = file.model.GetConstantValue(node).Value;
                 if (value != null) {
-                    ln += ",constant=" + value;
+                    ln += ",Constant=" + value;
                 }
                 if (debugToString) {
-                    ln += ",tostring=" + node.ToString().Replace("\r", "").Replace("\n", "");
+                    ln += ",ToString=" + node.ToString().Replace("\r", "").Replace("\n", "");
                 }
                 Console.WriteLine(ln);
                 if (debugTokens) printTokens(file, node.ChildTokens(), lvl);
@@ -221,6 +228,9 @@ namespace QSharpCompiler
 
         public void generate(ArrayList sources, string cppFile)
         {
+            if (Program.debug) {
+                Console.WriteLine();
+            }
             usings.Add("Qt::Core");
             foreach(Source file in sources) {
                 generate(file);
@@ -816,7 +826,8 @@ namespace QSharpCompiler
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
                             type.type = typesym.ToString().Replace(".", "::");
-                            type.typekind = typesym.TypeKind;
+//                            type.typekind = typesym.TypeKind;
+                            type.BaseType = typesym.BaseType.Name;
                         }
                         type.setPrimative();
                         break;
@@ -935,7 +946,8 @@ namespace QSharpCompiler
                         }
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
-                            method.typekind = typesym.TypeKind;
+//                            method.typekind = typesym.TypeKind;
+                            method.BaseType = typesym.BaseType.Name;
                         }
                         method.setPrimative();
                         break;
@@ -984,7 +996,8 @@ namespace QSharpCompiler
                     }
                     ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
                     if (typesym != null) {
-                        type.typekind = typesym.TypeKind;
+//                        type.typekind = typesym.TypeKind;
+                        type.BaseType = typesym.BaseType.Name;
                     }
                     type.setPrimative();
                     break;
@@ -1461,7 +1474,7 @@ namespace QSharpCompiler
             }
             Console.WriteLine("Warning(isStatic):Symbol not found for:" + node.ToString());
 //            Environment.Exit(0);
-            return false;
+            return true;
         }
 
         private bool isClass(SyntaxNode node) {
@@ -1472,7 +1485,9 @@ namespace QSharpCompiler
         private bool isEnum(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
             if (type == null) return false;
-            return (type.TypeKind == TypeKind.Enum);
+            if (type.TypeKind == TypeKind.Enum) return true;  //Roslyn Bug : works in compiled file, not when referenced (appears as Class when from referenced assembly)
+            if (type.BaseType.Name == "Enum") return true;  //works in references
+            return false;
         }
 
         private bool isProperty(SyntaxNode node) {
@@ -1744,7 +1759,8 @@ namespace QSharpCompiler
     class Type : Flags {
         public string name;
         public string type;
-        public TypeKind typekind;
+//        public TypeKind typekind;  //Roslyn Bug : not consistent
+        public string BaseType;
         public bool primative;
         public bool weakRef;
         public bool array;
@@ -1766,9 +1782,9 @@ namespace QSharpCompiler
                 case "float": primative = true; break;
                 case "double": primative = true; break;
                 default:
-                    switch (typekind) {
-                        case TypeKind.Delegate: primative = true; break;
-                        case TypeKind.Enum: primative = true; break;
+                    switch (BaseType) {
+                        case "MulticastDelegate": primative = true; break;
+                        case "Enum": primative = true; break;
                         default: primative = false; break;
                     }
                     break;
