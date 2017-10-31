@@ -936,7 +936,7 @@ namespace QSharpCompiler
                         ISymbol symbol = file.model.GetSymbolInfo(child).Symbol;
                         ISymbol declsymbol = file.model.GetDeclaredSymbol(child);
                         if (symbol == null && declsymbol == null) {
-                            Console.WriteLine("Error(methodNode):Symbol not found for:" + child);
+                            Console.WriteLine("Error:Symbol not found for:" + child);
                             Environment.Exit(0);
                         }
                         if (symbol != null) {
@@ -1472,8 +1472,8 @@ namespace QSharpCompiler
             if (type != null) {
                 return type.IsStatic;
             }
-            Console.WriteLine("Warning(isStatic):Symbol not found for:" + node.ToString());
-//            Environment.Exit(0);
+            Console.WriteLine("Error:Symbol not found for:" + node.ToString());
+            Environment.Exit(0);
             return true;
         }
 
