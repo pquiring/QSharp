@@ -228,7 +228,7 @@ namespace QSharpCompiler
             openOutput(Program.hppFile);
             writeForward();
             while (sortClasses()) {};
-            writeDelegates();
+            writeNoClassTypes();
             writeClasses();
             closeOutput();
             openOutput(Program.cppFile);
@@ -304,7 +304,7 @@ namespace QSharpCompiler
             return moved;
         }
 
-        private void writeDelegates() {
+        private void writeNoClassTypes() {
             StringBuilder sb = new StringBuilder();
             foreach(var dgate in NoClass.methods) {
                 if (dgate.Namespace.Length > 0) {
@@ -314,6 +314,16 @@ namespace QSharpCompiler
                 }
                 sb.Append(dgate.GetDeclaration());
                 if (dgate.Namespace.Length > 0) sb.Append("}\r\n");
+            }
+            foreach(var e in NoClass.enums) {
+                if (e.Namespace.Length > 0) {
+                    sb.Append("namespace ");
+                    sb.Append(e.Namespace);
+                    sb.Append("{\r\n");
+                }
+                sb.Append(e.src);
+                sb.Append(";\r\n");
+                if (e.Namespace.Length > 0) sb.Append("}\r\n");
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -353,6 +363,10 @@ namespace QSharpCompiler
                 }
                 foreach(var method in cls.methods) {
                     sb.Append(method.GetDeclaration());
+                }
+                foreach(var e in cls.enums) {
+                    sb.Append(e.src);
+                    sb.Append(";\r\n");
                 }
                 sb.Append("};\r\n");
                 if (cls.Namespace != "") sb.Append("}\r\n");
@@ -510,6 +524,10 @@ namespace QSharpCompiler
                     cls = NoClass;
                     methodNode(node, false, true, null);
                     break;
+                case SyntaxKind.EnumDeclaration:
+                    cls = NoClass;
+                    cls.enums.Add(new Enum(node.ToString().Replace("public", ""), Namespace));
+                    break;
             }
         }
 
@@ -554,6 +572,9 @@ namespace QSharpCompiler
                         break;
                     case SyntaxKind.AttributeList:
                         attributeListNode(child, cls);
+                        break;
+                    case SyntaxKind.EnumDeclaration:
+                        cls.enums.Add(new Enum(child.ToString().Replace("public", ""), null));
                         break;
                 }
             }
@@ -1222,7 +1243,7 @@ namespace QSharpCompiler
                 case SyntaxKind.SimpleMemberAccessExpression:
                     SyntaxNode left = GetChildNode(node, 1);
                     SyntaxNode right = GetChildNode(node, 2);
-                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression) {
+                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(right)) {
                         expressionNode(left, ob, lvalue);
                         ob.Append("::");
                         expressionNode(right, ob, lvalue);
@@ -1446,6 +1467,11 @@ namespace QSharpCompiler
         private bool isClass(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
             return (type.TypeKind == TypeKind.Class);
+        }
+
+        private bool isEnum(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            return (type.TypeKind == TypeKind.Enum);
         }
 
         private bool isProperty(SyntaxNode node) {
@@ -1679,6 +1705,16 @@ namespace QSharpCompiler
         }
     }
 
+    class Enum {
+        public Enum(string src, string Namespace) {
+            src = src.Substring(src.IndexOf("enum"));  //remove public, private, etc.
+            this.src = src;
+            this.Namespace = Namespace;
+        }
+        public string src;
+        public string Namespace;
+    }
+
     class Class : Flags
     {
         public string name;
@@ -1689,6 +1725,7 @@ namespace QSharpCompiler
         public List<string> ifaces = new List<string>();
         public List<Field> fields = new List<Field>();
         public List<Method> methods = new List<Method>();
+        public List<Enum> enums = new List<Enum>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
         public bool omitFields, omitMethods, omitConstructors;
         //uses are used to sort classes
@@ -1727,7 +1764,13 @@ namespace QSharpCompiler
                 case "char": primative = true; break;
                 case "float": primative = true; break;
                 case "double": primative = true; break;
-                default: primative = typekind == TypeKind.Delegate; break;
+                default:
+                    switch (typekind) {
+                        case TypeKind.Delegate: primative = true; break;
+                        case TypeKind.Enum: primative = true; break;
+                        default: primative = false; break;
+                    }
+                    break;
             }
         }
         public string ConvertType() {
