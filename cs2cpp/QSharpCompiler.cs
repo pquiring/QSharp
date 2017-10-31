@@ -278,6 +278,16 @@ namespace QSharpCompiler
             foreach(var cls in clss) {
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                if (cls.Generic) {
+                    sb.Append("template<");
+                    bool first = true;
+                    foreach(var arg in cls.GenericTypes) {
+                        if (!first) sb.Append(","); else first = false;
+                        sb.Append("typename ");
+                        sb.Append(arg);
+                    }
+                    sb.Append(">");
+                }
                 sb.Append("class " + cls.name + ";\r\n");
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
@@ -323,6 +333,7 @@ namespace QSharpCompiler
                     sb.Append("{\r\n");
                 }
                 sb.Append(dgate.GetDeclaration());
+                sb.Append(";\r\n");
                 if (dgate.Namespace.Length > 0) sb.Append("}\r\n");
             }
             foreach(var e in NoClass.enums) {
@@ -342,11 +353,20 @@ namespace QSharpCompiler
         private void writeClasses() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in clss) {
-                if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
+                if (cls.Namespace == "Qt::QSharp") continue;
                 if (!cls.hasctor && !cls.Interface && !cls.omitConstructors) {
                     createNewMethod(cls, null);
                 }
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                if (cls.Generic) {
+                    sb.Append("template<typename ");
+                    bool first = true;
+                    foreach(var type in cls.GenericTypes) {
+                        if (!first) sb.Append(","); else first = false;
+                        sb.Append(type);
+                    }
+                    sb.Append(">");
+                }
                 sb.Append(cls.GetFlags(true));
                 sb.Append(" class " + cls.name);
                 if (cls.bases.Count > 0 || cls.ifaces.Count > 0) {
@@ -366,13 +386,38 @@ namespace QSharpCompiler
                 sb.Append("{\r\n");
                 if (cls.cpp != null) sb.Append(cls.cpp);
                 if (!cls.Interface) {
-                    sb.Append("private: std::weak_ptr<" + cls.name + "> $this;\r\n");
+                    sb.Append("private: std::weak_ptr<" + cls.name);
+                    if (cls.Generic) {
+                        sb.Append("<");
+                        bool first = true;
+                        foreach(var arg in cls.GenericTypes) {
+                            if (!first) sb.Append(","); else first = false;
+                            sb.Append(arg);
+                        }
+                        sb.Append(">");
+                    }
+                    sb.Append("> $this;\r\n");
                 }
                 foreach(var field in cls.fields) {
                     sb.Append(field.GetDeclaration());
                 }
                 foreach(var method in cls.methods) {
                     sb.Append(method.GetDeclaration());
+                    if (cls.Generic) {
+                        if (method.name == "$init") {
+                            sb.Append("{\r\n");
+                            foreach(var field in cls.fields) {
+                                if (field.Length() > 0 && !field.Static) {
+                                    sb.Append(field.src);
+                                }
+                            }
+                            sb.Append("}\r\n");
+                        } else {
+                            sb.Append(method.src);
+                        }
+                    } else {
+                        sb.Append(";\r\n");
+                    }
                 }
                 foreach(var e in cls.enums) {
                     sb.Append(e.src);
@@ -424,10 +469,20 @@ namespace QSharpCompiler
         private void writeMethods() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in clss) {
+                if (cls.Generic) continue;
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 foreach(var method in cls.methods) {
                     if (method.isDelegate) continue;
+                    if (cls.Generic) {
+                        sb.Append("template<typename ");
+                        bool first = true;
+                        foreach(var type in cls.GenericTypes) {
+                            if (!first) sb.Append(","); else first = false;
+                            sb.Append(type);
+                        }
+                        sb.Append(">");
+                    }
                     sb.Append(method.GetTypeDecl());
                     sb.Append(" ");
                     sb.Append(cls.name);
@@ -585,6 +640,20 @@ namespace QSharpCompiler
                         break;
                     case SyntaxKind.EnumDeclaration:
                         cls.enums.Add(new Enum(child.ToString().Replace("public", ""), null));
+                        break;
+                    case SyntaxKind.TypeParameterList:
+                        typeParameterListNode(child);
+                        break;
+                }
+            }
+        }
+
+        private void typeParameterListNode(SyntaxNode node) {
+            cls.Generic = true;
+            foreach(var child in node.ChildNodes()) {
+                switch (child.Kind()) {
+                    case SyntaxKind.TypeParameter:
+                        cls.GenericTypes.Add(child.ToString());  //declared symbol
                         break;
                 }
             }
@@ -820,6 +889,14 @@ namespace QSharpCompiler
                         type.ptr = true;
                         variableDeclaration(child, type);
                         break;
+                    case SyntaxKind.GenericName:
+                        type.Generic = true;
+                        SyntaxNode typeArgList = GetChildNode(child);
+                        foreach(var arg in typeArgList.ChildNodes()) {
+                            type.GenericTypes.Add(arg.ToString());
+                        }
+                        type.type = child.ToString();
+                        break;
                     case SyntaxKind.PredefinedType:
                     case SyntaxKind.IdentifierName:
                     case SyntaxKind.QualifiedName:
@@ -883,8 +960,21 @@ namespace QSharpCompiler
             method.Static = true;
             method.name = "$new";
             method.type = cls.name;
+            method.cls = cls;
+            method.Generic = cls.Generic;
+            method.GenericTypes = cls.GenericTypes;
             method.Append("{\r\n");
-            method.Append("std::shared_ptr<" + cls.name + ">$this = std::make_shared<" + cls.name + ">(" + cls.ctorArgs + ");\r\n");
+            method.Append("std::shared_ptr<" + cls.name + ">$this = std::make_shared<" + cls.name);
+            if (cls.Generic) {
+                method.Append("<");
+                bool first = true;
+                foreach(var arg in cls.GenericTypes) {
+                    if (!first) method.Append(","); else first = false;
+                    method.Append(arg);
+                }
+                method.Append(">");
+            }
+            method.Append(">(" + cls.ctorArgs + ");\r\n");
             method.Append("$this->$this = $this;\r\n");
             method.Append("$this->$init();\r\n");
             if (args != null) {
@@ -948,6 +1038,14 @@ namespace QSharpCompiler
                             method.typekind = typesym.TypeKind;
                         }
                         method.setPrimative();
+                        if (method.cls.Generic) {
+                            foreach(var arg in cls.GenericTypes) {
+                                if (method.type == arg) {
+                                    method.primative = true;
+                                    break;
+                                }
+                            }
+                        }
                         break;
                     case SyntaxKind.ParameterList:
                         parameterListNode(child);
@@ -977,6 +1075,14 @@ namespace QSharpCompiler
                         Type type = new Type();
                         parameterNode(par, type);
                         type.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
+                        if (cls.Generic) {
+                            foreach(var arg in cls.GenericTypes) {
+                                if (type.type == arg) {
+                                    type.primative = true;
+                                    break;
+                                }
+                            }
+                        }
                         method.args.Add(type);
                         break;
                 }
@@ -1181,6 +1287,7 @@ namespace QSharpCompiler
                 case SyntaxKind.IdentifierName:
                 case SyntaxKind.PredefinedType:
                 case SyntaxKind.QualifiedName:
+                case SyntaxKind.GenericName:
                     type = new Type();
                     type.type = node.ToString().Replace(".", "::");
                     if (isProperty(node)) {
@@ -1739,6 +1846,8 @@ namespace QSharpCompiler
         public List<Field> fields = new List<Field>();
         public List<Method> methods = new List<Method>();
         public List<Enum> enums = new List<Enum>();
+        public bool Generic;
+        public List<string> GenericTypes = new List<string>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
         public bool omitFields, omitMethods, omitConstructors;
         //uses are used to sort classes
@@ -1762,6 +1871,8 @@ namespace QSharpCompiler
         public bool array;
         public int arrays;  //# of dimensions
         public bool ptr;  //unsafe pointer
+        public bool Generic;
+        public List<string> GenericTypes = new List<string>();
         public void setPrimative() {
             switch (type) {
                 case "void": primative = true; break;
@@ -1811,7 +1922,7 @@ namespace QSharpCompiler
         public string GetTypeDecl() {
             if (type == null || type == "") {
                 if (name.StartsWith("~")) return "";
-                Console.WriteLine("type unknown:" + name);
+                Console.WriteLine("Warning:type unknown:" + name);
             }
             StringBuilder sb = new StringBuilder();
             for(int a=0;a<arrays;a++) {
@@ -1930,7 +2041,6 @@ namespace QSharpCompiler
                 sb.Append(name);
             }
             if (Abstract) sb.Append("=0");
-            sb.Append(";\r\n");
             return sb.ToString();
         }
     }
