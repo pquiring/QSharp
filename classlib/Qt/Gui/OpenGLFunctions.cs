@@ -2,9 +2,8 @@ using Qt.Core;
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPOmitFields()]
     [CPPClass("QOpenGLFunctions *$q = nullptr;\r\n")]
-    public class OpenGLFunctions : Object {
+    public class OpenGLFunctions : OpenGLConstants {
         /** Initialize the GL functions. */
         public void InitializeOpenGLFunctions() {
             CPP.Add("$q = new QOpenGLFunctions();\r\n");
@@ -161,12 +160,5 @@ namespace Qt.Gui {
         public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride, float[] ptr) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, ptr->data());");}
         public void glViewport(int x, int y, int width, int height) {CPP.Add("$q->glViewport(x, y, width, height);");}
 //        public bool hasOpenGLFeature($q->OpenGLFeature feature) { }  //TODO
-
-        //gl constants (these values are defined in opengl.h)
-        public static int GL_FALSE;
-        public static int GL_TRUE;
-        public static int GL_FLOAT;
-        public static int GL_TRIANGLES;
-        public static int GL_COLOR_BUFFER_BIT;
     }
 }

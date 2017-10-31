@@ -1471,6 +1471,7 @@ namespace QSharpCompiler
 
         private bool isEnum(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
             return (type.TypeKind == TypeKind.Enum);
         }
 
