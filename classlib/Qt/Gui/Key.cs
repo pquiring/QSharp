@@ -1,5 +1,5 @@
 namespace Qt.Gui {
-    enum Key {
+    public enum Key {
         Key_Escape = 0x01000000,                // misc keys
         Key_Tab = 0x01000001,
         Key_Backtab = 0x01000002,

@@ -16,8 +16,8 @@ namespace Qt.Gui {
           Since C# does not support multiple-inheritance and OpenGLWindow needs Window and OpenGLFunctions
           therefore Window must derive from OpenGLFunctions to make it available to OpenGLWindow
         */
-        public virtual void KeyPressed(int key) {}
-        public virtual void KeyReleased(int key) {}
+        public virtual void KeyPressed(Key key) {}
+        public virtual void KeyReleased(Key key) {}
         public virtual void KeyTyped(char key) {}
         public virtual void MousePressed(int x, int y, int button) {}
         public virtual void MouseReleased(int x, int y, int button) {}

@@ -4,7 +4,7 @@ namespace Qt::Gui {
     Q_UNUSED(obj);
     if (event->type() == QEvent::KeyPress) {
       QKeyEvent* keyEvent = (QKeyEvent*)(event);
-      KeyPressed(keyEvent->key());
+      KeyPressed((Key)keyEvent->key());
       QString txt = keyEvent->text();
       if (txt.length() > 0) {
         KeyTyped(txt.at(0).toLatin1());
@@ -12,7 +12,7 @@ namespace Qt::Gui {
       return true;
     } else if (event->type() == QEvent::KeyRelease) {
       QKeyEvent* keyEvent = (QKeyEvent*)(event);
-      KeyReleased(keyEvent->key());
+      KeyReleased((Key)keyEvent->key());
       return true;
     } else if (event->type() == QEvent::MouseButtonPress) {
       QMouseEvent* mouseEvent = (QMouseEvent*)(event);
