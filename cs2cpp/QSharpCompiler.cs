@@ -826,8 +826,7 @@ namespace QSharpCompiler
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
                             type.type = typesym.ToString().Replace(".", "::");
-//                            type.typekind = typesym.TypeKind;
-                            type.BaseType = typesym.BaseType.Name;
+                            type.typekind = typesym.TypeKind;
                         }
                         type.setPrimative();
                         break;
@@ -946,8 +945,7 @@ namespace QSharpCompiler
                         }
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
-//                            method.typekind = typesym.TypeKind;
-                            method.BaseType = typesym.BaseType.Name;
+                            method.typekind = typesym.TypeKind;
                         }
                         method.setPrimative();
                         break;
@@ -996,8 +994,7 @@ namespace QSharpCompiler
                     }
                     ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
                     if (typesym != null) {
-//                        type.typekind = typesym.TypeKind;
-                        type.BaseType = typesym.BaseType.Name;
+                        type.typekind = typesym.TypeKind;
                     }
                     type.setPrimative();
                     break;
@@ -1759,8 +1756,7 @@ namespace QSharpCompiler
     class Type : Flags {
         public string name;
         public string type;
-//        public TypeKind typekind;  //Roslyn Bug : not consistent
-        public string BaseType;
+        public TypeKind typekind;
         public bool primative;
         public bool weakRef;
         public bool array;
@@ -1782,9 +1778,9 @@ namespace QSharpCompiler
                 case "float": primative = true; break;
                 case "double": primative = true; break;
                 default:
-                    switch (BaseType) {
-                        case "MulticastDelegate": primative = true; break;
-                        case "Enum": primative = true; break;
+                    switch (typekind) {
+                        case TypeKind.Delegate: primative = true; break;
+                        case TypeKind.Enum: primative = true; break;
                         default: primative = false; break;
                     }
                     break;
