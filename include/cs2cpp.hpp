@@ -12,6 +12,9 @@
 #include <initializer_list>
 
 //include Qt Headers
+#include <QtCore/QMutex>
+#include <QtCore/qmath.h>
+
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
 #include <QtGui/QOpenGLFunctions>
@@ -20,7 +23,6 @@
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
-#include <QtCore/qmath.h>
 
 namespace Qt::Core {
   extern int g_argc;

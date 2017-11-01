@@ -1209,6 +1209,17 @@ namespace QSharpCompiler
                     method.Append("}\r\n");
                     method.inFixedBlock = false;
                     break;
+                case SyntaxKind.LockStatement:
+                    //lock, block
+                    SyntaxNode lockId = GetChildNode(node, 1);
+                    SyntaxNode lockBlock = GetChildNode(node, 2);
+                    string holder = "__lock_holder_" + cls.lockCnt++;
+                    method.Append("for(ThreadLockHolder " + holder + "(");
+                    expressionNode(lockId, method, false);
+                    //TODO : confirm type == Qt.Core.ThreadLock
+                    method.Append(");" + holder + ".IsDone();" + holder + ".Signal())");
+                    blockNode(lockBlock, false, false);
+                    break;
             }
         }
 
@@ -1780,6 +1791,7 @@ namespace QSharpCompiler
         public List<Enum> enums = new List<Enum>();
         public List<Class> inners = new List<Class>();
         public Class otter;
+        public int lockCnt;
         public bool Generic;
         public List<string> GenericTypes = new List<string>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
