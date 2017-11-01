@@ -9,18 +9,21 @@ namespace Qt.Core {
     )]
     public class ThreadLockHolder {
         private ThreadLock threadlock;
-        private bool done;
-        public bool IsDone() {
-            return done;
+        private bool signal = true;
+        public bool Condition() {
+            return signal;
         }
         public void Signal() {
-            done = true;
+            signal = false;
         }
         public ThreadLock GetThreadLock() {
             return threadlock;
         }
         public void SetThreadLock(ThreadLock threadlock) {
             this.threadlock = threadlock;
+        }
+        ~ThreadLockHolder() {
+            CPP.Add("threadlock->Unlock();");
         }
     }
 }

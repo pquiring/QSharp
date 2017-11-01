@@ -1217,7 +1217,7 @@ namespace QSharpCompiler
                     method.Append("for(ThreadLockHolder " + holder + "(");
                     expressionNode(lockId, method, false);
                     //TODO : confirm type == Qt.Core.ThreadLock
-                    method.Append(");" + holder + ".IsDone();" + holder + ".Signal())");
+                    method.Append(");" + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock, false, false);
                     break;
             }
