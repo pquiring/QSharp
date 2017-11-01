@@ -359,10 +359,11 @@ namespace QSharpCompiler
                 }
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 if (cls.Generic) {
-                    sb.Append("template<typename ");
+                    sb.Append("template< ");
                     bool first = true;
                     foreach(var type in cls.GenericTypes) {
                         if (!first) sb.Append(","); else first = false;
+                        sb.Append("typename ");
                         sb.Append(type);
                     }
                     sb.Append(">");
