@@ -362,25 +362,8 @@ namespace QSharpCompiler
         private void writeStaticFields() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in clss) {
-                StringBuilder sb2 = new StringBuilder();
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                int cnt = 0;
-                sb2.Append("__attribute__((constructor)) static void $init_" + cls.name + "() {\r\n");
-                foreach(var field in cls.fields) {
-                    if (!field.Static) continue;
-                    sb.Append(field.GetTypeDecl() + " " + cls.name + "::" + field.name);
-                    if (field.primative) {
-                        sb.Append("= 0;\r\n");
-                    }  else {
-                        sb.Append(";\r\n");
-                    }
-                    if (field.src.Length > 0) {
-                        sb2.Append(field.src);
-                    }
-                    cnt++;
-                }
-                sb2.Append("}");
-                if (cnt > 0) sb.Append(sb2);
+                sb.Append(cls.GetStaticFields());
                 if (cls.Namespace != "") sb.Append("}\r\n");
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
@@ -479,9 +462,10 @@ namespace QSharpCompiler
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.StructDeclaration:
-                    cls = new Class();
-                    clss.Add(cls);
-                    classNode(node, cls, node.Kind() == SyntaxKind.InterfaceDeclaration);
+                    Class topcls = new Class();
+                    clss.Add(topcls);
+                    classNode(node, topcls, NoClass, node.Kind() == SyntaxKind.InterfaceDeclaration);
+                    cls = NoClass;
                     break;
                 case SyntaxKind.NamespaceDeclaration:
                     string name = GetChildNode(node).ToString().Replace(".", "::");  //IdentifierName or QualifiedName
@@ -520,9 +504,14 @@ namespace QSharpCompiler
             }
         }
 
-        private void classNode(SyntaxNode node, Class _cls, bool Interface) {
-            cls = _cls;
+        private void classNode(SyntaxNode node, Class inner, Class otter, bool Interface) {
+            cls = inner;
+            cls.fullname = otter.fullname;
+            if (cls.fullname.Length > 0) {
+                cls.fullname += "::";
+            }
             cls.name = file.model.GetDeclaredSymbol(node).Name;
+            cls.fullname += cls.name;
             cls.Namespace = Namespace;
             cls.Interface = Interface;
             if (!Interface) {
@@ -534,6 +523,7 @@ namespace QSharpCompiler
                 init.name = "$init";
                 cls.methods.Add(init);
             }
+            getFlags(cls, file.model.GetDeclaredSymbol(node));
             foreach(var child in node.ChildNodes()) {
                 switch (child.Kind()) {
                     case SyntaxKind.FieldDeclaration:
@@ -569,12 +559,12 @@ namespace QSharpCompiler
                     case SyntaxKind.InterfaceDeclaration:
                     case SyntaxKind.ClassDeclaration:
                     case SyntaxKind.StructDeclaration:
-                        Class otter = cls;
-                        Class inner = new Class();
-                        otter.inners.Add(inner);
-                        inner.otter = otter;
-                        classNode(child, inner, node.Kind() == SyntaxKind.InterfaceDeclaration);
-                        cls = otter;
+                        Class _otter = cls;
+                        Class _inner = new Class();
+                        _otter.inners.Add(_inner);
+                        _inner.outter = _otter;
+                        classNode(child, _inner, _otter, node.Kind() == SyntaxKind.InterfaceDeclaration);
+                        cls = _otter;
                         break;
                 }
             }
@@ -636,7 +626,7 @@ namespace QSharpCompiler
                     case SyntaxKind.VariableDeclaration:
                         SyntaxNode equals = variableDeclaration(child, field);
                         if (equals != null) {
-                            field.Append(cls.name);
+                            field.Append(cls.fullname);
                             field.Append("::");
                             field.Append(field.name);
                             field.Append(" = ");
@@ -1780,7 +1770,8 @@ namespace QSharpCompiler
 
     class Class : Flags
     {
-        public string name;
+        public string name = "";
+        public string fullname = "";  //inner classes
         public string Namespace = "";
         public bool hasctor;
         public bool Interface;
@@ -1790,7 +1781,7 @@ namespace QSharpCompiler
         public List<Method> methods = new List<Method>();
         public List<Enum> enums = new List<Enum>();
         public List<Class> inners = new List<Class>();
-        public Class otter;
+        public Class outter;
         public int lockCnt;
         public bool Generic;
         public List<string> GenericTypes = new List<string>();
@@ -1834,7 +1825,7 @@ namespace QSharpCompiler
                 }
                 sb.Append(">");
             }
-            sb.Append(GetFlags(true));
+            if (name != fullname) sb.Append(GetFlags(true));  //inner class
             sb.Append(" class " + name);
             if (bases.Count > 0 || ifaces.Count > 0) {
                 sb.Append(":");
@@ -1896,6 +1887,49 @@ namespace QSharpCompiler
             sb.Append("};\r\n");
             return sb.ToString();
         }
+        public int GetInnerStaticFields(StringBuilder sb, StringBuilder sb2) {
+            int cnt = 0;
+            foreach(var inner in inners) {
+                foreach(var field in inner.fields) {
+                    if (!field.Static) continue;
+                    sb.Append(field.GetTypeDecl() + " " + inner.fullname + "::" + field.name);
+                    if (field.IsNumeric()) {
+                        sb.Append("= 0;\r\n");
+                    }  else {
+                        sb.Append(";\r\n");
+                    }
+                    if (field.src.Length > 0) {
+                        sb2.Append(field.src);
+                    }
+                    cnt++;
+                }
+                cnt += inner.GetInnerStaticFields(sb, sb2);
+            }
+            return cnt;
+        }
+        public string GetStaticFields() {
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sb2 = new StringBuilder();
+            sb2.Append("__attribute__((constructor)) static void $init_" + name + "() {\r\n");
+            int cnt = 0;
+            foreach(var field in fields) {
+                if (!field.Static) continue;
+                sb.Append(field.GetTypeDecl() + " " + name + "::" + field.name);
+                if (field.IsNumeric()) {
+                    sb.Append("= 0;\r\n");
+                }  else {
+                    sb.Append(";\r\n");
+                }
+                if (field.src.Length > 0) {
+                    sb2.Append(field.src);
+                }
+                cnt++;
+            }
+            cnt += GetInnerStaticFields(sb, sb2);
+            sb2.Append("}");
+            if (cnt > 0) sb.Append(sb2);
+            return sb.ToString();
+        }
     }
 
     class Type : Flags {
@@ -1931,6 +1965,23 @@ namespace QSharpCompiler
                         default: primative = false; break;
                     }
                     break;
+            }
+        }
+        public bool IsNumeric() {
+            switch (type) {
+                case "bool": return true;
+                case "byte": return true;
+                case "sbyte": return true;
+                case "short": return true;
+                case "ushort": return true;
+                case "int": return true;
+                case "uint": return true;
+                case "long": return true;
+                case "ulong": return true;
+                case "char": return true;
+                case "float": return true;
+                case "double": return true;
+                default: return false;
             }
         }
         public string ConvertType() {

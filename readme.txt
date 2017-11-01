@@ -34,6 +34,9 @@ To compile under cygwin/mingw define these environment variables before calling 
   set CXX=/usr/bin/x86_64-w64-mingw32-gcc.exe
 you should also install the 'cygwin' version of Qt5 so the headers are in the correct location.
 
+Under cygwin you should also define:
+set CMAKE_LEGACY_CYGWIN_WIN32=0
+to avoid cmake warnings.
 
 WebSite : github.com/pquiring/qsharp
 
