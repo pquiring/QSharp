@@ -264,10 +264,6 @@ namespace QSharpCompiler
         private void writeForward() {
             StringBuilder sb = new StringBuilder();
             sb.Append("#include <cs2cpp.hpp>\r\n");
-            sb.Append("namespace Qt::Core {\r\n");;
-            sb.Append("extern int g_argc;\r\n");
-            sb.Append("extern const char **g_argv;\r\n");
-            sb.Append("}\r\n");
             if (Program.cppFile != "classlib.cpp") {
                 sb.Append("#include <classlib.hpp>\r\n");
             }
@@ -278,17 +274,7 @@ namespace QSharpCompiler
             foreach(var cls in clss) {
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                if (cls.Generic) {
-                    sb.Append("template<");
-                    bool first = true;
-                    foreach(var arg in cls.GenericTypes) {
-                        if (!first) sb.Append(","); else first = false;
-                        sb.Append("typename ");
-                        sb.Append(arg);
-                    }
-                    sb.Append(">");
-                }
-                sb.Append("class " + cls.name + ";\r\n");
+                sb.Append(cls.GetForwardDeclaration());
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
                     cls.bases.Add("Qt::Core::Object");
@@ -358,73 +344,7 @@ namespace QSharpCompiler
                     createNewMethod(cls, null);
                 }
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                if (cls.Generic) {
-                    sb.Append("template< ");
-                    bool first = true;
-                    foreach(var type in cls.GenericTypes) {
-                        if (!first) sb.Append(","); else first = false;
-                        sb.Append("typename ");
-                        sb.Append(type);
-                    }
-                    sb.Append(">");
-                }
-                sb.Append(cls.GetFlags(true));
-                sb.Append(" class " + cls.name);
-                if (cls.bases.Count > 0 || cls.ifaces.Count > 0) {
-                    sb.Append(":");
-                    bool first = true;
-                    foreach(var basecls in cls.bases) {
-                        if (!first) sb.Append(","); else first = false;
-                        sb.Append("public ");
-                        sb.Append(basecls);
-                    }
-                    foreach(var iface in cls.ifaces) {
-                        if (!first) sb.Append(","); else first = false;
-                        sb.Append("public ");
-                        sb.Append(iface);
-                    }
-                }
-                sb.Append("{\r\n");
-                if (cls.cpp != null) sb.Append(cls.cpp);
-                if (!cls.Interface) {
-                    sb.Append("private: std::weak_ptr<" + cls.name);
-                    if (cls.Generic) {
-                        sb.Append("<");
-                        bool first = true;
-                        foreach(var arg in cls.GenericTypes) {
-                            if (!first) sb.Append(","); else first = false;
-                            sb.Append(arg);
-                        }
-                        sb.Append(">");
-                    }
-                    sb.Append("> $this;\r\n");
-                }
-                foreach(var field in cls.fields) {
-                    sb.Append(field.GetDeclaration());
-                }
-                foreach(var method in cls.methods) {
-                    sb.Append(method.GetDeclaration());
-                    if (cls.Generic) {
-                        if (method.name == "$init") {
-                            sb.Append("{\r\n");
-                            foreach(var field in cls.fields) {
-                                if (field.Length() > 0 && !field.Static) {
-                                    sb.Append(field.src);
-                                }
-                            }
-                            sb.Append("}\r\n");
-                        } else {
-                            sb.Append(method.src);
-                        }
-                    } else {
-                        sb.Append(";\r\n");
-                    }
-                }
-                foreach(var e in cls.enums) {
-                    sb.Append(e.src);
-                    sb.Append(";\r\n");
-                }
-                sb.Append("};\r\n");
+                sb.Append(cls.GetDeclaration());
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
             }
@@ -558,7 +478,10 @@ namespace QSharpCompiler
             switch (node.Kind()) {
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.ClassDeclaration:
-                    classNode(node, node.Kind() == SyntaxKind.InterfaceDeclaration);
+                case SyntaxKind.StructDeclaration:
+                    cls = new Class();
+                    clss.Add(cls);
+                    classNode(node, cls, node.Kind() == SyntaxKind.InterfaceDeclaration);
                     break;
                 case SyntaxKind.NamespaceDeclaration:
                     string name = GetChildNode(node).ToString().Replace(".", "::");  //IdentifierName or QualifiedName
@@ -597,9 +520,8 @@ namespace QSharpCompiler
             }
         }
 
-        private void classNode(SyntaxNode node, bool Interface) {
-            cls = new Class();
-            clss.Add(cls);
+        private void classNode(SyntaxNode node, Class _cls, bool Interface) {
+            cls = _cls;
             cls.name = file.model.GetDeclaredSymbol(node).Name;
             cls.Namespace = Namespace;
             cls.Interface = Interface;
@@ -612,8 +534,7 @@ namespace QSharpCompiler
                 init.name = "$init";
                 cls.methods.Add(init);
             }
-            IEnumerable<SyntaxNode> nodes = node.ChildNodes();
-            foreach(var child in nodes) {
+            foreach(var child in node.ChildNodes()) {
                 switch (child.Kind()) {
                     case SyntaxKind.FieldDeclaration:
                         if (!cls.omitFields) fieldNode(child);
@@ -644,6 +565,16 @@ namespace QSharpCompiler
                         break;
                     case SyntaxKind.TypeParameterList:
                         typeParameterListNode(child);
+                        break;
+                    case SyntaxKind.InterfaceDeclaration:
+                    case SyntaxKind.ClassDeclaration:
+                    case SyntaxKind.StructDeclaration:
+                        Class otter = cls;
+                        Class inner = new Class();
+                        otter.inners.Add(inner);
+                        inner.otter = otter;
+                        classNode(child, inner, node.Kind() == SyntaxKind.InterfaceDeclaration);
+                        cls = otter;
                         break;
                 }
             }
@@ -1847,6 +1778,8 @@ namespace QSharpCompiler
         public List<Field> fields = new List<Field>();
         public List<Method> methods = new List<Method>();
         public List<Enum> enums = new List<Enum>();
+        public List<Class> inners = new List<Class>();
+        public Class otter;
         public bool Generic;
         public List<string> GenericTypes = new List<string>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
@@ -1860,6 +1793,96 @@ namespace QSharpCompiler
             if (!uses.Contains(cls)) {
                 uses.Add(cls);
             }
+        }
+        public string GetForwardDeclaration() {
+            StringBuilder sb = new StringBuilder();
+            if (Generic) {
+                sb.Append("template<");
+                bool first = true;
+                foreach(var arg in GenericTypes) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append("typename ");
+                    sb.Append(arg);
+                }
+                sb.Append(">");
+            }
+            sb.Append("class " + name);
+            sb.Append(";\r\n");
+            return sb.ToString();
+        }
+        public string GetDeclaration() {
+            StringBuilder sb = new StringBuilder();
+            if (Generic) {
+                sb.Append("template< ");
+                bool first = true;
+                foreach(var type in GenericTypes) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append("typename ");
+                    sb.Append(type);
+                }
+                sb.Append(">");
+            }
+            sb.Append(GetFlags(true));
+            sb.Append(" class " + name);
+            if (bases.Count > 0 || ifaces.Count > 0) {
+                sb.Append(":");
+                bool first = true;
+                foreach(var basecls in bases) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append("public ");
+                    sb.Append(basecls);
+                }
+                foreach(var iface in ifaces) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append("public ");
+                    sb.Append(iface);
+                }
+            }
+            sb.Append("{\r\n");
+            foreach(var inner in inners) {
+                sb.Append(inner.GetDeclaration());
+            }
+            if (cpp != null) sb.Append(cpp);
+            if (!Interface) {
+                sb.Append("private: std::weak_ptr<" + name);
+                if (Generic) {
+                    sb.Append("<");
+                    bool first = true;
+                    foreach(var arg in GenericTypes) {
+                        if (!first) sb.Append(","); else first = false;
+                        sb.Append(arg);
+                    }
+                    sb.Append(">");
+                }
+                sb.Append("> $this;\r\n");
+            }
+            foreach(var field in fields) {
+                sb.Append(field.GetDeclaration());
+            }
+            foreach(var method in methods) {
+                sb.Append(method.GetDeclaration());
+                if (Generic) {
+                    if (method.name == "$init") {
+                        sb.Append("{\r\n");
+                        foreach(var field in fields) {
+                            if (field.Length() > 0 && !field.Static) {
+                                sb.Append(field.src);
+                            }
+                        }
+                        sb.Append("}\r\n");
+                    } else {
+                        sb.Append(method.src);
+                    }
+                } else {
+                    sb.Append(";\r\n");
+                }
+            }
+            foreach(var e in enums) {
+                sb.Append(e.src);
+                sb.Append(";\r\n");
+            }
+            sb.Append("};\r\n");
+            return sb.ToString();
         }
     }
 

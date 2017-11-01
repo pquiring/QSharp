@@ -22,6 +22,11 @@
 #include <QtGui/QScreen>
 #include <QtCore/qmath.h>
 
+namespace Qt::Core {
+  extern int g_argc;
+  extern const char **g_argv;
+}
+
 //macro definitions
 
 #define int8 signed char
