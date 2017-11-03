@@ -1,0 +1,13 @@
+What's new
+==========
+
+Nov 3, 2017 : 0.2
+ - support unsafe blocks
+ - support delegates
+ - support enums
+ - supoprt generics
+ - support foreach
+ - more Qt functions
+
+Oct 27, 2017 : 0.1
+ - init public release

@@ -20,7 +20,7 @@ namespace QSharpCompiler
         public static bool debug = false;
         public static bool debugToString = false;
         public static bool debugTokens = false;
-        public static string version = "0.0.1";
+        public static string version = "0.2";
         public static bool library;
         public static bool classlib;
         public static string main;
