@@ -180,7 +180,7 @@ namespace QSharpCompiler
                 }
                 Object value = file.model.GetConstantValue(node).Value;
                 if (value != null) {
-                    ln += ",Constant=" + value;
+                    ln += ",Constant=" + value.ToString().Replace("\r", "").Replace("\n", "");
                 }
                 if (debugToString) {
                     ln += ",ToString=" + node.ToString().Replace("\r", "").Replace("\n", "");
@@ -215,16 +215,16 @@ namespace QSharpCompiler
 
     class Generate
     {
+        public static Source file;
+
         private FileStream fs;
         private string Namespace = "";
         private List<Class> clss = new List<Class>();
         private List<string> usings = new List<string>();
-        private Source file;
         private Class cls;
         private Class NoClass = new Class();  //for classless delegates
         private Method method;
         private Field field;
-        private int finallyCount = 0;
 
         public void generate(ArrayList sources, string cppFile)
         {
@@ -276,7 +276,7 @@ namespace QSharpCompiler
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 sb.Append(cls.GetForwardDeclaration());
                 if (cls.Namespace != "") sb.Append("}\r\n");
-                if (cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
+                if (!cls.Interface && cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
                     cls.bases.Add("Qt::Core::Object");
                     cls.addUsage("Object");
                 }
@@ -419,7 +419,7 @@ namespace QSharpCompiler
 
         private void outputFile(Source file)
         {
-            this.file = file;
+            Generate.file = file;
             SyntaxNode root = file.tree.GetRoot();
             IEnumerable<SyntaxNode> nodes = root.ChildNodes();
             foreach(var child in nodes) {
@@ -492,6 +492,7 @@ namespace QSharpCompiler
                 init.primative = true;
                 init.Private = true;
                 init.name = "$init";
+                init.setTypes();
                 cls.methods.Add(init);
             }
             getFlags(cls, file.model.GetDeclaredSymbol(node));
@@ -546,7 +547,7 @@ namespace QSharpCompiler
             foreach(var child in node.ChildNodes()) {
                 switch (child.Kind()) {
                     case SyntaxKind.TypeParameter:
-                        cls.GenericTypes.Add(child.ToString());  //declared symbol
+                        cls.GenericArgs.Add(new Type(child));
                         break;
                 }
             }
@@ -565,6 +566,10 @@ namespace QSharpCompiler
                             cls.bases.Add(baseName);
                         else
                             cls.ifaces.Add(baseName);
+                        int idx = baseName.IndexOf("<");
+                        if (idx != -1) {
+                            baseName = baseName.Substring(0, idx);
+                        }
                         cls.addUsage(baseName);
                         break;
                 }
@@ -627,32 +632,23 @@ namespace QSharpCompiler
             foreach(var child in nodes) {
                 switch (child.Kind()) {
                     case SyntaxKind.AccessorList:
-                        foreach(var tter in child.ChildNodes()) {
-                            switch (tter.Kind()) {
+                        foreach(var _etter in child.ChildNodes()) {
+                            switch (_etter.Kind()) {
                                 case SyntaxKind.GetAccessorDeclaration:
-                                    SyntaxNode getBlock = GetChildNode(tter);
-                                    if (getBlock != null) {
-                                        methodNode(tter, false, false, "$get_" + field.name);
-                                        method.type = field.type;
-                                        method.primative = field.primative;
-                                    } else {
-                                        field.get_Property = true;
-                                    }
+                                    methodNode(_etter, false, false, "$get_" + field.name);
+                                    method.type = field.type;
+                                    method.typekind = field.typekind;
+                                    method.setTypes();
+                                    field.get_Property = true;
                                     break;
                                 case SyntaxKind.SetAccessorDeclaration:
-                                    SyntaxNode setBlock = GetChildNode(tter);
-                                    if (setBlock != null) {
-                                        methodNode(tter, false, false, "$set_" + field.name);
-                                        Type arg = new Type();
-                                        arg.type = field.type;
-                                        arg.primative = field.primative;
-                                        arg.name = "value";
-                                        method.args.Add(arg);
-                                        method.type = "void";
-                                        method.primative = true;
-                                    } else {
-                                        field.set_Property = true;
-                                    }
+                                    methodNode(_etter, false, false, "$set_" + field.name);
+                                    Type arg = new Type(field.node);
+                                    arg.name = "value";
+                                    method.args.Add(arg);
+                                    method.type = "void";
+                                    method.setTypes();
+                                    field.set_Property = true;
                                     break;
                             }
                         }
@@ -783,12 +779,12 @@ namespace QSharpCompiler
                         variableDeclaration(child, type);
                         break;
                     case SyntaxKind.GenericName:
-                        type.Generic = true;
-                        SyntaxNode typeArgList = GetChildNode(child);
-                        foreach(var arg in typeArgList.ChildNodes()) {
-                            type.GenericTypes.Add(arg.ToString());
+                        SyntaxNode typeList = GetChildNode(child);
+                        foreach(var arg in typeList.ChildNodes()) {
+                            type.GenericArgs.Add(new Type(arg));
                         }
-                        type.type = child.ToString();
+                        type.type = GetSymbol(child);
+                        type.setTypes();
                         break;
                     case SyntaxKind.PredefinedType:
                     case SyntaxKind.IdentifierName:
@@ -844,6 +840,7 @@ namespace QSharpCompiler
                         break;
                 }
             }
+            method.setTypes();
             createNewMethod(cls, method.args);
         }
 
@@ -854,16 +851,15 @@ namespace QSharpCompiler
             method.name = "$new";
             method.type = cls.name;
             method.cls = cls;
-            method.Generic = cls.Generic;
-            method.GenericTypes = cls.GenericTypes;
+            method.GenericArgs = cls.GenericArgs;
             method.Append("{\r\n");
-            method.Append("std::shared_ptr<" + cls.name + ">$this = std::make_shared<" + cls.name);
+            method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + ">$this = std::make_shared<" + cls.name);
             if (cls.Generic) {
                 method.Append("<");
                 bool first = true;
-                foreach(var arg in cls.GenericTypes) {
+                foreach(var arg in cls.GenericArgs) {
                     if (!first) method.Append(","); else first = false;
-                    method.Append(arg);
+                    method.Append(arg.GetTypeDeclaration());
                 }
                 method.Append(">");
             }
@@ -882,6 +878,7 @@ namespace QSharpCompiler
             }
             method.Append("return $this;\r\n");
             method.Append("}\r\n");
+            method.setTypes();
             cls.methods.Add(method);
         }
 
@@ -900,6 +897,7 @@ namespace QSharpCompiler
             } else {
                 if (dtor) {
                     method.name = "~" + cls.name;
+                    method.type = "";
                 } else {
                     method.name = file.model.GetDeclaredSymbol(node).Name;
                 }
@@ -915,6 +913,7 @@ namespace QSharpCompiler
                     case SyntaxKind.PredefinedType:
                     case SyntaxKind.IdentifierName:
                     case SyntaxKind.QualifiedName:
+                        Type type = new Type(child);
                         ISymbol symbol = file.model.GetSymbolInfo(child).Symbol;
                         ISymbol declsymbol = file.model.GetDeclaredSymbol(child);
                         if (symbol == null && declsymbol == null) {
@@ -930,15 +929,8 @@ namespace QSharpCompiler
                         if (typesym != null) {
                             method.typekind = typesym.TypeKind;
                         }
+                        method.node = child;
                         method.setTypes();
-                        if (method.cls.Generic) {
-                            foreach(var arg in cls.GenericTypes) {
-                                if (method.type == arg) {
-                                    method.primative = true;
-                                    break;
-                                }
-                            }
-                        }
                         break;
                     case SyntaxKind.ParameterList:
                         parameterListNode(child);
@@ -954,8 +946,17 @@ namespace QSharpCompiler
                         method.arrays++;
                         parameterNode(GetChildNode(child), method);
                         break;
+                    case SyntaxKind.GenericName:
+                        SyntaxNode typeList = GetChildNode(child);
+                        foreach(var arg in typeList.ChildNodes()) {
+                            method.GenericArgs.Add(new Type(arg));
+                        }
+                        method.type = GetSymbol(child);
+                        method.setTypes();
+                        break;
                 }
             }
+            method.setTypes();
             cls.methods.Add(method);
         }
 
@@ -968,14 +969,6 @@ namespace QSharpCompiler
                         Type type = new Type();
                         parameterNode(par, type);
                         type.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
-                        if (cls.Generic) {
-                            foreach(var arg in cls.GenericTypes) {
-                                if (type.type == arg) {
-                                    type.primative = true;
-                                    break;
-                                }
-                            }
-                        }
                         method.args.Add(type);
                         break;
                 }
@@ -1007,6 +1000,14 @@ namespace QSharpCompiler
                         }
                     }
                     break;
+                case SyntaxKind.GenericName:
+                    SyntaxNode typeList = GetChildNode(node);
+                    foreach(var arg in typeList.ChildNodes()) {
+                        type.GenericArgs.Add(new Type(arg));
+                    }
+                    type.type = GetSymbol(node);
+                    type.setTypes();
+                    break;
                 default:
                     Console.WriteLine("Unknown arg type:" + node.Kind());
                     break;
@@ -1017,7 +1018,7 @@ namespace QSharpCompiler
             method.Append("{\r\n");
             if (top) {
                 if (!method.Static) {
-                    method.Append("std::shared_ptr<" + cls.name + "> $this = this->$this.lock();\r\n");
+                    method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = this->$this.lock();\r\n");
                 }
                 if (method.basector != null) method.Append(method.basector);
             }
@@ -1067,6 +1068,34 @@ namespace QSharpCompiler
                     }
                     method.Append(")");
                     statementNode(GetChildNode(node, Count));
+                    break;
+                case SyntaxKind.ForEachStatement:
+                    //foreach(var item in items) {}
+                    //node(item) -> type, items, block {}
+                    SyntaxNode foreachItem = node;
+                    String foreachName = file.model.GetDeclaredSymbol(foreachItem).ToString();
+                    SyntaxNode foreachTypeNode = GetChildNode(node, 1);
+                    ISymbol foreachTypeNodeSymbol = file.model.GetSymbolInfo(foreachTypeNode).Symbol;
+                    Type foreachType = new Type(foreachTypeNode);
+                    SyntaxNode foreachItems = GetChildNode(node, 2);
+                    SyntaxNode foreachBlock = GetChildNode(node, 3);
+                    String enumID = "$enum_" + cls.enumCnt++;
+                    method.Append("{");
+                    method.Append(foreachType.GetTypeDeclaration());  //var type
+                    method.Append(" ");
+                    method.Append(foreachName);  //var name : item
+                    method.Append(";\r\n");
+                    method.Append("std::shared_ptr<IEnumerator<");
+                    method.Append(foreachType.GetTypeDeclaration());  //var type
+                    method.Append(">> " + enumID + " = ");
+                    expressionNode(foreachItems, method, false);  //items
+                    method.Append("->GetEnumerator();\r\n");
+                    method.Append("while (");
+                    method.Append(enumID + "->MoveNext()) {\r\n");
+                    method.Append(foreachName + " = ");  //var name : item =
+                    method.Append(enumID + "->$get_Current();\r\n");
+                    statementNode(foreachBlock);
+                    method.Append("}}\r\n");
                     break;
                 case SyntaxKind.DoStatement:
                     //do statement/block while (expression)
@@ -1126,7 +1155,7 @@ namespace QSharpCompiler
                                 }
                                 break;
                             case SyntaxKind.FinallyClause:
-                                method.Append("} catch(std::shared_ptr<FinallyException> __finally" + finallyCount++ + ") ");
+                                method.Append("} catch(std::shared_ptr<FinallyException> __finally" + cls.finallyCnt++ + ") ");
                                 statementNode(GetChildNode(child));
                                 break;
                         }
@@ -1191,9 +1220,7 @@ namespace QSharpCompiler
                 case SyntaxKind.IdentifierName:
                 case SyntaxKind.PredefinedType:
                 case SyntaxKind.QualifiedName:
-                case SyntaxKind.GenericName:
-                    type = new Type();
-                    type.type = node.ToString().Replace(".", "::");
+                    type = new Type(node);
                     if (isProperty(node)) {
                         ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                         switch (symbol.ToString()) {
@@ -1208,11 +1235,20 @@ namespace QSharpCompiler
                                 break;
                         }
                     } else {
-                        ob.Append(type.ConvertType());
+                        ob.Append(type.GetTypeType());
                         cls.addUsage(type.type);
                     }
                     break;
+                case SyntaxKind.GenericName:
+                    type = new Type(node);
+                    SyntaxNode typeList = GetChildNode(node);
+                    foreach(var arg in typeList.ChildNodes()) {
+                        type.GenericArgs.Add(new Type(arg));
+                    }
+                    ob.Append(type.GetTypeType());
+                    break;
                 case SyntaxKind.VariableDeclaration:
+                    //local variable
                     type = new Type();
                     SyntaxNode equals = variableDeclaration(node, type);
                     method.Append(type.GetTypeDeclaration());
@@ -1363,6 +1399,12 @@ namespace QSharpCompiler
                     ob.Append("!");
                     expressionNode(GetChildNode(node), ob, false);
                     break;
+                case SyntaxKind.LogicalOrExpression:
+                    binaryNode(node, ob, "||");
+                    break;
+                case SyntaxKind.LogicalAndExpression:
+                    binaryNode(node, ob, "&&");
+                    break;
                 case SyntaxKind.ParenthesizedExpression:
                     ob.Append("(");
                     expressionNode(GetChildNode(node), ob, false);
@@ -1430,6 +1472,10 @@ namespace QSharpCompiler
                     }
                     ob.Append(")");
                     blockNode(pblock, false, false);
+                    break;
+                case SyntaxKind.DefaultExpression:
+                    expressionNode(GetChildNode(node), ob, false);
+                    ob.Append("()");
                     break;
             }
         }
@@ -1556,10 +1602,8 @@ namespace QSharpCompiler
             //cast value to type
             //C# (type)value
             //C++ std::static_pointer_cast<type>(value)
-            Type type = new Type();
-            type.type = castType.ToString();
-            type.setTypes();
-            if (!type.primative) ob.Append("std::static_pointer_cast<"); else ob.Append("static_cast<");  //reinterpret_cast ?
+            Type type = new Type(castType);
+            if (type.shared) ob.Append("std::static_pointer_cast<"); else ob.Append("static_cast<");
             expressionNode(castType, ob, false);
             ob.Append(">");
             ob.Append("(");
@@ -1647,7 +1691,7 @@ namespace QSharpCompiler
             if (isDelegate(id)) {
                 ob.Append("$checkDelegate(");
             }
-            expressionNode(id, ob, false);
+            expressionNode(id, ob, true);
             if (isDelegate(id)) {
                 ob.Append(")");
             }
@@ -1697,6 +1741,23 @@ namespace QSharpCompiler
                 cnt++;
             }
             return cnt;
+        }
+
+        private string GetSymbol(SyntaxNode node) {
+            ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
+            if (symbol != null) return symbol.Name;
+            return null;
+        }
+
+        private string GetDeclaredSymbol(SyntaxNode node) {
+            ISymbol symbol = file.model.GetDeclaredSymbol(node);
+            if (symbol != null) return symbol.Name;
+            return null;
+        }
+
+        private TypeKind GetTypeKind(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            return type.TypeKind;
         }
     }
 
@@ -1754,8 +1815,10 @@ namespace QSharpCompiler
         public List<Class> inners = new List<Class>();
         public Class outter;
         public int lockCnt;
+        public int finallyCnt;
+        public int enumCnt;
         public bool Generic;
-        public List<string> GenericTypes = new List<string>();
+        public List<Type> GenericArgs = new List<Type>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
         public bool omitFields, omitMethods, omitConstructors;
         //uses are used to sort classes
@@ -1768,15 +1831,29 @@ namespace QSharpCompiler
                 uses.Add(cls);
             }
         }
+        public string GetTypeDeclaration() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(name);
+            if (Generic) {
+                sb.Append("<");
+                bool first = true;
+                foreach(var arg in GenericArgs) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append(arg.type);
+                }
+                sb.Append(">");
+            }
+            return sb.ToString();
+        }
         public string GetForwardDeclaration() {
             StringBuilder sb = new StringBuilder();
             if (Generic) {
                 sb.Append("template<");
                 bool first = true;
-                foreach(var arg in GenericTypes) {
+                foreach(var arg in GenericArgs) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("typename ");
-                    sb.Append(arg);
+                    sb.Append(arg.GetTypeDeclaration());
                 }
                 sb.Append(">");
             }
@@ -1789,10 +1866,10 @@ namespace QSharpCompiler
             if (Generic) {
                 sb.Append("template< ");
                 bool first = true;
-                foreach(var type in GenericTypes) {
+                foreach(var arg in GenericArgs) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("typename ");
-                    sb.Append(type);
+                    sb.Append(arg.GetTypeDeclaration());
                 }
                 sb.Append(">");
             }
@@ -1822,9 +1899,9 @@ namespace QSharpCompiler
                 if (Generic) {
                     sb.Append("<");
                     bool first = true;
-                    foreach(var arg in GenericTypes) {
+                    foreach(var arg in GenericArgs) {
                         if (!first) sb.Append(","); else first = false;
-                        sb.Append(arg);
+                        sb.Append(arg.GetTypeDeclaration());
                     }
                     sb.Append(">");
                 }
@@ -1905,17 +1982,6 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             foreach(var method in methods) {
                 if (method.isDelegate) continue;
-/*
-                if (method.cls.Generic) {
-                    sb.Append("template<typename ");
-                    bool first = true;
-                    foreach(var type in cls.GenericTypes) {
-                        if (!first) sb.Append(","); else first = false;
-                        sb.Append(type);
-                    }
-                    sb.Append(">");
-                }
-*/
                 sb.Append(method.GetTypeDeclaration());
                 sb.Append(" ");
                 sb.Append(method.cls.fullname);
@@ -1946,51 +2012,73 @@ namespace QSharpCompiler
         public string name;
         public string type;
         public TypeKind typekind;
+        public SyntaxNode node;
         public bool primative;
         public bool numeric;
         public bool weakRef;
         public bool array;
         public int arrays;  //# of dimensions
+        public bool shared;
         public bool ptr;  //unsafe pointer
-        public bool Generic;
-        public List<string> GenericTypes = new List<string>();
+        public List<Type> GenericArgs = new List<Type>();
+        public Type() {}
+        public Type(SyntaxNode node) {
+            this.node = node;
+            ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
+            if (symbol != null) {
+                type = symbol.Name.Replace(".", "::");
+            } else {
+                symbol = Generate.file.model.GetDeclaredSymbol(node);
+                if (symbol != null) {
+                    type = symbol.Name.Replace(".", "::");
+                } else {
+                    type = node.ToString().Replace(".", "::");
+                }
+            }
+            ITypeSymbol typesymbol = Generate.file.model.GetTypeInfo(node).Type;
+            if (typesymbol != null) {
+                typekind = typesymbol.TypeKind;
+            }
+            setTypes();
+        }
         public void setTypes() {
             switch (type) {
-                case "void": primative = true; break;
-                case "bool": primative = true; break;
-                case "byte": primative = true; break;
-                case "sbyte": primative = true; break;
-                case "short": primative = true; break;
-                case "ushort": primative = true; break;
-                case "int": primative = true; break;
-                case "uint": primative = true; break;
-                case "long": primative = true; break;
-                case "ulong": primative = true; break;
-                case "char": primative = true; break;
-                case "float": primative = true; break;
-                case "double": primative = true; break;
+                case "":
+                case "void":
+                    primative = true;
+                    numeric = false;
+                    shared = false;
+                    break;
+                case "bool":
+                case "byte":
+                case "sbyte":
+                case "short":
+                case "ushort":
+                case "int":
+                case "uint":
+                case "long":
+                case "ulong":
+                case "char":
+                case "float":
+                case "double":
+                    primative = true;
+                    numeric = true;
+                    shared = false;
+                    break;
                 default:
+                    primative = false;
+                    shared = true;
                     switch (typekind) {
-                        case TypeKind.Delegate: primative = true; break;
-                        case TypeKind.Enum: primative = true; break;
-                        default: primative = false; break;
+                        case TypeKind.Delegate: shared = false; break;
+                        case TypeKind.Enum: shared = false; break;
+                        case TypeKind.TypeParameter: shared = false; break;
+                    }
+                    if (node != null) {
+                        switch (node.Kind()) {
+                            case SyntaxKind.TypeParameter: shared = false; break;
+                        }
                     }
                     break;
-            }
-            switch (type) {
-                case "bool": numeric = true; break;
-                case "byte": numeric = true; break;
-                case "sbyte": numeric = true; break;
-                case "short": numeric = true; break;
-                case "ushort": numeric = true; break;
-                case "int": numeric = true; break;
-                case "uint": numeric = true; break;
-                case "long": numeric = true; break;
-                case "ulong": numeric = true; break;
-                case "char": numeric = true; break;
-                case "float": numeric = true; break;
-                case "double": numeric = true; break;
-                default: numeric = false; break;
             }
         }
         public bool IsNumeric() {
@@ -2021,24 +2109,36 @@ namespace QSharpCompiler
                 default: return type;
             }
         }
-        public string GetTypeDeclaration() {
-            if (type == null || type == "") {
-                if (name.StartsWith("~")) return "";
-                Console.WriteLine("Warning:type unknown:" + name);
+        public string GetTypeType() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(ConvertType());
+            if (GenericArgs.Count > 0) {
+                sb.Append("<");
+                bool first = true;
+                foreach(var arg in GenericArgs) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append(arg.GetTypeDeclaration());
+                }
+                sb.Append(">");
             }
+            return sb.ToString();
+        }
+        public string GetTypeDeclaration() {
             StringBuilder sb = new StringBuilder();
             for(int a=0;a<arrays;a++) {
                 sb.Append("std::shared_ptr<QVector<");
             }
-            if (primative) {
-                sb.Append(ConvertType());
-            } else {
+            if (shared) {
                 if (weakRef)
-                    sb.Append("std::weak_ptr<" + ConvertType() + ">");
+                    sb.Append("std::weak_ptr<");
                 else
-                    sb.Append("std::shared_ptr<" + ConvertType() + ">");
+                    sb.Append("std::shared_ptr<");
             }
+            sb.Append(GetTypeType());
             if (ptr) sb.Append("*");
+            if (shared) {
+                sb.Append(">");
+            }
             for(int a=0;a<arrays;a++) {
                 sb.Append(">>");
             }
@@ -2142,7 +2242,7 @@ namespace QSharpCompiler
                 sb.Append(">");
                 sb.Append(name);
             }
-            if (Abstract) sb.Append("=0");
+            if (Abstract) sb.Append("=0" + ";\r\n");
             return sb.ToString();
         }
     }
