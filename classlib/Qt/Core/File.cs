@@ -9,11 +9,11 @@ namespace Qt.Core {
             CPP.Add("$q = new QFile(filename->qstring());\r\n");
             CPP.Add("$base($q);\r\n");
         }
-        public bool Exists() {return CPP.ReturnBool("exists()");}
-        public bool Remove() {return CPP.ReturnBool("remove()");}
-        public bool Rename(String newName) {return CPP.ReturnBool("rename(newName->qstring())");}
-        public bool Resize(long newSize) {return CPP.ReturnBool("resize(newSize)");}
-        public long Size() {return CPP.ReturnLong("size()");}
+        public bool Exists() {return CPP.ReturnBool("$q->exists()");}
+        public bool Remove() {return CPP.ReturnBool("$q->remove()");}
+        public bool Rename(String newName) {return CPP.ReturnBool("$q->rename(newName->qstring())");}
+        public bool Resize(long newSize) {return CPP.ReturnBool("$q->resize(newSize)");}
+        public long Size() {return CPP.ReturnLong("$q->size()");}
         ~File() {
             CPP.Add("delete $q;\r\n");
         }

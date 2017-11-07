@@ -23,6 +23,8 @@
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
+#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QUdpSocket>
 
 namespace Qt::Core {
   extern int g_argc;
@@ -110,6 +112,23 @@ inline uint64 $add(uint64 x,uint64 y) {return x + y;}
 
 inline float $add(float x,float y) {return x + y;}
 inline double $add(double x,double y) {return x + y;}
+
+//char mixed
+inline int16 $add(char16 x,int8 y) {return x + y;}
+inline int32 $add(char16 x,int32 y) {return x + y;}
+inline int64 $add(char16 x,int64 y) {return x + y;}
+
+inline int16 $add(int8 x,char16 y) {return x + y;}
+inline int32 $add(int32 x,char16 y) {return x + y;}
+inline int64 $add(int64 x,char16 y) {return x + y;}
+
+inline uint16 $add(char16 x,uint8 y) {return x + y;}
+inline uint32 $add(char16 x,uint32 y) {return x + y;}
+inline uint64 $add(char16 x,uint64 y) {return x + y;}
+
+inline uint16 $add(uint8 x,char16 y) {return x + y;}
+inline uint32 $add(uint32 x,char16 y) {return x + y;}
+inline uint64 $add(uint64 x,char16 y) {return x + y;}
 
 //mixed numericals
 inline float $add(float x,int32 y) {return x + y;}

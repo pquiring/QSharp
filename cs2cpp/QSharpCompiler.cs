@@ -149,7 +149,7 @@ namespace QSharpCompiler
                 }
                 ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                 if (symbol != null) {
-                    ln += ",Symbol=" + symbol;
+                    ln += ",Symbol=" + symbol.ToString();
                     ln += ",Symbol.Kind=" + symbol.Kind;
                     ln += ",Symbol.Name=" + symbol.Name;
                     ln += ",Symbol.IsStatic=" + symbol.IsStatic;
@@ -265,6 +265,9 @@ namespace QSharpCompiler
         private void generate(Source file)
         {
             SyntaxNode root = file.tree.GetRoot();
+            if (Program.debug) {
+                Console.WriteLine("Compiling:" + file.csFile);
+            }
             outputFile(file);
         }
 
@@ -302,7 +305,6 @@ namespace QSharpCompiler
         private bool sortClasses() {
             int cnt = clss.Count;
             Class tmp;
-            bool moved = false;
             for(int idx=0;idx<cnt;idx++) {
                 Class cls = clss[idx];
                 int ucnt = cls.uses.Count;
@@ -311,16 +313,16 @@ namespace QSharpCompiler
                     for(int i=idx+1;i<cnt;i++) {
                         if (clss[i].name == use) {
                             //need to move i before idx
+//                            Console.WriteLine("Moving " + clss[i].name + " before " + clss[idx].name);
                             tmp = clss[i];
-                            clss[i] = clss[idx];
-                            clss[idx] = tmp;
-                            moved = true;
-                            break;
+                            clss.RemoveAt(i);
+                            clss.Insert(0, tmp);
+                            return true;
                         }
                     }
                 }
             }
-            return moved;
+            return false;
         }
 
         private void writeNoClassTypes() {
@@ -1249,7 +1251,6 @@ namespace QSharpCompiler
                         }
                     } else {
                         ob.Append(type.GetTypeType());
-                        cls.addUsage(type.type);
                     }
                     break;
                 case SyntaxKind.GenericName:
@@ -1306,7 +1307,7 @@ namespace QSharpCompiler
                     ob.Append(")");
                     break;
                 case SyntaxKind.CharacterLiteralExpression:
-                    ob.Append("\'");
+                    ob.Append("(char16)\'");
                     outString(file.model.GetConstantValue(node).Value.ToString(), ob);
                     ob.Append("\'");
                     break;
@@ -1628,8 +1629,8 @@ namespace QSharpCompiler
             //node = ArrayCreationExpression -> {ArrayType -> {type, [[rank -> size] ...]} [, ArrayInitializerExpression -> {...}]}
             SyntaxNode arrayType = GetChildNode(node);
             IEnumerable<SyntaxNode> nodes = arrayType.ChildNodes();
-            SyntaxNode type = null;
-            SyntaxNode size = null;
+            SyntaxNode typeNode = null;
+            SyntaxNode sizeNode = null;
             int dims = 0;
             foreach(var child in nodes) {
                 switch (child.Kind()) {
@@ -1640,35 +1641,36 @@ namespace QSharpCompiler
                             case SyntaxKind.OmittedArraySizeExpression:
                                 break;
                             default:
-                                if (size != null) Console.WriteLine("Error:multiple sizes for ArrayCreationExpression");
-                                size = rank;  //*Expression
+                                if (sizeNode != null) Console.WriteLine("Error:multiple sizes for ArrayCreationExpression");
+                                sizeNode = rank;  //*Expression
                                 break;
                         }
                         break;
                     default:  //PredefinedType or IdentifierName
-                        type = child;
+                        typeNode = child;
                         break;
                 }
             }
             SyntaxNode initList = GetChildNode(node, 2);
             if (initList != null && initList.Kind() == SyntaxKind.ArrayInitializerExpression) {
                 //ob.Append("=");
-                arrayInitNode(initList, ob, type.ToString(), dims);
+                arrayInitNode(initList, ob, typeNode.ToString(), dims);
                 return;
             }
-            if (type == null || size == null) {
-                Console.WriteLine("Error:Invalid ArrayCreationExpression : " + type + " : " + size);
+            if (typeNode == null || sizeNode == null) {
+                Console.WriteLine("Error:Invalid ArrayCreationExpression : " + typeNode + " : " + sizeNode);
                 return;
             }
             for(int a=0;a<dims;a++) {
               ob.Append("std::make_shared<QVector<");
             }
-            ob.Append(type.ToString());
+            Type type = new Type(typeNode);
+            ob.Append(type.GetTypeType());
             for(int a=0;a<dims;a++) {
                 ob.Append(">>");
             }
             ob.Append("(");
-            expressionNode(size, ob, false);
+            expressionNode(sizeNode, ob, false);
             ob.Append(")");
         }
 
@@ -2039,7 +2041,11 @@ namespace QSharpCompiler
             this.node = node;
             ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
             if (symbol != null) {
-                type = symbol.Name.Replace(".", "::");
+                //for PredefinedType ISymbol.Name == Boxed type
+                if (node.Kind() == SyntaxKind.PredefinedType)
+                    type = symbol.ToString().Replace(".", "::");
+                else
+                    type = symbol.Name.Replace(".", "::");
             } else {
                 symbol = Generate.file.model.GetDeclaredSymbol(node);
                 if (symbol != null) {

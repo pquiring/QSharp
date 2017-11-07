@@ -12,4 +12,4 @@ link_directories(../../lib)
 
 add_executable(testgl1 testgl1.cpp)
 
-target_link_libraries(testgl1 classlib Qt5Core Qt5Gui stdc++)
+target_link_libraries(testgl1 classlib Qt5Core Qt5Gui Qt5Network stdc++)
