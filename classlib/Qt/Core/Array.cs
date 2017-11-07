@@ -16,6 +16,7 @@ namespace Qt.Core {
             return (T)CPP.ReturnObject("$q->at(idx)");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
+        public int Count {get {return Size();}}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
         public void Remove(int idx) {CPP.Add("$q->removeAt(idx);");}
         public IEnumerator<T> GetEnumerator() {
