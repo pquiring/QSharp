@@ -24,6 +24,10 @@ namespace Qt.Core {
             //convert builtin string to Qt.Core.String
             return new String(s);
         }
+        public static implicit operator string(String s) {
+            //convert Qt.Core.String to builtin string
+            return (string)s;
+        }
 
         public int Length {get{return CPP.ReturnInt("$q->length()");}}
         public String Append(String s) {
