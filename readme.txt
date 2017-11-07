@@ -23,9 +23,6 @@ Notes:
  - NullPointerExceptions are checked
  - not all C# features are supported (reflection, properties, operators, etc.)
  - classlib is a work in progress
- - there are currently some bugs in Roslyn that make this project unuseable
-   - bug 22905
-   - bug 22931
 
 Compiling:
 

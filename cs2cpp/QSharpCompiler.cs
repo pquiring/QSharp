@@ -78,11 +78,12 @@ namespace QSharpCompiler
             cppFile = cpp;
             hppFile = hpp;
             compiler = CSharpCompilation.Create("C#");
-//            if (classlib)
-            {
-                String lib = typeof(object).Assembly.Location;
-                Console.WriteLine("Adding Reference:" + lib);
-                compiler = compiler.AddReferences(MetadataReference.CreateFromFile(lib));
+            var corelibs = ((String)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")).Split(Path.PathSeparator);
+            foreach(var lib in corelibs) {
+                if (lib.Contains("System")) {
+//                    Console.WriteLine("Adding Corelib Reference:" + lib);
+                    compiler = compiler.AddReferences(MetadataReference.CreateFromFile(lib));
+                }
             }
             foreach(var lib in refs) {
                 Console.WriteLine("Adding Reference:" + lib);
@@ -177,6 +178,18 @@ namespace QSharpCompiler
                     }
                 } else {
                     ln += ",Type=null";
+                }
+                foreach(var diag in file.model.GetDiagnostics()) {
+                    ln += ",diag=" + diag.ToString();
+                }
+                foreach(var diag in file.model.GetSyntaxDiagnostics()) {
+                    ln += ",syntaxdiag=" + diag.ToString();
+                }
+                foreach(var diag in file.model.GetDeclarationDiagnostics()) {
+                    ln += ",decldiag=" + diag.ToString();
+                }
+                foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
+                    ln += ",methoddiag=" + diag.ToString();
                 }
                 Object value = file.model.GetConstantValue(node).Value;
                 if (value != null) {
@@ -1155,7 +1168,7 @@ namespace QSharpCompiler
                                 }
                                 break;
                             case SyntaxKind.FinallyClause:
-                                method.Append("} catch(std::shared_ptr<FinallyException> __finally" + cls.finallyCnt++ + ") ");
+                                method.Append("} catch(std::shared_ptr<FinallyException> $finally" + cls.finallyCnt++ + ") ");
                                 statementNode(GetChildNode(child));
                                 break;
                         }
@@ -1203,7 +1216,7 @@ namespace QSharpCompiler
                     //lock, block
                     SyntaxNode lockId = GetChildNode(node, 1);
                     SyntaxNode lockBlock = GetChildNode(node, 2);
-                    string holder = "__lock_holder_" + cls.lockCnt++;
+                    string holder = "$lock" + cls.lockCnt++;
                     method.Append("for(ThreadLockHolder " + holder + "(");
                     expressionNode(lockId, method, false);
                     //TODO : confirm type == Qt.Core.ThreadLock

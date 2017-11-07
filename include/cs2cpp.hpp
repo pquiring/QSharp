@@ -48,7 +48,8 @@ namespace Qt::Core {
 #define true 1
 #define false 0
 
-extern void $npe();
+extern void $npe();  //NullPointerException
+extern void $abe();  //ArrayBoundsException
 
 template<typename T> T* $deref(std::shared_ptr<T> x) {
   if (x == nullptr) $npe();
@@ -70,6 +71,12 @@ inline int $hash(Qt::Core::Object *obj) {
   union {Qt::Core::Object* ptr; int hash;} u;
   u.ptr = obj;
   return u.hash;
+}
+
+template<typename T>
+void $checkArray(std::shared_ptr<QVector<T>> array, int offset, int length) {
+  int arrayLength = array->size();
+  if (offset + length > arrayLength) $abe();
 }
 
 //$add
