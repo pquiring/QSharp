@@ -1217,9 +1217,9 @@ namespace QSharpCompiler
                     SyntaxNode lockId = GetChildNode(node, 1);
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
-                    method.Append("for(ThreadLockHolder " + holder + "(");
+                    method.Append("for(MutexHolder " + holder + "(");
                     expressionNode(lockId, method, false);
-                    //TODO : confirm type == Qt.Core.ThreadLock
+                    //TODO : confirm type == Qt.Core.Mutex
                     method.Append(");" + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock, false, false);
                     break;

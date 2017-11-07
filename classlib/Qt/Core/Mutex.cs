@@ -3,9 +3,9 @@ using Qt.QSharp;
 namespace Qt.Core {
     [CPPClass(
         "private: QMutex $q;\r\n" +
-        "public: ThreadLock() : $q(QMutex::Recursive) {}"
+        "public: Mutex() : $q(QMutex::Recursive) {}"
     )]
-    public class ThreadLock {
+    public class Mutex {
         public void Lock() {
             CPP.Add("$q.lock();");
         }
