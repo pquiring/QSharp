@@ -1,12 +1,18 @@
 What's new
 ==========
 
+Nov 10, 2017 : 0.3
+ - fixed compilation by adding proper corelib references
+ - added IODevice, File, Dir, TcpSocket, UdpSocket
+ - more Qt functions
+
 Nov 3, 2017 : 0.2
  - support unsafe blocks
  - support delegates
  - support enums
- - supoprt generics
+ - support generics
  - support foreach
+ - support lock {} blocks
  - more Qt functions
 
 Oct 27, 2017 : 0.1

@@ -9,7 +9,7 @@ namespace Qt.Core {
             CPP.Add("$q = new QDir(folder->qstring());\r\n");
         }
         public bool Exists() {return CPP.ReturnBool("$q->exists()");}
-        public bool Exists(String name) {return CPP.ReturnBool("$q->exists(name->qstirng())");}
+        public bool Exists(String name) {return CPP.ReturnBool("$q->exists(name->qstring())");}
         public bool Remove(String filename) {return CPP.ReturnBool("$q->remove(filename->qstring())");}
         public bool Rename(String oldName, String newName) {return CPP.ReturnBool("$q->rename(oldName->qstring(), newName->qstring())");}
         ~Dir() {
