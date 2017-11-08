@@ -80,10 +80,10 @@ namespace QSharpCompiler
             compiler = CSharpCompilation.Create("C#");
             var corelibs = ((String)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")).Split(Path.PathSeparator);
             foreach(var lib in corelibs) {
-                if (lib.Contains("System")) {
+//                if (lib.Contains("System")) {
 //                    Console.WriteLine("Adding Corelib Reference:" + lib);
                     compiler = compiler.AddReferences(MetadataReference.CreateFromFile(lib));
-                }
+//                }
             }
             foreach(var lib in refs) {
                 Console.WriteLine("Adding Reference:" + lib);

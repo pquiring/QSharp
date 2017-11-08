@@ -11,7 +11,7 @@ public class TriangleWindow : OpenGLWindow
 
     public override void InitializeGL() {
         InitializeOpenGLFunctions();
-        m_program = new OpenGLShaderProgram(this);
+        m_program = new OpenGLShaderProgram();
         if (!m_program.AddShaderFromSourceCode(OpenGLShader.Vertex, vertexShaderSource)) {
             Console.WriteLine("Vertex Failed!");
         }
