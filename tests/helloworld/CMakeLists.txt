@@ -10,4 +10,4 @@ link_directories(../../lib)
 
 add_executable(helloworld helloworld.cpp)
 
-target_link_libraries(helloworld classlib Qt5Core Qt5Gui Qt5Network stdc++)
+target_link_libraries(helloworld classlib Qt5Core Qt5Gui Qt5Network stdc++ z)
