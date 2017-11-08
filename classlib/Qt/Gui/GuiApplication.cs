@@ -2,15 +2,14 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QGuiApplication *q = nullptr;\r\n" +
-        "public: GuiApplication() {q = new QGuiApplication(Qt::Core::g_argc, (char**)Qt::Core::g_argv);}\r\n"
+        "private: std::shared_ptr<QGuiApplication> $q;\r\n"
     )]
     public class GuiApplication {
-        public void Exec() {
-            CPP.Add("q->exec();");
+        public GuiApplication() {
+            CPP.Add("$q = std::make_shared<QGuiApplication>(Qt::Core::g_argc, (char**)Qt::Core::g_argv);");
         }
-        ~GuiApplication() {
-            CPP.Add("delete q;");
+        public void Exec() {
+            CPP.Add("$q->exec();");
         }
     }
 }

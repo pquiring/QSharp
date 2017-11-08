@@ -2,10 +2,10 @@ using Qt.Core;
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPClass("private: QOpenGLShaderProgram *$q = nullptr;\r\n")]
+    [CPPClass("private: std::shared_ptr<QOpenGLShaderProgram> $q;\r\n")]
     public class OpenGLShaderProgram {
-        public OpenGLShaderProgram(OpenGLWindow parent) {
-            CPP.Add("$q = new QOpenGLShaderProgram();");
+        public OpenGLShaderProgram() {
+            CPP.Add("$q = std::make_shared<QOpenGLShaderProgram>();");
         }
 
         public bool AddShaderFromSourceCode(int type, string src) {

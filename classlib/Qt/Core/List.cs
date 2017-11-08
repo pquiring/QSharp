@@ -2,10 +2,12 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: QList<T> *$q;\r\n" +
-        "public: List() {$q = new QList<T>();}\r\n"
+        "private: std::shared_ptr<QList<T>> $q;\r\n"
     )]
     public class List<T> : IEnumerable<T> {
+        public List() {
+            CPP.Add("$q = std::make_shared<QList<T>>();");
+        }
         public void Add(T t) {
             CPP.Add("$q->append(t);");
         }
@@ -21,10 +23,6 @@ namespace Qt.Core {
 
         public IEnumerator<T> GetEnumerator() {
             return new ListEnumerator<T>(this);
-        }
-
-        ~List() {
-            CPP.Add("delete $q;");
         }
     }
 

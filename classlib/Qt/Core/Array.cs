@@ -2,10 +2,12 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: QVector<T> *$q;\r\n" +
-        "public: Array() {$q = new QVector<T>();}\r\n"
+        "private: std::shared_ptr<QVector<T>> $q;\r\n"
     )]
     public class Array<T> : IEnumerable<T> {
+        public Array() {
+            CPP.Add("$q = std::make_shared<QVector<T>>();");
+        }
         public void Add(T t) {
             CPP.Add("$q->append(t);");
         }
@@ -21,9 +23,6 @@ namespace Qt.Core {
         public void Remove(int idx) {CPP.Add("$q->removeAt(idx);");}
         public IEnumerator<T> GetEnumerator() {
             return new ArrayEnumerator<T>(this);
-        }
-        ~Array() {
-            CPP.Add("delete $q;");
         }
     }
     public class ArrayEnumerator<T> : IEnumerator<T> {

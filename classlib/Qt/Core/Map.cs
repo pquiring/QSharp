@@ -2,10 +2,12 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: QMap<K, V> *$q;\r\n" + 
-        "public: Map() {$q = new QMap<K, V>();}\r\n"
+        "private: std::shared_ptr<QMap<K, V>> $q;\r\n"
     )]
     public class Map<K, V> {
+        public Map() {
+            CPP.Add("$q = std::make_shared<QMap<K, V>>();");
+        }
         public void Set(K k, V v) {
             CPP.Add("$q->insert(k, v);");
         }
@@ -15,8 +17,5 @@ namespace Qt.Core {
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool Contains(K k) {return CPP.ReturnBool("$q->contains(k)");}
         public void Remove(K k) {CPP.Add("$q->remove(k);");}
-        ~Map() {
-            CPP.Add("delete $q;");
-        }
     }
 }
