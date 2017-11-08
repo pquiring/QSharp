@@ -12,6 +12,8 @@
 #include <initializer_list>
 
 //include Qt Headers
+#include <QtCore/QFile>
+#include <QtCore/QDir>
 #include <QtCore/QMutex>
 #include <QtCore/qmath.h>
 
@@ -23,8 +25,13 @@
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
+
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>
+
+//include Quazip Headers
+#include <quazip/quazip.h>
+#include <quazip/quazipfile.h>
 
 namespace Qt::Core {
   extern int g_argc;

@@ -574,7 +574,28 @@ namespace QSharpCompiler
                 switch (child.Kind()) {
                     case SyntaxKind.SimpleBaseType:
                         SyntaxNode baseNode = GetChildNode(child);
-                        String baseName = baseNode.ToString().Replace(".", "::");
+                        String baseName = null;
+                        switch (baseNode.Kind()) {
+                            case SyntaxKind.IdentifierName:
+                            case SyntaxKind.QualifiedName:
+                                baseName = baseNode.ToString().Replace(".", "::");
+                                break;
+                            case SyntaxKind.GenericName:
+                                baseName = GetSymbol(baseNode);
+                                SyntaxNode argList = GetChildNode(baseNode);
+                                baseName += "<";
+                                bool first = true;
+                                foreach(var arg in argList.ChildNodes()) {
+                                    if (!first) baseName += ","; else first = false;
+                                    Type type = new Type(arg);
+                                    baseName += type.GetTypeDeclaration();
+                                }
+                                baseName += ">";
+                                break;
+                            default:
+                                Console.WriteLine("unknown baseList node:" + baseNode.Kind());
+                                break;
+                        }
                         if (baseName == "System::Exception") continue;
                         if (baseName == "System::Attribute") continue;
                         if (isClass(baseNode))
@@ -1760,13 +1781,13 @@ namespace QSharpCompiler
 
         private string GetSymbol(SyntaxNode node) {
             ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
-            if (symbol != null) return symbol.Name;
+            if (symbol != null) return symbol.Name.Replace(".", "::");
             return null;
         }
 
         private string GetDeclaredSymbol(SyntaxNode node) {
             ISymbol symbol = file.model.GetDeclaredSymbol(node);
-            if (symbol != null) return symbol.Name;
+            if (symbol != null) return symbol.Name.Replace(".", "::");
             return null;
         }
 

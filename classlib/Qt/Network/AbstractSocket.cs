@@ -3,8 +3,8 @@ using Qt.QSharp;
 
 namespace Qt.Network {
     [CPPClass(
-        "private: QAbstractSocket *$q;\r\n" +
-        "public: void $base(QAbstractSocket *socket) {$q = socket; IODevice::$base(socket);}\r\n"
+        "private: std::shared_ptr<QAbstractSocket> $q;\r\n" +
+        "public: void $base(std::shared_ptr<QAbstractSocket> as) {$q = as; IODevice::$base((std::shared_ptr<QIODevice>)as);}"
     )]
     public class AbstractSocket : IODevice {
         public void Abort() {CPP.Add("$q->abort();");}
