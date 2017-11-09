@@ -13,10 +13,11 @@
 #include <initializer_list>
 
 //include Qt Headers
+#include <QtCore/qmath.h>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 #include <QtCore/QMutex>
-#include <QtCore/qmath.h>
+#include <QtCore/QTimer>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
@@ -90,6 +91,12 @@ void $checkArray(std::shared_ptr<QVector<T>> array, int offset, int length) {
   int arrayLength = array->size();
   if (offset + length > arrayLength) $abe();
 }
+
+//$mod
+inline int $mod(int x, int y) {return x % y;}
+inline uint32 $mod(uint32 x, uint32 y) {return x % y;}
+inline float $mod(float x, float y) {return ::fmod(x, y);}
+inline double $mod(double x, double y) {return ::fmod(x, y);}
 
 //$add
 extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
