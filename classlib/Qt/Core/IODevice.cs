@@ -4,7 +4,7 @@ namespace Qt.Core {
     public enum OpenMode {NotOpen, ReadOnly, WriteOnly, ReadWrite, Append, Truncate, Text, Unbuffered}
     [CPPClass(
         "private: std::shared_ptr<QIODevice> $q;\r\n" +
-        "public: void $base(std::shared_ptr<QIODevice> io) {$q = io;}"
+        "public: void $base(std::shared_ptr<QIODevice> io) {$q = io;}\r\n"
     )]
     public class IODevice {
         public bool Open(OpenMode mode) {return CPP.ReturnBool("$q->open((QIODevice::OpenMode)mode)");}
@@ -13,7 +13,7 @@ namespace Qt.Core {
         public int Write(byte[] data, int offset, int length) {CPP.Add("$checkArray(data, offset, length);"); return CPP.ReturnInt("$q->write((char*)data->data() + offset, length)");}
         public ByteArray ReadAll() {
             ByteArray byteArray = new ByteArray();
-            CPP.Add("byteArray->$base(std::make_shared<QByteArray>($q->readAll()));");
+            CPP.Add("byteArray->$base($q->readAll());");
             return byteArray;
         }
     }
