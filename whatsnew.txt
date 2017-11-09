@@ -3,7 +3,7 @@ What's new
 
 Nov 10, 2017 : 0.3
  - fixed compilation by adding proper corelib references
- - added IODevice, File, Dir, TcpSocket, UdpSocket
+ - added IODevice, File, Dir, TcpSocket, UdpSocket, ByteArray, etc.
  - more Qt functions
 
 Nov 3, 2017 : 0.2

@@ -1413,6 +1413,12 @@ namespace QSharpCompiler
                 case SyntaxKind.NotEqualsExpression:
                     binaryNode(node, ob, "!=");
                     break;
+                case SyntaxKind.LeftShiftExpression:
+                    binaryNode(node, ob, "<<");
+                    break;
+                case SyntaxKind.RightShiftExpression:
+                    binaryNode(node, ob, ">>");
+                    break;
                 case SyntaxKind.AddAssignmentExpression:
                     expressionNode(GetChildNode(node, 1), ob, true);
                     ob.Append("= $add(");
@@ -1439,6 +1445,12 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.LogicalAndExpression:
                     binaryNode(node, ob, "&&");
+                    break;
+                case SyntaxKind.LeftShiftAssignmentExpression:
+                    binaryAssignNode(node, ob, "<<");
+                    break;
+                case SyntaxKind.RightShiftAssignmentExpression:
+                    binaryAssignNode(node, ob, ">>");
                     break;
                 case SyntaxKind.ParenthesizedExpression:
                     ob.Append("(");
@@ -2070,7 +2082,7 @@ namespace QSharpCompiler
                     if (child.Kind() == SyntaxKind.ArrayRankSpecifier) {
                         arrays++;
                     }
-                }    
+                }
                 node = Generate.GetChildNode(node);
             }
             ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
