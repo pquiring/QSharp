@@ -1238,11 +1238,15 @@ namespace QSharpCompiler
                 case SyntaxKind.LockStatement:
                     //lock, block
                     SyntaxNode lockId = GetChildNode(node, 1);
+                    string lockIdName = GetTypeName(lockId);
+                    if (lockIdName != "Qt::Core::Mutex") {
+                        Console.WriteLine("Error:lock {} must use Qt.Core.Mutex");
+                        Environment.Exit(0);
+                    }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
                     method.Append("for(MutexHolder " + holder + "(");
                     expressionNode(lockId, method, false);
-                    //TODO : confirm type == Qt.Core.Mutex
                     method.Append(");" + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock, false, false);
                     break;
@@ -1805,6 +1809,11 @@ namespace QSharpCompiler
             ISymbol symbol = file.model.GetDeclaredSymbol(node);
             if (symbol != null) return symbol.Name.Replace(".", "::");
             return null;
+        }
+
+        private string GetTypeName(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            return type.ToString().Replace(".", "::");
         }
 
         private TypeKind GetTypeKind(SyntaxNode node) {
