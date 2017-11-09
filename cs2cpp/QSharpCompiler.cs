@@ -1631,6 +1631,8 @@ namespace QSharpCompiler
             ob.Append(")");
         }
 
+        private static bool CStyleCast = true;  //C++ style not working
+
         private void castNode(SyntaxNode node, OutputBuffer ob) {
             SyntaxNode castType = GetChildNode(node, 1);
             SyntaxNode value = GetChildNode(node, 2);
@@ -1638,12 +1640,14 @@ namespace QSharpCompiler
             //C# (type)value
             //C++ std::static_pointer_cast<type>(value)
             Type type = new Type(castType);
-            if (type.shared) ob.Append("std::static_pointer_cast<"); else ob.Append("static_cast<");
-            expressionNode(castType, ob, false);
-            ob.Append(">");
-            ob.Append("(");
+            if (!CStyleCast) if (type.shared) ob.Append("std::static_pointer_cast<"); else ob.Append("static_cast<");
+            if (CStyleCast) ob.Append("(");
+            ob.Append(type.GetTypeDeclaration());
+            if (CStyleCast) ob.Append(")");
+            if (!CStyleCast) ob.Append(">");
+            if (!CStyleCast) ob.Append("(");
             expressionNode(value, ob, false);
-            ob.Append(")");
+            if (!CStyleCast) ob.Append(")");
         }
 
         private void newArrayNode(SyntaxNode node, OutputBuffer ob) {
@@ -1762,7 +1766,7 @@ namespace QSharpCompiler
             }
         }
 
-        private SyntaxNode GetChildNode(SyntaxNode node, int idx = 1) {
+        public static SyntaxNode GetChildNode(SyntaxNode node, int idx = 1) {
             IEnumerator<SyntaxNode> e = node.ChildNodes().GetEnumerator();
             for(int a=0;a<idx;a++) {
                 e.MoveNext();
@@ -2060,6 +2064,15 @@ namespace QSharpCompiler
         public Type() {}
         public Type(SyntaxNode node) {
             this.node = node;
+            while (node.Kind() == SyntaxKind.ArrayType) {
+                array = true;
+                foreach(var child in node.ChildNodes()) {
+                    if (child.Kind() == SyntaxKind.ArrayRankSpecifier) {
+                        arrays++;
+                    }
+                }    
+                node = Generate.GetChildNode(node);
+            }
             ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
             if (symbol != null) {
                 //for PredefinedType ISymbol.Name == Boxed type

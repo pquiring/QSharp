@@ -6,6 +6,7 @@
 
 //include C++ headers
 #include <cstddef>
+#include <cstring>
 #include <memory>
 #include <atomic>
 #include <functional>
