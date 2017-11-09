@@ -61,9 +61,11 @@ namespace Qt::Core {
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
 
-template<typename T> T* $deref(std::shared_ptr<T> x) {
-  if (x == nullptr) $npe();
-  return x.get();
+template<typename T>
+inline T* $deref(std::shared_ptr<T> x) {
+  T* ptr = x.get();
+  if (ptr == nullptr) $npe();
+  return ptr;
 }
 
 namespace Qt::Core {
