@@ -14,6 +14,7 @@
 
 //include Qt Headers
 #include <QtCore/qmath.h>
+#include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 #include <QtCore/QMutex>
@@ -28,6 +29,8 @@
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
+
+#include <QtWidgets/QApplication>
 
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>
