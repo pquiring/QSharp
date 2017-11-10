@@ -3,12 +3,12 @@ using Qt.QSharp;
 namespace Qt.Gui {
     [CPPExtends("QObject")]  //for eventFilter()
     [CPPClass(
-        "private: QWindow *$q = nullptr;\r\n" +
-        "private: bool $del = false;\r\n" +
-        "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;\r\n" +
-        "private: void $$init() {screen_ptr = std::make_shared<Qt::Gui::Screen>($q->screen()); $q->installEventFilter(this);}\r\n" +
-        "public: Window() {$q = new QWindow(); $del = true; $$init();}\r\n" +
-        "public: Window(QWindow *$d) {$q = $d; $del = false; $$init();}\r\n" +
+        "private: QWindow *$q = nullptr;" +
+        "private: bool $del = false;" +
+        "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
+        "private: void $$init() {screen_ptr = std::make_shared<Qt::Gui::Screen>($q->screen()); $q->installEventFilter(this);}" +
+        "public: Window() {$q = new QWindow(); $del = true; $$init();}" +
+        "public: Window(QWindow *$d) {$q = $d; $del = false; $$init();}" +
         "public: bool eventFilter(QObject *obj, QEvent *event);"
     )]
     public class Window : OpenGLFunctions {

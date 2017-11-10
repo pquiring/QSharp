@@ -2,13 +2,13 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: QString *$q = nullptr;\r\n" +
-        "public: String() { $q = new QString(); }\r\n" +
-        "public: String(const char* cs) { $q = new QString(cs); }\r\n" +
-        "public: String(std::string ss) { $q = new QString(ss.c_str()); }\r\n" +
-        "public: String(const QString qs) { $q = new QString(qs); }\r\n" +
-        "public: const char* cstring() {return $q->toUtf8().constData();}\r\n" +
-        "public: QString qstring() {return *$q;}\r\n"
+        "public: QString *$q = nullptr;" +
+        "public: String() { $q = new QString(); }" +
+        "public: String(const char* cs) { $q = new QString(cs); }" +
+        "public: String(std::string ss) { $q = new QString(ss.c_str()); }" +
+        "public: String(const QString qs) { $q = new QString(qs); }" +
+        "public: const char* cstring() {return $q->toUtf8().constData();}" +
+        "public: QString qstring() {return *$q;}"
     )]
     public class String : Object {
         public String() {}
@@ -86,11 +86,11 @@ namespace Qt.Core {
         }
 
         public char[] ToCharArray() {
-            CPP.Add("//TODO\r\n");
+            CPP.Add("//TODO");
             return CPP.ReturnCharArray("std::shared_ptr<QVector<char16>>()");
         }
         public byte[] ToByteArray() {
-            CPP.Add("//TODO\r\n");
+            CPP.Add("//TODO");
             return CPP.ReturnByteArray("std::shared_ptr<QVector<uint8>>()");
         }
 

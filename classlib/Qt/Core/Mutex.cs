@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: QMutex $q;\r\n" +
+        "private: QMutex $q;" +
         "public: Mutex() : $q(QMutex::Recursive) {}"
     )]
     public class Mutex {

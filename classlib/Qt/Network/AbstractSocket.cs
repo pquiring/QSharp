@@ -3,7 +3,7 @@ using Qt.QSharp;
 
 namespace Qt.Network {
     [CPPClass(
-        "private: std::shared_ptr<QAbstractSocket> $q;\r\n" +
+        "private: std::shared_ptr<QAbstractSocket> $q;" +
         "public: void $base(std::shared_ptr<QAbstractSocket> as) {$q = as; IODevice::$base((std::shared_ptr<QIODevice>)as);}"
     )]
     public class AbstractSocket : IODevice {

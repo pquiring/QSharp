@@ -2,10 +2,10 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QWidget *$q;\r\n" +
-        "private: bool $del;\r\n" +
-        "public: Widget() {$q = new QWidget(); $del = true;}\r\n" +
-        "public: Widget(Widget *w) {$del = false;}\r\n" +
+        "private: QWidget *$q;" +
+        "private: bool $del;" +
+        "public: Widget() {$q = new QWidget(); $del = true;}" +
+        "public: Widget(Widget *w) {$del = false;}" +
         "public: void $base(QWidget *w) {$q = w;}"
     )]
     public class Widget {

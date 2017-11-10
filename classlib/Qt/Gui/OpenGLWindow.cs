@@ -3,12 +3,12 @@ using Qt.QSharp;
 namespace Qt.Gui {
     [CPPExtends("QOpenGLWindow")]
     [CPPClass(
-        "public: void initializeGL() {InitializeGL();}\r\n" +
-        "public: void paintGL() {PaintGL();}\r\n" +
-        "public: void paintOverGL() {PaintOverGL();}\r\n" +
-        "public: void paintUnderGL() {PaintUnderGL();}\r\n" +
-        "public: void resizeGL(int x, int y) {ResizeGL(x, y);}\r\n" +
-        "public: OpenGLWindow() : Qt::Gui::Window(this) {}\r\n"
+        "public: void initializeGL() {InitializeGL();}" +
+        "public: void paintGL() {PaintGL();}" +
+        "public: void paintOverGL() {PaintOverGL();}" +
+        "public: void paintUnderGL() {PaintUnderGL();}" +
+        "public: void resizeGL(int x, int y) {ResizeGL(x, y);}" +
+        "public: OpenGLWindow() : Qt::Gui::Window(this) {}"
     )]
 
     public class OpenGLWindow : Window {

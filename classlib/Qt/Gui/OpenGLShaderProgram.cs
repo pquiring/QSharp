@@ -2,14 +2,14 @@ using Qt.Core;
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPClass("private: std::shared_ptr<QOpenGLShaderProgram> $q;\r\n")]
+    [CPPClass("private: std::shared_ptr<QOpenGLShaderProgram> $q;")]
     public class OpenGLShaderProgram {
         public OpenGLShaderProgram() {
             CPP.Add("$q = std::make_shared<QOpenGLShaderProgram>();");
         }
 
         public bool AddShaderFromSourceCode(int type, string src) {
-            CPP.Add("bool ret = $q->addShaderFromSourceCode((QOpenGLShader::ShaderType)type, *src.get()->$q);\r\n");
+            CPP.Add("bool ret = $q->addShaderFromSourceCode((QOpenGLShader::ShaderType)type, *src.get()->$q);");
             return CPP.ReturnBool("ret");
         }
         public int AttributeLocation(string name) {

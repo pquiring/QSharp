@@ -2,12 +2,12 @@ using Qt.Core;
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPClass("std::shared_ptr<QOpenGLFunctions> $q;\r\n")]
+    [CPPClass("std::shared_ptr<QOpenGLFunctions> $q;")]
     public class OpenGLFunctions : OpenGLConstants {
         /** Initialize the GL functions. */
         public void InitializeOpenGLFunctions() {
-            CPP.Add("$q = std::make_shared<QOpenGLFunctions>();\r\n");
-            CPP.Add("$q->initializeOpenGLFunctions();\r\n");
+            CPP.Add("$q = std::make_shared<QOpenGLFunctions>();");
+            CPP.Add("$q->initializeOpenGLFunctions();");
         }
 
         public void glActiveTexture(int texture) {CPP.Add("$q->glActiveTexture(texture);");}

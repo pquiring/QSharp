@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QVector<T>> $q;\r\n"
+        "private: std::shared_ptr<QVector<T>> $q;"
     )]
     public class Array<T> : IEnumerable<T> {
         public Array() {

@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Core {
     public enum ZipMode { mdNotOpen, mdUnzip, mdCreate, mdAppend, mdAdd }
     [CPPClass(
-        "private: std::shared_ptr<QuaZipFile> $q;\r\n" +
+        "private: std::shared_ptr<QuaZipFile> $q;" +
         "public: void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IODevice::$base((std::shared_ptr<QIODevice>)zf);}"
     )]
     public class ZipEntry : IODevice {
@@ -14,7 +14,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "private: std::shared_ptr<QuaZip> $q;\r\n"
+        "private: std::shared_ptr<QuaZip> $q;"
     )]
     public class ZipFile {
         protected String filename;
@@ -27,16 +27,16 @@ namespace Qt.Core {
         public bool NextEntry() {
             bool next = CPP.ReturnBool("$q->goToNextFile()");
             if (next) {
-                CPP.Add("filename = std::make_shared<String>($q->getCurrentFileName());\r\n");
+                CPP.Add("filename = std::make_shared<String>($q->getCurrentFileName());");
             } else {
                 filename = null;
             }
             return next;
         }
         public ZipEntry GetEntry() {
-            CPP.Add("std::shared_ptr<QuaZipFile> zf = std::make_shared<QuaZipFile>($q.get());\r\n");
-            CPP.Add("std::shared_ptr<ZipEntry> ze = std::make_shared<ZipEntry>(); ze->$ctor(filename);\r\n");
-            CPP.Add("ze->$base(zf);\r\n");
+            CPP.Add("std::shared_ptr<QuaZipFile> zf = std::make_shared<QuaZipFile>($q.get());");
+            CPP.Add("std::shared_ptr<ZipEntry> ze = std::make_shared<ZipEntry>(); ze->$ctor(filename);");
+            CPP.Add("ze->$base(zf);");
             return (ZipEntry)CPP.ReturnObject("ze");
         }
         //TODO : AddEntry()

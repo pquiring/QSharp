@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QScreen *$q = nullptr;\r\n" +
+        "private: QScreen *$q = nullptr;" +
         "public: Screen(QScreen *s) {$q = s;}"
     )]
     [CPPOmitConstructors()]

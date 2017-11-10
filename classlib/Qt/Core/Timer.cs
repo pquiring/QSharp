@@ -9,20 +9,20 @@ namespace Qt.Core {
             if (handler != null) handler();
         }
         public void Start(int ms) {
-            CPP.Add("start(ms);\r\n");
+            CPP.Add("start(ms);");
         }
         public void Stop() {
-            CPP.Add("stop();\r\n");
+            CPP.Add("stop();");
         }
         public void SetSingleShot(bool once) {
-            CPP.Add("setSingleShot(once);\r\n");
+            CPP.Add("setSingleShot(once);");
         }
         public bool IsSingleShot() {
             return CPP.ReturnBool("isSingleShot()");
         }
         public void Connect(TimerEvent handler) {
             this.handler = handler;
-            CPP.Add("connect(this, &QTimer::timeout, this, &Timer::Timeout);\r\n");
+            CPP.Add("connect(this, &QTimer::timeout, this, &Timer::Timeout);");
         }
     }
 }

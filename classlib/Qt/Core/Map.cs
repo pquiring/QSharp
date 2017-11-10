@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QMap<K, V>> $q;\r\n"
+        "private: std::shared_ptr<QMap<K, V>> $q;"
     )]
     public class Map<K, V> {
         public Map() {

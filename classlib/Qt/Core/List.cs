@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QList<T>> $q;\r\n"
+        "private: std::shared_ptr<QList<T>> $q;"
     )]
     public class List<T> : IEnumerable<T> {
         public List() {

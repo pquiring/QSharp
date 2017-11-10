@@ -1,7 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
-    [CPPNonClassCPP("void $abe() {throw ArrayBoundsException::$new();}\r\n")]
+    [CPPNonClassCPP("void $abe() {throw ArrayBoundsException::$new();}")]
     public class ArrayBoundsException : Exception {
         public ArrayBoundsException() {}
         public ArrayBoundsException(String msg) {

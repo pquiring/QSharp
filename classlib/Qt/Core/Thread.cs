@@ -3,33 +3,33 @@ using Qt.QSharp;
 namespace Qt.Core {
     [CPPExtends("QThread")]
     [CPPClass(
-        "public: void run() {Run();}\r\n"
+        "public: void run() {Run();}"
     )]
     public class Thread {
         public static void Sleep(int ms) {
-            CPP.Add("msleep(ms);\r\n");
+            CPP.Add("msleep(ms);");
         }
         public void Start() {
-            CPP.Add("start();\r\n");
+            CPP.Add("start();");
         }
         public virtual void Run() {}
         public void Join() {
-            CPP.Add("wait();\r\n");
+            CPP.Add("wait();");
         }
         public bool IsRunning() {
-            return CPP.ReturnBool("isRunning();\r\n");
+            return CPP.ReturnBool("isRunning();");
         }
  
         //the following are EventLoop related
 
         public void Exit(int exitCode = 0) {
-            CPP.Add("exit(exitCode);\r\n");
+            CPP.Add("exit(exitCode);");
         }
         public void Exec() {
-            CPP.Add("exec();\r\n");
+            CPP.Add("exec();");
         }
         public void Quit() {
-            CPP.Add("quit();\r\n");
+            CPP.Add("quit();");
         }
 
     }

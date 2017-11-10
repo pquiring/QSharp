@@ -4,8 +4,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: MutexHolder(std::shared_ptr<Mutex> mutex) {this->mutex = mutex; mutex->Lock();}\r\n" +
-        "public: MutexHolder() {}\r\n"
+        "public: MutexHolder(std::shared_ptr<Mutex> mutex) {this->mutex = mutex; mutex->Lock();}" +
+        "public: MutexHolder() {}"
     )]
     public class MutexHolder {
         private Mutex mutex;
