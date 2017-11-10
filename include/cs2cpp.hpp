@@ -31,6 +31,8 @@
 #include <QtGui/QScreen>
 
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QAbstractButton>
 
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>

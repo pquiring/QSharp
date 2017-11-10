@@ -7,8 +7,8 @@ namespace Qt.Gui {
         "private: bool $del = false;\r\n" +
         "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;\r\n" +
         "private: void $$init() {screen_ptr = std::make_shared<Qt::Gui::Screen>($q->screen()); $q->installEventFilter(this);}\r\n" +
-        "public: Window() {$q = new QWindow(); $$init(); $del = true;}\r\n" +
-        "public: Window(QWindow *w) {$q = w; $$init(); $del = false;}\r\n" +
+        "public: Window() {$q = new QWindow(); $del = true; $$init();}\r\n" +
+        "public: Window(QWindow *$d) {$q = $d; $del = false; $$init();}\r\n" +
         "public: bool eventFilter(QObject *obj, QEvent *event);"
     )]
     public class Window : OpenGLFunctions {

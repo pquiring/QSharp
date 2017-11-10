@@ -4,7 +4,7 @@ namespace Qt.Core {
     [CPPClass(
         "public: QString *$q = nullptr;\r\n" +
         "public: String() { $q = new QString(); }\r\n" +
-        "public: String(const char* cstring) { $q = new QString(cstring); }\r\n" +
+        "public: String(const char* cs) { $q = new QString(cs); }\r\n" +
         "public: String(std::string ss) { $q = new QString(ss.c_str()); }\r\n" +
         "public: String(const QString qs) { $q = new QString(qs); }\r\n" +
         "public: const char* cstring() {return $q->toUtf8().constData();}\r\n" +

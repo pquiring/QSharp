@@ -77,5 +77,4 @@ namespace Qt.QSharp {
         public static byte[] ReturnByteArray(string s) {return null;}
         public static char[] ReturnCharArray(string s) {return null;}
     }
-
 }

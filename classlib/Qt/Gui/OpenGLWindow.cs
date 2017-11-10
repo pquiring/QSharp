@@ -1,7 +1,6 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
-
     [CPPExtends("QOpenGLWindow")]
     [CPPClass(
         "public: void initializeGL() {InitializeGL();}\r\n" +
