@@ -18,6 +18,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QMutex>
 #include <QtCore/QTimer>
+#include <QtCore/QThread>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
