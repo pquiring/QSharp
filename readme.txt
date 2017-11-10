@@ -21,7 +21,7 @@ cygwin/make
 Notes:
  - uses std::shared_ptr<> to implement memory management
  - NullPointerExceptions are checked
- - not all C# features are supported (reflection, properties, operators, etc.)
+ - not all C# features are supported (reflection, operators, events, etc.)
  - classlib is a work in progress
 
 Compiling:
@@ -39,6 +39,6 @@ WebSite : github.com/pquiring/qsharp
 
 Author : Peter Quiring (pquiring@gmail.com)
 
-Version 0.2
+Version 0.3
 
-Released Nov 3, 2017
+Released Nov 10, 2017
