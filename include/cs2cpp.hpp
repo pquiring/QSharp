@@ -33,6 +33,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QAbstractButton>
+#include <QtWidgets/QPushButton>
 
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>

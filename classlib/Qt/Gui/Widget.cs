@@ -1,6 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
+    [CPPExtends("QObject")]  //for connect
     [CPPClass(
         "private: QWidget *$q;" +
         "private: bool $del;" +

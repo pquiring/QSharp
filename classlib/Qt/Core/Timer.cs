@@ -20,7 +20,7 @@ namespace Qt.Core {
         public bool IsSingleShot() {
             return CPP.ReturnBool("isSingleShot()");
         }
-        public void Connect(TimerEvent handler) {
+        public void OnEvent(TimerEvent handler) {
             this.handler = handler;
             CPP.Add("connect(this, &QTimer::timeout, this, &Timer::Timeout);");
         }
