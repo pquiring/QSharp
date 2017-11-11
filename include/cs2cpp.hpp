@@ -1,12 +1,11 @@
 #ifndef CS2CPP_HPP
 #define CS2CPP_HPP
 
-//include C headers
-#include <math.h>
-
 //include C++ headers
 #include <cstddef>
+#include <cstdio>
 #include <cstring>
+#include <cmath>
 #include <memory>
 #include <atomic>
 #include <functional>
@@ -107,8 +106,8 @@ void $checkArray(std::shared_ptr<QVector<T>> array, int offset, int length) {
 //$mod
 inline int $mod(int x, int y) {return x % y;}
 inline uint32 $mod(uint32 x, uint32 y) {return x % y;}
-inline float $mod(float x, float y) {return ::fmod(x, y);}
-inline double $mod(double x, double y) {return ::fmod(x, y);}
+inline float $mod(float x, float y) {return std::fmod(x, y);}
+inline double $mod(double x, double y) {return std::fmod(x, y);}
 
 //$add
 extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
