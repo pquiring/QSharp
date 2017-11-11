@@ -35,6 +35,11 @@
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QPushButton>
 
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QVBoxLayout>
+
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>
 

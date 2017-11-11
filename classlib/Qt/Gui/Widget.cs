@@ -3,8 +3,8 @@ using Qt.QSharp;
 namespace Qt.Gui {
     [CPPExtends("QObject")]  //for connect
     [CPPClass(
-        "private: QWidget *$q;" +
-        "private: bool $del;" +
+        "public: QWidget *$q;" +
+        "public: bool $del;" +
         "public: Widget() {$q = new QWidget(); $del = true;}" +
         "public: Widget(Widget *w) {$del = false;}" +
         "public: void $base(QWidget *w) {$q = w;}"

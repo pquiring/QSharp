@@ -11,6 +11,7 @@ namespace Qt.Gui {
         "public: Window(QWindow *$d) {$q = $d; $del = false; $$init();}" +
         "public: bool eventFilter(QObject *obj, QEvent *event);"
     )]
+    /** Window represents the native Window object. */
     public class Window : OpenGLFunctions {
         /*
           Since C# does not support multiple-inheritance and OpenGLWindow needs Window and OpenGLFunctions
