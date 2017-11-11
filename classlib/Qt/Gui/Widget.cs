@@ -10,10 +10,13 @@ namespace Qt.Gui {
         "public: void $base(QWidget *w) {$q = w;}"
     )]
     public class Widget {
-        int GetWidth() {return CPP.ReturnInt("$q->width()");}
-        int GetHeight() {return CPP.ReturnInt("$q->height()");}
-        int GetX() {return CPP.ReturnInt("$q->x()");}
-        int GetY() {return CPP.ReturnInt("$q->y()");}
+        public int GetWidth() {return CPP.ReturnInt("$q->width()");}
+        public int GetHeight() {return CPP.ReturnInt("$q->height()");}
+        public int GetX() {return CPP.ReturnInt("$q->x()");}
+        public int GetY() {return CPP.ReturnInt("$q->y()");}
+        public void SetSize(int x, int y) {CPP.Add("$q->resize(x,y);");}
+        public void Show() {CPP.Add("$q->show();");}
+        public void Hide() {CPP.Add("$q->hide();");}
         ~Widget() {
             CPP.Add("if ($del) delete $q;");
         }
