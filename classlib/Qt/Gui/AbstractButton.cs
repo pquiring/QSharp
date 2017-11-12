@@ -5,6 +5,8 @@ namespace Qt.Gui {
     public delegate void Clicked(bool selected);
     [CPPClass(
         "private: QAbstractButton *$q;" +
+        "public: AbstractButton() : Widget(true) {}" +
+        "public: AbstractButton(bool derived) : Widget(true) {}" +
         "public: void $base(QAbstractButton *$d) {$q = $d; Widget::$base($q);}"
     )]
     public abstract class AbstractButton : Widget {

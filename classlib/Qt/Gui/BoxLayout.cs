@@ -5,6 +5,8 @@ namespace Qt.Gui {
     public enum Direction { LeftToRight, RightToLeft, TopToBottom, BottomToTop }
     [CPPClass(
         "public: QBoxLayout *$q;" +
+        "public: BoxLayout() {}" +
+        "public: BoxLayout(bool derived) {}" +
         "public: void $base(QBoxLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class BoxLayout : Layout {
