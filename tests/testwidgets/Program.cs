@@ -11,6 +11,7 @@ namespace testwidgets
             VBoxLayout layout = new VBoxLayout();
             PushButton pb = new PushButton();
             pb.SetText("Test");
+            pb.OnClicked((bool selected) => {Console.WriteLine("Clicked Button!");});
             layout.AddWidget(pb);
             Widget window = new Widget();
             window.SetSize(640, 480);
