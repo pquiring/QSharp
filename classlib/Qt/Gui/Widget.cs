@@ -4,12 +4,12 @@ namespace Qt.Gui {
     [CPPExtends("QObject")]  //for connect
     [CPPClass(
         "public: QWidget *$q;" +
-        "public: bool $del;" +
-        "public: Widget() {$q = new QWidget(); $del = true;}" +
-        "public: Widget(Widget *w) {$del = false;}" +
-        "public: void $base(QWidget *w) {$q = w;}"
+        "public: void $base(QWidget *$d) {$q = $d;}"
     )]
     public class Widget {
+        public Widget() {
+            CPP.Add("$q = new QWidget();");
+        }
         public int GetWidth() {return CPP.ReturnInt("$q->width()");}
         public int GetHeight() {return CPP.ReturnInt("$q->height()");}
         public int GetX() {return CPP.ReturnInt("$q->x()");}
@@ -17,8 +17,8 @@ namespace Qt.Gui {
         public void SetSize(int x, int y) {CPP.Add("$q->resize(x,y);");}
         public void Show() {CPP.Add("$q->show();");}
         public void Hide() {CPP.Add("$q->hide();");}
-        ~Widget() {
-            CPP.Add("if ($del) delete $q;");
+        public void SetLayout(Layout layout) {
+            CPP.Add("$q->setLayout(layout->$q);");
         }
     }
 }

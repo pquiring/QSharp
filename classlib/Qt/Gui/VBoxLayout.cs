@@ -3,14 +3,11 @@ using Qt.QSharp;
 namespace Qt.Gui {
     [CPPClass(
         "public: QVBoxLayout *$q;" +
-        "public: bool $del;" +
-        "public: VBoxLayout() {$q = new QVBoxLayout(); $del = true;}" +
-        "public: VBoxLayout(VBoxLayout *b) {$del = false;}" +
-        "public: void $base(QVBoxLayout *w) {$q = w;}"
+        "public: void $base(QVBoxLayout *$d) {$q = $d; BoxLayout::$base($q);}"
     )]
     public class VBoxLayout : BoxLayout {
         public VBoxLayout() {
-            CPP.Add("BoxLayout::$base($q);");
+            CPP.Add("$q = new QVBoxLayout(); BoxLayout::$base($q);");
         }
     }
 }

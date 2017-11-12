@@ -1,12 +1,10 @@
 using Qt.QSharp;
+using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
         "public: QLayout *$q;" +
-        "public: bool $del;" +
-        "public: Layout() {$del = false;}" +
-        "public: Layout(Layout *b) {$del = false;}" +
-        "public: void $base(QLayout *w) {$q = w;}"
+        "public: void $base(QLayout *$d) {$q = $d;}"
     )]
     public abstract class Layout {
         public void AddWidget(Widget w) {

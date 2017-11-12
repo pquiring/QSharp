@@ -4,14 +4,12 @@ using Qt.Core;
 namespace Qt.Gui {
     [CPPClass(
         "private: QPushButton *$q;" +
-        "private: bool $del;" +
-        "public: PushButton() {$q = new QPushButton(); $del = true; AbstractButton::$base($q);}" +
-        "public: PushButton(PushButton *w) {$del = false;}" +
-        "public: void $base(QPushButton *w) {$q = w; AbstractButton::$base($q);}"
+        "public: void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class PushButton : AbstractButton {
-        ~PushButton() {
-            CPP.Add("if ($del) delete $q;");
+        public PushButton() {
+            CPP.Add("$q = new QPushButton();");
+            CPP.Add("AbstractButton::$base($q);");
         }
     }
 }
