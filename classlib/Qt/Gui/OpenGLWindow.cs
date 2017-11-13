@@ -7,11 +7,11 @@ namespace Qt.Gui {
         "public: void paintGL() {PaintGL();}" +
         "public: void paintOverGL() {PaintOverGL();}" +
         "public: void paintUnderGL() {PaintUnderGL();}" +
-        "public: void resizeGL(int x, int y) {ResizeGL(x, y);}" +
-        "public: OpenGLWindow() : Qt::Gui::Window(this) {}"
+        "public: void resizeGL(int x, int y) {ResizeGL(x, y);}"
     )]
 
     public class OpenGLWindow : Window {
+        public OpenGLWindow() : base(Derived.derived) { }
         /** This function is called during window creation. */
         public virtual void InitializeGL() { }
         /** This function is called to print the window.  This is where gl..() functions should be called. */

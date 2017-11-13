@@ -4,11 +4,8 @@ namespace Qt.Gui {
     [CPPExtends("QObject")]  //for eventFilter()
     [CPPClass(
         "private: QWindow *$q = nullptr;" +
-        "private: bool $del = false;" +
         "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
         "private: void $$init() {screen_ptr = std::make_shared<Qt::Gui::Screen>($q->screen()); $q->installEventFilter(this);}" +
-        "public: Window() {$q = new QWindow(); $del = true; $$init();}" +
-        "public: Window(QWindow *$d) {$q = $d; $del = false; $$init();}" +
         "public: bool eventFilter(QObject *obj, QEvent *event);"
     )]
     /** Window represents the native Window object. */
@@ -17,6 +14,9 @@ namespace Qt.Gui {
           Since C# does not support multiple-inheritance and OpenGLWindow needs Window and OpenGLFunctions
           therefore Window must derive from OpenGLFunctions to make it available to OpenGLWindow
         */
+        protected Window(Derived derived) {
+            CPP.Add("$$init();");
+        }
         public virtual void KeyPressed(Key key) {}
         public virtual void KeyReleased(Key key) {}
         public virtual void KeyTyped(char key) {}
@@ -44,10 +44,6 @@ namespace Qt.Gui {
         }
         public void Resize(int x, int y) {
             CPP.Add("$q->resize(x, y);");
-        }
-
-        ~Window() {
-            CPP.Add("if ($del) delete $q;");
         }
     }
 }

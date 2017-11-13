@@ -599,7 +599,7 @@ namespace QSharpCompiler
                         if (baseName == "System::Exception") continue;
                         if (baseName == "System::Attribute") continue;
                         if (isClass(baseNode))
-                            cls.bases.Add(baseName);
+                            cls.bases.Insert(0, baseName);  //must Insert before CPPExtends
                         else
                             cls.ifaces.Add(baseName);
                         int idx = baseName.IndexOf("<");
