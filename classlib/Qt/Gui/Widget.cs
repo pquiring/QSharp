@@ -1,6 +1,8 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
+    public enum CheckState {Unchecked, PartiallyChecked, Checked}
+
     [CPPExtends("QObject")]  //for connect
     [CPPClass(
         "public: QWidget *$q;" +

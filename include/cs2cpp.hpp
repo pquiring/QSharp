@@ -33,6 +33,7 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QCheckBox>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
