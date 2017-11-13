@@ -42,6 +42,8 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QFormLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QStackedLayout>
 
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>
