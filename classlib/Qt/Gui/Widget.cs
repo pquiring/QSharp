@@ -12,7 +12,7 @@ namespace Qt.Gui {
         public Widget() {
             CPP.Add("$q = new QWidget();");
         }
-        public Widget(Derived derived) {}
+        protected Widget(Derived derived) {}
         public int GetWidth() {return CPP.ReturnInt("$q->width()");}
         public int GetHeight() {return CPP.ReturnInt("$q->height()");}
         public int GetX() {return CPP.ReturnInt("$q->x()");}

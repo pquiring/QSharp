@@ -295,6 +295,7 @@ namespace QSharpCompiler
                 if (!cls.Interface && cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
                     cls.bases.Add("Qt::Core::Object");
                     cls.addUsage("Object");
+                    if (cls.Namespace.StartsWith("Qt")) cls.addUsage("Derived");  //temp fix
                 }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
@@ -354,7 +355,7 @@ namespace QSharpCompiler
         private void writeClasses() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in clss) {
-                if (cls.Namespace == "Qt::QSharp") continue;
+                if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (!cls.hasctor && !cls.Interface && !cls.omitConstructors) {
                     createNewMethod(cls, null);
                 }
@@ -472,7 +473,6 @@ namespace QSharpCompiler
                             Using += id.ToString();
                         }
                     }
-                    if (Using == "Qt::QSharp") break;  //omit (internal usage only)
                     if (Using == "System") break;  //not needed
                     if (Using == "System::Reflection") break;  //not supported yet
                     if (!usings.Contains(Using)) {
