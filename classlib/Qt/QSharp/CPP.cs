@@ -61,7 +61,7 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Constructor)]
     public class CPPOmitConstructor : System.Attribute {}
 
-    class CPP {
+    public class CPP {
         //these special functions will inject code directly into source
         public static void Add(string s) {}
         public static bool ReturnBool(string s) {return false;}
