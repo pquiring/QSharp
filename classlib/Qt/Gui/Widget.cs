@@ -6,11 +6,13 @@ namespace Qt.Gui {
     [CPPExtends("QObject")]  //for connect
     [CPPClass(
         "public: QWidget *$q;" +
-        "public: Widget() {$q = new QWidget();}" +
-        "public: Widget(bool derived) {}" +
         "public: void $base(QWidget *$d) {$q = $d;}"
     )]
     public class Widget {
+        public Widget() {
+            CPP.Add("$q = new QWidget();");
+        }
+        public Widget(Derived derived) {}
         public int GetWidth() {return CPP.ReturnInt("$q->width()");}
         public int GetHeight() {return CPP.ReturnInt("$q->height()");}
         public int GetX() {return CPP.ReturnInt("$q->x()");}

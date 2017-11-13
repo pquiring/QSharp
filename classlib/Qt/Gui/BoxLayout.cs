@@ -5,12 +5,10 @@ namespace Qt.Gui {
     public enum Direction { LeftToRight, RightToLeft, TopToBottom, BottomToTop }
     [CPPClass(
         "public: QBoxLayout *$q;" +
-        "public: BoxLayout() {}" +
-        "public: BoxLayout(bool derived) {}" +
         "public: void $base(QBoxLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class BoxLayout : Layout {
-        protected BoxLayout() {}
+        protected BoxLayout(Derived derived) {}
         public BoxLayout(Direction direction) {
             CPP.Add("$q = new QBoxLayout((QBoxLayout::Direction)direction);");
             CPP.Add("Layout::$base($q);");

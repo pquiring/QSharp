@@ -5,10 +5,18 @@ namespace Qt.Gui {
     public delegate void StateChanged(int state);
     [CPPClass(
         "private: QCheckBox *$q;" +
-        "public: CheckBox() : AbstractButton(true) {$q = new QCheckBox(); AbstractButton::$base($q);}" +
         "public: void $base(QCheckBox *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class CheckBox : AbstractButton {
+        public CheckBox() : base(Derived.derived) {
+            CPP.Add("$q = new QCheckBox();");
+            CPP.Add("AbstractButton::$base($q);");
+        }
+        public CheckBox(String text) : base(Derived.derived) {
+            CPP.Add("$q = new QCheckBox();");
+            CPP.Add("AbstractButton::$base($q);");
+            SetText(text);
+        }
         private StateChanged delegateStateChanged;
         private void stateChanged(int state) {
             if (delegateStateChanged != null) delegateStateChanged(state);
