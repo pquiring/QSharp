@@ -11,7 +11,9 @@ namespace Qt.Gui {
     )]
 
     public class OpenGLWindow : Window {
-        public OpenGLWindow() : base(Derived.derived) { }
+        public OpenGLWindow() : base(Derived.derived) {
+            CPP.Add("printf(\"OpenGLWindow::$ctor()\"); Window::$base(this);");
+        }
         /** This function is called during window creation. */
         public virtual void InitializeGL() { }
         /** This function is called to print the window.  This is where gl..() functions should be called. */

@@ -234,7 +234,7 @@ namespace QSharpCompiler
         private string Namespace = "";
         private List<Class> clss = new List<Class>();
         private List<string> usings = new List<string>();
-        private Class cls;
+        private static Class cls;
         private Class NoClass = new Class();  //for classless delegates
         private Method method;
         private Field field;
@@ -357,7 +357,8 @@ namespace QSharpCompiler
             foreach(var cls in clss) {
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (!cls.hasctor && !cls.Interface && !cls.omitConstructors) {
-                    createNewMethod(cls, null);
+                    Generate.cls = cls;
+                    ctorNode(null);
                 }
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 sb.Append(cls.GetDeclaration());
@@ -599,7 +600,7 @@ namespace QSharpCompiler
                         if (baseName == "System::Exception") continue;
                         if (baseName == "System::Attribute") continue;
                         if (isClass(baseNode))
-                            cls.bases.Insert(0, baseName);  //must Insert before CPPExtends
+                            cls.bases.Add(baseName);
                         else
                             cls.ifaces.Add(baseName);
                         int idx = baseName.IndexOf("<");
@@ -751,7 +752,7 @@ namespace QSharpCompiler
                                         foreach(var arg in args) {
                                             if (arg.Kind() != SyntaxKind.StringLiteralExpression) continue;
                                             String value = file.model.GetConstantValue(arg).Value.ToString();
-                                            cls.bases.Add(value);
+                                            cls.cppbases.Add(value);
                                         }
                                         break;
                                     }
@@ -854,26 +855,37 @@ namespace QSharpCompiler
             method.primative = true;
             method.ctor = true;
             cls.hasctor = true;
-            getFlags(method, file.model.GetDeclaredSymbol(node));
-            IEnumerable<SyntaxNode> nodes = node.ChildNodes();
-            //nodes : parameter list, [baseCtor], block
-            foreach(var child in nodes) {
-                switch (child.Kind()) {
-                    case SyntaxKind.ParameterList:
-                        parameterListNode(child);
-                        break;
-                    case SyntaxKind.BaseConstructorInitializer:
-                        SyntaxNode argList = GetChildNode(child);
-                        method.Append(cls.bases[0]);
-                        method.Append("::$ctor(");
-                        outArgList(argList, method);
-                        method.Append(");\r\n");
-                        method.basector = method.src.ToString();
-                        method.src.Length = 0;
-                        break;
-                    case SyntaxKind.Block:
-                        blockNode(child, true, false);
-                        break;
+            if (node != null) {
+                getFlags(method, file.model.GetDeclaredSymbol(node));
+                IEnumerable<SyntaxNode> nodes = node.ChildNodes();
+                //nodes : parameter list, [baseCtor], block
+                foreach(var child in nodes) {
+                    switch (child.Kind()) {
+                        case SyntaxKind.ParameterList:
+                            parameterListNode(child);
+                            break;
+                        case SyntaxKind.BaseConstructorInitializer:
+                            SyntaxNode argList = GetChildNode(child);
+                            method.Append(cls.bases[0]);
+                            method.Append("::$ctor(");
+                            outArgList(argList, method);
+                            method.Append(");\r\n");
+                            method.basector = method.src.ToString();
+                            method.src.Length = 0;
+                            break;
+                        case SyntaxKind.Block:
+                            blockNode(child, true, false);
+                            break;
+                    }
+                }
+            } else {
+                if (cls.bases.Count > 0) {
+                    method.Public = true;
+                    method.Append("{");
+                    method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = this->$this.lock();\r\n");
+                    method.Append(cls.bases[0]);
+                    method.Append("::$ctor();\r\n");
+                    method.Append("}");
                 }
             }
             method.setTypes();
@@ -902,16 +914,16 @@ namespace QSharpCompiler
             method.Append(">(" + cls.ctorArgs + ");\r\n");
             method.Append("$this->$this = $this;\r\n");
             method.Append("$this->$init();\r\n");
+            method.Append("$this->$ctor(");
             if (args != null) {
-                method.Append("$this->$ctor(");
                 bool first = true;
                 foreach(var arg in args) {
                     if (!first) method.Append(","); else first = false;
                     method.Append(arg.name);
                     method.args.Add(arg);
                 }
-                method.Append(");\r\n");
             }
+            method.Append(");\r\n");
             method.Append("return $this;\r\n");
             method.Append("}\r\n");
             method.setTypes();
@@ -1869,6 +1881,7 @@ namespace QSharpCompiler
         public bool hasctor;
         public bool Interface;
         public List<string> bases = new List<string>();
+        public List<string> cppbases = new List<string>();
         public List<string> ifaces = new List<string>();
         public List<Field> fields = new List<Field>();
         public List<Method> methods = new List<Method>();
@@ -1936,13 +1949,18 @@ namespace QSharpCompiler
             }
             if (name != fullname) sb.Append(GetFlags(true));  //inner class
             sb.Append(" class " + name);
-            if (bases.Count > 0 || ifaces.Count > 0) {
+            if (bases.Count > 0 || cppbases.Count > 0 || ifaces.Count > 0) {
                 sb.Append(":");
                 bool first = true;
                 foreach(var basecls in bases) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
                     sb.Append(basecls);
+                }
+                foreach(var cppcls in cppbases) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append("public ");
+                    sb.Append(cppcls);
                 }
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;

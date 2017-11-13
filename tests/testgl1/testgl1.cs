@@ -26,7 +26,7 @@ public class TriangleWindow : OpenGLWindow
 
     public override void PaintGL() {
         float retinaScale = DevicePixelRatio();
-        glViewport(0, 0, (int)(Width() * retinaScale), (int)(Height() * retinaScale));
+        glViewport(0, 0, (int)(GetWidth() * retinaScale), (int)(GetHeight() * retinaScale));
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -102,7 +102,7 @@ public class TriangleWindow : OpenGLWindow
 
         TriangleWindow window = new TriangleWindow();
         window.SetFormat(format);
-        window.Resize(640, 480);
+        window.SetSize(640, 480);
         window.Show();
 
         app.Exec();
