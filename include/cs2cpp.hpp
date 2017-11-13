@@ -40,6 +40,7 @@
 #include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QFormLayout>
 
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>

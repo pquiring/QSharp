@@ -10,5 +10,14 @@ namespace Qt.Gui {
         public void AddWidget(Widget w) {
             CPP.Add("$q->addWidget(w->$q);");
         }
+        public void RemoveWidget(Widget w) {
+            CPP.Add("$q->removeWidget(w->$q);");
+        }
+        public void SetEnabled(bool state) {
+            CPP.Add("$q->setEnabled(state);");
+        }
+        public bool IsEnabled() {
+            return CPP.ReturnBool("$q->isEnabled();");
+        }
     }
 }
