@@ -4,7 +4,7 @@ namespace Qt.Gui {
     [CPPExtends("QObject")]  //for eventFilter()
     [CPPClass(
         "private: QWindow *$q = nullptr;" +
-        "public: void $base(QWindow *$b) {printf(\"Window::$base()\"); $q = $b; $$init();}" +
+        "public: void $base(QWindow *$b) {$q = $b; $$init();}" +
         "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
         "private: void $$init() {screen_ptr = std::make_shared<Qt::Gui::Screen>($q->screen()); $q->installEventFilter(this);}" +
         "public: bool eventFilter(QObject *obj, QEvent *event);"
@@ -36,7 +36,6 @@ namespace Qt.Gui {
             return (Screen)CPP.ReturnObject("screen_ptr");
         }
         public void SetFormat(SurfaceFormat format) {
-            CPP.Add("printf(\"$q=%d\\n\", $q);");
             CPP.Add("$q->setFormat(*format.get());");
         }
         public void Show() {
