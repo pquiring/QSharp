@@ -31,6 +31,7 @@
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QMainWindow>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QCheckBox>
