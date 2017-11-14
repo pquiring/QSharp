@@ -38,6 +38,7 @@
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QAbstractSlider>
 #include <QtWidgets/QDial>
+#include <QtWidgets/QSlider>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
