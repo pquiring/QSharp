@@ -39,6 +39,7 @@
 #include <QtWidgets/QAbstractSlider>
 #include <QtWidgets/QDial>
 #include <QtWidgets/QSlider>
+#include <QtWidgets/QScrollBar>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>

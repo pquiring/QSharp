@@ -28,6 +28,9 @@ namespace Qt.Gui {
         public void SetMaximum(int maximum) {
             CPP.Add("$q->setMaximum(maximum);");
         }
+        public void SetRange(int min, int max) {
+            CPP.Add("$q->setRange(min, max);");
+        }
         public int GetSliderPosition() {
             return CPP.ReturnInt("$q->sliderPosition()");
         }
