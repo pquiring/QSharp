@@ -120,7 +120,7 @@ namespace QSharpCompiler
         void addFile(string file)
         {
             if (file.IndexOf("AssemblyInfo") != -1) return;
-            Console.WriteLine("AddFile:" + file);
+//            Console.WriteLine("AddFile:" + file);
             string src = System.IO.File.ReadAllText(file);
             Source node = new Source();
             node.csFile = file;

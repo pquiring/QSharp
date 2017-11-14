@@ -36,6 +36,8 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QRadioButton>
+#include <QtWidgets/QAbstractSlider>
+#include <QtWidgets/QDial>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
