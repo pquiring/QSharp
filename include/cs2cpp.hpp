@@ -40,6 +40,8 @@
 #include <QtWidgets/QDial>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QScrollBar>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QLabel>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
