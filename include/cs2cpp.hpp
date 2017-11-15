@@ -54,6 +54,7 @@
 
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>
+#include <QtNetwork/QTcpServer>
 
 //include Quazip Headers
 #include <quazip/quazip.h>

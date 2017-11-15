@@ -3,7 +3,9 @@ using Qt.QSharp;
 
 namespace Qt.Network {
     [CPPClass(
-        "private: std::shared_ptr<QTcpSocket> $q;"
+        "public: std::shared_ptr<QTcpSocket> $q;" +
+        "public: TcpSocket() {}" +
+        "public: TcpSocket(QTcpSocket *$s) {$q.reset($s);}"
     )]
     public class TcpSocket : AbstractSocket {
         public TcpSocket() {
