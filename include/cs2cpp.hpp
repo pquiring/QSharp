@@ -42,6 +42,7 @@
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QGroupBox>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
