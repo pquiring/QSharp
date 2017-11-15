@@ -1013,11 +1013,15 @@ namespace QSharpCompiler
             foreach(var param in nodes) {
                 switch (param.Kind()) {
                     case SyntaxKind.Parameter:
-                        SyntaxNode par = GetChildNode(param);
+                        SyntaxNode par = GetChildNode(param, 1);
                         Type type = new Type();
                         parameterNode(par, type);
                         type.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
                         method.args.Add(type);
+                        SyntaxNode equals = GetChildNode(param, 2);
+                        if (equals != null && equals.Kind() == SyntaxKind.EqualsValueClause) {
+                            expressionNode(GetChildNode(equals), type, false);
+                        }
                         break;
                 }
             }
@@ -2066,7 +2070,7 @@ namespace QSharpCompiler
                 sb.Append(method.cls.fullname);
                 sb.Append("::");
                 sb.Append(method.name);
-                sb.Append(method.GetArgs());
+                sb.Append(method.GetArgs(false));
                 if (method.Length() == 0) method.Append("{}\r\n");
                 if (method.name == "$init") {
                     sb.Append("{\r\n");
@@ -2087,7 +2091,7 @@ namespace QSharpCompiler
         }
     }
 
-    class Type : Flags {
+    class Type : Flags, OutputBuffer {
         public string name;
         public string type;
         public TypeKind typekind;
@@ -2100,6 +2104,18 @@ namespace QSharpCompiler
         public bool shared;
         public bool ptr;  //unsafe pointer
         public List<Type> GenericArgs = new List<Type>();
+
+        public StringBuilder src = new StringBuilder();
+        public void Append(string s) {
+            src.Append(s);
+        }
+        public void Insert(int idx, string s) {
+            src.Insert(idx, s);
+        }
+        public int Length() {return src.Length;}
+        public virtual bool isField() {return false;}
+        public virtual bool isMethod() {return false;}
+
         public Type() {}
         public Type(SyntaxNode node) {
             this.node = node;
@@ -2246,21 +2262,12 @@ namespace QSharpCompiler
         bool isMethod();
     }
 
-    class Field : Type, OutputBuffer
+    class Field : Type
     {
         public bool Property;
         public bool get_Property;
         public bool set_Property;
-        public StringBuilder src = new StringBuilder();
-        public void Append(string s) {
-            src.Append(s);
-        }
-        public void Insert(int idx, string s) {
-            src.Insert(idx, s);
-        }
-        public int Length() {return src.Length;}
-        public bool isField() {return true;}
-        public bool isMethod() {return false;}
+        public override bool isField() {return true;}
 
         public string GetDeclaration() {
             StringBuilder sb = new StringBuilder();
@@ -2288,18 +2295,9 @@ namespace QSharpCompiler
         }
     }
 
-    class Method : Type, OutputBuffer
+    class Method : Type
     {
-        public StringBuilder src = new StringBuilder();
-        public void Append(string s) {
-            src.Append(s);
-        }
-        public void Insert(int idx, string s) {
-            src.Insert(idx, s);
-        }
-        public int Length() {return src.Length;}
-        public bool isField() {return false;}
-        public bool isMethod() {return true;}
+        public override bool isMethod() {return true;}
 
         public bool ctor;
         public bool isDelegate;
@@ -2308,7 +2306,7 @@ namespace QSharpCompiler
         public List<Type> args = new List<Type>();
         public Class cls;
         public bool inFixedBlock;
-        public string GetArgs() {
+        public string GetArgs(bool decl) {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
             bool first = true;
@@ -2317,6 +2315,10 @@ namespace QSharpCompiler
                 sb.Append(arg.GetTypeDeclaration());
                 sb.Append(" ");
                 sb.Append(arg.name);
+                if (decl && arg.src.Length > 0) {
+                    sb.Append(" = " );
+                    sb.Append(arg.src.ToString());
+                }
             }
             sb.Append(")");
             return sb.ToString();
@@ -2329,7 +2331,7 @@ namespace QSharpCompiler
             sb.Append(GetTypeDeclaration());
             sb.Append(" ");
             if (!isDelegate) sb.Append(name);
-            sb.Append(GetArgs());
+            sb.Append(GetArgs(true));
             if (isDelegate) {
                 sb.Append(">");
                 sb.Append(name);

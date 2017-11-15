@@ -1,4 +1,5 @@
 using Qt.QSharp;
+using Qt.Core;
 
 namespace Qt.Gui {
     public enum CheckState {Unchecked, PartiallyChecked, Checked}
@@ -28,6 +29,12 @@ namespace Qt.Gui {
         }
         public bool IsEnabled() {
             return CPP.ReturnBool("$q->isEnabled();");
+        }
+        public String GetWindowTitle() {
+            return CPP.ReturnString("std::make_shared<String>($q->windowTitle())");
+        }
+        public void SetWindowTitle(String title) {
+            CPP.Add("$q->setWindowTitle(title->qstring());");
         }
     }
 }
