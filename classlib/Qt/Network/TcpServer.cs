@@ -10,6 +10,7 @@ namespace Qt.Network {
                 pending(this);
             }
         }
+        /** Starts listening on port. */
         public bool Listen(int port) {
             return CPP.ReturnBool("listen(QHostAddress::Any, port)");
         }
@@ -19,13 +20,15 @@ namespace Qt.Network {
             CPP.Add("socket.reset(new TcpSocket(nextPendingConnection()));");
             return (TcpSocket)CPP.ReturnObject("socket");
         }
-        public bool Pending() {
+        /** Returns status of pending connection. */
+        public bool IsPending() {
             return CPP.ReturnBool("hasPendingConnections()");
         }
+        /** Closes TCP socket server. */
         public void Close() {
             CPP.Add("close();");
         }
-        /** Called pending delegate when a new connection arrives. */
+        /** Calls pending delegate when a new connection arrives. */
         public void OnPending(Pending pending) {
             this.pending = pending;
             CPP.Add("connect(this, &QTcpServer::newConnection, this, &TcpServer::NewConnection);");
