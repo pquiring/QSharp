@@ -9,7 +9,7 @@ folder layout:
 /cs2cpp - C# .NET Core program to convert C# to C++ using Roslyn code analyzer
 /classlib - Qt wrapper classes
 /tests/helloworld - simple Console.WriteLine() example
-/tests/testgl1 - simple OpenGL app using QOpenGLWindow
+/tests/test... - various test apps
 
 Build Tools:
 .Net Core 2.0 + Roslyn
