@@ -257,6 +257,7 @@ namespace QSharpCompiler
             openOutput(Program.cppFile);
             writeIncludes();
             writeStaticFields();
+            writeStaticFieldsInit();
             writeMethods();
             if (Program.main != null) writeMain();
             closeOutput();
@@ -383,6 +384,17 @@ namespace QSharpCompiler
                 sb.Append(cls.GetStaticFields());
                 if (cls.Namespace != "") sb.Append("}\r\n");
             }
+            byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
+            fs.Write(bytes, 0, bytes.Length);
+        }
+
+        private void writeStaticFieldsInit() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("class $class { public: $class() {\r\n");
+            foreach(var cls in clss) {
+                sb.Append(cls.GetStaticFieldsInit());
+            }
+            sb.Append("}}; static $class $instance;\r\n");
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
         }
@@ -639,8 +651,14 @@ namespace QSharpCompiler
                     case SyntaxKind.VariableDeclaration:
                         SyntaxNode equals = variableDeclaration(child, field);
                         if (equals != null) {
-                            field.Append(cls.fullname);
-                            field.Append("::");
+                            if (field.Static) {
+                                if (cls.Namespace.Length > 0) {
+                                    field.Append(cls.Namespace);
+                                    field.Append("::");
+                                }
+                                field.Append(cls.fullname);
+                                field.Append("::");
+                            }
                             field.Append(field.name);
                             field.Append(" = ");
                             SyntaxNode equalsChild = GetChildNode(equals);
@@ -2018,8 +2036,7 @@ namespace QSharpCompiler
             sb.Append("};\r\n");
             return sb.ToString();
         }
-        public int GetInnerStaticFields(StringBuilder sb, StringBuilder sb2) {
-            int cnt = 0;
+        public void GetInnerStaticFields(StringBuilder sb) {
             foreach(var inner in inners) {
                 foreach(var field in inner.fields) {
                     if (!field.Static) continue;
@@ -2029,20 +2046,21 @@ namespace QSharpCompiler
                     }  else {
                         sb.Append(";\r\n");
                     }
-                    if (field.src.Length > 0) {
-                        sb2.Append(field.src);
-                    }
-                    cnt++;
                 }
-                cnt += inner.GetInnerStaticFields(sb, sb2);
+                inner.GetInnerStaticFields(sb);
             }
-            return cnt;
+        }
+        public void GetInnerStaticFieldsInit(StringBuilder sb) {
+            foreach(var inner in inners) {
+                foreach(var field in inner.fields) {
+                    if (!field.Static) continue;
+                    sb.Append(field.src);
+                }
+                inner.GetInnerStaticFields(sb);
+            }
         }
         public string GetStaticFields() {
             StringBuilder sb = new StringBuilder();
-            StringBuilder sb2 = new StringBuilder();
-            sb2.Append("__attribute__((constructor)) static void $init_" + name + "() {\r\n");
-            int cnt = 0;
             foreach(var field in fields) {
                 if (!field.Static) continue;
                 sb.Append(field.GetTypeDeclaration() + " " + name + "::" + field.name);
@@ -2051,14 +2069,17 @@ namespace QSharpCompiler
                 }  else {
                     sb.Append(";\r\n");
                 }
-                if (field.src.Length > 0) {
-                    sb2.Append(field.src);
-                }
-                cnt++;
             }
-            cnt += GetInnerStaticFields(sb, sb2);
-            sb2.Append("}");
-            if (cnt > 0) sb.Append(sb2);
+            GetInnerStaticFields(sb);
+            return sb.ToString();
+        }
+        public string GetStaticFieldsInit() {
+            StringBuilder sb = new StringBuilder();
+            foreach(var field in fields) {
+                if (!field.Static) continue;
+                sb.Append(field.src);
+            }
+            GetInnerStaticFieldsInit(sb);
             return sb.ToString();
         }
         public string GetMethodsDefinitions() {
