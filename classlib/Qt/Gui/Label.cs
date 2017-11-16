@@ -16,7 +16,7 @@ namespace Qt.Gui {
             CPP.Add("Frame::$base($q);");
         }
         public String GetText() {
-            return (String)CPP.ReturnObject("std::make_shared<String>($q->text())");
+            return CPP.ReturnString("std::make_shared<String>($q->text())");
         }
         public void SetText(String text) {
             CPP.Add("$q->setText(text->qstring());");

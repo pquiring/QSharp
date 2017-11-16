@@ -656,9 +656,9 @@ namespace QSharpCompiler
                                     field.Append(cls.Namespace);
                                     field.Append("::");
                                 }
-                                field.Append(cls.fullname);
-                                field.Append("::");
                             }
+                            field.Append(cls.fullname);
+                            field.Append("::");
                             field.Append(field.name);
                             field.Append(" = ");
                             SyntaxNode equalsChild = GetChildNode(equals);
