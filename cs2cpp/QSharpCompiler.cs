@@ -2116,6 +2116,7 @@ namespace QSharpCompiler
         public string name;
         public string type;
         public TypeKind typekind;
+        public SymbolKind symbolkind;
         public SyntaxNode node;
         public bool primative;
         public bool numeric;
@@ -2124,6 +2125,7 @@ namespace QSharpCompiler
         public int arrays;  //# of dimensions
         public bool shared;
         public bool ptr;  //unsafe pointer
+        public bool isTypeDelegate;
         public List<Type> GenericArgs = new List<Type>();
 
         public StringBuilder src = new StringBuilder();
@@ -2156,6 +2158,7 @@ namespace QSharpCompiler
                     type = symbol.ToString().Replace(".", "::");
                 else
                     type = symbol.Name.Replace(".", "::");
+                symbolkind = symbol.Kind;
             } else {
                 symbol = Generate.file.model.GetDeclaredSymbol(node);
                 if (symbol != null) {
@@ -2209,6 +2212,21 @@ namespace QSharpCompiler
                     }
                     break;
             }
+/*
+            switch (typekind) {
+                case TypeKind.Delegate:
+                    isTypeDelegate = true;
+                    if (symbolkind == SymbolKind.NamedType) {
+                        int idx = type.LastIndexOf("::");
+                        if (idx == -1) {
+                            type = "$delegate" + type;
+                        } else {
+                            type = type.Substring(0, idx+2) + "$delegate" + type.Substring(idx + 2);
+                        }
+                    }
+                    break;
+            }
+*/
         }
         public bool IsNumeric() {
             return numeric;
@@ -2354,7 +2372,7 @@ namespace QSharpCompiler
             if (!isDelegate) sb.Append(name);
             sb.Append(GetArgs(true));
             if (isDelegate) {
-                sb.Append(">");
+                sb.Append(">");  //$delegate");
                 sb.Append(name);
             }
             if (Abstract) sb.Append("=0" + ";\r\n");

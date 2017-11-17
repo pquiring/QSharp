@@ -44,6 +44,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QDialog>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
