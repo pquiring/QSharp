@@ -1,6 +1,13 @@
 What's new
 ==========
 
+Nov 17, 2017 : 0.4
+ - added more Widgets
+ - added tests\testwidgets
+ - many compiler fixes
+   - static initializers are done in a global class constructor
+     instead of using gcc's non-standard __attribute__(constructor)
+
 Nov 10, 2017 : 0.3
  - fixed compilation by adding proper corelib references
  - added IODevice, File, Dir, TcpSocket, UdpSocket, ByteArray, etc.

@@ -26,19 +26,30 @@ Notes:
 
 Compiling:
 
+First compile the compiler:
+
+  cd cs2cpp
+  build
+  release
+
+Then build the classlib:
+
+  cd classlib
+  build
+
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
   set CXX=/usr/bin/x86_64-w64-mingw32-gcc.exe
 you should also install the 'cygwin' version of Qt5 so the headers are in the correct location.
 
 Under cygwin you should also define:
-set CMAKE_LEGACY_CYGWIN_WIN32=0
+  set CMAKE_LEGACY_CYGWIN_WIN32=0
 to avoid cmake warnings.
 
 WebSite : github.com/pquiring/qsharp
 
 Author : Peter Quiring (pquiring@gmail.com)
 
-Version 0.3
+Version 0.4
 
-Released Nov 10, 2017
+Released Nov 17, 2017
