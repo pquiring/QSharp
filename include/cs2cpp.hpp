@@ -48,6 +48,7 @@
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTreeWidget>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>

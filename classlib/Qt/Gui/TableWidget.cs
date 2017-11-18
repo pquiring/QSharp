@@ -6,10 +6,11 @@ namespace Qt.Gui {
         "private: QTableWidget *$q;" +
         "public: void $base(QTableWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
-    public abstract class TableWidget : Widget {
+    public class TableWidget : Widget {
         protected TableWidget(Derived derived) : base(Derived.derived) {}
         public TableWidget(int rows, int columns) {
             CPP.Add("$q = new QTableWidget(rows, columns);");
+            CPP.Add("Widget::$base($q);");
         }
         public void AddRow() {
             CPP.Add("int row = $q->rowCount();");

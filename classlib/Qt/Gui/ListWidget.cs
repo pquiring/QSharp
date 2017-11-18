@@ -6,10 +6,11 @@ namespace Qt.Gui {
         "private: QListWidget *$q;" +
         "public: void $base(QListWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
-    public abstract class ListWidget : Widget {
+    public class ListWidget : Widget {
         protected ListWidget(Derived derived) : base(Derived.derived) {}
         public ListWidget() {
             CPP.Add("$q = new QListWidget();");
+            CPP.Add("Widget::$base($q);");
         }
         public void AddItem(String text) {
             CPP.Add("$q->addItem(text->qstring());");
