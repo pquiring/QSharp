@@ -46,6 +46,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QProgressBar>
+#include <QtWidgets/QListWidget>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
