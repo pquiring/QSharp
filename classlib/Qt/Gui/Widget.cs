@@ -2,6 +2,8 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
+    public delegate void ChangedEvent();
+
     public enum CheckState {Unchecked, PartiallyChecked, Checked}
     public enum Orientation {Horizontal	= 1, Vertical}
 

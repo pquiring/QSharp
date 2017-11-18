@@ -31,5 +31,14 @@ namespace Qt.Gui {
         public int GetSelectedIndex() {
             return CPP.ReturnInt("$q->currentIndex()");
         }
+
+        private ChangedEvent changed;
+        private void SlotChanged(int idx) {
+            if (changed != null) changed();
+        }
+        public void OnChanged(ChangedEvent changed) {
+            this.changed = changed;
+            CPP.Add("$q->connect($q, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &ComboBox::SlotChanged);");
+        }
     }
 }

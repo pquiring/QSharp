@@ -2,7 +2,6 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
-    public delegate void ChangedEvent();
     [CPPClass(
         "private: QListWidget *$q;" +
         "public: void $base(QListWidget *$d) {$q = $d; Widget::$base($q);}"
@@ -54,7 +53,7 @@ namespace Qt.Gui {
         private void SlotChanged() {
             if (changed != null) changed();
         }
-        public void OnRejected(ChangedEvent changed) {
+        public void OnChanged(ChangedEvent changed) {
             this.changed = changed;
             CPP.Add("$q->connect($q, &QListWidget::itemSelectionChanged, this, &ListWidget::SlotChanged);");
         }
