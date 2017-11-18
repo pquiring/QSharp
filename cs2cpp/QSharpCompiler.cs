@@ -1009,8 +1009,9 @@ namespace QSharpCompiler
                         break;
                     case SyntaxKind.ArrayType:
                         method.array = true;
-                        method.arrays++;
-                        parameterNode(GetChildNode(child), method);
+                        foreach(var arrayType in child.ChildNodes()) {
+                            parameterNode(arrayType, method);
+                        }
                         break;
                     case SyntaxKind.GenericName:
                         SyntaxNode typeList = GetChildNode(child);
@@ -1069,6 +1070,9 @@ namespace QSharpCompiler
                             type.arrays++;
                         }
                     }
+                    break;
+                case SyntaxKind.ArrayRankSpecifier:
+                    type.arrays++;
                     break;
                 case SyntaxKind.GenericName:
                     SyntaxNode typeList = GetChildNode(node);
