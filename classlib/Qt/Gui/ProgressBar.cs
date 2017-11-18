@@ -2,16 +2,14 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
-    public delegate void SliderMoved(int value);
     [CPPClass(
-        "private: QAbstractSlider *$q;" +
-        "public: void $base(QAbstractSlider *$d) {$q = $d; Widget::$base($q);}"
+        "private: QProgressBar *$q;" +
+        "public: void $base(QProgressBar *$d) {$q = $d; Widget::$base($q);}"
     )]
-    public abstract class AbstractSlider : Widget {
-        protected AbstractSlider(Derived derived) : base(Derived.derived) {}
-        private SliderMoved delegateSliderMoved;
-        private void SliderMoved(int value) {
-            if (delegateSliderMoved != null) delegateSliderMoved(value);
+    public class ProgressBar : Widget {
+        protected ProgressBar(Derived derived) : base(Derived.derived) {}
+        public ProgressBar() {
+            CPP.Add("$q = new QProgressBar();");
         }
         public void SetOrientation(Orientation orientation) {
             CPP.Add("$q->setOrientation((Qt::Orientation)orientation);");
@@ -31,22 +29,11 @@ namespace Qt.Gui {
         public void SetRange(int min, int max) {
             CPP.Add("$q->setRange(min, max);");
         }
-        public int GetSliderPosition() {
-            return CPP.ReturnInt("$q->sliderPosition()");
-        }
-        public void SetSliderPosition(int sliderPosition) {
-            CPP.Add("$q->setSliderPosition(sliderPosition);");
-        }
         public int GetValue() {
             return CPP.ReturnInt("$q->value()");
         }
         public void SetValue(int value) {
             CPP.Add("$q->setValue(value);");
-        }
-
-        public void OnSliderMoved(SliderMoved handler) {
-            delegateSliderMoved = handler;
-            CPP.Add("connect($q, &QAbstractSlider::sliderMoved, this, &AbstractSlider::SliderMoved);");
         }
     }
 }

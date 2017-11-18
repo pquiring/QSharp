@@ -2,7 +2,6 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
-    public enum Orientation {Horizontal	= 1, Vertical}
     [CPPClass(
         "private: QSlider *$q;" +
         "public: void $base(QSlider *$d) {$q = $d; AbstractSlider::$base($q);}"
