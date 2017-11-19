@@ -10,5 +10,5 @@ link_directories(../../lib)
 
 add_executable(testunsafe testunsafe.cpp)
 
-target_link_libraries(testunsafe classlib Qt5Core Qt5Gui Qt5Network Qt5Widgets stdc++ z)
+target_link_libraries(testunsafe classlib Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml stdc++ z)
 

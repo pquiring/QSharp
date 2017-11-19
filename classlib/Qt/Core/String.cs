@@ -8,7 +8,8 @@ namespace Qt.Core {
         "public: String(std::string ss) { $q = new QString(ss.c_str()); }" +
         "public: String(const QString qs) { $q = new QString(qs); }" +
         "public: const char* cstring() {return $q->toUtf8().constData();}" +
-        "public: QString qstring() {return *$q;}"
+        "public: QString qstring() {return *$q;}" +
+        "public: const char16* ustring() {return (const char16*)$q->utf16();}"
     )]
     public class String : Object {
         public String() {}

@@ -62,6 +62,11 @@
 #include <QtNetwork/QUdpSocket>
 #include <QtNetwork/QTcpServer>
 
+#include <QtXml/QDomNode>
+#include <QtXml/QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomAttr>
+
 //include Quazip Headers
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
