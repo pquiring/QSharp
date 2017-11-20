@@ -21,7 +21,7 @@ cygwin/make
 Notes:
  - uses std::shared_ptr<> to implement memory management
  - NullPointerExceptions are checked
- - not all C# features are supported (reflection, operators, events, etc.)
+ - not all C# features are supported (reflection, operators, events, switch on strings, etc.)
  - classlib is a work in progress
 
 Compiling:
@@ -29,12 +29,14 @@ Compiling:
 First compile the compiler:
 
   cd cs2cpp
+  setup
   build
   release
 
 Then build the classlib:
 
   cd classlib
+  setup
   build
 
 To compile under cygwin/mingw define these environment variables before calling cmake:
