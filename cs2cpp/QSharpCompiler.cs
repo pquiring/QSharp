@@ -1291,7 +1291,12 @@ namespace QSharpCompiler
                 case SyntaxKind.SwitchStatement:
                     // var, [SwitchSection...]
                     method.Append("switch (");
-                    expressionNode(GetChildNode(node), method, false);
+                    SyntaxNode var = GetChildNode(node);
+                    if (GetTypeName(var) == "Qt::Core::String") {
+                        Console.WriteLine("switch (String) {} not supported (yet)");
+                        Environment.Exit(0);
+                    }
+                    expressionNode(var, method, false);
                     method.Append(") {\r\n");
                     bool skip = true;
                     foreach(var section in node.ChildNodes()) {
