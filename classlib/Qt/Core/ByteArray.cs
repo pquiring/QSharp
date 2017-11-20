@@ -2,10 +2,11 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QByteArray> $q;" +
+        "public: std::shared_ptr<QByteArray> $q;" +
         "public: void $base(std::shared_ptr<QByteArray> ba) {$q = ba;}" +
         "public: void $base(QByteArray ba) {*$q = ba;}" +
-        "public: ByteArray() {$q = std::make_shared<QByteArray>();}"
+        "public: ByteArray() {$q = std::make_shared<QByteArray>();}" +
+        "public: ByteArray(QByteArray ba) {$q = std::make_shared<QByteArray>(); $base(ba);}"
     )]
     public class ByteArray {
         public void Append(byte[] buf, int offset, int length) {

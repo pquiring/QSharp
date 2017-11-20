@@ -16,8 +16,8 @@ namespace Qt.Gui {
           therefore Window must derive from OpenGLFunctions to make it available to OpenGLWindow
         */
         protected Window(Derived derived) { }
-        public virtual void KeyPressed(Key key) {}
-        public virtual void KeyReleased(Key key) {}
+        public virtual void KeyPressed(KeyCode key) {}
+        public virtual void KeyReleased(KeyCode key) {}
         public virtual void KeyTyped(char key) {}
         public virtual void MousePressed(int x, int y, int button) {}
         public virtual void MouseReleased(int x, int y, int button) {}

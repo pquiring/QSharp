@@ -404,12 +404,14 @@ namespace QSharpCompiler
             foreach(var cls in clss) {
                 if (cls.Generic) continue;
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
+                string hppfile = "src/" + cls.name + ".hpp";
+                if (File.Exists(hppfile)) sb.Append("#include \"" + hppfile + "\"\r\n");
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 sb.Append(cls.GetMethodsDefinitions());
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.nonClassCPP != null) sb.Append(cls.nonClassCPP);
-                string fn = "src/" + cls.name + ".cpp";
-                if (File.Exists(fn)) sb.Append("#include \"" + fn + "\"\r\n");
+                string cppfile = "src/" + cls.name + ".cpp";
+                if (File.Exists(cppfile)) sb.Append("#include \"" + cppfile + "\"\r\n");
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -2168,7 +2170,7 @@ namespace QSharpCompiler
         public int arrays;  //# of dimensions
         public bool shared;
         public bool ptr;  //unsafe pointer
-        public bool isTypeDelegate;
+//        public bool isTypeDelegate;
         public List<Type> GenericArgs = new List<Type>();
 
         public StringBuilder src = new StringBuilder();
