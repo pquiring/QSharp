@@ -1288,6 +1288,40 @@ namespace QSharpCompiler
                     method.Append(");" + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock, false, false);
                     break;
+                case SyntaxKind.SwitchStatement:
+                    // var, [SwitchSection...]
+                    method.Append("switch (");
+                    expressionNode(GetChildNode(node), method, false);
+                    method.Append(") {\r\n");
+                    bool skip = true;
+                    foreach(var section in node.ChildNodes()) {
+                        if (skip) {skip = false; continue;}  //var
+                        //section == SyntaxKind.SwitchSection
+                        SyntaxNode secType = GetChildNode(section);
+                        switch (secType.Kind()) {
+                            case SyntaxKind.CaseSwitchLabel:
+                                method.Append("case");
+                                expressionNode(GetChildNode(secType), method, false);
+                                method.Append(":");
+                                break;
+                            case SyntaxKind.DefaultSwitchLabel:
+                                method.Append("default:");
+                                break;
+                        }
+                        bool skip2 = true;
+                        foreach(var statement in section.ChildNodes()) {
+                            if (skip2) {skip2 = false; continue;}  //Case/Default SwitchLabel
+                            statementNode(statement);
+                        }
+                    }
+                    method.Append("}\r\n");
+                    break;
+                case SyntaxKind.BreakStatement:
+                    method.Append("break;\r\n");
+                    break;
+                case SyntaxKind.ContinueStatement:
+                    method.Append("continue;\r\n");
+                    break;
             }
         }
 
