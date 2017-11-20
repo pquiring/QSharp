@@ -19,6 +19,9 @@
 #include <QtCore/QMutex>
 #include <QtCore/QTimer>
 #include <QtCore/QThread>
+#include <QtCore/QDate>
+#include <QtCore/QTime>
+#include <QtCore/QDateTime>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
