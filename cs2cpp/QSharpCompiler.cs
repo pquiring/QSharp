@@ -1300,7 +1300,7 @@ namespace QSharpCompiler
                         SyntaxNode secType = GetChildNode(section);
                         switch (secType.Kind()) {
                             case SyntaxKind.CaseSwitchLabel:
-                                method.Append("case");
+                                method.Append("case ");
                                 expressionNode(GetChildNode(secType), method, false);
                                 method.Append(":");
                                 break;
