@@ -49,6 +49,7 @@
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QSplitter>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>

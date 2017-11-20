@@ -13,6 +13,9 @@ namespace Qt.Gui {
         private void SliderMoved(int value) {
             if (delegateSliderMoved != null) delegateSliderMoved(value);
         }
+        public Orientation GetOrientation() {
+            return (Orientation)CPP.ReturnInt("$q->orientation();");
+        }
         public void SetOrientation(Orientation orientation) {
             CPP.Add("$q->setOrientation((Qt::Orientation)orientation);");
         }
