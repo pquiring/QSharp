@@ -31,6 +31,8 @@
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
+#include <QtGui/QImage>
+#include <QtGui/QPainter>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>

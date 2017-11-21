@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Core {
     public enum OpenMode {NotOpen, ReadOnly, WriteOnly, ReadWrite, Append, Truncate, Text, Unbuffered}
     [CPPClass(
-        "private: std::shared_ptr<QIODevice> $q;" +
+        "public: std::shared_ptr<QIODevice> $q;" +
         "public: void $base(std::shared_ptr<QIODevice> io) {$q = io;}"
     )]
     public class IODevice {
