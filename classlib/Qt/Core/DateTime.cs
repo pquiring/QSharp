@@ -5,7 +5,7 @@ namespace Qt.Core {
         "public: std::shared_ptr<QDateTime> $q;" +
         "public: DateTime() {$q = std::make_shared<QDateTime>();}" +
         "public: DateTime(QDate date, QTime time) {$q = std::make_shared<QDateTime>(date, time);}" +
-        "public: DateTime(QDateTime datetime) {$q = std::make_shared<QDateTime>(datetime);}"
+        "public: DateTime(QDateTime datetime) {$q = std::make_shared<QDateTime>((const QDateTime&)datetime);}"
     )]
     public class DateTime {
         public Date GetDate() {
@@ -46,9 +46,6 @@ namespace Qt.Core {
         }
         public static long GetMiliSecondsSinceEpoch() {
             return CPP.ReturnLong("QDateTime::currentMSecsSinceEpoch()");
-        }
-        public static long GetSecondsSinceEpoch() {
-            return CPP.ReturnLong("QDateTime::currentSecsSinceEpoch()");
         }
     }
 }

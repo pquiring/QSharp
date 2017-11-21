@@ -69,11 +69,11 @@ public class TriangleWindow : OpenGLWindow
         Update();
     }
 
-    public override void KeyPressed(Key key) {
+    public override void KeyPressed(KeyCode key) {
         Console.WriteLine("KeyPressed:" + (int)key);
     }
 
-    public override void KeyReleased(Key key) {
+    public override void KeyReleased(KeyCode key) {
         Console.WriteLine("KeyReleased:" + (int)key);
     }
 

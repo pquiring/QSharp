@@ -1,9 +1,9 @@
 #ifndef QAESENCRYPTION_H
 #define QAESENCRYPTION_H
 
-class QAESEncryption : public QObject
+class QAESEncryption
 {
-    Q_OBJECT
+//    Q_OBJECT
 public:
     typedef enum {
         AES_128,
@@ -27,9 +27,9 @@ public:
     QByteArray decode(const QByteArray rawText, const QByteArray key, const QByteArray iv = NULL);
     QByteArray expandKey(const QByteArray key);
 
-signals:
+//signals:
 
-public slots:
+//public slots:
 
 private:
     int m_nb;
