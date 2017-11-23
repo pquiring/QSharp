@@ -74,6 +74,7 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QUdpSocket>
 #include <QtNetwork/QTcpServer>
+#include <QtNetwork/QSslSocket>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomElement>
