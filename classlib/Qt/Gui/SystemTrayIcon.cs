@@ -19,10 +19,10 @@ namespace Qt.Gui {
         public void ShowMessage(String title, String msg, MessageIcon MessageIcon = MessageIcon.Information, int msTimeout = 10000) {
             CPP.Add("$q->showMessage(title->qstring(), msg->qstring(), (QSystemTrayIcon::MessageIcon)MessageIcon, msTimeout);");
         }
-/*  //available in Qt 5.9
+        [CPPVersion("0x050900")]  //Qt 5.9+
         public void ShowMessage(String title, String msg, Image icon, int msTimeout = 10000) {
             CPP.Add("$q->showMessage(title->qstring(), msg->qstring(), icon->$icon(), msTimeout);");
         }
-*/
+
     }
 }

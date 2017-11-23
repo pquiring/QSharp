@@ -730,6 +730,7 @@ namespace QSharpCompiler
                 switch (child.Kind()) {
                     case SyntaxKind.Attribute:
                         SyntaxNode attrNode = GetChildNode(child);
+                        SyntaxNode attrArgList = GetChildNode(child, 2);  //AttributeArgumentList
                         switch (attrNode.Kind()) {
                             case SyntaxKind.IdentifierName:
                             case SyntaxKind.QualifiedName:
@@ -744,6 +745,12 @@ namespace QSharpCompiler
                                     case "Qt::QSharp::CPPOmitMethod":
                                     case "Qt::QSharp::CPPOmitConstructor":
                                         return true;
+                                    case "Qt::QSharp::CPPVersion":
+                                        SyntaxNode arg = GetChildNode(attrArgList);  //AttributeArgument
+                                        SyntaxNode str = GetChildNode(arg);  //StringLiteralExpression
+                                        String value = file.model.GetConstantValue(str).Value.ToString();
+                                        method.version = value;
+                                        break;
                                 }
                                 break;
                         }
@@ -2086,6 +2093,9 @@ namespace QSharpCompiler
                 sb.Append(field.GetDeclaration());
             }
             foreach(var method in methods) {
+                if (method.version != null) {
+                    sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
+                }
                 sb.Append(method.GetDeclaration());
                 if (Generic) {
                     if (method.name == "$init") {
@@ -2103,6 +2113,9 @@ namespace QSharpCompiler
                     }
                 }
                 sb.Append(";\r\n");
+                if (method.version != null) {
+                    sb.Append("#endif\r\n");
+                }
             }
             foreach(var e in enums) {
                 sb.Append(e.src);
@@ -2169,6 +2182,9 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             foreach(var method in methods) {
                 if (method.isDelegate) continue;
+                if (method.version != null) {
+                    sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
+                }
                 sb.Append(method.type.GetTypeDeclaration());
                 sb.Append(" ");
                 sb.Append(method.cls.fullname);
@@ -2188,6 +2204,9 @@ namespace QSharpCompiler
                     sb.Append("}\r\n");
                 } else {
                     sb.Append(method.src);
+                }
+                if (method.version != null) {
+                    sb.Append("#endif\r\n");
                 }
             }
             foreach(var inner in inners) {
@@ -2439,6 +2458,7 @@ namespace QSharpCompiler
         public List<Variable> args = new List<Variable>();
         public Class cls;
         public bool inFixedBlock;
+        public String version;
         public string GetArgs(bool decl) {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");

@@ -12,6 +12,12 @@ namespace Qt.QSharp {
         public CPPClass(string src) {}
     }
 
+    /* Places #if QT_VERSION >= version directive around method. */
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CPPVersion : System.Attribute {
+        public CPPVersion(string version) {}
+    }
+
     /* Adds base classes to a class (allows multiple inheritance) */
     [AttributeUsage(AttributeTargets.Class)]
     public class CPPExtends : System.Attribute {
