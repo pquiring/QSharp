@@ -32,6 +32,8 @@
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
 #include <QtGui/QImage>
+#include <QtGui/QPixmap>
+#include <QtGui/QIcon>
 #include <QtGui/QPainter>
 
 #include <QtWidgets/QApplication>
@@ -55,6 +57,8 @@
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QSplitter>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMenu>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
