@@ -59,6 +59,7 @@
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>

@@ -17,5 +17,8 @@ namespace Qt.Gui {
         public void SetMenuWidget(Widget w) {
             CPP.Add("$q->setMenuWidget(w->$q);");
         }
+        public void SetMenuBar(MenuBar menubar) {
+            CPP.Add("$q->setMenuBar(menubar->$q);");
+        }
     }
 }
