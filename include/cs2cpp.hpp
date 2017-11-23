@@ -60,6 +60,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSystemTrayIcon>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
