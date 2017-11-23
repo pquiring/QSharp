@@ -117,6 +117,13 @@ namespace Qt.Gui {
             CPP.Add("$painter.drawRoundedRect(x,y,width,height,xRadius,yRadius);");
             CPP.Add("$painter.end();");
         }
-        //TODO : DrawText() - need QFont
+        public void SetFont(Font font) {
+            CPP.Add("$painter.setFont(*font->$q);");
+        }
+        public void DrawText(int x, int y, String text) {
+            CPP.Add("$painter.begin($q.get());");
+            CPP.Add("$painter.drawText(x,y,text->qstring());");
+            CPP.Add("$painter.end();");
+        }
     }
 }

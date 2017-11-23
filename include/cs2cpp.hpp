@@ -35,6 +35,7 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
 #include <QtGui/QPainter>
+#include <QtGui/QFont>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
