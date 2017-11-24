@@ -22,6 +22,7 @@
 #include <QtCore/QDate>
 #include <QtCore/QTime>
 #include <QtCore/QDateTime>
+#include <QtCore/QUrl>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
@@ -75,6 +76,9 @@
 #include <QtNetwork/QUdpSocket>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QSslSocket>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 
 #include <QtXml/QDomNode>
 #include <QtXml/QDomElement>
@@ -103,8 +107,8 @@ namespace Qt::Core {
 #define uint32 unsigned int
 #define uint64 unsigned long long
 
-#define char8 unsigned char
-#define char16 unsigned short
+#define char8 char
+#define char16 short
 
 #define true 1
 #define false 0

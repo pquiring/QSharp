@@ -1445,7 +1445,7 @@ namespace QSharpCompiler
                 case SyntaxKind.SimpleMemberAccessExpression:
                     SyntaxNode left = GetChildNode(node, 1);
                     SyntaxNode right = GetChildNode(node, 2);
-                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(right)) {
+                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(left)) {
                         expressionNode(left, ob, lvalue);
                         ob.Append("::");
                         expressionNode(right, ob, lvalue);
@@ -1697,8 +1697,7 @@ namespace QSharpCompiler
         private bool isEnum(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
             if (type == null) return false;
-            if (type.TypeKind == TypeKind.Enum) return true;  //Roslyn Bug : works in compiled file, not when referenced (appears as Class when from referenced assembly)
-            if (type.BaseType.Name == "Enum") return true;  //works in references
+            if (type.TypeKind == TypeKind.Enum) return true;
             return false;
         }
 

@@ -9,6 +9,10 @@ namespace Qt.Core {
         "public: ByteArray(QByteArray ba) {$q = std::make_shared<QByteArray>(); $base(ba);}"
     )]
     public class ByteArray {
+        public ByteArray() {}
+        public ByteArray(String str) {
+            CPP.Add("$q->append(str->qstring());");
+        }
         public void Append(byte[] buf, int offset, int length) {
             CPP.Add("$checkArray(buf, offset, length);");
             CPP.Add("$q->append((const char*)(buf->data() + offset), length);");
