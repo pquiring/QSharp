@@ -1,6 +1,12 @@
 What's new
 ==========
 
+Nov 24, 2017 : 0.5
+ - added more Widgets
+ - added AES Cipher
+ - added WebClient, WebRequest, WebReply
+ - more compiler fixes
+
 Nov 17, 2017 : 0.4
  - added more Widgets
  - added tests\testwidgets
