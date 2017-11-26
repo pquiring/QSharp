@@ -28,12 +28,12 @@ namespace Qt.Network {
             return true;
         }
 
-        public void OnTcpConnect(TcpServer server) {
+        private void OnTcpConnect(TcpServer server) {
             TcpSocket socket = server.Accept();
             WebThread thread = new WebThread(handler, socket);
             thread.Start();
         }
-        public void OnSslConnect(SslServer server) {
+        private void OnSslConnect(SslServer server) {
             SslSocket socket = server.Accept();
             WebThread thread = new WebThread(handler, socket);
             thread.Start();
@@ -67,12 +67,12 @@ namespace Qt.Network {
                 }
             }
         }
-    }
-    [CPPExtends("QNetworkReply")]
-    [CPPClass(
-        "public: qint64 readData(char *data, qint64 maxlen) {return 0;}" +
-        "public: void abort() {}"
-    )]
-    public class WebServerReply : WebReply {
+        [CPPExtends("QNetworkReply")]
+        [CPPClass(
+            "public: qint64 readData(char *data, qint64 maxlen) {return 0;}" +
+            "public: void abort() {}"
+        )]
+        private class WebServerReply : WebReply {
+        }
     }
 }
