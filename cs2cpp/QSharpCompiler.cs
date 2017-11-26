@@ -1075,7 +1075,11 @@ namespace QSharpCompiler
                     case SyntaxKind.Parameter:
                         SyntaxNode par = GetChildNode(param, 1);
                         Type type = new Type();
-                        parameterNode(par, type);
+                        if (par != null) {
+                            parameterNode(par, type);
+                        } else {
+                            type.type = "auto";
+                        }
                         Variable variable = new Variable();
                         variable.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
                         variable.type = type;
@@ -1647,7 +1651,12 @@ namespace QSharpCompiler
                             case SyntaxKind.Parameter:
                                 SyntaxNode par = GetChildNode(param);
                                 Type ptype = new Type();
-                                parameterNode(par, ptype);
+                                if (par != null) {
+                                    parameterNode(par, ptype);
+                                } else {
+                                    //lambda without arg types
+                                    ptype.type = "auto";
+                                }
                                 Variable pvar = new Variable();
                                 pvar.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
                                 if (!firstLambda) ob.Append(","); else firstLambda = false;
