@@ -1,11 +1,11 @@
 using Qt.QSharp;
 
 namespace Qt.Network {
-    public delegate void Pending(TcpServer server);
+    public delegate void PendingEvent(TcpServer server);
     [CPPExtends("QTcpServer")]
     public class TcpServer {
-        private Pending pending;
-        private void NewConnection() {
+        private PendingEvent pending;
+        private void SlotNewConnection() {
             if (pending != null) {
                 pending(this);
             }
@@ -29,9 +29,9 @@ namespace Qt.Network {
             CPP.Add("close();");
         }
         /** Calls pending delegate when a new connection arrives. */
-        public void OnPending(Pending pending) {
+        public void OnPending(PendingEvent pending) {
             this.pending = pending;
-            CPP.Add("connect(this, &QTcpServer::newConnection, this, &TcpServer::NewConnection);");
+            CPP.Add("connect(this, &QTcpServer::newConnection, this, &TcpServer::SlotNewConnection);");
         }
     }
 }

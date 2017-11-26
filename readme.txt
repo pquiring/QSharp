@@ -21,8 +21,16 @@ cygwin/make
 Notes:
  - uses std::shared_ptr<> to implement memory management
  - NullPointerExceptions are checked
- - not all C# features are supported (reflection, operators, events, switch on strings, etc.)
  - classlib is a work in progress
+
+C# features not supported (yet):
+ - reflection
+ - operators
+ - events
+ - switch on strings
+ - passing member function as delegate - zero argument delegates do work
+ - assign member function to delegate (use lambdas instead)
+ - inner classes are almost working
 
 Compiling:
 

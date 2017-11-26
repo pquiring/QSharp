@@ -8,7 +8,7 @@ namespace Qt.Network {
         "public: WebReply(QNetworkReply *reply) {$q.reset(reply); IODevice::$base((std::shared_ptr<QIODevice>)$q);} "
     )]
     public abstract class WebReply : IODevice {
-        private WebReply() {}
+        protected WebReply() {}
         private ByteArray data;
         private Map<String, String> args = new Map<String, String>();
         private void GetArgs(String[] kv) {
@@ -22,6 +22,13 @@ namespace Qt.Network {
         }
         public String GetHeader(String header) {
             return CPP.ReturnString("std::make_shared<String>($q->rawHeader(QByteArray(header->cstring())))");
+        }
+        public String GetHeaders() {
+            CPP.Add("QList<QByteArray> list = $q->rawHeaderList();");
+            CPP.Add("QByteArray array;");
+            CPP.Add("int cnt = list.count();");
+            CPP.Add("for(int i=0;i<cnt;i++) {array.append(list[i]); array.append(\"\\r\\n\");}");
+            return CPP.ReturnString("std::make_shared<String>(array)");
         }
         public new ByteArray ReadAll() {
             data = base.ReadAll();

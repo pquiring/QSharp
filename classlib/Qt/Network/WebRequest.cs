@@ -2,7 +2,7 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Network {
-    public enum Method {Get, Post, Put, Delete, Head}
+    public enum Method {Get, Post, Put, Delete, Head, Unknown}
     [CPPClass(
         "public: std::shared_ptr<QNetworkRequest> $q;"
     )]
@@ -69,6 +69,16 @@ namespace Qt.Network {
         }
         public void SetMethod(Method method) {
             this.method = method;
+        }
+        public static Method GetMethod(String method) {
+            //TODO : once switch string is supported update this code
+            method = method.ToUpperCase();
+            if (method.Equals("GET")) return Method.Get;
+            if (method.Equals("POST")) return Method.Post;
+            if (method.Equals("PUT")) return Method.Put;
+            if (method.Equals("DELETE")) return Method.Delete;
+            if (method.Equals("HEAD")) return Method.Head;
+            return Method.Unknown;
         }
     }
 }

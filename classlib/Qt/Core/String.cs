@@ -35,7 +35,7 @@ namespace Qt.Core {
             return (string)s;
         }
 
-        public int Length {get{return CPP.ReturnInt("$q->length()");}}
+        public int Length {get{return CPP.ReturnInt("$q->length()");} set{CPP.Add("$q->resize(value);");}}
         public String Append(String s) {
             CPP.Add("$q->append(*$deref(s)->$q);");
             return this;
@@ -90,6 +90,13 @@ namespace Qt.Core {
             return CPP.ReturnInt("$q->lastIndexOf((QChar)ch)");
         }
 
+        public bool StartsWith(String s) {
+            return CPP.ReturnBool("$q->startsWith(s->qstring())");
+        }
+        public bool EndsWith(String s) {
+            return CPP.ReturnBool("$q->endsWith(s->qstring())");
+        }
+
         public String[] Split(char ch) {
             CPP.Add("QStringList list = $q->split(ch);");
             CPP.Add("std::shared_ptr<QVector<std::shared_ptr<String>>> array;");
@@ -99,8 +106,24 @@ namespace Qt.Core {
             return (String[])CPP.ReturnObject("array");
         }
 
+        public String[] Split(String str) {
+            CPP.Add("QStringList list = $q->split(str->qstring());");
+            CPP.Add("std::shared_ptr<QVector<std::shared_ptr<String>>> array;");
+            CPP.Add("array = std::make_shared<QVector<std::shared_ptr<String>>>();");
+            CPP.Add("int cnt = list.count();");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->append(std::make_shared<String>(list[idx]));}");
+            return (String[])CPP.ReturnObject("array");
+        }
+
         public String Substring(int start, int len = -1) {
             return CPP.ReturnString("std::make_shared<String>($q->mid(start, len))");
+        }
+
+        public String ToUpperCase() {
+            return CPP.ReturnString("std::make_shared<String>($q->toUpper())");
+        }
+        public String ToLowerCase() {
+            return CPP.ReturnString("std::make_shared<String>($q->toLower())");
         }
 
         public char[] ToCharArray() {
