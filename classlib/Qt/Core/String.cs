@@ -99,19 +99,19 @@ namespace Qt.Core {
 
         public String[] Split(char ch) {
             CPP.Add("QStringList list = $q->split(ch);");
-            CPP.Add("std::shared_ptr<QVector<std::shared_ptr<String>>> array;");
-            CPP.Add("array = std::make_shared<QVector<std::shared_ptr<String>>>();");
+            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->append(std::make_shared<String>(list[idx]));}");
+            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]);}");
             return (String[])CPP.ReturnObject("array");
         }
 
         public String[] Split(String str) {
             CPP.Add("QStringList list = $q->split(str->qstring());");
-            CPP.Add("std::shared_ptr<QVector<std::shared_ptr<String>>> array;");
-            CPP.Add("array = std::make_shared<QVector<std::shared_ptr<String>>>();");
+            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->append(std::make_shared<String>(list[idx]));}");
+            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]);}");
             return (String[])CPP.ReturnObject("array");
         }
 
@@ -127,18 +127,18 @@ namespace Qt.Core {
         }
 
         public char[] ToCharArray() {
-            CPP.Add("std::shared_ptr<QVector<char16>> array;");
+            CPP.Add("std::shared_ptr<QSharpArray<char16>> array;");
             CPP.Add("int length = $get_Length();");
-            CPP.Add("array = std::make_shared<QVector<char16>>(length);");
+            CPP.Add("array = std::make_shared<QSharpArray<char16>>(length);");
             CPP.Add("char16 *dest = array->data();");
             CPP.Add("const char16 *src = ustring();");
             CPP.Add("std::memcpy(dest, src, length * 2);");
             return CPP.ReturnCharArray("array");
         }
         public byte[] ToByteArray() {
-            CPP.Add("std::shared_ptr<QVector<uint8>> array;");
+            CPP.Add("std::shared_ptr<QSharpArray<uint8>> array;");
             CPP.Add("int length = $get_Length();");
-            CPP.Add("array = std::make_shared<QVector<uint8>>(length);");
+            CPP.Add("array = std::make_shared<QSharpArray<uint8>>(length);");
             CPP.Add("uint8 *dest = array->data();");
             CPP.Add("const uint8 *src = (const uint8*)cstring();");
             CPP.Add("std::memcpy(dest, src, length);");

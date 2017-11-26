@@ -66,22 +66,25 @@ namespace Qt.Gui {
         }
         public String[] GetSelectedItems() {
             CPP.Add("QList<QTableWidgetItem*> list = $q->selectedItems();");
-            CPP.Add("std::shared_ptr<QVector<std::shared_ptr<String>>> array;");
+            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("for(int i=0;i<cnt;i++) {array->append(std::make_shared<String>(list[i]->text()));}");
+            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[][] GetSelectedIndexes() {
             CPP.Add("QModelIndexList list = $q->selectionModel()->selectedIndexes();");
-            CPP.Add("std::shared_ptr<QVector<std::shared_ptr<QVector<int32>>>> rc;");
+            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<QSharpArray<int32>>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("for(int i=0;i<cnt;i++) {");
-            CPP.Add("   std::shared_ptr<QVector<int>> row;");
-            CPP.Add("   row->append(list[i].row());");
-            CPP.Add("   row->append(list[i].column());");
-            CPP.Add("   rc->append(row);");
+            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<QSharpArray<int32>>>>(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {");
+            CPP.Add("  std::shared_ptr<QSharpArray<int>> row;");
+            CPP.Add("  row = std::make_shared<QSharpArray<int32>>(2);");
+            CPP.Add("  row->at(0) = list[idx].row();");
+            CPP.Add("  row->at(1) = list[idx].column();");
+            CPP.Add("  array->at(idx) = row;");
             CPP.Add("}");
-            return (int[][])CPP.ReturnObject("rc");
+            return (int[][])CPP.ReturnObject("array");
         }
         public void SelectAll() {
             CPP.Add("$q->selectAll();");

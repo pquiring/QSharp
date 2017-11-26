@@ -444,11 +444,11 @@ namespace QSharpCompiler
             sb.Append("const char **g_argv;\r\n");
             sb.Append("}\r\n");
             sb.Append("int main(int argc, const char **argv) {\r\n");
-            sb.Append("std::shared_ptr<QVector<std::shared_ptr<Qt::Core::String>>> args = std::make_shared<QVector<std::shared_ptr<Qt::Core::String>>>();\r\n");
+            sb.Append("std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> args = std::make_shared<QSharpArray<std::shared_ptr<Qt::Core::String>>>(argc-1);\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
-            sb.Append("for(int a=1;a<argc;a++) {args->append(std::make_shared<Qt::Core::String>(argv[a]));}\r\n");
+            sb.Append("for(int a=1;a<argc;a++) {args->at(a) = std::make_shared<Qt::Core::String>(argv[a]);}\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
             sb.Append("return 0;}\r\n");
 
@@ -1390,17 +1390,11 @@ namespace QSharpCompiler
                     type = new Type(node);
                     if (isProperty(node)) {
                         ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
-                        switch (symbol.ToString()) {
-                            case "System.Array.Length":
-                                ob.Append("size()");
-                                break;
-                            default:
-                                if (lvalue)
-                                    ob.Append("$set_" + type.type);
-                                else
-                                    ob.Append("$get_" + type.type + "()");
-                                break;
-                        }
+                        if (lvalue)
+                            ob.Append("$set_" + type.type);
+                        else
+                            ob.Append("$get_" + type.type + "()");
+                        break;
                     } else {
                         if (argument && type.isSymbolMethod()) {
                             ob.Append("std::bind(&");
@@ -1685,9 +1679,9 @@ namespace QSharpCompiler
             bool first = true;
             for(int a=0;a<dims;a++) {
                 if (a == 0)
-                    ob.Append("std::make_shared<QVector<");
+                    ob.Append("std::make_shared<QSharpArray<");
                 else
-                    ob.Append("std::shared_ptr<QVector<");
+                    ob.Append("std::shared_ptr<QSharpArray<");
             }
             ob.Append(type);
             for(int a=0;a<dims;a++) {
@@ -1695,7 +1689,7 @@ namespace QSharpCompiler
             }
             ob.Append("(std::initializer_list<");
             for(int a=1;a<dims;a++) {
-                ob.Append("std::shared_ptr<QVector<");
+                ob.Append("std::shared_ptr<QSharpArray<");
             }
             ob.Append(type);
             for(int a=1;a<dims;a++) {
@@ -1847,7 +1841,7 @@ namespace QSharpCompiler
                 return;
             }
             for(int a=0;a<dims;a++) {
-              ob.Append("std::make_shared<QVector<");
+              ob.Append("std::make_shared<QSharpArray<");
             }
             Type type = new Type(typeNode);
             ob.Append(type.GetTypeType());
@@ -2410,7 +2404,7 @@ namespace QSharpCompiler
         public string GetTypeDeclaration() {
             StringBuilder sb = new StringBuilder();
             for(int a=0;a<arrays;a++) {
-                sb.Append("std::shared_ptr<QVector<");
+                sb.Append("std::shared_ptr<QSharpArray<");
             }
             if (shared) {
                 if (weakRef)
@@ -2461,7 +2455,7 @@ namespace QSharpCompiler
             if (array) {
                 sb.Append(" ");
                 for(int a=0;a<arrays;a++) {
-                    sb.Append("std::shared_ptr<QVector<");
+                    sb.Append("std::shared_ptr<QSharpArray<");
                 }
                 sb.Append(GetTypeDeclaration());
                 for(int a=0;a<arrays;a++) {

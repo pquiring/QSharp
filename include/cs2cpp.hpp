@@ -10,6 +10,7 @@
 #include <atomic>
 #include <functional>
 #include <initializer_list>
+#include <new>
 
 //include Qt Headers
 #include <QtCore/qmath.h>
@@ -116,6 +117,21 @@ namespace Qt::Core {
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
 
+//fixed arrays
+template<typename T>
+class QSharpArray {
+public:
+  T *t;
+  int Length;
+  int $get_Length() {return Length;}
+  QSharpArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; Length = size;}
+  QSharpArray(std::initializer_list<T> list) {int size = list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];}}
+  ~QSharpArray() {delete[] t;}
+  T& operator[](int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}
+  T* data() {return t;}  //deprecated
+  T& at(int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}  //deprecated
+};
+
 template<typename T>
 inline T* $deref(std::shared_ptr<T> x) {
   T* ptr = x.get();
@@ -141,9 +157,8 @@ inline int $hash(Qt::Core::Object *obj) {
 }
 
 template<typename T>
-void $checkArray(std::shared_ptr<QVector<T>> array, int offset, int length) {
-  int arrayLength = array->size();
-  if (offset + length > arrayLength) $abe();
+void $checkArray(std::shared_ptr<QSharpArray<T>> array, int offset, int length) {
+  if (offset + length > array->Length) $abe();
 }
 
 //$mod

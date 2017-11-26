@@ -18,9 +18,8 @@ namespace Qt.Core {
             CPP.Add("$q->append((const char*)(buf->data() + offset), length);");
         }
         public byte[] ToArray() {
-            CPP.Add("std::shared_ptr<QVector<uint8>> array = std::make_shared<QVector<uint8>>();");
             CPP.Add("int length = $q->size();");
-            CPP.Add("array->resize(length);");
+            CPP.Add("std::shared_ptr<QSharpArray<uint8>> array = std::make_shared<QSharpArray<uint8>>(length);");
             CPP.Add("std::memcpy(array->data(), $q->data(), length);");
             return (byte[])CPP.ReturnObject("array");
         }
