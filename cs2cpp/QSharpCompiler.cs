@@ -25,6 +25,7 @@ namespace QSharpCompiler
         public static bool classlib;
         public static string main;
         public static List<string> refs = new List<string>();
+        public static List<string> libs = new List<string>();
 
         public static CSharpCompilation compiler;
 
@@ -58,6 +59,13 @@ namespace QSharpCompiler
                     }
                     if (arg == "--ref") {
                         refs.Add(value);
+                        int i1 = value.LastIndexOf("\\");
+                        if (i1 != -1) {
+                            value = value.Substring(i1+1);
+                        }
+                        int i2 = value.IndexOf(".");
+                        value = value.Substring(0, i2);
+                        libs.Add(value);
                     }
                     if (arg == "--debug") {
                         debug = true;
@@ -390,11 +398,18 @@ namespace QSharpCompiler
 
         private void writeStaticFieldsInit() {
             StringBuilder sb = new StringBuilder();
-            sb.Append("class $class { public: $class() {\r\n");
+            String libraryName = Program.cppFile;
+            int i1 = libraryName.LastIndexOf("\\");
+            if (i1 != -1) {
+                libraryName = libraryName.Substring(i1+1);
+            }
+            int i2 = libraryName.IndexOf(".");
+            libraryName = libraryName.Substring(0, i2);
+            sb.Append("void $" + libraryName + "_ctor() {\r\n");
             foreach(var cls in clss) {
                 sb.Append(cls.GetStaticFieldsInit());
             }
-            sb.Append("}}; static $class $instance;\r\n");
+            sb.Append("};\r\n");
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
         }
@@ -420,12 +435,19 @@ namespace QSharpCompiler
         private void writeMain() {
             StringBuilder sb = new StringBuilder();
 
+            foreach(var lib in Program.libs) {
+                sb.Append("extern void $" + lib + "_ctor();\r\n");
+            }
+
             sb.Append("namespace Qt::Core {\r\n");;
             sb.Append("int g_argc;\r\n");
             sb.Append("const char **g_argv;\r\n");
             sb.Append("}\r\n");
             sb.Append("int main(int argc, const char **argv) {\r\n");
             sb.Append("std::shared_ptr<QVector<std::shared_ptr<Qt::Core::String>>> args = std::make_shared<QVector<std::shared_ptr<Qt::Core::String>>>();\r\n");
+            foreach(var lib in Program.libs) {
+                sb.Append("$" + lib + "_ctor();\r\n");
+            }
             sb.Append("for(int a=1;a<argc;a++) {args->append(std::make_shared<Qt::Core::String>(argv[a]));}\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
             sb.Append("return 0;}\r\n");
