@@ -1380,6 +1380,14 @@ namespace QSharpCompiler
             }
         }
 
+        private int GetNumArgs(SyntaxNode node) {
+            ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
+            String str = symbol.ToString();  //delegate(args...)
+            if (str.EndsWith("()")) return 0;
+            String[] args = str.Split(",");
+            return args.Length;
+        }
+
         private void expressionNode(SyntaxNode node, OutputBuffer ob, bool lvalue = false, bool argument = false) {
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             Type type;
@@ -1401,8 +1409,13 @@ namespace QSharpCompiler
                         }
                         ob.Append(type.GetTypeType());
                         if (argument && type.isSymbolMethod()) {
-                            ob.Append(", this)");
-                            //TODO : need to add std::placeholders::_1, ... for # of arguments to delegate
+                            ob.Append(", this");
+                            //add std::placeholders::_1, ... for # of arguments to delegate
+                            int numArgs = GetNumArgs(node);
+                            for(int a=0;a<numArgs;a++) {
+                                ob.Append(", std::placeholders::_" + (a+1));
+                            }
+                            ob.Append(")");
                         }
                     }
                     break;

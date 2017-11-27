@@ -28,7 +28,6 @@ C# features not supported (yet):
  - operators
  - events
  - switch on strings
- - passing member function as delegate - zero argument delegates do work
  - assign member function to delegate (use lambdas instead)
  - using inner classes from another class
 
