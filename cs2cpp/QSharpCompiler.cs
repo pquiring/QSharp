@@ -1388,7 +1388,7 @@ namespace QSharpCompiler
             return args.Length;
         }
 
-        private void expressionNode(SyntaxNode node, OutputBuffer ob, bool lvalue = false, bool argument = false) {
+        private void expressionNode(SyntaxNode node, OutputBuffer ob, bool lvalue = false, bool argument = false, bool invoke = false) {
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             Type type;
             switch (node.Kind()) {
@@ -1485,6 +1485,22 @@ namespace QSharpCompiler
                 case SyntaxKind.SimpleMemberAccessExpression:
                     SyntaxNode left = GetChildNode(node, 1);
                     SyntaxNode right = GetChildNode(node, 2);
+                    if (!invoke && isMethod(right)) {
+                        //delegate method
+                        int numArgs = GetNumArgs(right);
+                        ob.Append("std::bind(&");
+                        ITypeSymbol dtype = file.model.GetTypeInfo(left).Type;
+                        ob.Append(dtype.ToString().Replace(".", "::"));
+                        ob.Append("::");
+                        expressionNode(right, ob);
+                        ob.Append(",");
+                        expressionNode(left, ob);  //'this'
+                        for(int a=0;a<numArgs;a++) {
+                            ob.Append(", std::placeholders::_" + (a+1));
+                        }
+                        ob.Append(")");
+                        break;
+                    }
                     if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(left)) {
                         expressionNode(left, ob, lvalue);
                         ob.Append("::");
@@ -1765,6 +1781,12 @@ namespace QSharpCompiler
             return type.TypeKind == TypeKind.Delegate;
         }
 
+        private bool isMethod(SyntaxNode node) {
+            ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
+            if (symbol == null) return false;
+            return symbol.Kind == SymbolKind.Method;
+        }
+
         private void binaryNode(SyntaxNode node, OutputBuffer ob, string op) {
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(op);
@@ -1898,7 +1920,7 @@ namespace QSharpCompiler
             if (isDelegate(id)) {
                 ob.Append("$checkDelegate(");
             }
-            expressionNode(id, ob, true);
+            expressionNode(id, ob, true, false, true);
             if (isDelegate(id)) {
                 ob.Append(")");
             }
