@@ -1388,7 +1388,7 @@ namespace QSharpCompiler
             return args.Length;
         }
 
-        private void expressionNode(SyntaxNode node, OutputBuffer ob, bool lvalue = false, bool argument = false, bool invoke = false) {
+        private void expressionNode(SyntaxNode node, OutputBuffer ob, bool lvalue = false, bool argument = false, bool invoke = false, bool assignment = false) {
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             Type type;
             switch (node.Kind()) {
@@ -1404,11 +1404,11 @@ namespace QSharpCompiler
                             ob.Append("$get_" + type.type + "()");
                         break;
                     } else {
-                        if (argument && type.isSymbolMethod()) {
+                        if ((argument || assignment) && type.isSymbolMethod()) {
                             ob.Append("std::bind(&");
                         }
                         ob.Append(type.GetTypeType());
-                        if (argument && type.isSymbolMethod()) {
+                        if ((argument || assignment) && type.isSymbolMethod()) {
                             ob.Append(", this");
                             //add std::placeholders::_1, ... for # of arguments to delegate
                             int numArgs = GetNumArgs(node);
@@ -1485,7 +1485,7 @@ namespace QSharpCompiler
                 case SyntaxKind.SimpleMemberAccessExpression:
                     SyntaxNode left = GetChildNode(node, 1);
                     SyntaxNode right = GetChildNode(node, 2);
-                    if (!invoke && isMethod(right)) {
+                    if ((!invoke || assignment) && isMethod(right)) {
                         //delegate method
                         int numArgs = GetNumArgs(right);
                         ob.Append("std::bind(&");
@@ -1898,12 +1898,12 @@ namespace QSharpCompiler
             if (isProperty(left)) {
                 expressionNode(left, method, true);
                 method.Append("(");
-                expressionNode(right, method);
+                expressionNode(right, method, false, false, false, true);
                 method.Append(")");
             } else {
                 expressionNode(left, method);
                 method.Append(" = ");
-                expressionNode(right, method);
+                expressionNode(right, method, false, false, false, true);
             }
         }
 
