@@ -145,72 +145,76 @@ namespace QSharpCompiler
         {
             int idx = 0;
             foreach(var node in nodes) {
-                for(int a=0;a<lvl;a++) {
-                  Console.Write("  ");
-                }
-                String ln = "node[" + lvl + "][" + idx + "]=" + node.Kind();
-                ISymbol decl = file.model.GetDeclaredSymbol(node);
-                if (decl != null) {
-                    ln += ",DeclSymbol=" + decl.Name;
-                } else {
-                    ln += ",DeclSymbol=null";
-                }
-                ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
-                if (symbol != null) {
-                    ln += ",Symbol=" + symbol.ToString();
-                    ln += ",Symbol.Kind=" + symbol.Kind;
-                    ln += ",Symbol.Name=" + symbol.Name;
-                    ln += ",Symbol.IsStatic=" + symbol.IsStatic;
-                    ITypeSymbol containing = symbol.ContainingType;
-                    if (containing != null) {
-                        ln += ",Symbol.ContainingType.TypeKind=" + containing.TypeKind;
-                    }
-                } else {
-                    ln += ",symbol=null";
-                }
-                ITypeSymbol type = file.model.GetTypeInfo(node).Type;
-                if (type != null) {
-                    ln += ",Type=" + type.ToString();
-                    ln += ",Type.IsStatic=" + type.IsStatic;
-                    ln += ",Type.Kind=" + type.Kind;
-                    ln += ",Type.TypeKind=" + type.TypeKind;
-                    ln += ",Type.OrgDef=" + type.OriginalDefinition;
-                    ln += ",Type.SpecialType=" + type.SpecialType;
-                    INamedTypeSymbol baseType = type.BaseType;
-                    if (baseType != null) {
-                        ln += ",Type.BaseType=" + baseType;
-                        ln += ",Type.BaseType.Name=" + baseType.Name;
-                        ln += ",Type.BaseType.TypeKind=" + baseType.TypeKind;
-                        ln += ",Type.BaseType.OrgDef=" + baseType.OriginalDefinition;
-                        ln += ",Type.BaseType.SpecialType=" + baseType.SpecialType;
-                    }
-                } else {
-                    ln += ",Type=null";
-                }
-                foreach(var diag in file.model.GetDiagnostics()) {
-                    ln += ",diag=" + diag.ToString();
-                }
-                foreach(var diag in file.model.GetSyntaxDiagnostics()) {
-                    ln += ",syntaxdiag=" + diag.ToString();
-                }
-                foreach(var diag in file.model.GetDeclarationDiagnostics()) {
-                    ln += ",decldiag=" + diag.ToString();
-                }
-                foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
-                    ln += ",methoddiag=" + diag.ToString();
-                }
-                Object value = file.model.GetConstantValue(node).Value;
-                if (value != null) {
-                    ln += ",Constant=" + value.ToString().Replace("\r", "").Replace("\n", "");
-                }
-                if (debugToString) {
-                    ln += ",ToString=" + node.ToString().Replace("\r", "").Replace("\n", "");
-                }
-                Console.WriteLine(ln);
+                printNode(file, node, lvl, idx);
                 if (debugTokens) printTokens(file, node.ChildTokens(), lvl);
                 printNodes(file, node.ChildNodes(), lvl+1);
                 idx++;
             }
+        }
+
+        public static void printNode(Source file, SyntaxNode node, int lvl, int idx) {
+            for(int a=0;a<lvl;a++) {
+                Console.Write("  ");
+            }
+            String ln = "node[" + lvl + "][" + idx + "]=" + node.Kind();
+            ISymbol decl = file.model.GetDeclaredSymbol(node);
+            if (decl != null) {
+                ln += ",DeclSymbol=" + decl.Name;
+            } else {
+                ln += ",DeclSymbol=null";
+            }
+            ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
+            if (symbol != null) {
+                ln += ",Symbol=" + symbol.ToString();
+                ln += ",Symbol.Kind=" + symbol.Kind;
+                ln += ",Symbol.Name=" + symbol.Name;
+                ln += ",Symbol.IsStatic=" + symbol.IsStatic;
+                ITypeSymbol containing = symbol.ContainingType;
+                if (containing != null) {
+                    ln += ",Symbol.ContainingType.TypeKind=" + containing.TypeKind;
+                }
+            } else {
+                ln += ",symbol=null";
+            }
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type != null) {
+                ln += ",Type=" + type.ToString();
+                ln += ",Type.IsStatic=" + type.IsStatic;
+                ln += ",Type.Kind=" + type.Kind;
+                ln += ",Type.TypeKind=" + type.TypeKind;
+                ln += ",Type.OrgDef=" + type.OriginalDefinition;
+                ln += ",Type.SpecialType=" + type.SpecialType;
+                INamedTypeSymbol baseType = type.BaseType;
+                if (baseType != null) {
+                    ln += ",Type.BaseType=" + baseType;
+                    ln += ",Type.BaseType.Name=" + baseType.Name;
+                    ln += ",Type.BaseType.TypeKind=" + baseType.TypeKind;
+                    ln += ",Type.BaseType.OrgDef=" + baseType.OriginalDefinition;
+                    ln += ",Type.BaseType.SpecialType=" + baseType.SpecialType;
+                }
+            } else {
+                ln += ",Type=null";
+            }
+            foreach(var diag in file.model.GetDiagnostics()) {
+                ln += ",diag=" + diag.ToString();
+            }
+            foreach(var diag in file.model.GetSyntaxDiagnostics()) {
+                ln += ",syntaxdiag=" + diag.ToString();
+            }
+            foreach(var diag in file.model.GetDeclarationDiagnostics()) {
+                ln += ",decldiag=" + diag.ToString();
+            }
+            foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
+                ln += ",methoddiag=" + diag.ToString();
+            }
+            Object value = file.model.GetConstantValue(node).Value;
+            if (value != null) {
+                ln += ",Constant=" + value.ToString().Replace("\r", "").Replace("\n", "");
+            }
+            if (debugToString) {
+                ln += ",ToString=" + node.ToString().Replace("\r", "").Replace("\n", "");
+            }
+            Console.WriteLine(ln);
         }
 
         void printTokens(Source file, IEnumerable<SyntaxToken> tokens, int lvl)
@@ -1397,7 +1401,6 @@ namespace QSharpCompiler
                 case SyntaxKind.QualifiedName:
                     type = new Type(node);
                     if (isProperty(node)) {
-                        ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                         if (lvalue)
                             ob.Append("$set_" + type.type);
                         else
@@ -1501,7 +1504,7 @@ namespace QSharpCompiler
                         ob.Append(")");
                         break;
                     }
-                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(left)) {
+                    if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(left) || (isNamedType(left) && isNamedType(right))) {
                         expressionNode(left, ob, lvalue);
                         ob.Append("::");
                         expressionNode(right, ob, lvalue);
@@ -1752,6 +1755,7 @@ namespace QSharpCompiler
 
         private bool isClass(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
             return (type.TypeKind == TypeKind.Class);
         }
 
@@ -1785,6 +1789,12 @@ namespace QSharpCompiler
             ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
             if (symbol == null) return false;
             return symbol.Kind == SymbolKind.Method;
+        }
+
+        private bool isNamedType(SyntaxNode node) {
+            ISymbol symbol = Generate.file.model.GetSymbolInfo(node).Symbol;
+            if (symbol == null) return false;
+            return symbol.Kind == SymbolKind.NamedType;
         }
 
         private void binaryNode(SyntaxNode node, OutputBuffer ob, string op) {
