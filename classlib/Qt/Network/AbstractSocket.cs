@@ -4,9 +4,9 @@ using Qt.QSharp;
 namespace Qt.Network {
     [CPPClass(
         "private: std::shared_ptr<QAbstractSocket> $q;" +
-        "public: void $base(std::shared_ptr<QAbstractSocket> as) {$q = as; IODevice::$base((std::shared_ptr<QIODevice>)as);}"
+        "public: void $base(std::shared_ptr<QAbstractSocket> as) {$q = as; IOStream::$base((std::shared_ptr<QIODevice>)as);}"
     )]
-    public class AbstractSocket : IODevice {
+    public class AbstractSocket : IOStream {
         public void Abort() {CPP.Add("$q->abort();");}
         public void Bind(int port = 0) {CPP.Add("$q->bind(port);");}
         public void Connect(String host, int port) {CPP.Add("$q->connectToHost(host->qstring(), port);");}

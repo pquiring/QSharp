@@ -24,6 +24,8 @@
 #include <QtCore/QTime>
 #include <QtCore/QDateTime>
 #include <QtCore/QUrl>
+#include <QtCore/QByteArray>
+#include <QtCore/QBuffer>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>

@@ -4,7 +4,7 @@ namespace Qt.Core {
     [CPPClass(
         "private: std::shared_ptr<QFile> $q;"
     )]
-    public class File : IODevice {
+    public class File : IOStream {
         public File(String filename) {
             CPP.Add("$q = std::make_shared<QFile>(filename->qstring());");
             CPP.Add("$base($q);");

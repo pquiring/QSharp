@@ -36,7 +36,7 @@ namespace Qt.Gui {
             }
             return ok;
         }
-        public bool Load(IODevice io, String fmt = null) {
+        public bool Load(IOStream io, String fmt = null) {
             CPP.Add("const char *cfmt = nullptr;  if (fmt.get() != nullptr) cfmt = fmt->cstring();");
             bool ok = false;
             CPP.Add("ok = $q->load(io->$q.get(), cfmt)");
@@ -49,7 +49,7 @@ namespace Qt.Gui {
             CPP.Add("const char *cfmt = nullptr;  if (fmt.get() != nullptr) cfmt = fmt->cstring();");
             return CPP.ReturnBool("$q->save(file->qstring(), cfmt)");
         }
-        public bool Save(IODevice io, String fmt) {
+        public bool Save(IOStream io, String fmt) {
             return CPP.ReturnBool("$q->save(io->$q.get(), (const char*)$deref(fmt)->cstring())");
         }
         public void SetPixel(int x, int y, uint px) {

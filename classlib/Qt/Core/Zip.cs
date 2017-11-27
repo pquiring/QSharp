@@ -4,9 +4,9 @@ namespace Qt.Core {
     public enum ZipMode { mdNotOpen, mdUnzip, mdCreate, mdAppend, mdAdd }
     [CPPClass(
         "private: std::shared_ptr<QuaZipFile> $q;" +
-        "public: void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IODevice::$base((std::shared_ptr<QIODevice>)zf);}"
+        "public: void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IOStream::$base((std::shared_ptr<QIODevice>)zf);}"
     )]
-    public class ZipEntry : IODevice {
+    public class ZipEntry : IOStream {
         private String _filename;
         public String filename {get {return _filename;}}
         public ZipEntry(String filename) {

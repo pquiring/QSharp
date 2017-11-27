@@ -5,9 +5,9 @@ namespace Qt.Network {
     [CPPClass(
         "public: std::shared_ptr<QNetworkReply> $q;" +
         "public: WebReply() {}" +  //invalid
-        "public: WebReply(QNetworkReply *reply) {$q.reset(reply); IODevice::$base((std::shared_ptr<QIODevice>)$q);} "
+        "public: WebReply(QNetworkReply *reply) {$q.reset(reply); IOStream::$base((std::shared_ptr<QIODevice>)$q);} "
     )]
-    public abstract class WebReply : IODevice {
+    public abstract class WebReply : IOStream {
         protected WebReply() {}
         private ByteArray data;
         private Map<String, String> args = new Map<String, String>();

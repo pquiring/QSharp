@@ -32,7 +32,7 @@ namespace Qt.Network {
         public WebReply Post(WebRequest request) {
             return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->post(*request->$q, *request->GetData()->$q));");
         }
-        public WebReply Post(WebRequest request, IODevice io) {
+        public WebReply Post(WebRequest request, IOStream io) {
             return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->post(*request->$q, io->$q.get()));");
         }
         public WebReply Post(WebRequest request, ByteArray array) {
@@ -41,7 +41,7 @@ namespace Qt.Network {
         public WebReply Put(WebRequest request) {
             return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->put(*request->$q, *request->GetData()->$q));");
         }
-        public WebReply Put(WebRequest request, IODevice io) {
+        public WebReply Put(WebRequest request, IOStream io) {
             return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->put(*request->$q, io->$q.get()));");
         }
         public WebReply Put(WebRequest request, ByteArray array) {
