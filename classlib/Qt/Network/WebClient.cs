@@ -18,11 +18,11 @@ namespace Qt.Network {
         }
         public WebReply Process(WebRequest request) {
             switch (request.GetMethod()) {
-                case Method.Get: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->get(*request->$q));");
-                case Method.Post: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->post(*request->$q, *request->GetData()->$q));");
-                case Method.Put: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->put(*request->$q, *request->GetData()->$q));");
-                case Method.Head: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->head(*request->$q));");
-                case Method.Delete: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->deleteResource(*request->$q));");
+                case WebMethod.Get: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->get(*request->$q));");
+                case WebMethod.Post: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->post(*request->$q, *request->GetData()->$q));");
+                case WebMethod.Put: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->put(*request->$q, *request->GetData()->$q));");
+                case WebMethod.Head: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->head(*request->$q));");
+                case WebMethod.Delete: return (WebReply)CPP.ReturnObject("std::make_shared<WebReply>($q->deleteResource(*request->$q));");
             }
             return null;
         }

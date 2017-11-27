@@ -2,19 +2,19 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Network {
-    public enum Method {Get, Post, Put, Delete, Head, Unknown}
+    public enum WebMethod {Get, Post, Put, Delete, Head, Unknown}
     [CPPClass(
         "public: std::shared_ptr<QNetworkRequest> $q;"
     )]
     public class WebRequest {
         private ByteArray data;
-        private Method method = Method.Get;
+        private WebMethod method = WebMethod.Get;
         private Url url;
         private Map<String, String> args = new Map<String, String>();
         public WebRequest(Url url) {
             SetUrl(url);
         }
-        public WebRequest(Method method, Url url) {
+        public WebRequest(WebMethod method, Url url) {
             this.method = method;
             SetUrl(url);
         }
@@ -64,21 +64,21 @@ namespace Qt.Network {
             }
             return null;
         }
-        public Method GetMethod() {
+        public WebMethod GetMethod() {
             return method;
         }
-        public void SetMethod(Method method) {
+        public void SetMethod(WebMethod method) {
             this.method = method;
         }
-        public static Method GetMethod(String method) {
+        public static WebMethod GetMethod(String method) {
             //TODO : once switch string is supported update this code
             method = method.ToUpperCase();
-            if (method.Equals("GET")) return Method.Get;
-            if (method.Equals("POST")) return Method.Post;
-            if (method.Equals("PUT")) return Method.Put;
-            if (method.Equals("DELETE")) return Method.Delete;
-            if (method.Equals("HEAD")) return Method.Head;
-            return Method.Unknown;
+            if (method.Equals("GET")) return WebMethod.Get;
+            if (method.Equals("POST")) return WebMethod.Post;
+            if (method.Equals("PUT")) return WebMethod.Put;
+            if (method.Equals("DELETE")) return WebMethod.Delete;
+            if (method.Equals("HEAD")) return WebMethod.Head;
+            return WebMethod.Unknown;
         }
     }
 }

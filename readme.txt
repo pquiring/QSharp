@@ -30,7 +30,7 @@ C# features not supported (yet):
  - switch on strings
  - passing member function as delegate - zero argument delegates do work
  - assign member function to delegate (use lambdas instead)
- - inner classes are almost working
+ - using inner classes from another class
 
 Compiling:
 
