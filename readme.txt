@@ -28,8 +28,6 @@ C# features not supported (yet):
  - operators
  - events
  - switch on strings
- - assign member function to delegate (use lambdas instead)
- - using inner classes from another class
 
 Compiling:
 
