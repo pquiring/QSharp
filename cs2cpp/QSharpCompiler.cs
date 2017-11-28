@@ -1344,33 +1344,30 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.SwitchStatement:
                     // var, [SwitchSection...]
-                    method.Append("switch (");
                     SyntaxNode var = GetChildNode(node);
                     if (GetTypeName(var) == "Qt::Core::String") {
-                        Console.WriteLine("switch (String) {} not supported (yet)");
-                        Environment.Exit(0);
+                        switchString(node);
+                        break;
                     }
+                    method.Append("switch (");
                     expressionNode(var, method);
                     method.Append(") {\r\n");
-                    bool skip = true;
                     foreach(var section in node.ChildNodes()) {
-                        if (skip) {skip = false; continue;}  //var
-                        //section == SyntaxKind.SwitchSection
-                        SyntaxNode secType = GetChildNode(section);
-                        switch (secType.Kind()) {
-                            case SyntaxKind.CaseSwitchLabel:
-                                method.Append("case ");
-                                expressionNode(GetChildNode(secType), method);
-                                method.Append(":");
-                                break;
-                            case SyntaxKind.DefaultSwitchLabel:
-                                method.Append("default:");
-                                break;
-                        }
-                        bool skip2 = true;
-                        foreach(var statement in section.ChildNodes()) {
-                            if (skip2) {skip2 = false; continue;}  //Case/Default SwitchLabel
-                            statementNode(statement);
+                        if (section.Kind() != SyntaxKind.SwitchSection) continue;
+                        foreach(var child in section.ChildNodes()) {
+                            switch (child.Kind()) {
+                                case SyntaxKind.CaseSwitchLabel:
+                                    method.Append("case ");
+                                    expressionNode(GetChildNode(child), method);
+                                    method.Append(":");
+                                    break;
+                                case SyntaxKind.DefaultSwitchLabel:
+                                    method.Append("default:");
+                                    break;
+                                default:
+                                    statementNode(child);
+                                    break;
+                            }
                         }
                     }
                     method.Append("}\r\n");
@@ -1382,6 +1379,75 @@ namespace QSharpCompiler
                     method.Append("continue;\r\n");
                     break;
             }
+        }
+
+        public void switchString(SyntaxNode node) {
+            //SwitchStatement -> [SwitchSection -> [CaseSwitchLabel, [Default] ...] [Statements...] ...]
+            SyntaxNode var = GetChildNode(node);
+            String ssid = "$ss_" + cls.switchStringCnt++;
+            method.Append("bool " + ssid + " = false;\r\n");  //set to true if case block used (else default is used)
+            method.Append("while (true) {\r\n");
+            SyntaxNode defaultSection = null;
+            foreach(var section in node.ChildNodes()) {
+                if (section.Kind() != SyntaxKind.SwitchSection) continue;
+                if (hasDefault(section)) {
+                    defaultSection = section;
+                } else {
+                    switchStringSection(var, section, ssid);
+                }
+            }
+            if (defaultSection != null) {
+                switchStringSection(var, defaultSection, ssid);
+            }
+            method.Append("}\r\n");  //end of while loop
+        }
+
+        public bool hasDefault(SyntaxNode section) {
+            foreach(var child in section.ChildNodes()) {
+                if (child.Kind() == SyntaxKind.DefaultSwitchLabel) return true;
+            }
+            return false;
+        }
+
+        public void switchStringSection(SyntaxNode var, SyntaxNode section, String ssid) {
+            bool first = true;
+            bool statements = false;
+            foreach(var child in section.ChildNodes()) {
+                switch (child.Kind()) {
+                    case SyntaxKind.CaseSwitchLabel:
+                        if (first) {
+                            method.Append("if (");
+                            first = false;
+                        } else {
+                            method.Append("||");
+                        }
+                        method.Append("(");
+                        expressionNode(var, method);
+                        method.Append("->Equals(");
+                        expressionNode(GetChildNode(child), method);
+                        method.Append("))");
+                        break;
+                    case SyntaxKind.DefaultSwitchLabel:
+                        if (first) {
+                            method.Append("if (");
+                            first = false;
+                        } else {
+                            method.Append("||");
+                        }
+                        method.Append("(!" + ssid + ")");
+                        break;
+                    default:
+                        //statements
+                        if (!statements) {
+                            method.Append(") {\r\n");
+                            method.Append(ssid + " = true;\r\n");
+                            statements = true;
+                        }
+                        statementNode(child);
+                        break;
+                }
+            }
+            method.Append("}\r\n");  //end of statements
         }
 
         private int GetNumArgs(SyntaxNode node) {
@@ -1577,7 +1643,7 @@ namespace QSharpCompiler
                     binaryNode(node, ob, ">=");
                     break;
                 case SyntaxKind.EqualsExpression:
-                    binaryNode(node, ob, "==");
+                    equalsNode(node, ob);
                     break;
                 case SyntaxKind.NotEqualsExpression:
                     binaryNode(node, ob, "!=");
@@ -1803,6 +1869,20 @@ namespace QSharpCompiler
             expressionNode(GetChildNode(node, 2), ob);
         }
 
+        private void equalsNode(SyntaxNode node, OutputBuffer ob) {
+            SyntaxNode left = GetChildNode(node, 1);
+            SyntaxNode right = GetChildNode(node, 2);
+            if (GetTypeName(left) == "Qt::Core::String" && GetTypeName(right) == "Qt::Core::String") {
+                //string comparison : invoke left.Equals(right) [NOTE: Use Object.ReferenceEquals() to compare pointers]
+                expressionNode(left, ob);
+                ob.Append("->Equals(");
+                expressionNode(right, ob);
+                ob.Append(")");
+            } else {
+                binaryNode(node, ob, "==");
+            }
+        }
+
         private void binaryAssignNode(SyntaxNode node, OutputBuffer ob, string op) {
             expressionNode(GetChildNode(node, 1), ob, true);
             ob.Append(" = ");
@@ -1996,11 +2076,13 @@ namespace QSharpCompiler
 
         private string GetTypeName(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return "";
             return type.ToString().Replace(".", "::");
         }
 
         private TypeKind GetTypeKind(SyntaxNode node) {
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return TypeKind.Error;
             return type.TypeKind;
         }
     }
@@ -2070,6 +2152,7 @@ namespace QSharpCompiler
         public int lockCnt;
         public int finallyCnt;
         public int enumCnt;
+        public int switchStringCnt;
         public bool Generic;
         public List<Type> GenericArgs = new List<Type>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;

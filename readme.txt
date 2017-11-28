@@ -27,7 +27,7 @@ C# features not supported (yet):
  - reflection
  - operators
  - events
- - switch on strings
+ - goto switch case label
 
 Compiling:
 
