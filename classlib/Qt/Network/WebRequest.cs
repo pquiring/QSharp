@@ -71,13 +71,14 @@ namespace Qt.Network {
             this.method = method;
         }
         public static WebMethod GetMethod(String method) {
-            //TODO : once switch string is supported update this code
             method = method.ToUpperCase();
-            if (method.Equals("GET")) return WebMethod.Get;
-            if (method.Equals("POST")) return WebMethod.Post;
-            if (method.Equals("PUT")) return WebMethod.Put;
-            if (method.Equals("DELETE")) return WebMethod.Delete;
-            if (method.Equals("HEAD")) return WebMethod.Head;
+            switch (method) {
+                case "GET": return WebMethod.Get;
+                case "POST": return WebMethod.Post;
+                case "PUT": return WebMethod.Put;
+                case "DELETE": return WebMethod.Delete;
+                case "HEAD": return WebMethod.Head;
+            }
             return WebMethod.Unknown;
         }
     }
