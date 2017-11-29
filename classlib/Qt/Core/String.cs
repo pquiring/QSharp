@@ -99,20 +99,12 @@ namespace Qt.Core {
 
         public String[] Split(char ch) {
             CPP.Add("QStringList list = $q->split(ch);");
-            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
-            CPP.Add("int cnt = list.count();");
-            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]);}");
-            return (String[])CPP.ReturnObject("array");
+            return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
 
         public String[] Split(String str) {
             CPP.Add("QStringList list = $q->split(str->qstring());");
-            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
-            CPP.Add("int cnt = list.count();");
-            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]);}");
-            return (String[])CPP.ReturnObject("array");
+            return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
 
         public String Substring(int start, int len = -1) {

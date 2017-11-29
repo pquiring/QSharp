@@ -1,3 +1,5 @@
+//String $add()
+
 std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2) {
   std::shared_ptr<Qt::Core::String> s = std::make_shared<Qt::Core::String>();
   s->$q->append(*(s1->$q));
@@ -104,4 +106,19 @@ std::shared_ptr<Qt::Core::String> $add(double x, std::shared_ptr<Qt::Core::Strin
   return s;
 }
 
+//QStringList <-> String[] conversions
 
+std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list) {
+  std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> array;
+  int cnt = list.count();
+  array = std::make_shared<QSharpArray<std::shared_ptr<Qt::Core::String>>>(cnt);
+  for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]);}
+  return array;
+}
+
+QStringList $StringArrayToQStringList(std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> array) {
+  QStringList list;
+  int cnt = array->Length;
+  for(int idx=0;idx<cnt;idx++) {list.append(array->at(idx)->qstring());}
+  return list;
+}
