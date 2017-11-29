@@ -58,6 +58,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QColorDialog>
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QTableWidget>
