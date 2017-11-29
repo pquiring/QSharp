@@ -78,6 +78,7 @@ namespace QSharpCompiler
                 }
             }
             new Program().process(args[0], args[1], args[2]);
+            Console.WriteLine("cs2cpp generated " + args[1]);
         }
 
         void process(string cs, string cpp, string hpp)
