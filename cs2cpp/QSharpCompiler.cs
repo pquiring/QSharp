@@ -1684,6 +1684,9 @@ namespace QSharpCompiler
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                     binaryAssignNode(node, ob, "^");
                     break;
+                case SyntaxKind.ExclusiveOrExpression:
+                    binaryNode(node, ob, "^");
+                    break;
                 case SyntaxKind.LogicalNotExpression:
                     ob.Append("!");
                     expressionNode(GetChildNode(node), ob);
