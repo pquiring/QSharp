@@ -1378,6 +1378,10 @@ namespace QSharpCompiler
                 case SyntaxKind.ContinueStatement:
                     method.Append("continue;\r\n");
                     break;
+                default:
+                    Console.WriteLine("Error:Statement not supported:" + node.Kind());
+                    Environment.Exit(0);
+                    break;
             }
         }
 
@@ -1764,6 +1768,10 @@ namespace QSharpCompiler
                 case SyntaxKind.DefaultExpression:
                     expressionNode(GetChildNode(node), ob);
                     ob.Append("()");
+                    break;
+                default:
+                    Console.WriteLine("Error:Unsupported expression:" + node.Kind());
+                    Environment.Exit(0);
                     break;
             }
         }
