@@ -1675,6 +1675,12 @@ namespace QSharpCompiler
                 case SyntaxKind.DivideAssignmentExpression:
                     binaryAssignNode(node, ob, "/");
                     break;
+                case SyntaxKind.OrAssignmentExpression:
+                    binaryAssignNode(node, ob, "|");
+                    break;
+                case SyntaxKind.AndAssignmentExpression:
+                    binaryAssignNode(node, ob, "&");
+                    break;
                 case SyntaxKind.LogicalNotExpression:
                     ob.Append("!");
                     expressionNode(GetChildNode(node), ob);
