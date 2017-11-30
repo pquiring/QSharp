@@ -5,8 +5,8 @@ namespace Qt.Gui {
     [CPPClass(
         "public: QTextEdit *$q;"
     )]
-    public class TextEdit : AbstractScrollArea {
-        public TextEdit() {
+    public class TextArea : AbstractScrollArea {
+        public TextArea() {
             CPP.Add("$q = new QTextEdit();");
             CPP.Add("AbstractScrollArea::$base($q);");
         }

@@ -68,6 +68,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QSystemTrayIcon>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QTextEdit>
 
 #include <QtWidgets/QLayout>
