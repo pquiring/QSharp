@@ -2,6 +2,7 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
+    public enum ToolBarArea {NoToolBarArea = 0, LeftToolBarArea = 0x1, RightToolBarArea = 0x2, TopToolBarArea = 0x4, BottomToolBarArea = 0x8, AllToolBarAreas = 0xf}
     [CPPClass(
         "public: QMainWindow *$q;" +
         "public: void $base(QMainWindow *$d) {$q = $d;}"
@@ -19,6 +20,12 @@ namespace Qt.Gui {
         }
         public void SetMenuBar(MenuBar menubar) {
             CPP.Add("$q->setMenuBar(menubar->$q);");
+        }
+        public void AddToolBar(ToolBar toolbar) {
+            CPP.Add("$q->addToolBar(toolbar->$q);");
+        }
+        public void AddToolBar(ToolBarArea toolbararea, ToolBar toolbar) {
+            CPP.Add("$q->addToolBar((Qt::ToolBarArea)toolbararea, toolbar->$q);");
         }
     }
 }
