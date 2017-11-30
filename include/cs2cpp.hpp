@@ -70,6 +70,7 @@
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QTextEdit>
+#include <QtWidgets/QToolBar>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
