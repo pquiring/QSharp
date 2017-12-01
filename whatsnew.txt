@@ -1,6 +1,10 @@
 What's new
 ==========
 
+Dec 1, 2017 : 0.6
+ - more new Qt classes (WebServer, SslServer, Widgets, etc.)
+ - more compiler fixes
+
 Nov 24, 2017 : 0.5
  - added more Widgets
  - added AES Cipher
