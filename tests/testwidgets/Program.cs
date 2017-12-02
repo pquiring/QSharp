@@ -24,12 +24,12 @@ namespace testwidgets
         public static GroupBox group() {
             GroupBox group = new GroupBox("Group Box");
             VBoxLayout layout = new VBoxLayout();
-            PushButton pb = new PushButton();
+            Button pb = new Button();
             pb.SetText("Test #1");
-            pb.OnClicked((bool selected) => {Console.WriteLine("Clicked Button!");});
+            pb.OnClicked(() => {Console.WriteLine("Clicked Button!");});
             layout.AddWidget(pb);
-            PushButton pb2 = new PushButton("Test #2");
-            layout.AddWidget(pb2);
+            ToggleButton tb = new ToggleButton("Test #2");
+            layout.AddWidget(tb);
             group.SetLayout(layout);
             return group;
         }
