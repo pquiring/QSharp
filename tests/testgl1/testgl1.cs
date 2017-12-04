@@ -95,7 +95,7 @@ public class TriangleWindow : OpenGLWindow
 
     public static void Main(string[] args)
     {
-        GuiApplication app = new GuiApplication();
+        OpenGLApplication app = new OpenGLApplication();
 
         SurfaceFormat format = new SurfaceFormat();
         format.SetSamples(32);
