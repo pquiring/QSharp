@@ -28,10 +28,10 @@ namespace Qt.Gui {
             CPP.Add("$q->setText(text->qstring());");
         }
         public bool IsPasswordMode() {
-            return CPP.ReturnBool("($q->echoMode() == QLineEdit::PasswordEchoOnEdit)");
+            return CPP.ReturnBool("($q->echoMode() == QLineEdit::Password)");
         }
         public void SetPasswordMode(bool passwordMode) {
-            CPP.Add("$q->setEchoMode(passwordMode ? QLineEdit::PasswordEchoOnEdit : QLineEdit::Normal);");
+            CPP.Add("$q->setEchoMode(passwordMode ? QLineEdit::Password : QLineEdit::Normal);");
         }
     }
 }
