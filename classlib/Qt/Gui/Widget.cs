@@ -39,10 +39,5 @@ namespace Qt.Gui {
         public void SetWindowTitle(String title) {
             CPP.Add("$q->setWindowTitle(title->qstring());");
         }
-        public Window GetWindow() {
-            CPP.Add("std::shared_ptr<Window> window;");
-            CPP.Add("window = std::make_shared<Window>($q->windowHandle());");
-            return (Window)CPP.ReturnObject("window");
-        }
     }
 }

@@ -42,6 +42,11 @@ namespace Qt.Gui {
         public void Reject() {
             CPP.Add("$q->reject();");
         }
+        public NativeWindow GetNativeWindow() {
+            CPP.Add("std::shared_ptr<Window> window;");
+            CPP.Add("window = std::make_shared<Window>($q->windowHandle());");
+            return (NativeWindow)CPP.ReturnObject("window");
+        }
 
         private AcceptedEvent accepted;
         private void SlotAccepted() {

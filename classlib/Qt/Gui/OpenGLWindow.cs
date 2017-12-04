@@ -10,7 +10,7 @@ namespace Qt.Gui {
         "public: void resizeGL(int x, int y) {ResizeGL(x, y);}"
     )]
 
-    public class OpenGLWindow : Window {
+    public class OpenGLWindow : NativeWindow {
         public OpenGLWindow() : base(Derived.derived) {
             CPP.Add("Window::$base(this);");
         }
