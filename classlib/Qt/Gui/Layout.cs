@@ -19,5 +19,11 @@ namespace Qt.Gui {
         public bool IsEnabled() {
             return CPP.ReturnBool("$q->isEnabled();");
         }
+        public void AddLayout(Layout layout) {
+            CPP.Add("$q->addItem(layout->$q);");
+        }
+        public void RemoveLayout(Layout layout) {
+            CPP.Add("$q->removeItem(layout->$q);");
+        }
     }
 }

@@ -919,6 +919,10 @@ namespace QSharpCompiler
             method.type.primative = true;
             method.ctor = true;
             cls.hasctor = true;
+            if (cls.bases.Count > 0) {
+                method.type.Public = true;
+                method.basector = cls.bases[0] + "::$ctor();\r\n";
+            }
             if (node != null) {
                 getFlags(method.type, file.model.GetDeclaredSymbol(node));
                 IEnumerable<SyntaxNode> nodes = node.ChildNodes();
@@ -941,15 +945,6 @@ namespace QSharpCompiler
                             blockNode(child, true);
                             break;
                     }
-                }
-            } else {
-                if (cls.bases.Count > 0) {
-                    method.type.Public = true;
-                    method.Append("{");
-                    method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = this->$this.lock();\r\n");
-                    method.Append(cls.bases[0]);
-                    method.Append("::$ctor();\r\n");
-                    method.Append("}");
                 }
             }
             method.type.setTypes();

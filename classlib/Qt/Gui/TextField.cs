@@ -10,6 +10,11 @@ namespace Qt.Gui {
             CPP.Add("$q = new QLineEdit();");
             CPP.Add("Widget::$base($q);");
         }
+        public TextField(String text) {
+            CPP.Add("$q = new QLineEdit();");
+            CPP.Add("Widget::$base($q);");
+            SetText(text);
+        }
         public bool IsReadOnly() {
             return CPP.ReturnBool("$q->isReadOnly()");
         }
