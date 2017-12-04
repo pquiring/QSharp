@@ -7,8 +7,8 @@ namespace Qt.Gui {
         "public: QMainWindow *$q;" +
         "public: void $base(QMainWindow *$d) {$q = $d;}"
     )]
-    public class MainWindow : Widget {
-        public MainWindow() : base(Derived.derived) {
+    public class Window : Widget {
+        public Window() : base(Derived.derived) {
             CPP.Add("$q = new QMainWindow();");
             CPP.Add("Widget::$base($q);");
         }
@@ -28,8 +28,8 @@ namespace Qt.Gui {
             CPP.Add("$q->addToolBar((Qt::ToolBarArea)toolbararea, toolbar->$q);");
         }
         public NativeWindow GetNativeWindow() {
-            CPP.Add("std::shared_ptr<Window> window;");
-            CPP.Add("window = std::make_shared<Window>($q->windowHandle());");
+            CPP.Add("std::shared_ptr<NativeWindow> window;");
+            CPP.Add("window = std::make_shared<NativeWindow>($q->windowHandle());");
             return (NativeWindow)CPP.ReturnObject("window");
         }
     }

@@ -15,7 +15,7 @@ namespace testwidgets
             layout.AddWidget(group(), 1, 1);
             Widget widget = new Widget();
             widget.SetLayout(layout);
-            MainWindow window = new MainWindow();
+            Window window = new Window();
             window.SetSize(640, 480);
             window.SetCentralWidget(widget);
             window.Show();

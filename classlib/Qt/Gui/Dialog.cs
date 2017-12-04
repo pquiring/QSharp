@@ -43,8 +43,8 @@ namespace Qt.Gui {
             CPP.Add("$q->reject();");
         }
         public NativeWindow GetNativeWindow() {
-            CPP.Add("std::shared_ptr<Window> window;");
-            CPP.Add("window = std::make_shared<Window>($q->windowHandle());");
+            CPP.Add("std::shared_ptr<NativeWindow> window;");
+            CPP.Add("window = std::make_shared<NativeWindow>($q->windowHandle());");
             return (NativeWindow)CPP.ReturnObject("window");
         }
 

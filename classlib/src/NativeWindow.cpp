@@ -1,5 +1,5 @@
 namespace Qt::Gui {
-  bool Window::eventFilter(QObject* obj, QEvent* event)
+  bool NativeWindow::eventFilter(QObject* obj, QEvent* event)
   {
     Q_UNUSED(obj);
     if (event->type() == QEvent::KeyPress) {

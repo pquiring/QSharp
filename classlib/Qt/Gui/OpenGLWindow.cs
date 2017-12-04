@@ -12,7 +12,7 @@ namespace Qt.Gui {
 
     public class OpenGLWindow : NativeWindow {
         public OpenGLWindow() : base(Derived.derived) {
-            CPP.Add("Window::$base(this);");
+            CPP.Add("NativeWindow::$base(this);");
         }
         /** This function is called during window creation. */
         public virtual void InitializeGL() { }
