@@ -40,9 +40,9 @@ namespace Qt.Gui {
         "private: QTreeWidget *$q;" +
         "public: void $base(QTreeWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
-    public class TreeWidget : Widget {
-        protected TreeWidget(Derived derived) : base(Derived.derived) {}
-        public TreeWidget() {
+    public class Tree : Widget {
+        protected Tree(Derived derived) : base(Derived.derived) {}
+        public Tree() {
             CPP.Add("$q = new QTreeWidget();");
             CPP.Add("Widget::$base($q);");
         }
@@ -63,7 +63,7 @@ namespace Qt.Gui {
         }
         public void OnChanged(ChangedEvent changed) {
             this.changed = changed;
-            CPP.Add("$q->connect($q, &QTreeWidget::itemSelectionChanged, this, &TreeWidget::SlotChanged);");
+            CPP.Add("$q->connect($q, &QTreeWidget::itemSelectionChanged, this, &Tree::SlotChanged);");
         }
     }
 }
