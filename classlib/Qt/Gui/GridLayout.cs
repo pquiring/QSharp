@@ -2,15 +2,6 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
-    public enum Alignment {
-        AlignDefault = 0,
-        AlignLeft = 0x1, AlignRight = 0x2, AlignHCenter = 0x4, AlignJustify = 0x8,
-        AlignTop = 0x20, AlignBottom = 0x40, AlignVCenter = 0x80, AlignBaseline = 0x100,
-        AlignCenter = AlignVCenter | AlignHCenter,
-        AlignAbsolute = 0x10, AlignLeading = AlignLeft, AlignTrailing = AlignRight,
-        AlignHorizontal_Mask = AlignLeft | AlignRight | AlignHCenter | AlignJustify | AlignAbsolute,
-        AlignVertical_Mask = AlignTop | AlignBottom | AlignVCenter | AlignBaseline
-    }
     [CPPClass(
         "public: QGridLayout *$q;" +
         "public: void $base(QGridLayout *$d) {$q = $d; Layout::$base($q);}"

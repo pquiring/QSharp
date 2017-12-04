@@ -12,8 +12,9 @@ namespace Qt.Gui {
     )]
     public class Dialog : Widget {
         protected Dialog(Derived derived) : base(Derived.derived) {}
-        public Dialog() {
+        public Dialog() : base(Derived.derived) {
             CPP.Add("$q = new QDialog();");
+            CPP.Add("Widget::$base($q);");
         }
         public bool IsModal() {
             return CPP.ReturnBool("$q->isModal()");
