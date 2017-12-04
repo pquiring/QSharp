@@ -56,10 +56,10 @@ To build any test:
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
   set CXX=/usr/bin/x86_64-w64-mingw32-gcc.exe
-you should also install the 'cygwin' version of Qt5 so the headers are in the correct location,
-or create the symlink /usr/include/qt5 to /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5
+If using cygwin/mingw you need to create a symlink /usr/include/qt5 to /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5
   cd \cygwin
   ln -s /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5 /usr/include/qt5
+Do not install the cygwin version of qt5 since it's version is different and can cause unresolved linker errors.
 
 Under cygwin you should also define:
   set CMAKE_LEGACY_CYGWIN_WIN32=0
