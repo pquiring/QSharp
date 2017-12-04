@@ -24,7 +24,7 @@ Notes:
  - classlib is a work in progress
 
 C# features that differ:
- - lock () {} only work with Qt.Core.Mutex objects
+ - lock () {} only work with Qt.Core.ThreadLock objects
 
 C# features not supported (yet):
  - reflection

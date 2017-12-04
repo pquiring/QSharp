@@ -1327,13 +1327,13 @@ namespace QSharpCompiler
                     //lock, block
                     SyntaxNode lockId = GetChildNode(node, 1);
                     string lockIdName = GetTypeName(lockId);
-                    if (lockIdName != "Qt::Core::Mutex") {
-                        Console.WriteLine("Error:lock {} must use Qt.Core.Mutex");
+                    if (lockIdName != "Qt::Core::ThreadLock") {
+                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock");
                         Environment.Exit(0);
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
-                    method.Append("for(MutexHolder " + holder + "(");
+                    method.Append("for($ThreadLockHolder " + holder + "(");
                     expressionNode(lockId, method);
                     method.Append(");" + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock);
