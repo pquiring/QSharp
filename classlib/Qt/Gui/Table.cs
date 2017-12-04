@@ -6,9 +6,9 @@ namespace Qt.Gui {
         "private: QTableWidget *$q;" +
         "public: void $base(QTableWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
-    public class TableWidget : Widget {
-        protected TableWidget(Derived derived) : base(Derived.derived) {}
-        public TableWidget(int rows, int columns) {
+    public class Table : Widget {
+        protected Table(Derived derived) : base(Derived.derived) {}
+        public Table(int rows, int columns) {
             CPP.Add("$q = new QTableWidget(rows, columns);");
             CPP.Add("Widget::$base($q);");
         }
@@ -96,7 +96,7 @@ namespace Qt.Gui {
         }
         public void OnChanged(ChangedEvent changed) {
             this.changed = changed;
-            CPP.Add("$q->connect($q, &QTableWidget::itemSelectionChanged, this, &TableWidget::SlotChanged);");
+            CPP.Add("$q->connect($q, &QTableWidget::itemSelectionChanged, this, &Table::SlotChanged);");
         }
     }
 }

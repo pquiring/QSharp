@@ -4,6 +4,7 @@ namespace Qt.Core {
     [CPPClass(
         "private: std::shared_ptr<QVector<T>> $q;"
     )]
+    /** Stores an array of objects in a resizable continuous memory. */
     public class Array<T> : IEnumerable<T> {
         public Array() {
             CPP.Add("$q = std::make_shared<QVector<T>>();");
