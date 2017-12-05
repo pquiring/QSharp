@@ -10,6 +10,9 @@ namespace Qt.Core {
     )]
     public class ByteArray {
         public ByteArray() {}
+        public ByteArray(byte[] array) {
+            CPP.Add("$q->append(array->data(), array->size());");
+        }
         public ByteArray(String str) {
             CPP.Add("$q->append(str->qstring());");
         }
@@ -22,6 +25,9 @@ namespace Qt.Core {
             CPP.Add("std::shared_ptr<QSharpArray<uint8>> array = std::make_shared<QSharpArray<uint8>>(length);");
             CPP.Add("std::memcpy(array->data(), $q->data(), length);");
             return (byte[])CPP.ReturnObject("array");
+        }
+        public new String ToString() {
+            return new String(this);
         }
     }
 }
