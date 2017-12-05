@@ -58,11 +58,17 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Class)]
     public class CPPOmitConstructors : System.Attribute {}
 
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CPPOmitBodies : System.Attribute {}
+
     [AttributeUsage(AttributeTargets.Field)]
     public class CPPOmitField : System.Attribute {}
 
     [AttributeUsage(AttributeTargets.Method)]
     public class CPPOmitMethod : System.Attribute {}
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CPPOmitBody : System.Attribute {}
 
     [AttributeUsage(AttributeTargets.Constructor)]
     public class CPPOmitConstructor : System.Attribute {}

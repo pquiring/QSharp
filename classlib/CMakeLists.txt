@@ -9,6 +9,8 @@ add_library(classlib classlib.cpp
 
 include_directories(/usr/include/qt5)
 
+include_directories(/usr/include/ffmpeg)
+
 include_directories(../include)
 
 include_directories(../include/quazip)

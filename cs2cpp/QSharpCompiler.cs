@@ -772,6 +772,9 @@ namespace QSharpCompiler
                                     case "Qt::QSharp::CPPOmitMethod":
                                     case "Qt::QSharp::CPPOmitConstructor":
                                         return true;
+                                    case "Qt::QSharp::CPPOmitBody":
+                                        method.omitBody = true;
+                                        break;
                                     case "Qt::QSharp::CPPVersion":
                                         SyntaxNode arg = GetChildNode(attrArgList);  //AttributeArgument
                                         SyntaxNode str = GetChildNode(arg);  //StringLiteralExpression
@@ -845,6 +848,10 @@ namespace QSharpCompiler
                                     }
                                     case "Qt::QSharp::CPPOmitMethods": {
                                         cls.omitMethods = true;
+                                        break;
+                                    }
+                                    case "Qt::QSharp::CPPOmitBodies": {
+                                        cls.omitBodies = true;
                                         break;
                                     }
                                     case "Qt::QSharp::CPPOmitConstructors": {
@@ -2172,7 +2179,7 @@ namespace QSharpCompiler
         public bool Generic;
         public List<Type> GenericArgs = new List<Type>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
-        public bool omitFields, omitMethods, omitConstructors;
+        public bool omitFields, omitMethods, omitConstructors, omitBodies;
         //uses are used to sort classes
         public List<string> uses = new List<string>();
         public void addUsage(string cls) {
@@ -2356,7 +2363,9 @@ namespace QSharpCompiler
         public string GetMethodsDefinitions() {
             StringBuilder sb = new StringBuilder();
             foreach(var method in methods) {
+                if (omitBodies) continue;
                 if (method.isDelegate) continue;
+                if (method.omitBody) continue;
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
@@ -2639,6 +2648,7 @@ namespace QSharpCompiler
         public Class cls;
         public bool inFixedBlock;
         public String version;
+        public bool omitBody;
         public string GetArgs(bool decl) {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");

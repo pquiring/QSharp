@@ -26,6 +26,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QByteArray>
 #include <QtCore/QBuffer>
+#include <QtCore/QLibrary>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
@@ -102,6 +103,10 @@ namespace Qt::Core {
   extern const char **g_argv;
 }
 
+namespace Qt::Media {
+  struct FFContext;
+}
+
 //macro definitions
 
 #define int8 signed char
@@ -130,10 +135,12 @@ class QSharpArray {
 public:
   T *t;
   int Length;
+  bool alloced;
   int $get_Length() {return Length;}
-  QSharpArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; Length = size;}
-  QSharpArray(std::initializer_list<T> list) {int size = list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];}}
-  ~QSharpArray() {delete[] t;}
+  QSharpArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; Length = size; alloced = true; }
+  QSharpArray(void *buf, int size) {t = (T*)buf; Length = size; alloced = false;}
+  QSharpArray(std::initializer_list<T> list) {int size = list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];} alloced = true; }
+  ~QSharpArray() {if (alloced) delete[] t;}
   T& operator[](int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}
   T* data() {return t;}  //deprecated
   T& at(int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}  //deprecated

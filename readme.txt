@@ -17,6 +17,12 @@ Build Tools:
   cygwin/mingw qt5 libraries (Qt 5.4+ required)
   cygwin/cmake
   cygwin/make
+  ffmpeg/3.0+
+
+ffmpeg under cygwin/mingw:
+  Download ffmpeg extract to /usr/include/ffmpeg and run 'bash configure --disable-yasm'
+  You'll need gcc installed.
+  The pre-built shared binaries can be downloaded from ffmpeg.org
 
 Notes:
  - uses std::shared_ptr<> to implement memory management
