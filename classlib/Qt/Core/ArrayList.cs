@@ -23,12 +23,12 @@ namespace Qt.Core {
         public void Remove(int idx) {CPP.Add("$q->removeAt(idx);");}
 
         public IEnumerator<T> GetEnumerator() {
-            return new ListEnumerator<T>(this);
+            return new ArrayListEnumerator<T>(this);
         }
     }
 
-    public class ListEnumerator<T> : IEnumerator<T> {
-        public ListEnumerator(ArrayList<T> list) {this.list = list;}
+    public class ArrayListEnumerator<T> : IEnumerator<T> {
+        public ArrayListEnumerator(ArrayList<T> list) {this.list = list;}
         private ArrayList<T> list;
         private int idx = -1;
         public bool MoveNext() {
