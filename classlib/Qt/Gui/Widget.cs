@@ -6,6 +6,7 @@ namespace Qt.Gui {
 
     public enum CheckState {Unchecked, PartiallyChecked, Checked}
     public enum Orientation {Horizontal	= 1, Vertical}
+    public enum IconType {NoIcon, Information, Warning, Critical, Question}
 
     [CPPExtends("QObject")]  //for connect
     [CPPClass(
