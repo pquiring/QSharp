@@ -15,6 +15,14 @@ namespace Qt.Gui {
         public static String BMP = "BMP";
         private int _width;
         private int _height;
+        private Image(Image image, int x, int y, int width, int height) {
+            CPP.Add("$q = std::make_shared<QImage>(image->$q->copy(x,y,width,height));");
+            GetPtr();
+        }
+        private Image(Image image, int newWidth, int newHeight) {
+            CPP.Add("$q = std::make_shared<QImage>(image->$q->scaled(newWidth,newHeight));");
+            GetPtr();
+        }
         public Image(int width, int height) {
             CPP.Add("$q = std::make_shared<QImage>(width, height, QImage::Format_ARGB32);");
             GetPtr();
@@ -129,6 +137,12 @@ namespace Qt.Gui {
             CPP.Add("$painter.begin($q.get());");
             CPP.Add("$painter.drawText(x,y,text->qstring());");
             CPP.Add("$painter.end();");
+        }
+        public Image GetSubImage(int x, int y, int width, int height) {
+            return new Image(this, x, y, width, height);
+        }
+        public Image GetScaledImage(int newWidth, int newHeight) {
+            return new Image(this, newWidth, newHeight);
         }
     }
 }
