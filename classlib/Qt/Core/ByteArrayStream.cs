@@ -10,7 +10,9 @@ namespace Qt.Core {
             CPP.Add("setBuffer(data->$q.get());");
         }
         public ByteArray GetData() {
-            return (ByteArray)CPP.ReturnObject("std::make_shared<ByteArray>(buffer())");
+            CPP.Add("std::shared_ptr<ByteArray> array = ByteArray::$new();");
+            CPP.Add("array->$base(buffer());");
+            return (ByteArray)CPP.ReturnObject("array");
         }
     }
 }

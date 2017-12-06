@@ -956,7 +956,7 @@ namespace QSharpCompiler
             } else {
                 method.src.Append("{");
                 if (method.basector != null) method.src.Append(method.basector);
-                method.src.Append("}");
+                method.src.Append("}\r\n");
             }
             method.type.setTypes();
             createNewMethod(cls, method.args);

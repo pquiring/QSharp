@@ -4,12 +4,12 @@ namespace Qt.Core {
     [CPPClass(
         "public: std::shared_ptr<QByteArray> $q;" +
         "public: void $base(std::shared_ptr<QByteArray> ba) {$q = ba;}" +
-        "public: void $base(QByteArray ba) {*$q = ba;}" +
-        "public: ByteArray() {$q = std::make_shared<QByteArray>();}" +
-        "public: ByteArray(QByteArray ba) {$q = std::make_shared<QByteArray>(); $base(ba);}"
+        "public: void $base(QByteArray ba) {*$q = ba;}"
     )]
     public class ByteArray {
-        public ByteArray() {}
+        public ByteArray() {
+            CPP.Add("$q = std::make_shared<QByteArray>();");
+        }
         public ByteArray(byte[] array) {
             CPP.Add("$q->append((const char*)array->data(), array->$get_Length());");
         }
@@ -40,10 +40,14 @@ namespace Qt.Core {
             CPP.Add("$q->resize(size);");
         }
         public ByteArray ToBase64() {
-            return (ByteArray)CPP.ReturnObject("std::make_shared<ByteArray>($q->toBase64())");
+            CPP.Add("std::shared_ptr<ByteArray> array = ByteArray::$new();");
+            CPP.Add("array->$base($q->toBase64());");
+            return (ByteArray)CPP.ReturnObject("array");
         }
         public static ByteArray FromBase64(ByteArray base64) {
-            return (ByteArray)CPP.ReturnObject("std::make_shared<ByteArray>(QByteArray::fromBase64(*$deref(base64)->$q))");
+            CPP.Add("std::shared_ptr<ByteArray> array = ByteArray::$new();");
+            CPP.Add("array->$base(QByteArray::fromBase64(*$deref(base64)->$q));");
+            return (ByteArray)CPP.ReturnObject("array");
         }
         public new String ToString() {
             return new String(this);
