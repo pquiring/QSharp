@@ -11,7 +11,7 @@ namespace Qt.Core {
     public class ByteArray {
         public ByteArray() {}
         public ByteArray(byte[] array) {
-            CPP.Add("$q->append(array->data(), array->size());");
+            CPP.Add("$q->append((const char*)array->data(), array->$get_Length());");
         }
         public ByteArray(String str) {
             CPP.Add("$q->append(str->qstring());");
