@@ -953,6 +953,10 @@ namespace QSharpCompiler
                             break;
                     }
                 }
+            } else {
+                method.src.Append("{");
+                if (method.basector != null) method.src.Append(method.basector);
+                method.src.Append("}");
             }
             method.type.setTypes();
             createNewMethod(cls, method.args);
