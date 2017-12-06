@@ -3,12 +3,11 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QColorDialog *$q;" +
-        "public: void $base(QColorDialog *$d) {$q = $d; Dialog::$base($q);}"
+        "public: std::shared_ptr<QColorDialog> $q;"
     )]
     public class ColorDialog : Dialog {
         public ColorDialog() : base(Derived.derived) {
-            CPP.Add("$q = new QColorDialog();");
+            CPP.Add("$q = std::make_shared<QColorDialog>();");
             CPP.Add("Dialog::$base($q);");
         }
         public int GetColor() {

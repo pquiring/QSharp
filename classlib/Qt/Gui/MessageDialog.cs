@@ -7,11 +7,11 @@ namespace Qt.Gui {
         , Abort = 0x40000, Retry = 0x80000, Ignore = 0x100000, Close = 0x200000, Cancel = 0x400000, Discard = 0x800000
         , Help = 0x1000000, Apply = 0x2000000, Reset = 0x4000000, RestoreDefaults = 0x8000000}
     [CPPClass(
-        "public: QMessageBox *$q;"
+        "public: std::shared_ptr<QMessageBox> $q;"
     )]
     public class MessageDialog : Dialog {
         public MessageDialog(IconType icontype, String title, String msg) : base(Derived.derived) {
-            CPP.Add("$q = new QMessageBox();");
+            CPP.Add("$q = std::make_shared<QMessageBox>();");
             CPP.Add("Dialog::$base($q);");
         }
         public void AddButton(ButtonType buttonType, KeyType keyType = KeyType.None) {

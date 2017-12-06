@@ -4,12 +4,11 @@ using Qt.Core;
 namespace Qt.Gui {
     public enum FileMode {AnyFile, ExistingFile, Directory, ExistingFiles}
     [CPPClass(
-        "public: QFileDialog *$q;" +
-        "public: void $base(QFileDialog *$d) {$q = $d; Dialog::$base($q);}"
+        "public: std::shared_ptr<QFileDialog> $q;"
     )]
     public class FileDialog : Dialog {
         public FileDialog() : base(Derived.derived) {
-            CPP.Add("$q = new QFileDialog();");
+            CPP.Add("$q = std::make_shared<QFileDialog>();");
             CPP.Add("Dialog::$base($q);");
         }
         public String[] GetSelectedFiles() {

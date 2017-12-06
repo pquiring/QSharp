@@ -2,19 +2,19 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
-    public enum DialogCode {Rejected, Accepted}
+    public enum DialogResult {Rejected, Accepted}
     public delegate void AcceptedEvent();
     public delegate void FinishedEvent(int result);
     public delegate void RejectedEvent();
     [CPPClass(
-        "private: QDialog *$q;" +
-        "public: void $base(QDialog *$d) {$q = $d; Widget::$base($q);}"
+        "private: std::shared_ptr<QDialog> $q;" +
+        "public: void $base(std::shared_ptr<QDialog> $d) {$q = $d; Widget::$base($q.get());}"
     )]
     public class Dialog : Widget {
         protected Dialog(Derived derived) : base(Derived.derived) {}
         public Dialog() : base(Derived.derived) {
-            CPP.Add("$q = new QDialog();");
-            CPP.Add("Widget::$base($q);");
+            CPP.Add("$q = std::make_shared<QDialog>();");
+            CPP.Add("Widget::$base($q.get());");
         }
         public bool IsModal() {
             return CPP.ReturnBool("$q->isModal()");
@@ -55,7 +55,7 @@ namespace Qt.Gui {
         }
         public void OnAccepted(AcceptedEvent accepted) {
             this.accepted = accepted;
-            CPP.Add("$q->connect($q, &QDialog::accepted, this, &Dialog::SlotAccepted);");
+            CPP.Add("$q->connect($q.get(), &QDialog::accepted, this, &Dialog::SlotAccepted);");
         }
 
         private FinishedEvent finished;
@@ -64,7 +64,7 @@ namespace Qt.Gui {
         }
         public void OnFinished(FinishedEvent finished) {
             this.finished = finished;
-            CPP.Add("$q->connect($q, &QDialog::finished, this, &Dialog::SlotFinished);");
+            CPP.Add("$q->connect($q.get(), &QDialog::finished, this, &Dialog::SlotFinished);");
         }
 
         private RejectedEvent rejected;
@@ -73,7 +73,7 @@ namespace Qt.Gui {
         }
         public void OnRejected(RejectedEvent rejected) {
             this.rejected = rejected;
-            CPP.Add("$q->connect($q, &QDialog::rejected, this, &Dialog::SlotRejected);");
+            CPP.Add("$q->connect($q.get(), &QDialog::rejected, this, &Dialog::SlotRejected);");
         }
 
     }
