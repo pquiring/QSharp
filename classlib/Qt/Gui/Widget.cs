@@ -13,7 +13,7 @@ namespace Qt.Gui {
         "public: QWidget *$q;" +
         "public: void $base(QWidget *$d) {$q = $d;}"
     )]
-    public class Widget {
+    public class Widget : OpenGLFunctions {
         public Widget() {
             CPP.Add("$q = new QWidget();");
         }

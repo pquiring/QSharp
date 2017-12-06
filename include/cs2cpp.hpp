@@ -73,6 +73,7 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QOpenGLWidget>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
