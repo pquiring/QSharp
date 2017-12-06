@@ -78,7 +78,7 @@ namespace Qt.Gui {
             return CPP.ReturnByte("$px8[offset]");
         }
         public int[] GetPixels() {
-            return (int[])CPP.ReturnObject("std::make_shared<QSharpArray<int>>($px, _width * _height)");
+            return (int[])CPP.ReturnObject("std::make_shared<QSharpArray<int>>($this, $px, _width * _height)");
         }
         public void SetColor(int clr) {
             CPP.Add("$painter.setPen(QColor(clr));");
