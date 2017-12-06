@@ -453,7 +453,7 @@ namespace QSharpCompiler
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
-            sb.Append("for(int a=1;a<argc;a++) {args->at(a) = std::make_shared<Qt::Core::String>(argv[a]);}\r\n");
+            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = std::make_shared<Qt::Core::String>(argv[a]);}\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
             sb.Append("return 0;}\r\n");
 

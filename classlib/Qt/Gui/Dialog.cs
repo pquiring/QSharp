@@ -75,6 +75,5 @@ namespace Qt.Gui {
             this.rejected = rejected;
             CPP.Add("$q->connect($q.get(), &QDialog::rejected, this, &Dialog::SlotRejected);");
         }
-
     }
 }
