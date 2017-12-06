@@ -17,3 +17,4 @@ I tried many different types of conversions and it seemed like everything was a 
 Until I tried one last time using Roslyn's SyntaxNodes and that seems to work fine.
 
 The only thing Qt is missing is Zip support but Quazip fills that hole nicely.
+And Cipher (AES) support but found some C++ source on that.
