@@ -43,7 +43,7 @@ namespace Qt.Core {
             return (ByteArray)CPP.ReturnObject("std::make_shared<ByteArray>($q->toBase64())");
         }
         public static ByteArray FromBase64(ByteArray base64) {
-            return (ByteArray)CPP.ReturnObject("std::make_shared<ByteArray>(QByteArray::fromBase64(*base64->$q))");
+            return (ByteArray)CPP.ReturnObject("std::make_shared<ByteArray>(QByteArray::fromBase64(*$deref(base64)->$q))");
         }
         public new String ToString() {
             return new String(this);

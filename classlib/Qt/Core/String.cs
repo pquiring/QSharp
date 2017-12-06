@@ -24,7 +24,7 @@ namespace Qt.Core {
             Append(s);
         }
         public String(ByteArray array) {
-            CPP.Add("$q->append(*array->$q);");
+            CPP.Add("$q->append(*$deref(array)->$q);");
         }
         public static implicit operator String(string s) {
             //convert builtin string to Qt.Core.String
