@@ -1176,7 +1176,8 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.ReturnStatement:
                     method.Append("return ");
-                    expressionNode(GetChildNode(node), method);
+                    SyntaxNode returnValue = GetChildNode(node);
+                    if (returnValue != null) expressionNode(returnValue , method);
                     method.Append(";\r\n");
                     break;
                 case SyntaxKind.WhileStatement:

@@ -80,6 +80,11 @@ namespace Qt.Gui {
         public int[] GetPixels() {
             return (int[])CPP.ReturnObject("std::make_shared<QSharpArray<int>>($this, $px, _width * _height)");
         }
+        public void SetPixels(int[] px) {
+            int pxs = _width * _height;
+            if (px.Length != pxs) return;
+            CPP.Add("std::memcpy($px, px->data(), pxs * 4);");
+        }
         public void SetColor(int clr) {
             CPP.Add("$painter.setPen(QColor(clr));");
         }
