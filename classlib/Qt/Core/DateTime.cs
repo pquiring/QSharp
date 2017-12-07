@@ -2,31 +2,31 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: std::shared_ptr<QDateTime> $q;"
+        "private: std::unique_ptr<QDateTime> $q;"
     )]
     public class DateTime {
         public DateTime() {
-            CPP.Add("$q = std::make_shared<QDateTime>();");
+            CPP.Add("$q = std::make_unique<QDateTime>();");
         }
         [CPPReplaceArgs("const QDateTime dt")]
         private DateTime(NativeArg1 arg) {
-            CPP.Add("$q = std::make_shared<QDateTime>(dt);");
+            CPP.Add("$q = std::make_unique<QDateTime>(dt);");
         }
         [CPPReplaceArgs("QDate date,QTime time")]
         private DateTime(NativeArg2 arg) {
-            CPP.Add("$q = std::make_shared<QDateTime>(date,time);");
+            CPP.Add("$q = std::make_unique<QDateTime>(date,time);");
         }
         public Date GetDate() {
             return (Date)CPP.ReturnObject("Date::$new($q->date())");
         }
         public void SetDate(Date date) {
-            CPP.Add("$q->setDate(*date->$q);");
+            CPP.Add("$q->setDate(*date->$date());");
         }
         public Time GetTime() {
             return (Time)CPP.ReturnObject("Time::$new($q->time())");
         }
         public void SetTime(Time time) {
-            CPP.Add("$q->setTime(*time->$q);");
+            CPP.Add("$q->setTime(*time->$time());");
         }
 
         public DateTime AddYears(int years) {

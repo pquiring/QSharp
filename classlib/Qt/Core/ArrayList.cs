@@ -2,12 +2,12 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QList<T>> $q;"
+        "private: std::unique_ptr<QList<T>> $q;"
     )]
     /** Stores an array of objects in a linked-list style. */
     public class ArrayList<T> : IEnumerable<T> {
         public ArrayList() {
-            CPP.Add("$q = std::make_shared<QList<T>>();");
+            CPP.Add("$q = std::make_unique<QList<T>>();");
         }
         public void Add(T t) {
             CPP.Add("$q->append(t);");

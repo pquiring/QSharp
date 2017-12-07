@@ -8,10 +8,10 @@ namespace Qt.Core {
             this.type = type;
         }
         public ByteArray Encode(ByteArray input, ByteArray key) {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Crypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::CBC, *$deref(input)->$q, *$deref(key)->$q))");
+            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Crypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::CBC, *$deref(input)->$value(), *$deref(key)->$value()))");
         }
         public ByteArray Decode(ByteArray input, ByteArray key) {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Decrypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::CBC, *$deref(input)->$q, *$deref(key)->$q))");
+            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Decrypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::CBC, *$deref(input)->$value(), *$deref(key)->$value()))");
         }
     }
 }

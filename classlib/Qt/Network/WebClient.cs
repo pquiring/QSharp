@@ -19,8 +19,8 @@ namespace Qt.Network {
         public WebReply Process(WebRequest request) {
             switch (request.GetMethod()) {
                 case WebMethod.Get: return (WebReply)CPP.ReturnObject("WebReply::$new($q->get(*request->$q));");
-                case WebMethod.Post: return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, *request->GetData()->$q));");
-                case WebMethod.Put: return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, *request->GetData()->$q));");
+                case WebMethod.Post: return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, *request->GetData()->$value()));");
+                case WebMethod.Put: return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, *request->GetData()->$value()));");
                 case WebMethod.Head: return (WebReply)CPP.ReturnObject("WebReply::$new($q->head(*request->$q));");
                 case WebMethod.Delete: return (WebReply)CPP.ReturnObject("WebReply::$new($q->deleteResource(*request->$q));");
             }
@@ -30,22 +30,22 @@ namespace Qt.Network {
             return (WebReply)CPP.ReturnObject("WebReply::$new($q->get(*request->$q));");
         }
         public WebReply Post(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, *request->GetData()->$q));");
+            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, *request->GetData()->$value()));");
         }
         public WebReply Post(WebRequest request, IOStream io) {
             return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, io->$q.get()));");
         }
         public WebReply Post(WebRequest request, ByteArray array) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, *array->$q));");
+            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*request->$q, *array->$value()));");
         }
         public WebReply Put(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, *request->GetData()->$q));");
+            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, *request->GetData()->$value()));");
         }
         public WebReply Put(WebRequest request, IOStream io) {
             return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, io->$q.get()));");
         }
         public WebReply Put(WebRequest request, ByteArray array) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, *array->$q));");
+            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*request->$q, *array->$value()));");
         }
         public WebReply Delete(WebRequest request) {
             return (WebReply)CPP.ReturnObject("WebReply::$new($q->deleteResource(*request->$q));");

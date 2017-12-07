@@ -64,6 +64,7 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Field)]
     public class CPPOmitField : System.Attribute {}
 
+    /** Replaces args for constructors (for native types).  Also changes constructor to public function. */
     [AttributeUsage(AttributeTargets.Constructor)]
     public class CPPReplaceArgs : System.Attribute {
         public CPPReplaceArgs(string s1) {}

@@ -12,9 +12,7 @@ namespace Qt.Core {
         public int Read(byte[] data, int offset, int length) {CPP.Add("$checkArray(data, offset, length);"); return CPP.ReturnInt("$q->read((char*)data->data() + offset, length)");}
         public int Write(byte[] data, int offset, int length) {CPP.Add("$checkArray(data, offset, length);"); return CPP.ReturnInt("$q->write((char*)data->data() + offset, length)");}
         public ByteArray ReadAll() {
-            ByteArray byteArray = new ByteArray();
-            CPP.Add("byteArray->$base($q->readAll());");
-            return byteArray;
+            return (ByteArray)CPP.ReturnObject("ByteArray::$new($q->readAll())");
         }
     }
 }

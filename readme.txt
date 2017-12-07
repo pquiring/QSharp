@@ -13,7 +13,7 @@ folder layout:
 
 Build Tools:
   .Net Core 2.0 + Roslyn
-  cygwin/mingw gcc toolset (C++11 required)
+  cygwin/mingw gcc toolset (C++14 required)
   cygwin/mingw qt5 libraries (Qt 5.4+ required)
   cygwin/cmake
   cygwin/make

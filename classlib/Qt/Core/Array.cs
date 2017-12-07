@@ -2,12 +2,12 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QVector<T>> $q;"
+        "private: std::unique_ptr<QVector<T>> $q;"
     )]
     /** Stores an array of objects in a resizable continuous memory. */
     public class Array<T> : IEnumerable<T> {
         public Array() {
-            CPP.Add("$q = std::make_shared<QVector<T>>();");
+            CPP.Add("$q = std::make_unique<QVector<T>>();");
         }
         public void Add(T t) {
             CPP.Add("$q->append(t);");
