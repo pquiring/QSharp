@@ -25,9 +25,7 @@ namespace Qt.Gui {
             return CPP.ReturnInt("$q->count()");
         }
         public String GetSelectedItem() {
-            CPP.Add("std::shared_ptr<String> text;");
-            CPP.Add("text.reset(new String($q->currentItem()->text()));");
-            return CPP.ReturnString("text");
+            return CPP.ReturnString("String::$new($q->currentItem()->text())");
         }
         public int GetSelectedIndex() {
             return CPP.ReturnInt("$q->currentRow()");
@@ -37,7 +35,7 @@ namespace Qt.Gui {
             CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
             CPP.Add("int cnt = list.count();");
             CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]->text());}");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = String::$new(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[] GetSelectedIndexes() {

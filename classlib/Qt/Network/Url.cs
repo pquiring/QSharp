@@ -10,7 +10,7 @@ namespace Qt.Network {
             CPP.Add("$q = std::make_shared<QUrl>(url->qstring());");
         }
         public String GetQuery() {
-            return CPP.ReturnString("std::make_shared<String>($q->query())");
+            return CPP.ReturnString("String::$new($q->query())");
         }
         public void SetQuery(String query) {
             if (query == null)
@@ -19,13 +19,13 @@ namespace Qt.Network {
                 CPP.Add("$q->setQuery(query->qstring())");
         }
         public String GetHost() {
-            return CPP.ReturnString("std::make_shared<String>($q->host())");
+            return CPP.ReturnString("String::$new($q->host())");
         }
         public void SetHost(String host) {
             CPP.Add("$q->setHost(host->qstring())");
         }
         public String GetProtocol() {
-            return CPP.ReturnString("std::make_shared<String>($q->scheme())");
+            return CPP.ReturnString("String::$new($q->scheme())");
         }
         public void SetProtcol(String protocol) {
             CPP.Add("$q->setScheme(protocol->qstring())");

@@ -16,7 +16,7 @@ namespace Qt.Core {
             CPP.Add("$q->setTagName(name->qstring());");
         }
         public String GetName() {
-            return CPP.ReturnString("std::make_shared<String>($q->tagName())");
+            return CPP.ReturnString("String::$new($q->tagName())");
         }
         public XMLTag AddChild(String name) {
             CPP.Add("std::shared_ptr<XMLTag> child = std::make_shared<XMLTag>();");
@@ -67,7 +67,7 @@ namespace Qt.Core {
             return CPP.ReturnInt("$q->attributes().count()");
         }
         public String GetContent() {
-            return CPP.ReturnString("std::make_shared<String>($q->nodeValue())");
+            return CPP.ReturnString("String::$new($q->nodeValue())");
         }
         public void SetContent(String text) {
             CPP.Add("$q->setNodeValue(text->qstring());");
@@ -89,10 +89,10 @@ namespace Qt.Core {
             CPP.Add("*$q = tag->$q->attributeNode(name);");
         }
         public String GetName() {
-            return CPP.ReturnString("std::make_shared<String>($q->name())");
+            return CPP.ReturnString("String::$new($q->name())");
         }
         public String GetValue() {
-            return CPP.ReturnString("std::make_shared<String>($q->value())");
+            return CPP.ReturnString("String::$new($q->value())");
         }
         public void SetValue(String text) {
             CPP.Add("$q->setValue(text->qstring());");
@@ -109,7 +109,7 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->setContent(input->qstring());");
         }
         public String Output() {
-            return CPP.ReturnString("std::make_shared<String>($q->toString())");
+            return CPP.ReturnString("String::$new($q->toString())");
         }
         public XMLTag GetRoot() {
             return new XMLTag(this);

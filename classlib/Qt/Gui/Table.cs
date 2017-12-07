@@ -46,17 +46,13 @@ namespace Qt.Gui {
             CPP.Add("$q->removeColumn(index);");
         }
         public String GetData(int row, int column) {
-            CPP.Add("QString qstring = $q->item(row, column)->text()");
-            CPP.Add("std::shared_ptr<String> string = std::make_shared<String>(qstring);");
-            return CPP.ReturnString("string");
+            return CPP.ReturnString("String::$new($q->item(row, column)->text())");
         }
         public void SetData(int row, int column, String data) {
             CPP.Add("$q->setItem(row, column, new QTableWidgetItem(data->qstring()));");
         }
         public String GetSelectedItem() {
-            CPP.Add("std::shared_ptr<String> text;");
-            CPP.Add("text.reset(new String($q->currentItem()->text()));");
-            return CPP.ReturnString("text");
+            return CPP.ReturnString("String::$new($q->currentItem()->text())");
         }
         public int GetSelectedRow() {
             return CPP.ReturnInt("$q->currentRow()");
@@ -69,7 +65,7 @@ namespace Qt.Gui {
             CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
             CPP.Add("int cnt = list.count();");
             CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = std::make_shared<String>(list[idx]->text());}");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = String::$new(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[][] GetSelectedIndexes() {

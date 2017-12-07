@@ -16,7 +16,7 @@ namespace Qt.Gui {
             return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
         public String GetDirectory() {
-            return CPP.ReturnString("std::make_shared<String>($q->directory().absolutePath())");
+            return CPP.ReturnString("String::$new($q->directory().absolutePath())");
         }
         public void SetDirectory(String dir) {
             CPP.Add("$q->setDirectory(dir->qstring());");

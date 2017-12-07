@@ -81,7 +81,7 @@ namespace Qt.Gui {
         public void glGetShaderPrecisionFormat(int shadertype, int precisiontype, int[] range, int[] precision) {CPP.Add("$q->glGetShaderPrecisionFormat(shadertype, precisiontype, range->data(), precision->data());");}
         public void glGetShaderSource(int shader, int bufsize, int[] length, byte []source) {CPP.Add("$q->glGetShaderSource(shader, bufsize, length->data(), (char*)source->data());");}
         public void glGetShaderiv(int shader, int pname, int[] args) {CPP.Add("$q->glGetShaderiv(shader, pname, args->data());");}
-        public string glGetString(int name) {CPP.Add("std::shared_ptr<String> str; str.reset(new String((const char*)$q->glGetString((GLenum)name)));"); return CPP.ReturnString("str");}
+        public string glGetString(int name) {return CPP.ReturnString("String::$new((const char*)$q->glGetString((GLenum)name))");}
         public void glGetTexParameterfv(int target, int pname, float[] args) {CPP.Add("$q->glGetTexParameterfv(target, pname, args->data());");}
         public void glGetTexParameteriv(int target, int pname, int[] args) {CPP.Add("$q->glGetTexParameteriv(target, pname, args->data());");}
         public int glGetUniformLocation(int program, string name) {return CPP.ReturnInt("$q->glGetUniformLocation(program, name->cstring())");}

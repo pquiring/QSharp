@@ -104,6 +104,7 @@ namespace Qt::Core {
   extern int g_argc;
   extern const char **g_argv;
   class Object;
+  class String;
 }
 
 namespace Qt::Media {
@@ -156,11 +157,6 @@ inline T* $deref(std::shared_ptr<T> x) {
   T* ptr = x.get();
   if (ptr == nullptr) $npe();
   return ptr;
-}
-
-namespace Qt::Core {
-class String;
-class Object;
 }
 
 template<typename T>

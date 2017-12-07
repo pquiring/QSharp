@@ -453,7 +453,7 @@ namespace QSharpCompiler
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
-            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = std::make_shared<Qt::Core::String>(argv[a]);}\r\n");
+            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
             sb.Append("return 0;}\r\n");
 
@@ -775,12 +775,21 @@ namespace QSharpCompiler
                                     case "Qt::QSharp::CPPOmitBody":
                                         method.omitBody = true;
                                         break;
-                                    case "Qt::QSharp::CPPVersion":
+                                    case "Qt::QSharp::CPPVersion": {
                                         SyntaxNode arg = GetChildNode(attrArgList);  //AttributeArgument
                                         SyntaxNode str = GetChildNode(arg);  //StringLiteralExpression
                                         String value = file.model.GetConstantValue(str).Value.ToString();
                                         method.version = value;
                                         break;
+                                    }
+                                    case "Qt::QSharp::CPPReplaceArgs": {
+                                        SyntaxNode arg = GetChildNode(attrArgList);  //AttributeArgument
+                                        SyntaxNode str = GetChildNode(arg);  //StringLiteralExpression
+                                        String value = file.model.GetConstantValue(str).Value.ToString();
+                                        method.replaceArgs = value;
+                                        method.type.Public = true;
+                                        break;
+                                    }
                                 }
                                 break;
                         }
@@ -936,6 +945,9 @@ namespace QSharpCompiler
                 //nodes : parameter list, [baseCtor], block
                 foreach(var child in nodes) {
                     switch (child.Kind()) {
+                        case SyntaxKind.AttributeList:
+                            if (attributeListNode(child, method.type)) return;
+                            break;
                         case SyntaxKind.ParameterList:
                             parameterListNode(child);
                             break;
@@ -959,10 +971,10 @@ namespace QSharpCompiler
                 method.src.Append("}\r\n");
             }
             method.type.setTypes();
-            createNewMethod(cls, method.args);
+            createNewMethod(cls, method.args, method.replaceArgs);
         }
 
-        private void createNewMethod(Class cls, List<Variable> args) {
+        private void createNewMethod(Class cls, List<Variable> args, String replaceArgs) {
             Method method = new Method();
             method.type.Public = true;
             method.type.Static = true;
@@ -985,12 +997,26 @@ namespace QSharpCompiler
             method.Append("$this->$this = $this;\r\n");
             method.Append("$this->$init();\r\n");
             method.Append("$this->$ctor(");
-            if (args != null) {
+            if (replaceArgs == null) {
+                if (args != null) {
+                    bool first = true;
+                    foreach(var arg in args) {
+                        if (!first) method.Append(","); else first = false;
+                        method.Append(arg.name);
+                        method.args.Add(arg);
+                    }
+                }
+            } else {
+                method.replaceArgs = replaceArgs;
+                String[] repArgs = replaceArgs.Split(",");
                 bool first = true;
-                foreach(var arg in args) {
+                foreach(var arg in repArgs) {
                     if (!first) method.Append(","); else first = false;
-                    method.Append(arg.name);
-                    method.args.Add(arg);
+                    int idx = arg.LastIndexOf("*");
+                    if (idx == -1) {
+                      idx = arg.LastIndexOf(" ");
+                    }
+                    method.Append(arg.Substring(idx+1));
                 }
             }
             method.Append(");\r\n");
@@ -1552,7 +1578,7 @@ namespace QSharpCompiler
                     ob.Append("false");
                     break;
                 case SyntaxKind.StringLiteralExpression:
-                    ob.Append("std::make_shared<String>(");
+                    ob.Append("String::$new(");
                     ob.Append("\"");
                     outString(file.model.GetConstantValue(node).Value.ToString(), ob);
                     ob.Append("\"");
@@ -2264,7 +2290,7 @@ namespace QSharpCompiler
             }
             if (cpp != null) sb.Append(cpp);
             if (!Interface) {
-                sb.Append("private: std::weak_ptr<" + name);
+                sb.Append("public: std::weak_ptr<" + name);
                 if (Generic) {
                     sb.Append("<");
                     bool first = true;
@@ -2653,19 +2679,24 @@ namespace QSharpCompiler
         public Class cls;
         public bool inFixedBlock;
         public String version;
+        public String replaceArgs;
         public bool omitBody;
         public string GetArgs(bool decl) {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            bool first = true;
-            foreach(var arg in args) {
-                if (!first) sb.Append(","); else first = false;
-                sb.Append(arg.type.GetTypeDeclaration());
-                sb.Append(" ");
-                sb.Append(arg.name);
-                if (decl && arg.src.Length > 0) {
-                    sb.Append(" = " );
-                    sb.Append(arg.src.ToString());
+            if (replaceArgs != null) {
+                sb.Append(replaceArgs);
+            } else {
+                bool first = true;
+                foreach(var arg in args) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append(arg.type.GetTypeDeclaration());
+                    sb.Append(" ");
+                    sb.Append(arg.name);
+                    if (decl && arg.src.Length > 0) {
+                        sb.Append(" = " );
+                        sb.Append(arg.src.ToString());
+                    }
                 }
             }
             sb.Append(")");

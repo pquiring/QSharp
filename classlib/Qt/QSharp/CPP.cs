@@ -64,6 +64,11 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Field)]
     public class CPPOmitField : System.Attribute {}
 
+    [AttributeUsage(AttributeTargets.Constructor)]
+    public class CPPReplaceArgs : System.Attribute {
+        public CPPReplaceArgs(string s1) {}
+    }
+
     [AttributeUsage(AttributeTargets.Method)]
     public class CPPOmitMethod : System.Attribute {}
 

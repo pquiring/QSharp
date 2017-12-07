@@ -21,14 +21,14 @@ namespace Qt.Network {
             }
         }
         public String GetHeader(String header) {
-            return CPP.ReturnString("std::make_shared<String>($q->rawHeader(QByteArray(header->cstring())))");
+            return CPP.ReturnString("String::$new($q->rawHeader(QByteArray(header->cstring())))");
         }
         public String GetHeaders() {
             CPP.Add("QList<QByteArray> list = $q->rawHeaderList();");
             CPP.Add("QByteArray array;");
             CPP.Add("int cnt = list.count();");
             CPP.Add("for(int i=0;i<cnt;i++) {array.append(list[i]); array.append(\"\\r\\n\");}");
-            return CPP.ReturnString("std::make_shared<String>(array)");
+            return CPP.ReturnString("String::$new(array)");
         }
         public new ByteArray ReadAll() {
             data = base.ReadAll();

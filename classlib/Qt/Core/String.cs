@@ -2,18 +2,31 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: QString *$q = nullptr;" +
-        "public: String() { $q = new QString(); }" +
-        "public: String(const char* cs) { $q = new QString(cs); }" +
-        "public: String(std::string ss) { $q = new QString(ss.c_str()); }" +
-        "public: String(const QString qs) { $q = new QString(qs); }" +
-        "public: String(const QByteArray array) { $q = new QString(array); }" +
+        "public: QString *$q;" +
         "public: const char* cstring() {return $q->toUtf8().constData();}" +
         "public: QString qstring() {return *$q;}" +
         "public: const char16* ustring() {return (const char16*)$q->utf16();}"
     )]
     public class String : Object {
-        public String() {}
+        public String() {
+            CPP.Add("$q = new QString();");
+        }
+        [CPPReplaceArgs("const char *cs")]
+        private String(NativeArg1 arg) {
+            CPP.Add("$q = new QString(cs);");
+        }
+        [CPPReplaceArgs("std::string ss")]
+        private String(NativeArg2 arg) {
+            CPP.Add("$q = new QString(ss.c_str());");
+        }
+        [CPPReplaceArgs("const QString qs")]
+        private String(NativeArg3 arg) {
+            CPP.Add("$q = new QString(qs);");
+        }
+        [CPPReplaceArgs("const QByteArray array")]
+        private String(NativeArg4 arg) {
+            CPP.Add("$q = new QString(array);");
+        }
         public String(char[] str, int idx, int length) {
             CPP.Add("$q->append((const QChar*)$deref(str)->data(),length);");
         }
@@ -108,14 +121,14 @@ namespace Qt.Core {
         }
 
         public String Substring(int start, int len = -1) {
-            return CPP.ReturnString("std::make_shared<String>($q->mid(start, len))");
+            return CPP.ReturnString("String::$new($q->mid(start, len))");
         }
 
         public String ToUpperCase() {
-            return CPP.ReturnString("std::make_shared<String>($q->toUpper())");
+            return CPP.ReturnString("String::$new($q->toUpper())");
         }
         public String ToLowerCase() {
-            return CPP.ReturnString("std::make_shared<String>($q->toLower())");
+            return CPP.ReturnString("String::$new($q->toLower())");
         }
 
         public char[] ToCharArray() {
@@ -135,10 +148,6 @@ namespace Qt.Core {
             CPP.Add("const uint8 *src = (const uint8*)cstring();");
             CPP.Add("std::memcpy(dest, src, length);");
             return CPP.ReturnByteArray("array");
-        }
-
-        ~String() {
-            CPP.Add("delete $q;");
         }
     }
 }
