@@ -3,11 +3,12 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "public: std::shared_ptr<QUrl> $q;"
+        "private: std::unique_ptr<QUrl> $q;" +
+        "public: QUrl *$value() {return $q.get();}"
     )]
     public class Url {
         public Url(String url) {
-            CPP.Add("$q = std::make_shared<QUrl>(url->qstring());");
+            CPP.Add("$q = std::make_unique<QUrl>(url->qstring());");
         }
         public String GetQuery() {
             return CPP.ReturnString("String::$new($q->query())");

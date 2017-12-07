@@ -4,7 +4,8 @@ using Qt.Core;
 namespace Qt.Network {
     public enum WebMethod {Get, Post, Put, Delete, Head, Unknown}
     [CPPClass(
-        "public: std::shared_ptr<QNetworkRequest> $q;"
+        "private: std::unique_ptr<QNetworkRequest> $q;" +
+        "public: QNetworkRequest *$value() {return $q.get();}"
     )]
     public class WebRequest {
         private ByteArray data;
@@ -20,7 +21,7 @@ namespace Qt.Network {
         }
         public void SetUrl(Url url) {
             this.url = url;
-            CPP.Add("$q = std::make_shared<QNetworkRequest>(*url->$q);");
+            CPP.Add("$q = std::make_unique<QNetworkRequest>(*url->$value());");
             GetArgs();
         }
         public Url GetUrl() {
