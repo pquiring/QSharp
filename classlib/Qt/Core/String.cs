@@ -2,30 +2,31 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: QString *$q;" +
+        "private: std::unique_ptr<QString> $q;" +
+        "public: QString* $value() {return $q.get();}" +
         "public: const char* cstring() {return $q->toUtf8().constData();}" +
         "public: QString qstring() {return *$q;}" +
         "public: const char16* ustring() {return (const char16*)$q->utf16();}"
     )]
     public class String : Object {
         public String() {
-            CPP.Add("$q = new QString();");
+            CPP.Add("$q = std::make_unique<QString>();");
         }
         [CPPReplaceArgs("const char *cs")]
         private String(NativeArg1 arg) {
-            CPP.Add("$q = new QString(cs);");
+            CPP.Add("$q = std::make_unique<QString>(cs);");
         }
         [CPPReplaceArgs("std::string ss")]
         private String(NativeArg2 arg) {
-            CPP.Add("$q = new QString(ss.c_str());");
+            CPP.Add("$q = std::make_unique<QString>(ss.c_str());");
         }
         [CPPReplaceArgs("const QString qs")]
         private String(NativeArg3 arg) {
-            CPP.Add("$q = new QString(qs);");
+            CPP.Add("$q = std::make_unique<QString>(qs);");
         }
         [CPPReplaceArgs("const QByteArray array")]
         private String(NativeArg4 arg) {
-            CPP.Add("$q = new QString(array);");
+            CPP.Add("$q = std::make_unique<QString>(array);");
         }
         public String(char[] str, int idx, int length) {
             CPP.Add("$q->append((const QChar*)$deref(str)->data(),length);");

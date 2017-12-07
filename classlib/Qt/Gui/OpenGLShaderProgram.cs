@@ -9,14 +9,14 @@ namespace Qt.Gui {
         }
 
         public bool AddShaderFromSourceCode(int type, string src) {
-            CPP.Add("bool ret = $q->addShaderFromSourceCode((QOpenGLShader::ShaderType)type, *src.get()->$q);");
+            CPP.Add("bool ret = $q->addShaderFromSourceCode((QOpenGLShader::ShaderType)type, $deref(src)->qstring());");
             return CPP.ReturnBool("ret");
         }
         public int AttributeLocation(string name) {
-            return CPP.ReturnInt("$q->attributeLocation(name->cstring())");
+            return CPP.ReturnInt("$q->attributeLocation($deref(name)->cstring())");
         }
         public int UniformLocation(string name) {
-            return CPP.ReturnInt("$q->uniformLocation(name->cstring())");
+            return CPP.ReturnInt("$q->uniformLocation($deref(name)->cstring())");
         }
         public void SetUniformValue(int location, int value) {
             CPP.Add("$q->setUniformValue(location, value);");
@@ -25,7 +25,7 @@ namespace Qt.Gui {
             CPP.Add("$q->setUniformValue(location, value);");
         }
         public void SetUniformValue(int location, Matrix4x4 value) {
-            CPP.Add("$q->setUniformValue(location, (QMatrix4x4)*value.get());");
+            CPP.Add("$q->setUniformValue(location, (QMatrix4x4)*$deref(value));");
         }
         public void Link() {
             CPP.Add("$q->link();");
