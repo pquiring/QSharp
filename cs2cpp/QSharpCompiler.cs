@@ -1029,10 +1029,7 @@ namespace QSharpCompiler
         private void methodNode(SyntaxNode node, bool dtor, bool isDelegate, String name) {
             method = new Method();
             method.cls = cls;
-            if (dtor) {
-                method.type.Virtual = true;
-                method.type.Public = true;
-            } else if (isDelegate) {
+            if (isDelegate) {
                 method.isDelegate = true;
                 method.Namespace = Namespace;
             }
@@ -1049,6 +1046,8 @@ namespace QSharpCompiler
             getFlags(method.type, file.model.GetDeclaredSymbol(node));
             if (dtor) {
                 method.type.Protected = false;
+                method.type.Virtual = true;
+                method.type.Public = true;
             }
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             //nodes : [return type], parameter list, block
