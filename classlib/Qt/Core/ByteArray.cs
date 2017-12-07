@@ -4,7 +4,8 @@ namespace Qt.Core {
     [CPPClass(
         "public: std::shared_ptr<QByteArray> $q;" +
         "public: void $base(std::shared_ptr<QByteArray> ba) {$q = ba;}" +
-        "public: void $base(QByteArray ba) {*$q = ba;}"
+        "public: void $base(QByteArray ba) {*$q = ba;}" +
+        "public: static std::shared_ptr<ByteArray> $new(QByteArray ba) {std::shared_ptr<ByteArray> $this = std::make_shared<ByteArray>(); $this->$this = $this; $this->$ctor(); $this->$q->append(ba); return $this;}"
     )]
     public class ByteArray {
         public ByteArray() {
