@@ -3,12 +3,14 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "public: std::shared_ptr<QNetworkReply> $q;" +
-        "public: WebReply() {}" +  //invalid
-        "public: WebReply(QNetworkReply *reply) {$q.reset(reply); IOStream::$base((std::shared_ptr<QIODevice>)$q);} "
+        "public: std::shared_ptr<QNetworkReply> $q;"
     )]
     public abstract class WebReply : IOStream {
         protected WebReply() {}
+        [CPPReplaceArgs("QNetworkReply *reply")]
+        private WebReply(NativeArg1 arg) {
+            CPP.Add("$q.reset(reply); IOStream::$base((std::shared_ptr<QIODevice>)$q);");
+        }
         private ByteArray data;
         private Map<String, String> args = new Map<String, String>();
         private void GetArgs(String[] kv) {

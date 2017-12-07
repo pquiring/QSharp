@@ -4,12 +4,9 @@ namespace Qt.Gui {
     [CPPExtends("QObject")]  //for eventFilter()
     [CPPClass(
         "private: QWindow *$q = nullptr;" +
-        "public: void $base(QWindow *$b) {$q = $b; $$init();}" +
+        "public: void $base(QWindow *$b) {$q = $b; init();}" +
         "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
-        "private: void $$init() {screen_ptr = std::make_shared<Qt::Gui::Screen>($q->screen()); $q->installEventFilter(this);}" +
-        "public: bool eventFilter(QObject *obj, QEvent *event);" +
-        "public: NativeWindow() {}" +
-        "public: NativeWindow(QWindow *$w) {if ($w == nullptr) return; $q = $w; $$init();}"
+        "public: bool eventFilter(QObject *obj, QEvent *event);"
     )]
     /** Window represents the native Window object. */
     public class NativeWindow : OpenGLFunctions {
@@ -17,7 +14,14 @@ namespace Qt.Gui {
           Since C# does not support multiple-inheritance and OpenGLWindow needs Window and OpenGLFunctions
           therefore Window must derive from OpenGLFunctions to make it available to OpenGLWindow
         */
-        protected NativeWindow(Derived derived) { }
+        protected NativeWindow(Derived derived) {}
+        [CPPReplaceArgs("QWindow *$w")]
+        private NativeWindow(NativeArg1 arg) {
+            CPP.Add("if ($w == nullptr) return; $q = $w; init();");
+        }
+        private void init() {
+            CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen()); $q->installEventFilter(this);");
+        }
         public virtual void KeyPressed(KeyCode key) {}
         public virtual void KeyReleased(KeyCode key) {}
         public virtual void KeyTyped(char key) {}

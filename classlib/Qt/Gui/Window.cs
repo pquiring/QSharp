@@ -24,9 +24,7 @@ namespace Qt.Gui {
             CPP.Add("addToolBar((Qt::ToolBarArea)toolbararea, toolbar->$q);");
         }
         public NativeWindow GetNativeWindow() {
-            CPP.Add("std::shared_ptr<NativeWindow> window;");
-            CPP.Add("window = std::make_shared<NativeWindow>(windowHandle());");
-            return (NativeWindow)CPP.ReturnObject("window");
+            return (NativeWindow)CPP.ReturnObject("NativeWindow::$new(windowHandle())");
         }
     }
 }

@@ -4,18 +4,21 @@ namespace Qt.Core {
     [CPPClass(
         "public: std::shared_ptr<QByteArray> $q;" +
         "public: void $base(std::shared_ptr<QByteArray> ba) {$q = ba;}" +
-        "public: void $base(QByteArray ba) {*$q = ba;}" +
-        "public: static std::shared_ptr<ByteArray> $new(QByteArray ba) {std::shared_ptr<ByteArray> $this = std::make_shared<ByteArray>(); $this->$this = $this; $this->$ctor(); $this->$q->append(ba); return $this;}"
+        "public: void $base(QByteArray ba) {*$q = ba;}"
     )]
     public class ByteArray {
         public ByteArray() {
             CPP.Add("$q = std::make_shared<QByteArray>();");
         }
         public ByteArray(byte[] array) {
-            CPP.Add("$q->append((const char*)array->data(), array->$get_Length());");
+            CPP.Add("$q = std::make_shared<QByteArray>((const char*)array->data(), array->$get_Length());");
         }
         public ByteArray(String str) {
-            CPP.Add("$q->append(str->qstring());");
+            CPP.Add("$q = std::make_shared<QByteArray>(str->cstring(), str->$get_Length());");
+        }
+        [CPPReplaceArgs("QByteArray array")]
+        private ByteArray(NativeArg1 arg) {
+            CPP.Add("$q = std::make_shared<QByteArray>(array);");
         }
         public void Append(byte[] buf, int offset, int length) {
             CPP.Add("$checkArray(buf, offset, length);");

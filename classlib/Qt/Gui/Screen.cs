@@ -2,11 +2,13 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QScreen *$q = nullptr;" +
-        "public: Screen(QScreen *s) {$q = s;}"
+        "private: QScreen *$q = nullptr;"
     )]
-    [CPPOmitConstructors()]
     public class Screen {
+        [CPPReplaceArgs("QScreen *$s")]
+        private Screen(NativeArg1 arg) {
+            CPP.Add("$q = $s;");
+        }
         public int RefreshRate() {
             return CPP.ReturnInt("$q->refreshRate()");
         }
