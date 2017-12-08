@@ -29,16 +29,18 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QString>(array);");
         }
         public String(char[] str, int idx, int length) {
-            CPP.Add("$q->append((const QChar*)$deref(str)->data(),length);");
+            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q->append((const QChar*)$deref(str)->data()+idx,length);");
         }
         public String(byte[] utf8, int idx, int length) {
+            CPP.Add("$q = std::make_unique<QString>();");
             CPP.Add("$q->append(QByteArray((const char*)$deref(utf8)->data()+idx,length));");
         }
         public String(string s) {
-            Append(s);
+            CPP.Add("$q = std::make_unique<QString>(*$deref(s)->$value());");
         }
         public String(ByteArray array) {
-            CPP.Add("$q->append(*$deref(array)->$value());");
+            CPP.Add("$q = std::make_unique<QString>(*$deref(array)->$value());");
         }
         public static implicit operator String(string s) {
             //convert builtin string to Qt.Core.String
