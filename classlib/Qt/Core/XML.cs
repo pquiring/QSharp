@@ -19,7 +19,7 @@ namespace Qt.Core {
             return CPP.ReturnString("String::$new($q->tagName())");
         }
         public XMLTag AddChild(String name) {
-            CPP.Add("std::shared_ptr<XMLTag> child = std::make_shared<XMLTag>();");
+            CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new();");
             CPP.Add("child->SetName(name);");
             CPP.Add("$q->insertAfter(*child->$q, $q->lastChild());");
             return (XMLTag)CPP.ReturnObject("child");
@@ -29,7 +29,7 @@ namespace Qt.Core {
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag InsertChild(int index, String name) {
-            CPP.Add("std::shared_ptr<XMLTag> child = std::make_shared<XMLTag>();");
+            CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new();");
             CPP.Add("child->SetName(name);");
             CPP.Add("$q->insertBefore(*child->$q, $q->childNodes().at(index));");
             return (XMLTag)CPP.ReturnObject("child");
@@ -99,11 +99,11 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "public: std::shared_ptr<QDomDocument> $q;"
+        "public: std::unique_ptr<QDomDocument> $q;"
     )]
     public class XML {
         public XML() {
-            CPP.Add("$q = std::make_shared<QDomDocument>();");
+            CPP.Add("$q = std::make_unique<QDomDocument>();");
         }
         public bool Input(String input) {
             return CPP.ReturnBool("$q->setContent(input->qstring());");
