@@ -1,6 +1,11 @@
 What's new
 ==========
 
+Dec 8, 2017 : 0.7
+ - many ctor fixes
+ - added Qt.Media (ffmpeg)
+ - more new Qt Widgets
+
 Dec 1, 2017 : 0.6
  - more new Qt classes (WebServer, SslServer, Widgets, etc.)
  - more compiler fixes
