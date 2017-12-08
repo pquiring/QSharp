@@ -4,12 +4,15 @@ using Qt.Core;
 namespace Qt.Gui {
     public delegate void TriggeredEvent(bool selected);
     [CPPClass(
-        "public: QAction *$q;" +
-        "public: MenuItem() {}" +
-        "public: MenuItem(QAction *$a) {$q = $a;}"
+        "public: QAction *$q;"
     )]
     [CPPExtends("QObject")]  //for connect
     public class MenuItem {
+        private MenuItem() {}
+        [CPPReplaceArgs("QAction *$a")]
+        private MenuItem(NativeArg1 arg) {
+            CPP.Add("$q = $a;");
+        }
 
         private TriggeredEvent triggered;
         private void SlotTriggered(bool selected) {

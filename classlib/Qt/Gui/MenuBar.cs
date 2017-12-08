@@ -19,8 +19,7 @@ namespace Qt.Gui {
             return item;
         }
         public MenuItem AddSeparator() {
-            CPP.Add("QAction *$a = $q->addSeparator();");
-            return (MenuItem)CPP.ReturnObject("std::make_shared<MenuItem>($a)");
+            return (MenuItem)CPP.ReturnObject("MenuItem::$new($q->addSeparator())");
         }
     }
 }
