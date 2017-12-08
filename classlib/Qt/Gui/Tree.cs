@@ -3,8 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QTreeWidgetItem *$q;" +
-        "public: void $base(QTreeWidgetItem *$d) {$q = $d;}"
+        "private: QTreeWidgetItem *$q;"
     )]
     public class TreeItem {
         public TreeItem() {
@@ -12,6 +11,10 @@ namespace Qt.Gui {
         }
         public TreeItem(String text) {
             CPP.Add("$q = new QTreeWidgetItem(QStringList(text->qstring()));");
+        }
+        [CPPReplaceArgs("QTreeWidgetItem *$a")]
+        private TreeItem(NativeArg1 arg) {
+            CPP.Add("$q = $a");
         }
         public void AddChild(TreeItem item) {
             CPP.Add("$q->addChild(item->$q);");
@@ -26,14 +29,10 @@ namespace Qt.Gui {
             return CPP.ReturnInt("$q->childCount()");
         }
         public TreeItem GetChild(int index) {
-            CPP.Add("std::shared_ptr<TreeItem> child = std::make_shared<TreeItem>();");
-            CPP.Add("child->$base($q->child(index));");
-            return (TreeItem)CPP.ReturnObject("child");
+            return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->child(index))");
         }
         public TreeItem GetParent() {
-            CPP.Add("std::shared_ptr<TreeItem> parent = std::make_shared<TreeItem>();");
-            CPP.Add("parent->$base($q->parent());");
-            return (TreeItem)CPP.ReturnObject("parent");
+            return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->parent())");
         }
     }
     [CPPClass(
@@ -47,14 +46,10 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public TreeItem GetRoot() {
-            CPP.Add("std::shared_ptr<TreeItem> root = std::make_shared<TreeItem>();");
-            CPP.Add("root->$base($q->invisibleRootItem());");
-            return (TreeItem)CPP.ReturnObject("root");
+            return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->invisibleRootItem())");
         }
         public TreeItem GetSelectedItem() {
-            CPP.Add("std::shared_ptr<TreeItem> item = std::make_shared<TreeItem>();");
-            CPP.Add("item->$base($q->currentItem());");
-            return (TreeItem)CPP.ReturnObject("item");
+            return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->currentItem())");
         }
 
         private ChangedEvent changed;
