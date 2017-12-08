@@ -35,7 +35,7 @@ namespace Qt.Core {
         }
         public ZipEntry GetEntry() {
             CPP.Add("std::shared_ptr<QuaZipFile> zf = std::make_shared<QuaZipFile>($q.get());");
-            CPP.Add("std::shared_ptr<ZipEntry> ze = std::make_shared<ZipEntry>(); ze->$ctor(filename);");
+            CPP.Add("std::shared_ptr<ZipEntry> ze = ZipEntry::$new(filename);");
             CPP.Add("ze->$base(zf);");
             return (ZipEntry)CPP.ReturnObject("ze");
         }
