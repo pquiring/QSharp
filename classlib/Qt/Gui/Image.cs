@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: std::shared_ptr<QImage> $q;" +
+        "private: std::unique_ptr<QImage> $q;" +
         "public: uint32* $px;" +
         "public: uint8* $px8;" +
         "public: QPainter $painter;" +
@@ -16,15 +16,15 @@ namespace Qt.Gui {
         private int _width;
         private int _height;
         private Image(Image image, int x, int y, int width, int height) {
-            CPP.Add("$q = std::make_shared<QImage>(image->$q->copy(x,y,width,height));");
+            CPP.Add("$q = std::make_unique<QImage>(image->$q->copy(x,y,width,height));");
             GetPtr();
         }
         private Image(Image image, int newWidth, int newHeight) {
-            CPP.Add("$q = std::make_shared<QImage>(image->$q->scaled(newWidth,newHeight));");
+            CPP.Add("$q = std::make_unique<QImage>(image->$q->scaled(newWidth,newHeight));");
             GetPtr();
         }
         public Image(int width, int height) {
-            CPP.Add("$q = std::make_shared<QImage>(width, height, QImage::Format_ARGB32);");
+            CPP.Add("$q = std::make_unique<QImage>(width, height, QImage::Format_ARGB32);");
             GetPtr();
         }
         private void GetPtr() {
@@ -110,7 +110,7 @@ namespace Qt.Gui {
         }
         public void DrawImage(int x, int y, Image src, int sx, int sy, int width = -1, int height = -1) {
             CPP.Add("$painter.begin($q.get());");
-            CPP.Add("$painter.drawImage(x,y,*$deref(src->$q),sx,sy,width,height);");
+            CPP.Add("$painter.drawImage(x,y,*$deref(src)->$q,sx,sy,width,height);");
             CPP.Add("$painter.end();");
         }
         public void DrawPie(int x, int y, int width, int height, int startAngle, int spanAngle) {
