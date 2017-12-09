@@ -12,11 +12,17 @@ namespace Qt.Core {
             CPP.Add("$q = new QDomElement();");
             CPP.Add("*$q = xml->$q->documentElement();");
         }
+        private XMLTag(int index) {
+            CPP.Add("$q = new QDomElement($q->childNodes().at(index).toElement());");
+        }
         public void SetName(String name) {
             CPP.Add("$q->setTagName(name->qstring());");
         }
         public String GetName() {
             return CPP.ReturnString("String::$new($q->tagName())");
+        }
+        public XMLTag GetChild(int idx) {
+            return new XMLTag(idx);
         }
         public XMLTag AddChild(String name) {
             CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new();");
@@ -78,15 +84,11 @@ namespace Qt.Core {
     )]
     public class XMLAttr {
         public XMLAttr(XMLTag tag, String name) {
-            if (tag == null) throw new NullPointerException();
-            CPP.Add("$q = new QDomAttr();");
-            CPP.Add("*$q = tag->$q->attributeNode(name->qstring());");
+            CPP.Add("$q = new QDomAttr($deref(tag)->$q->attributeNode($deref(name)->qstring()));");
         }
         public XMLAttr(XMLTag tag, int index) {
-            if (tag == null) throw new NullPointerException();
-            CPP.Add("$q = new QDomAttr();");
-            CPP.Add("QString name = tag->$q->attributes().item(index).nodeName();");
-            CPP.Add("*$q = tag->$q->attributeNode(name);");
+            CPP.Add("QString name = $deref(tag)->$q->attributes().item(index).nodeName();");
+            CPP.Add("$q = new QDomAttr($deref(tag)->$q->attributeNode(name));");
         }
         public String GetName() {
             return CPP.ReturnString("String::$new($q->name())");
