@@ -2022,7 +2022,7 @@ namespace QSharpCompiler
               ob.Append("std::make_shared<QSharpArray<");
             }
             Type type = new Type(typeNode);
-            ob.Append(type.GetTypeType());
+            ob.Append(type.GetTypeDeclaration());
             for(int a=0;a<dims;a++) {
                 ob.Append(">>");
             }

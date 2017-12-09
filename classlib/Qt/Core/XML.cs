@@ -21,7 +21,6 @@ namespace Qt.Core {
         public XMLTag GetChild(int idx) {
             return (XMLTag)CPP.ReturnObject("XMLTag::$new($q->childNodes().at(idx).toElement())");
         }
-/*
         public XMLTag[] GetChilds() {
             int cnt = GetChildCount();
             XMLTag[] childs = new XMLTag[cnt];
@@ -30,7 +29,6 @@ namespace Qt.Core {
             }
             return childs;
         }
-*/
         public XMLTag AddChild(String name) {
             CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new();");
             CPP.Add("child->SetName(name);");
