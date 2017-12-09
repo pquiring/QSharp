@@ -3,15 +3,20 @@ using Qt.QSharp;
 namespace Qt.Core {
     public class Cipher {
         public static String AES = "AES";
-        private String type;
-        public Cipher(String type) {
-            this.type = type;
+        public static String SHA1 = "SHA1";
+        private String algo;
+        private String digest;
+        public Cipher(string algo, string digest) {
+            this.algo = algo;
+            this.digest = digest;
         }
         public ByteArray Encode(ByteArray input, ByteArray key) {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Crypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::CBC, *$deref(input)->$value(), *$deref(key)->$value()))");
+            CPP.Add("QByteArray ckey = QCryptographicHash::hash(*$deref(key)->$value(), QCryptographicHash::Sha1);");
+            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Crypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::ECB, *$deref(input)->$value(), ckey))");
         }
         public ByteArray Decode(ByteArray input, ByteArray key) {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Decrypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::CBC, *$deref(input)->$value(), *$deref(key)->$value()))");
+            CPP.Add("QByteArray ckey = QCryptographicHash::hash(*$deref(key)->$value(), QCryptographicHash::Sha1);");
+            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Decrypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::ECB, *$deref(input)->$value(), ckey))");
         }
     }
 }

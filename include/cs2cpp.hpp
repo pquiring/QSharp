@@ -27,6 +27,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QBuffer>
 #include <QtCore/QLibrary>
+#include <QtCore/QCryptographicHash>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
@@ -157,6 +158,13 @@ public:
 template<typename T>
 inline T* $deref(std::shared_ptr<T> x) {
   T* ptr = x.get();
+  if (ptr == nullptr) $npe();
+  return ptr;
+}
+
+template<typename T>
+inline T* $deref(std::weak_ptr<T> x) {
+  T* ptr = x.lock.get();
   if (ptr == nullptr) $npe();
   return ptr;
 }

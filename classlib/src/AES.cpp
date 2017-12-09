@@ -23,16 +23,16 @@ QByteArray QAESEncryption::ExpandKey(QAESEncryption::AES level, QAESEncryption::
  * Inline Functions
  * */
 
-inline quint8 xTime(quint8 x){
+inline static quint8 xTime(quint8 x){
   return ((x<<1) ^ (((x>>7) & 1) * 0x1b));
 }
 
-inline quint8 multiply(quint8 x, quint8 y){
+inline static quint8 multiply(quint8 x, quint8 y){
   return (((y & 1) * x) ^ ((y>>1 & 1) * xTime(x)) ^ ((y>>2 & 1) * xTime(xTime(x))) ^ ((y>>3 & 1)
             * xTime(xTime(xTime(x)))) ^ ((y>>4 & 1) * xTime(xTime(xTime(xTime(x))))));
 }
 
-inline int getPadding(int currSize, int alignment) {
+inline static int getPadding(int currSize, int alignment) {
     return (alignment - currSize % alignment) % alignment;
 }
 /*
@@ -386,8 +386,10 @@ QByteArray QAESEncryption::encode(const QByteArray rawText, const QByteArray key
 
 QByteArray QAESEncryption::decode(const QByteArray rawText, const QByteArray key, const QByteArray iv)
 {
-    if (m_mode >= CBC && (iv.isNull() || iv.size() != m_blocklen))
+    if (m_mode >= CBC && (iv.isNull() || iv.size() != m_blocklen)) {
+       printf("Cipher:AES:Error:Invalid arguments\n");
        return QByteArray();
+    }
 
     QByteArray ret;
     QByteArray expandedKey = expandKey(key);
