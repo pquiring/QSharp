@@ -279,7 +279,7 @@ namespace QSharpCompiler
         private string Namespace = "";
         private List<Class> clss = new List<Class>();
         private List<string> usings = new List<string>();
-        private static Class cls;
+        public static Class cls;
         private Class NoClass = new Class();  //for classless delegates
         private Method method;
         private Field field;
@@ -420,14 +420,22 @@ namespace QSharpCompiler
             fs.Write(bytes, 0, bytes.Length);
         }
 
+        /** Create default ctor if class has no ctors. */
+        private void createDefaultCtor(Class cls) {
+            if (!cls.hasctor && !cls.Interface && !cls.omitConstructors) {
+                Generate.cls = cls;
+                ctorNode(null);
+            }
+            foreach(var inner in cls.inners) {
+                createDefaultCtor(inner);
+            }
+        }
+
         private void writeClasses() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in clss) {
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
-                if (!cls.hasctor && !cls.Interface && !cls.omitConstructors) {
-                    Generate.cls = cls;
-                    ctorNode(null);
-                }
+                createDefaultCtor(cls);
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 sb.Append(cls.GetDeclaration());
                 if (cls.Namespace != "") sb.Append("}\r\n");
@@ -1035,7 +1043,7 @@ namespace QSharpCompiler
             return vars;
         }
 
-        private void ctorNode(SyntaxNode node) {
+        public void ctorNode(SyntaxNode node) {
             method = new Method();
             cls.methods.Add(method);
             method.cls = cls;
@@ -2072,23 +2080,19 @@ namespace QSharpCompiler
             ob.Append(")");
         }
 
-        private static bool CStyleCast = true;  //C++ style not working
-
         private void castNode(SyntaxNode node, OutputBuffer ob) {
             SyntaxNode castType = GetChildNode(node, 1);
             SyntaxNode value = GetChildNode(node, 2);
             //cast value to type
             //C# (type)value
-            //C++ std::static_pointer_cast<type>(value)
+            //C++ std::dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
-            if (!CStyleCast) if (type.shared) ob.Append("std::static_pointer_cast<"); else ob.Append("static_cast<");
-            if (CStyleCast) ob.Append("(");
-            ob.Append(type.GetTypeDeclaration());
-            if (CStyleCast) ob.Append(")");
-            if (!CStyleCast) ob.Append(">");
-            if (!CStyleCast) ob.Append("(");
+            if (type.shared) ob.Append("std::dynamic_pointer_cast<"); else ob.Append("static_cast<");
+            ob.Append(type.GetTypeType());
+            ob.Append(">");
+            ob.Append("(");
             expressionNode(value, ob);
-            if (!CStyleCast) ob.Append(")");
+            ob.Append(")");
         }
 
         private void newArrayNode(SyntaxNode node, OutputBuffer ob) {
