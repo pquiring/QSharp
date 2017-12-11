@@ -14,7 +14,7 @@ namespace Qt.Network {
     public class SslServer : TcpServer {
         private SslPendingEvent pending;
         public new SslSocket Accept() {
-            return (SslSocket)base.Accept();
+            return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)nextPendingConnection())");
         }
         private void SlotNewConnection() {
             if (pending != null) {

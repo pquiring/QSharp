@@ -26,6 +26,8 @@ namespace QSharpCompiler
         public static bool classlib;
         public static string main;
         public static string home = ".";
+        public static bool single = false;  //generate monolithic cpp source file
+        public static string cxx = "14";  //C++ version to use
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -35,7 +37,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -78,6 +80,15 @@ namespace QSharpCompiler
                         case "tokens": debugTokens = true; break;
                         case "tostring": debugToString = true; break;
                     }
+                }
+                if (arg == "--single") {
+                    single = true;
+                }
+                if (arg == "--multi") {
+                    single = false;
+                }
+                if (arg == "--cxx") {
+                    cxx = value;
                 }
             }
             csFolder = args[0];
@@ -289,23 +300,27 @@ namespace QSharpCompiler
             writeNoClassTypes();
             writeClasses();
             closeOutput();
+            if (Program.single) openOutput("cpp/" + Program.target + ".cpp");
+            if (Program.single) writeIncludes();
             foreach(Source file in sources) {
-                if (file.csTimestamp <= file.cppTimestamp) continue;
+                if (!Program.single && file.csTimestamp <= file.cppTimestamp) continue;
                 Generate.file = file;
-                openOutput(file.cppFile);
-                writeIncludes();
+                if (!Program.single) openOutput(file.cppFile);
+                if (!Program.single) writeIncludes();
                 writeStaticFields();
                 writeMethods();
-                closeOutput();
+                if (!Program.single) closeOutput();
             }
-            openOutput("cpp/ctor.cpp");
+            if (!Program.single) openOutput("cpp/ctor.cpp");
+            if (!Program.single) writeIncludes();
             writeStaticFieldsInit();
-            closeOutput();
+            if (!Program.single) closeOutput();
             if (Program.main != null) {
-                openOutput("cpp/main.cpp");
+                if (!Program.single) openOutput("cpp/main.cpp");
                 writeMain();
-                closeOutput();
+                if (!Program.single) closeOutput();
             }
+            if (Program.single) closeOutput();
             openOutput("CMakeLists.txt");
             writeCMakeLists(sources);
             closeOutput();
@@ -442,7 +457,6 @@ namespace QSharpCompiler
 
         private void writeStaticFieldsInit() {
             StringBuilder sb = new StringBuilder();
-            sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
             sb.Append("void $" + Program.target + "_ctor() {\r\n");
             foreach(var cls in clss) {
                 sb.Append(cls.GetStaticFieldsInit());
@@ -478,7 +492,7 @@ namespace QSharpCompiler
                 sb.Append("extern void $" + lib + "_ctor();\r\n");
             }
 
-            sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
+            if (!Program.single) sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
 
             sb.Append("namespace Qt::Core {\r\n");;
             sb.Append("int g_argc;\r\n");
@@ -501,7 +515,7 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
 
             sb.Append("cmake_minimum_required(VERSION 3.6)\r\n");
-            sb.Append("set(CMAKE_CXX_STANDARD 14)\r\n");
+            sb.Append("set(CMAKE_CXX_STANDARD " + Program.cxx + ")\r\n");
             sb.Append("include_directories(/usr/include/qt5)\r\n");
             sb.Append("include_directories(/usr/include/ffmpeg)\r\n");
             sb.Append("include_directories(" + Program.home + "/include)\r\n");
@@ -509,23 +523,33 @@ namespace QSharpCompiler
                 sb.Append("include_directories(" + Program.home + "/include/quazip)\r\n");
             }
             if (Program.library) {
-                sb.Append("add_library(" + Program.target + " cpp/ctor.cpp\r\n");
+                sb.Append("add_library(" + Program.target + "\r\n");
                 if (Program.classlib) {
                     sb.Append("quazip/qioapi.cpp quazip/quaadler32.cpp quazip/quacrc32.cpp quazip/quagzipfile.cpp quazip/quaziodevice.cpp quazip/quazip.cpp quazip/quazipdir.cpp quazip/quazipfile.cpp quazip/quazipfileinfo.cpp quazip/quazipnewinfo.cpp\r\n");
                     sb.Append("quazip/release/moc_quagzipfile.cpp quazip/release/moc_quaziodevice.cpp quazip/release/moc_quazipfile.cpp\r\n");
                     sb.Append("quazip/unzip.c quazip/zip.c\r\n");
                 }
-                foreach(Source file in sources) {
-                    sb.Append(" ");
-                    sb.Append(file.cppFile);
+                if (!Program.single) {
+                    sb.Append("cpp/ctor.cpp");
+                    foreach(Source file in sources) {
+                        sb.Append(" ");
+                        sb.Append(file.cppFile);
+                    }
+                } else {
+                    sb.Append(" cpp/" + Program.target + ".cpp");
                 }
                 sb.Append(")\r\n");
             } else {
                 sb.Append("link_directories(" + Program.home + "/lib)\r\n");
-                sb.Append("add_executable(" + Program.target + " cpp/main.cpp cpp/ctor.cpp\r\n");
-                foreach(Source file in sources) {
-                    sb.Append(" ");
-                    sb.Append(file.cppFile);
+                sb.Append("add_executable(" + Program.target + "\r\n");
+                if (!Program.single) {
+                    sb.Append("cpp/main.cpp cpp/ctor.cpp");
+                    foreach(Source file in sources) {
+                        sb.Append(" ");
+                        sb.Append(file.cppFile);
+                    }
+                } else {
+                    sb.Append(" cpp/" + Program.target + ".cpp");
                 }
                 sb.Append(")\r\n");
                 sb.Append("target_link_libraries(" + Program.target + "\r\n");
@@ -537,7 +561,7 @@ namespace QSharpCompiler
                 sb.Append(")\r\n");
             }
             if (Program.library) {
-                sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy " + Program.target + ".hpp " + Program.home + "/include)\r\n");
+                sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy cpp/" + Program.target + ".hpp " + Program.home + "/include)\r\n");
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:" + Program.target + "> " + Program.home + "/lib)\r\n");
             }
 
@@ -1704,7 +1728,7 @@ namespace QSharpCompiler
                     }
                     break;
                 case SyntaxKind.BaseExpression:
-                    ob.Append(cls.name);
+                    ob.Append(cls.bases[0]);
                     break;
                 case SyntaxKind.ObjectCreationExpression:
                     invokeNode(node, ob, true);

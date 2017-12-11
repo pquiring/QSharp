@@ -35,8 +35,8 @@ namespace Qt.Gui {
         public void glCompressedTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int imageSize, byte[] data) {CPP.Add("$q->glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data->data());");}
         public void glCopyTexImage2D(int target, int level, int internalformat, int x, int y, int width, int height, int border) {CPP.Add("$q->glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);");}
         public void glCopyTexSubImage2D(int target, int level, int xoffset, int yoffset, int x, int y, int width, int height) {CPP.Add("$q->glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);");}
-        public int glCreateProgram() {return CPP.ReturnInt("glCreateProgram();");}
-        public int glCreateShader(int type) {return CPP.ReturnInt("glCreateShader(type)");}
+        public int glCreateProgram() {return CPP.ReturnInt("$q->glCreateProgram();");}
+        public int glCreateShader(int type) {return CPP.ReturnInt("$q->glCreateShader(type)");}
         public void glCullFace(int mode) {CPP.Add("$q->glCullFace(mode);");}
         public void glDeleteBuffers(int n, int[] buffers) {CPP.Add("$q->glDeleteBuffers(n, (const GLuint*)buffers->data());");}
         public void glDeleteFramebuffers(int n, int[] framebuffers) {CPP.Add("$q->glDeleteFramebuffers(n, (const GLuint*)framebuffers->data());");}

@@ -27,7 +27,6 @@ static int open_codec_context(std::shared_ptr<Qt::Media::FFContext> ctx, AVForma
 }
 
 static bool open_codecs(std::shared_ptr<Qt::Media::FFContext> ctx, int new_width, int new_height, int new_chs, int new_freq) {
-  AVCodecContext *codec_ctx;
   if ((ctx->video_stream_idx = open_codec_context(ctx, ctx->fmt_ctx, AVMEDIA_TYPE_VIDEO)) >= 0) {
     ctx->video_stream = (AVStream*)ctx->fmt_ctx->streams[ctx->video_stream_idx];
     ctx->video_codec_ctx = ctx->codec_ctx;

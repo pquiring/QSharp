@@ -1,5 +1,5 @@
 @echo off
+::build the .NET Project (optional)
 dotnet build
-..\bin\cs2cpp.exe Qt classlib --library --classlib --home=.. %*
-cmake -D CMAKE_BUILD_TYPE=Release .
-make
+::generate the cpp sources and CMakeLists.txt
+..\bin\cs2cpp.exe Qt classlib --library --classlib --home=.. %QSHARP% %*

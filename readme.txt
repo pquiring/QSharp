@@ -52,12 +52,22 @@ Then build the classlib:
   cd classlib
   setup
   build
+  cmake {cmake options}
+  make | nmake
 
 To build any test:
 
   cd test...
   setup
   build
+  cmake {cmake options}
+  make | nmake
+
+cmake options (depends on platform):
+  to specify build type:
+    -D CMAKE_BUILD_TYPE=Release | Debug
+  to build with MSVC++
+    -G "NMake Makefiles"
 
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
