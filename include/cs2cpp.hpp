@@ -262,4 +262,9 @@ inline double $add(uint32 x,double y) {return x + y;}
 inline double $add(double x,uint64 y) {return x + y;}
 inline double $add(uint64 x,double y) {return x + y;}
 
+//string functions
+
+extern std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list);
+extern QStringList $StringArrayToQStringList(std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> array);
+
 #endif

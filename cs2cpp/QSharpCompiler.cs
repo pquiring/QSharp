@@ -14,7 +14,7 @@ namespace QSharpCompiler
     class Program
     {
         public static string csFolder;
-        public static string cppFile;
+        public static string cppFolder;
         public static string hppFile;
         public ArrayList files = new ArrayList();
         public static bool debug = false;
@@ -22,8 +22,10 @@ namespace QSharpCompiler
         public static bool debugTokens = false;
         public static string version = "0.7";
         public static bool library;
+        public static string target;
         public static bool classlib;
         public static string main;
+        public static string home = ".";
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -31,61 +33,63 @@ namespace QSharpCompiler
 
         static void Main(string[] args)
         {
-            if (args.Length < 3) {
+            if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_in_folder src_out_file.cpp header_out_file.hpp [--library | --main=class] [--ref=dll ...] [--debug[=tokens,tostring,all]]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]]");
                 return;
             }
-            if (args.Length > 3) {
-                for(int a=3;a<args.Length;a++) {
-                    int idx = args[a].IndexOf("=");
-                    String arg = "";
-                    String value = "";
-                    if (idx == -1) {
-                        arg = args[a];
-                        value = "";
-                    } else {
-                        arg = args[a].Substring(0, idx);
-                        value = args[a].Substring(idx + 1);
+            for(int a=2;a<args.Length;a++) {
+                int idx = args[a].IndexOf("=");
+                String arg = "";
+                String value = "";
+                if (idx == -1) {
+                    arg = args[a];
+                    value = "";
+                } else {
+                    arg = args[a].Substring(0, idx);
+                    value = args[a].Substring(idx + 1);
+                }
+                if (arg == "--library") {
+                    library = true;
+                }
+                if (arg == "--classlib") {
+                    classlib = true;
+                }
+                if (arg == "--main") {
+                    main = value.Replace(".", "::");
+                }
+                if (arg == "--ref") {
+                    refs.Add(value);
+                    int i1 = value.LastIndexOf("\\");
+                    if (i1 != -1) {
+                        value = value.Substring(i1+1);
                     }
-                    if (arg == "--library") {
-                        library = true;
-                    }
-                    if (arg == "--classlib") {
-                        classlib = true;
-                    }
-                    if (arg == "--main") {
-                        main = value.Replace(".", "::");
-                    }
-                    if (arg == "--ref") {
-                        refs.Add(value);
-                        int i1 = value.LastIndexOf("\\");
-                        if (i1 != -1) {
-                            value = value.Substring(i1+1);
-                        }
-                        int i2 = value.IndexOf(".");
-                        value = value.Substring(0, i2);
-                        libs.Add(value);
-                    }
-                    if (arg == "--debug") {
-                        debug = true;
-                        switch (value) {
-                            case "all": debugToString = true; debugTokens = true; break;
-                            case "tokens": debugTokens = true; break;
-                            case "tostring": debugToString = true; break;
-                        }
+                    int i2 = value.IndexOf(".");
+                    value = value.Substring(0, i2);
+                    libs.Add(value);
+                }
+                if (arg == "--home") {
+                    home = value.Replace("\\", "/");
+                }
+                if (arg == "--debug") {
+                    debug = true;
+                    switch (value) {
+                        case "all": debugToString = true; debugTokens = true; break;
+                        case "tokens": debugTokens = true; break;
+                        case "tostring": debugToString = true; break;
                     }
                 }
             }
-            new Program().process(args[0], args[1], args[2]);
+            csFolder = args[0];
+            target = args[1];
+            cppFolder = "cpp";
+            hppFile = target + ".hpp";
+            new Program().process();
             Console.WriteLine("cs2cpp generated " + args[1]);
         }
 
-        void process(string cs, string cpp, string hpp)
+        void process()
         {
-            csFolder = cs;
-            cppFile = cpp;
-            hppFile = hpp;
             compiler = CSharpCompilation.Create("C#");
             var corelibs = ((String)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")).Split(Path.PathSeparator);
             foreach(var lib in corelibs) {
@@ -98,7 +102,7 @@ namespace QSharpCompiler
                 Console.WriteLine("Adding Reference:" + lib);
                 compiler = compiler.AddReferences(MetadataReference.CreateFromFile(lib));
             }
-            addFolder(cs);
+            addFolder(csFolder);
             foreach(Source node in files)
             {
                 node.model = compiler.GetSemanticModel(node.tree);
@@ -108,7 +112,7 @@ namespace QSharpCompiler
                 }
             }
             try {
-                new Generate().generate(files, cppFile);
+                new Generate().generate(files);
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
@@ -133,6 +137,10 @@ namespace QSharpCompiler
             string src = System.IO.File.ReadAllText(file);
             Source node = new Source();
             node.csFile = file;
+            node.cppFile = cppFolder + "/" + node.csFile.Replace(".", "_").Replace("\\", "_") + ".cpp";
+            node.csTimestamp = timestamp(node.csFile);
+            node.cppTimestamp = timestamp(node.cppFile);
+            node.clss = new List<Class>();
             int idx = csFolder.Length;
             int len = file.Length - idx - 3;
             file = file.Substring(idx, len);
@@ -140,6 +148,15 @@ namespace QSharpCompiler
             node.tree = CSharpSyntaxTree.ParseText(src);
             files.Add(node);
             compiler = compiler.AddSyntaxTrees(node.tree);
+        }
+
+        DateTime now = DateTime.Now;
+
+        long timestamp(string filename) {
+            if (!File.Exists(filename)) return -1;
+            DateTime dt = File.GetLastWriteTimeUtc(filename);
+            TimeSpan offset = now - dt;
+            return (long)offset.TotalMilliseconds;
         }
 
         void printNodes(Source file, IEnumerable<SyntaxNode> nodes, int lvl)
@@ -234,9 +251,13 @@ namespace QSharpCompiler
     class Source
     {
         public string csFile;
+        public long csTimestamp;
+        public string cppFile;
+        public long cppTimestamp;
         public string src;
         public SyntaxTree tree;
         public SemanticModel model;
+        public List<Class> clss;
     }
 
     class Generate
@@ -252,7 +273,7 @@ namespace QSharpCompiler
         private Method method;
         private Field field;
 
-        public void generate(ArrayList sources, string cppFile)
+        public void generate(ArrayList sources)
         {
             if (Program.debug) {
                 Console.WriteLine();
@@ -261,18 +282,32 @@ namespace QSharpCompiler
             foreach(Source file in sources) {
                 generate(file);
             }
-            openOutput(Program.hppFile);
+            Directory.CreateDirectory("cpp");
+            openOutput("cpp/" + Program.hppFile);
             writeForward();
             while (sortClasses()) {};
             writeNoClassTypes();
             writeClasses();
             closeOutput();
-            openOutput(Program.cppFile);
-            writeIncludes();
-            writeStaticFields();
+            foreach(Source file in sources) {
+                if (file.csTimestamp <= file.cppTimestamp) continue;
+                Generate.file = file;
+                openOutput(file.cppFile);
+                writeIncludes();
+                writeStaticFields();
+                writeMethods();
+                closeOutput();
+            }
+            openOutput("cpp/ctor.cpp");
             writeStaticFieldsInit();
-            writeMethods();
-            if (Program.main != null) writeMain();
+            closeOutput();
+            if (Program.main != null) {
+                openOutput("cpp/main.cpp");
+                writeMain();
+                closeOutput();
+            }
+            openOutput("CMakeLists.txt");
+            writeCMakeLists(sources);
             closeOutput();
         }
 
@@ -287,15 +322,19 @@ namespace QSharpCompiler
 
         private void openOutput(string filename) {
             fs = System.IO.File.Open(filename, FileMode.Create);
-            byte[] bytes = new UTF8Encoding().GetBytes("//cs2cpp : Machine generated code : Do not edit!\r\n");
+            byte[] bytes;
+            if (filename.EndsWith(".txt"))
+                bytes = new UTF8Encoding().GetBytes("# cs2cpp : Machine generated code : Do not edit!\r\n");
+            else
+                bytes = new UTF8Encoding().GetBytes("// cs2cpp : Machine generated code : Do not edit!\r\n");
             fs.Write(bytes, 0, bytes.Length);
         }
 
         private void writeForward() {
             StringBuilder sb = new StringBuilder();
             sb.Append("#include <cs2cpp.hpp>\r\n");
-            if (Program.cppFile != "classlib.cpp") {
-                sb.Append("#include <classlib.hpp>\r\n");
+            foreach(var lib in Program.libs) {
+                sb.Append("#include <" + lib + ".hpp>\r\n");
             }
             foreach(var use in usings) {
                 sb.Append("namespace " + use + " {}\r\n");
@@ -392,7 +431,7 @@ namespace QSharpCompiler
 
         private void writeStaticFields() {
             StringBuilder sb = new StringBuilder();
-            foreach(var cls in clss) {
+            foreach(var cls in file.clss) {
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 sb.Append(cls.GetStaticFields());
                 if (cls.Namespace != "") sb.Append("}\r\n");
@@ -403,14 +442,8 @@ namespace QSharpCompiler
 
         private void writeStaticFieldsInit() {
             StringBuilder sb = new StringBuilder();
-            String libraryName = Program.cppFile;
-            int i1 = libraryName.LastIndexOf("\\");
-            if (i1 != -1) {
-                libraryName = libraryName.Substring(i1+1);
-            }
-            int i2 = libraryName.IndexOf(".");
-            libraryName = libraryName.Substring(0, i2);
-            sb.Append("void $" + libraryName + "_ctor() {\r\n");
+            sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
+            sb.Append("void $" + Program.target + "_ctor() {\r\n");
             foreach(var cls in clss) {
                 sb.Append(cls.GetStaticFieldsInit());
             }
@@ -421,17 +454,17 @@ namespace QSharpCompiler
 
         private void writeMethods() {
             StringBuilder sb = new StringBuilder();
-            foreach(var cls in clss) {
+            foreach(var cls in file.clss) {
                 if (cls.Generic) continue;
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 string hppfile = "src/" + cls.name + ".hpp";
-                if (File.Exists(hppfile)) sb.Append("#include \"" + hppfile + "\"\r\n");
+                if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                 sb.Append(cls.GetMethodsDefinitions());
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.nonClassCPP != null) sb.Append(cls.nonClassCPP);
                 string cppfile = "src/" + cls.name + ".cpp";
-                if (File.Exists(cppfile)) sb.Append("#include \"" + cppfile + "\"\r\n");
+                if (File.Exists(cppfile)) sb.Append("#include \"../" + cppfile + "\"\r\n");
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -441,8 +474,11 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
 
             foreach(var lib in Program.libs) {
+//                sb.Append("#include <" + lib + ".hpp>\r\n");
                 sb.Append("extern void $" + lib + "_ctor();\r\n");
             }
+
+            sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
 
             sb.Append("namespace Qt::Core {\r\n");;
             sb.Append("int g_argc;\r\n");
@@ -456,6 +492,54 @@ namespace QSharpCompiler
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
             sb.Append("return 0;}\r\n");
+
+            byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
+            fs.Write(bytes, 0, bytes.Length);
+        }
+
+        private void writeCMakeLists(ArrayList sources) {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("cmake_minimum_required(VERSION 3.6)\r\n");
+            sb.Append("set(CMAKE_CXX_STANDARD 14)\r\n");
+            sb.Append("include_directories(/usr/include/qt5)\r\n");
+            sb.Append("include_directories(/usr/include/ffmpeg)\r\n");
+            sb.Append("include_directories(" + Program.home + "/include)\r\n");
+            if (Program.classlib) {
+                sb.Append("include_directories(" + Program.home + "/include/quazip)\r\n");
+            }
+            if (Program.library) {
+                sb.Append("add_library(" + Program.target + " cpp/ctor.cpp\r\n");
+                if (Program.classlib) {
+                    sb.Append("quazip/qioapi.cpp quazip/quaadler32.cpp quazip/quacrc32.cpp quazip/quagzipfile.cpp quazip/quaziodevice.cpp quazip/quazip.cpp quazip/quazipdir.cpp quazip/quazipfile.cpp quazip/quazipfileinfo.cpp quazip/quazipnewinfo.cpp\r\n");
+                    sb.Append("quazip/release/moc_quagzipfile.cpp quazip/release/moc_quaziodevice.cpp quazip/release/moc_quazipfile.cpp\r\n");
+                    sb.Append("quazip/unzip.c quazip/zip.c\r\n");
+                }
+                foreach(Source file in sources) {
+                    sb.Append(" ");
+                    sb.Append(file.cppFile);
+                }
+                sb.Append(")\r\n");
+            } else {
+                sb.Append("link_directories(" + Program.home + "/lib)\r\n");
+                sb.Append("add_executable(" + Program.target + " cpp/main.cpp cpp/ctor.cpp\r\n");
+                foreach(Source file in sources) {
+                    sb.Append(" ");
+                    sb.Append(file.cppFile);
+                }
+                sb.Append(")\r\n");
+                sb.Append("target_link_libraries(" + Program.target + "\r\n");
+                foreach(var lib in Program.libs) {
+                    sb.Append(" ");
+                    sb.Append(lib);
+                }
+                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml stdc++ z");
+                sb.Append(")\r\n");
+            }
+            if (Program.library) {
+                sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy " + Program.target + ".hpp " + Program.home + "/include)\r\n");
+                sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:" + Program.target + "> " + Program.home + "/lib)\r\n");
+            }
 
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -493,6 +577,7 @@ namespace QSharpCompiler
                 case SyntaxKind.StructDeclaration:
                     Class topcls = new Class();
                     clss.Add(topcls);
+                    file.clss.Add(topcls);
                     classNode(node, topcls, NoClass, node.Kind() == SyntaxKind.InterfaceDeclaration);
                     cls = NoClass;
                     break;

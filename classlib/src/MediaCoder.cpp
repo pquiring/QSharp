@@ -24,18 +24,6 @@ static void register_vpx() {
   (*_av_register_output_format)(vpx);
 }
 
-//AVPicture was deprecated in ffmpeg/3.0 - use AVFrame instead - this function does the same as avpicture_alloc() except using AVFrame
-int _avframe_alloc(AVFrame *picture, enum AVPixelFormat pix_fmt, int width, int height)
-{
-  int ret = (*_av_image_alloc)(picture->data, picture->linesize, width, height, pix_fmt, 1);
-  if (ret < 0) {
-    memset(picture, 0, sizeof(AVFrame));
-    return ret;
-  }
-
-  return 0;
-}
-
 #ifndef __WIN32__
 int GetLastError() {
   return errno;
