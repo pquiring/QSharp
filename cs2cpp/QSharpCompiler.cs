@@ -16,7 +16,7 @@ namespace QSharpCompiler
         public static string csFolder;
         public static string cppFolder;
         public static string hppFile;
-        public ArrayList files = new ArrayList();
+        public static List<Source> files = new List<Source>();
         public static bool debug = false;
         public static bool debugToString = false;
         public static bool debugTokens = false;
@@ -29,6 +29,7 @@ namespace QSharpCompiler
         public static bool single = false;  //generate monolithic cpp source file
         public static string cxx = "14";  //C++ version to use
         public static bool msvc = false;
+        public static bool reflection = true;
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -38,7 +39,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version] [--msvc]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version] [--msvc] [--reflection=yes|no]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -94,6 +95,9 @@ namespace QSharpCompiler
                 if (arg == "--msvc") {
                     msvc = true;
                 }
+                if (arg == "--reflection") {
+                    reflection = value == "yes";
+                }
             }
             csFolder = args[0];
             target = args[1];
@@ -127,7 +131,7 @@ namespace QSharpCompiler
                 }
             }
             try {
-                new Generate().generate(files);
+                new Generate().generate();
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
@@ -281,32 +285,33 @@ namespace QSharpCompiler
 
         private FileStream fs;
         private string Namespace = "";
-        private List<Class> clss = new List<Class>();
         private List<string> usings = new List<string>();
         public static Class cls;
         private Class NoClass = new Class();  //for classless delegates
         private Method method;
         private Field field;
 
-        public void generate(ArrayList sources)
+        public void generate()
         {
             if (Program.debug) {
                 Console.WriteLine();
             }
             usings.Add("Qt::Core");
-            foreach(Source file in sources) {
+            foreach(Source file in Program.files) {
                 generate(file);
             }
             Directory.CreateDirectory("cpp");
             openOutput("cpp/" + Program.hppFile);
             writeForward();
+            /** In C++ you can not use an undefined class, so they must be sorted by usage. */
             while (sortClasses()) {};
+            while (sortFiles()) {};
             writeNoClassTypes();
             writeClasses();
             closeOutput();
             if (Program.single) openOutput("cpp/" + Program.target + ".cpp");
             if (Program.single) writeIncludes();
-            foreach(Source file in sources) {
+            foreach(Source file in Program.files) {
                 if (!Program.single && file.csTimestamp <= file.cppTimestamp) continue;
                 Generate.file = file;
                 if (!Program.single) openOutput(file.cppFile);
@@ -326,7 +331,7 @@ namespace QSharpCompiler
             }
             if (Program.single) closeOutput();
             openOutput("CMakeLists.txt");
-            writeCMakeLists(sources);
+            writeCMakeLists();
             closeOutput();
         }
 
@@ -359,38 +364,76 @@ namespace QSharpCompiler
                 sb.Append("namespace " + use + " {}\r\n");
                 sb.Append("using namespace " + use + ";\r\n");
             }
-            foreach(var cls in clss) {
-                if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
-                if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                sb.Append(cls.GetForwardDeclaration());
-                if (cls.Namespace != "") sb.Append("}\r\n");
-                if (!cls.Interface && cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
-                    cls.bases.Add("Qt::Core::Object");
-                    cls.addUsage("Object");
-                    if (cls.Namespace.StartsWith("Qt")) cls.addUsage("QSharpDerived");  //temp fix
+            foreach(var file in Program.files) {
+                foreach(var cls in file.clss) {
+                    if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
+                    if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                    sb.Append(cls.GetForwardDeclaration());
+                    if (cls.Namespace != "") sb.Append("}\r\n");
+                    if (!cls.Interface && cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
+                        cls.bases.Add(new Symbol("Qt::Core::Object"));
+                        cls.addUsage("Object");
+                        if (cls.Namespace.StartsWith("Qt")) cls.addUsage("QSharpDerived");  //temp fix
+                    }
                 }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
         }
 
-        /** In C++ you can not use an undefined class, so they must be sorted by usage. */
         private bool sortClasses() {
-            int cnt = clss.Count;
-            Class tmp;
-            for(int idx=0;idx<cnt;idx++) {
-                Class cls = clss[idx];
-                int ucnt = cls.uses.Count;
-                for(int uidx=0;uidx<ucnt;uidx++) {
-                    string use = cls.uses[uidx];
-                    for(int i=idx+1;i<cnt;i++) {
-                        if (clss[i].name == use) {
-                            //need to move i before idx
-//                            Console.WriteLine("Moving " + clss[i].name + " before " + clss[idx].name);
-                            tmp = clss[i];
-                            clss.RemoveAt(i);
-                            clss.Insert(0, tmp);
-                            return true;
+            int fcnt = Program.files.Count;
+            for(int fidx = 0;fidx<fcnt;fidx++) {
+                Source file = Program.files[fidx];
+                List<Class> clss = file.clss;
+                int cnt = clss.Count;
+                for(int idx=0;idx<cnt;idx++) {
+                    Class cls = clss[idx];
+                    int ucnt = cls.uses.Count;
+                    for(int uidx=0;uidx<ucnt;uidx++) {
+                        string use = cls.uses[uidx];
+                        for(int idx2=idx+1;idx2<cnt;idx2++) {
+                            if (clss[idx2].name == use) {
+                                //need to move idx2 before idx
+                                Class tmp = clss[idx2];
+//                                Console.WriteLine("move:" + tmp.name + " before " + cls.name);
+                                clss.RemoveAt(idx2);
+                                clss.Insert(0, tmp);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool sortFiles() {
+            int fcnt = Program.files.Count;
+            for(int fidx = 0;fidx<fcnt;fidx++) {
+                Source file = Program.files[fidx];
+                List<Class> clss = file.clss;
+                int cnt = clss.Count;
+                for(int idx=0;idx<cnt;idx++) {
+                    Class cls = clss[idx];
+                    int ucnt = cls.uses.Count;
+                    for(int uidx=0;uidx<ucnt;uidx++) {
+                        string use = cls.uses[uidx];
+                        for(int fidx2=fidx+1;fidx2<fcnt;fidx2++) {
+                            Source file2 = Program.files[fidx2];
+                            List<Class> clss2 = file2.clss;
+                            int cnt2 = clss2.Count;
+                            for(int idx2=0;idx2<cnt2;idx2++) {
+                                Class cls2 = clss2[idx2];
+                                if (use == cls2.name) {
+                                    //need to move idx2 before idx
+                                    Source tmp = Program.files[fidx2];
+//                                    Console.WriteLine("move:" + tmp.csFile + " before " + file.csFile);
+                                    Program.files.RemoveAt(fidx2);
+                                    Program.files.Insert(0, tmp);
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -437,13 +480,16 @@ namespace QSharpCompiler
 
         private void writeClasses() {
             StringBuilder sb = new StringBuilder();
-            foreach(var cls in clss) {
-                if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
-                createDefaultCtor(cls);
-                if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                sb.Append(cls.GetDeclaration());
-                if (cls.Namespace != "") sb.Append("}\r\n");
-                if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
+            foreach(var file in Program.files) {
+                foreach(var cls in file.clss) {
+                    if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
+                    createDefaultCtor(cls);
+                    if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+//                    Console.WriteLine("Class:" + cls.name);
+                    sb.Append(cls.GetDeclaration());
+                    if (cls.Namespace != "") sb.Append("}\r\n");
+                    if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
+                }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -470,8 +516,10 @@ namespace QSharpCompiler
         private void writeStaticFieldsInit() {
             StringBuilder sb = new StringBuilder();
             sb.Append("void $" + Program.target + "_ctor() {\r\n");
-            foreach(var cls in clss) {
-                sb.Append(cls.GetStaticFieldsInit());
+            foreach(var file in Program.files) {
+                foreach(var cls in file.clss) {
+                    sb.Append(cls.GetStaticFieldsInit());
+                }
             }
             sb.Append("};\r\n");
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
@@ -481,13 +529,16 @@ namespace QSharpCompiler
         private void writeMethods() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in file.clss) {
-                if (cls.Generic) continue;
-                if (cls.Interface) continue;
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 string hppfile = "src/" + cls.name + ".hpp";
                 if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                sb.Append(cls.GetMethodsDefinitions());
+                if (Program.reflection) {
+                    sb.Append(cls.GetReflectionData());
+                }
+                if (!cls.Generic && !cls.Interface) {
+                    sb.Append(cls.GetMethodsDefinitions());
+                }
                 if (cls.Namespace != "") sb.Append("}\r\n");
                 if (cls.nonClassCPP != null) sb.Append(cls.nonClassCPP);
                 string cppfile = "src/" + cls.name + ".cpp";
@@ -524,7 +575,7 @@ namespace QSharpCompiler
             fs.Write(bytes, 0, bytes.Length);
         }
 
-        private void writeCMakeLists(ArrayList sources) {
+        private void writeCMakeLists() {
             StringBuilder sb = new StringBuilder();
 
             if (Program.cxx == "17")
@@ -547,7 +598,7 @@ namespace QSharpCompiler
                 }
                 if (!Program.single) {
                     sb.Append("cpp/ctor.cpp");
-                    foreach(Source file in sources) {
+                    foreach(Source file in Program.files) {
                         sb.Append(" ");
                         sb.Append(file.cppFile);
                     }
@@ -560,7 +611,7 @@ namespace QSharpCompiler
                 sb.Append("add_executable(" + Program.target + "\r\n");
                 if (!Program.single) {
                     sb.Append("cpp/main.cpp cpp/ctor.cpp");
-                    foreach(Source file in sources) {
+                    foreach(Source file in Program.files) {
                         sb.Append(" ");
                         sb.Append(file.cppFile);
                     }
@@ -621,7 +672,6 @@ namespace QSharpCompiler
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.StructDeclaration:
                     Class topcls = new Class();
-                    clss.Add(topcls);
                     file.clss.Add(topcls);
                     classNode(node, topcls, NoClass, node.Kind() == SyntaxKind.InterfaceDeclaration);
                     cls = NoClass;
@@ -747,39 +797,36 @@ namespace QSharpCompiler
                 switch (child.Kind()) {
                     case SyntaxKind.SimpleBaseType:
                         SyntaxNode baseNode = GetChildNode(child);
-                        String baseName = null;
+                        Symbol baseSymbol = null;
                         switch (baseNode.Kind()) {
                             case SyntaxKind.IdentifierName:
                             case SyntaxKind.QualifiedName:
-                                baseName = baseNode.ToString().Replace(".", "::");
+                                baseSymbol = new Symbol(baseNode);
                                 break;
                             case SyntaxKind.GenericName:
-                                baseName = GetSymbol(baseNode);
+                                baseSymbol = new Symbol(baseNode);
                                 SyntaxNode argList = GetChildNode(baseNode);
-                                baseName += "<";
+                                String generic = "<";
                                 bool first = true;
                                 foreach(var arg in argList.ChildNodes()) {
-                                    if (!first) baseName += ","; else first = false;
+                                    if (!first) generic += ","; else first = false;
                                     Type type = new Type(arg);
-                                    baseName += type.GetTypeDeclaration();
+                                    generic += type.GetTypeDeclaration();
                                 }
-                                baseName += ">";
+                                generic += ">";
+                                baseSymbol.generic = generic;
                                 break;
                             default:
                                 Console.WriteLine("unknown baseList node:" + baseNode.Kind());
                                 break;
                         }
-                        if (baseName == "System::Exception") continue;
-                        if (baseName == "System::Attribute") continue;
+                        if (baseSymbol.full == "::System::Exception") continue;
+                        if (baseSymbol.full == "::System::Attribute") continue;
                         if (isClass(baseNode))
-                            cls.bases.Add(baseName);
+                            cls.bases.Add(baseSymbol);
                         else
-                            cls.ifaces.Add(baseName);
-                        int idx = baseName.IndexOf("<");
-                        if (idx != -1) {
-                            baseName = baseName.Substring(0, idx);
-                        }
-                        cls.addUsage(baseName);
+                            cls.ifaces.Add(baseSymbol);
+                        cls.addUsage(baseSymbol.full);
                         break;
                 }
             }
@@ -1071,7 +1118,7 @@ namespace QSharpCompiler
             cls.hasctor = true;
             if (cls.bases.Count > 0) {
                 method.type.Public = true;
-                method.basector = cls.bases[0] + "::$ctor();\r\n";
+                method.basector = cls.bases[0].name + "::$ctor();\r\n";
             }
             if (node != null) {
                 getFlags(method.type, file.model.GetDeclaredSymbol(node));
@@ -1087,7 +1134,7 @@ namespace QSharpCompiler
                             break;
                         case SyntaxKind.BaseConstructorInitializer:
                             SyntaxNode argList = GetChildNode(child);
-                            method.Append(cls.bases[0]);
+                            method.Append(cls.bases[0].full + cls.bases[0].generic);
                             method.Append("::$ctor(");
                             outArgList(argList, method);
                             method.Append(");\r\n");
@@ -1766,7 +1813,7 @@ namespace QSharpCompiler
                     }
                     break;
                 case SyntaxKind.BaseExpression:
-                    ob.Append(cls.bases[0]);
+                    ob.Append(cls.bases[0].full);
                     break;
                 case SyntaxKind.ObjectCreationExpression:
                     invokeNode(node, ob, true);
@@ -2275,6 +2322,12 @@ namespace QSharpCompiler
             return null;
         }
 
+        public static string GetSymbolFull(SyntaxNode node) {
+            ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
+            if (symbol != null) return symbol.ToString().Replace(".", "::");
+            return null;
+        }
+
         private string GetDeclaredSymbol(SyntaxNode node) {
             ISymbol symbol = file.model.GetDeclaredSymbol(node);
             if (symbol != null) return symbol.Name.Replace(".", "::");
@@ -2348,9 +2401,9 @@ namespace QSharpCompiler
         public string Namespace = "";
         public bool hasctor;
         public bool Interface;
-        public List<string> bases = new List<string>();
+        public List<Symbol> bases = new List<Symbol>();
         public List<string> cppbases = new List<string>();
-        public List<string> ifaces = new List<string>();
+        public List<Symbol> ifaces = new List<Symbol>();
         public List<Field> fields = new List<Field>();
         public List<Method> methods = new List<Method>();
         public List<Enum> enums = new List<Enum>();
@@ -2367,8 +2420,10 @@ namespace QSharpCompiler
         //uses are used to sort classes
         public List<string> uses = new List<string>();
         public void addUsage(string cls) {
-            int idx = cls.IndexOf("::");
-            if (idx != -1) cls = cls.Substring(idx+1);
+            int idx = cls.LastIndexOf("::");
+            if (idx != -1) cls = cls.Substring(idx+2);
+            idx = cls.LastIndexOf("<");
+            if (idx != -1) cls = cls.Substring(0, idx);
             if (cls == name) return;
             if (!uses.Contains(cls)) {
 //                Console.WriteLine("Class.AddUsage:" + name + " uses " + cls);
@@ -2389,8 +2444,15 @@ namespace QSharpCompiler
             }
             return sb.ToString();
         }
+        public string GetReflectionExtern() {
+            StringBuilder sb = new StringBuilder();
+            String full_name = Namespace.Replace("::", "_") + "_" + fullname.Replace("::", "_");
+            sb.Append("extern $class $class_" + full_name + ";\r\n");
+            return sb.ToString();
+        }
         public string GetForwardDeclaration() {
             StringBuilder sb = new StringBuilder();
+            sb.Append(GetReflectionExtern());
             if (Generic) {
                 sb.Append("template<");
                 bool first = true;
@@ -2403,13 +2465,94 @@ namespace QSharpCompiler
             }
             sb.Append("class " + name);
             sb.Append(";\r\n");
+            foreach(var inner in inners) {
+                sb.Append(inner.GetReflectionExtern());
+            }
+            return sb.ToString();
+        }
+        public string GetReflectionData() {
+            StringBuilder sb = new StringBuilder();
+            bool first;
+            int idx;
+            String full_name = Namespace.Replace("::", "_") + "_" + fullname.Replace("::", "_");
+            //reflection data : fields
+            foreach(Field i in fields) {
+                foreach(Variable v in i.variables) {
+                    sb.Append("static $field $field_" + full_name + "_" + v.name + "(\"" + v.name + "\");\r\n");
+                }
+            }
+            //reflection data : methods
+            idx = 0;
+            foreach(Method m in methods) {
+                if (m.name.StartsWith("$")) continue;
+                String name = m.name;
+                if (name.StartsWith("~")) {
+                    name = name.Replace("~", "$");
+                }
+                sb.Append("$method $method_" + full_name + "_" + name + (idx++) + "(\"" + m.name + "\");\r\n");
+            }
+            //reflection data : class
+            sb.Append("$class $class_" + full_name + "(");
+            if (Interface) {
+                sb.Append("true,");
+            } else {
+                sb.Append("false,");
+            }
+            sb.Append("\"" + name + "\",");
+            if (fullname == "Qt::Core::Object") {
+                sb.Append("nullptr");
+            } else {
+                if (bases.Count == 0) {
+                    sb.Append("&$class_Qt_Core_Object,");
+                } else {
+                    sb.Append("&$class_" + bases[0].full_name + ",");
+                }
+            }
+            //relection data : interfaces list
+            sb.Append("{");
+            first = true;
+            foreach(var i in ifaces) {
+                if (!first) sb.Append(","); else first = false;
+                sb.Append("&$class_" + i.full_name);
+            }
+            sb.Append("},");
+            //reflection data : fields lists
+            sb.Append("{");
+            first = true;
+            foreach(Field i in fields) {
+                foreach(Variable v in i.variables) {
+                    if (!first) sb.Append(","); else first = false;
+                    sb.Append("&$field_" + full_name + "_" + v.name);
+                }
+            }
+            sb.Append("},");
+            //reflection data : methods list
+            sb.Append("{");
+            first = true;
+            idx = 0;
+            foreach(Method m in methods) {
+                if (m.name.StartsWith("$")) continue;
+                if (!first) sb.Append(","); else first = false;
+                String name = m.name;
+                if (name.StartsWith("~")) {
+                    name = name.Replace("~", "$");
+                }
+                sb.Append("&$method_" + full_name + "_" + name + (idx++));
+            }
+            sb.Append("}");
+            sb.Append(");\r\n");
+            foreach(var inner in inners) {
+                sb.Append(inner.GetReflectionData());
+            }
             return sb.ToString();
         }
         public string GetDeclaration() {
             StringBuilder sb = new StringBuilder();
+            bool first;
+            String full_name = Namespace.Replace("::", "_") + "_" + fullname.Replace("::", "_");
             if (Generic) {
                 sb.Append("template< ");
-                bool first = true;
+                first = true;
                 foreach(var arg in GenericArgs) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("typename ");
@@ -2421,11 +2564,11 @@ namespace QSharpCompiler
             sb.Append(" class " + name);
             if (bases.Count > 0 || cppbases.Count > 0 || ifaces.Count > 0) {
                 sb.Append(":");
-                bool first = true;
+                first = true;
                 foreach(var basecls in bases) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(basecls);
+                    sb.Append(basecls.full);
                 }
                 foreach(var cppcls in cppbases) {
                     if (!first) sb.Append(","); else first = false;
@@ -2435,7 +2578,7 @@ namespace QSharpCompiler
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(iface);
+                    sb.Append(iface.full + iface.generic);
                 }
             }
             sb.Append("{\r\n");
@@ -2447,7 +2590,7 @@ namespace QSharpCompiler
                 sb.Append("public: std::weak_ptr<" + name);
                 if (Generic) {
                     sb.Append("<");
-                    bool first = true;
+                    first = true;
                     foreach(var arg in GenericArgs) {
                         if (!first) sb.Append(","); else first = false;
                         sb.Append(arg.GetTypeDeclaration());
@@ -2455,6 +2598,9 @@ namespace QSharpCompiler
                     sb.Append(">");
                 }
                 sb.Append("> $this;\r\n");
+                if (Program.reflection) {
+                    sb.Append("public: $class *$type = &$class_" + full_name + ";\r\n");
+                }
             }
             foreach(var field in fields) {
                 sb.Append(field.GetDeclaration());
@@ -2583,6 +2729,35 @@ namespace QSharpCompiler
             }
             return sb.ToString();
         }
+    }
+
+    class Symbol {
+        public Symbol(String sym) {
+            set(sym);
+        }
+        public Symbol(SyntaxNode node) {
+            this.node = node;
+            set(Generate.GetSymbolFull(node));
+        }
+        private void set(String sym) {
+            int idx;
+            full = sym;
+            idx = full.IndexOf("<");
+            if (idx != -1) full = full.Substring(0, idx);
+            full_name = full.Replace("::", "_");
+            full = "::" + full;
+            idx = full.LastIndexOf("::");
+            if (idx == -1) {
+                name = full;
+            } else {
+                name = full.Substring(idx+2);
+            }
+        }
+        public SyntaxNode node;
+        public string generic = "";  //< generic types >
+        public string full;  //full name
+        public string full_name;  //full_name
+        public string name;  //short name
     }
 
     class Type : Flags {

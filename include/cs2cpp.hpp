@@ -155,6 +155,43 @@ public:
   T& at(int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}  //deprecated
 };
 
+//reflection data
+struct $field {
+  $field(const char *name) {
+    this->name = name;
+  }
+  const char* name;
+};
+
+struct $method {
+  $method(const char *name) {
+    this->name = name;
+  }
+  const char *name;
+};
+
+struct $class {
+  $class(bool isInterface, const char*name, $class *base, std::initializer_list<$class*> ifaceList, std::initializer_list<$field*> fieldList, std::initializer_list<$method*> methodList) {
+    this->iface = isInterface;
+    this->name = name;
+    this->base = base;
+    this->ifaces = new QVector<$class*>(ifaceList);
+    this->fields = new QVector<$field*>(fieldList);
+    this->methods = new QVector<$method*>(methodList);
+  }
+  bool is($class *cls) {
+    if (std::strcmp(name, cls->name) == 0) return true;
+    if (base == nullptr) return false;
+    return base->is(cls);
+  }
+  bool iface;
+  const char *name;
+  $class *base;
+  QVector<$class*> *ifaces;
+  QVector<$field*> *fields;
+  QVector<$method*> *methods;
+};
+
 template<typename T>
 inline T* $deref(std::shared_ptr<T> x) {
   T* ptr = x.get();
