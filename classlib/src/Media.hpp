@@ -14,12 +14,6 @@
 
 namespace Qt::Media {
 
-//returned by Decoder.Read()
-#define END_FRAME -1
-#define NULL_FRAME 0  //could be metadata frame
-#define AUDIO_FRAME 1
-#define VIDEO_FRAME 2
-
 static bool libav_org = false;
 static bool loaded = false;
 
@@ -287,6 +281,8 @@ static int64 seek_packet(FFContext *ctx, int64 offset, int how) {
       return ctx->io->Seek(ctx->coder, offset);
     case SEEK_SET:
       return ctx->io->Seek(ctx->coder, offset);
+    default:
+      return -1;
   }
 }
 

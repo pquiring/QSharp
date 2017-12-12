@@ -217,8 +217,8 @@ void MediaDecoder::Stop()
   ctx = nullptr;
 }
 
-/** Reads next frame in stream and returns what type it was : AUDIO_FRAME, VIDEO_FRAME, NULL_FRAME or END_FRAME */
-int MediaDecoder::Read()
+/** Reads next frame in stream and returns what type it is. */
+MediaFrameType MediaDecoder::Read()
 {
   //read another frame
   if (ctx->pkt_size_left == 0) {
@@ -226,7 +226,7 @@ int MediaDecoder::Read()
       ctx->pkt_size_left = ctx->pkt->size;
       ctx->pkt_key_frame = ((ctx->pkt->flags & 0x0001) == 0x0001);
     } else {
-      return END_FRAME;
+      return MediaFrameType::End;
     }
   }
 
@@ -238,18 +238,18 @@ int MediaDecoder::Read()
     if (ret < 0) {
       ctx->pkt_size_left = 0;
       printf("Error:%d\n", ret);
-      return NULL_FRAME;
+      return MediaFrameType::Meta;
     }
     (*_av_free_packet)(ctx->pkt);
     ctx->pkt_size_left = 0;  //use entire packet
-    if (got_frame == 0) return NULL_FRAME;
+    if (got_frame == 0) return MediaFrameType::Meta;
     (*_av_image_copy)(ctx->video_dst_data, ctx->video_dst_linesize
       , ctx->frame->data, ctx->frame->linesize
       , ctx->video_codec_ctx->pix_fmt, ctx->video_codec_ctx->width, ctx->video_codec_ctx->height);
     //convert image to RGBA format
     (*_sws_scale)(ctx->sws_ctx, ctx->video_dst_data, ctx->video_dst_linesize, 0, ctx->video_codec_ctx->height
       , ctx->rgb_video_dst_data, ctx->rgb_video_dst_linesize);
-    return VIDEO_FRAME;
+    return MediaFrameType::Video;
   }
 
   if (ctx->pkt->stream_index == ctx->audio_stream_idx) {
@@ -259,7 +259,7 @@ int MediaDecoder::Read()
     if (ret < 0) {
       ctx->pkt_size_left = 0;
       printf("Error:%d\n", ret);
-      return NULL_FRAME;
+      return MediaFrameType::Meta;
     }
     ret = min(ctx->pkt_size_left, ret);
     ctx->pkt_size_left -= ret;
@@ -267,7 +267,7 @@ int MediaDecoder::Read()
       (*_av_free_packet)(ctx->pkt);
     }
     if (got_frame == 0) {
-      return NULL_FRAME;
+      return MediaFrameType::Meta;
     }
 //    int unpadded_linesize = frame.nb_samples * avutil.av_get_bytes_per_sample(audio_codec_ctx.sample_fmt);
     //convert to new format
@@ -280,7 +280,7 @@ int MediaDecoder::Read()
         + ctx->frame->nb_samples, ctx->dst_rate, ctx->src_rate, AV_ROUND_UP);
     }
     if (((*_av_samples_alloc)(ctx->audio_dst_data, ctx->audio_dst_linesize, ctx->dst_nb_channels
-      , dst_nb_samples, ctx->dst_sample_fmt, 1)) < 0) return NULL_FRAME;
+      , dst_nb_samples, ctx->dst_sample_fmt, 1)) < 0) return MediaFrameType::Meta;
     int converted_nb_samples = 0;
     if (libav_org) {
       converted_nb_samples = (*_avresample_convert)(ctx->swr_ctx, ctx->audio_dst_data, 0, dst_nb_samples
@@ -291,7 +291,7 @@ int MediaDecoder::Read()
     }
     if (converted_nb_samples < 0) {
       printf("FFMPEG:Resample failed!\n");
-      return NULL_FRAME;
+      return MediaFrameType::Meta;
     }
     int count = converted_nb_samples * ctx->dst_nb_channels;
     if (ctx->audio == nullptr || ctx->audio_length != count) {
@@ -304,14 +304,14 @@ int MediaDecoder::Read()
       (*_av_free)(ctx->audio_dst_data[0]);
       ctx->audio_dst_data[0] = nullptr;
     }
-    return AUDIO_FRAME;
+    return MediaFrameType::Audio;
   }
 
   //discard unknown packet
   (*_av_free_packet)(ctx->pkt);
   ctx->pkt_size_left = 0;  //use entire packet
 
-  return NULL_FRAME;
+  return MediaFrameType::Meta;
 }
 
 std::shared_ptr<QSharpArray<int>> MediaDecoder::GetVideo()

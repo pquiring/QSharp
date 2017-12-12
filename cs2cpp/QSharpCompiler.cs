@@ -28,6 +28,7 @@ namespace QSharpCompiler
         public static string home = ".";
         public static bool single = false;  //generate monolithic cpp source file
         public static string cxx = "14";  //C++ version to use
+        public static bool msvc = false;
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -37,7 +38,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version] [--msvc]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -89,6 +90,9 @@ namespace QSharpCompiler
                 }
                 if (arg == "--cxx") {
                     cxx = value;
+                }
+                if (arg == "--msvc") {
+                    msvc = true;
                 }
             }
             csFolder = args[0];
@@ -478,6 +482,7 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             foreach(var cls in file.clss) {
                 if (cls.Generic) continue;
+                if (cls.Interface) continue;
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 string hppfile = "src/" + cls.name + ".hpp";
                 if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
@@ -522,7 +527,10 @@ namespace QSharpCompiler
         private void writeCMakeLists(ArrayList sources) {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("cmake_minimum_required(VERSION 3.6)\r\n");
+            if (Program.cxx == "17")
+                sb.Append("cmake_minimum_required(VERSION 3.10)\r\n");
+            else
+                sb.Append("cmake_minimum_required(VERSION 3.6)\r\n");
             sb.Append("set(CMAKE_CXX_STANDARD " + Program.cxx + ")\r\n");
             sb.Append("include_directories(/usr/include/qt5)\r\n");
             sb.Append("include_directories(/usr/include/ffmpeg)\r\n");
@@ -565,7 +573,12 @@ namespace QSharpCompiler
                     sb.Append(" ");
                     sb.Append(lib);
                 }
-                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml stdc++ z");
+                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml");
+                if (Program.msvc) {
+                    sb.Append(" msvcrt");
+                } else {
+                    sb.Append(" stdc++ z");
+                }
                 sb.Append(")\r\n");
             }
             if (Program.library) {

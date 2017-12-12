@@ -11,14 +11,6 @@ namespace Qt.Media {
         [CPPOmitBody]
         public static bool Init() {return false;}
 
-        //returned by MediaDecoder.Read()
-        public enum MediaFrameType {
-            END_FRAME = -1,
-            NULL_FRAME = 0,    //could be metadata frame
-            AUDIO_FRAME = 1,
-            VIDEO_FRAME = 2
-        }
-
         //video codecs
         public const int AV_CODEC_ID_NONE = 0;
         public const int AV_CODEC_ID_MPEG1VIDEO = 1;
