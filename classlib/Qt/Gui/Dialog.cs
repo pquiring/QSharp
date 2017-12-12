@@ -11,8 +11,8 @@ namespace Qt.Gui {
         "public: void $base(std::shared_ptr<QDialog> $d) {$q = $d; Widget::$base($q.get());}"
     )]
     public class Dialog : Widget {
-        protected Dialog(Derived derived) : base(Derived.derived) {}
-        public Dialog() : base(Derived.derived) {
+        protected Dialog(QSharpDerived derived) : base(QSharpDerived.derived) {}
+        public Dialog() : base(QSharpDerived.derived) {
             CPP.Add("$q = std::make_shared<QDialog>();");
             CPP.Add("Widget::$base($q.get());");
         }

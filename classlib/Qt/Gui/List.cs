@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QListWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class List : Widget {
-        protected List(Derived derived) : base(Derived.derived) {}
+        protected List(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public List() {
             CPP.Add("$q = new QListWidget();");
             CPP.Add("Widget::$base($q);");

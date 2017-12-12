@@ -8,7 +8,7 @@ namespace Qt.Gui {
         "public: void resizeGL(int x, int y) {ResizeGL(x, y);}"
     )]
     public class OpenGLWindow : NativeWindow {
-        public OpenGLWindow() : base(Derived.derived) {
+        public OpenGLWindow() : base(QSharpDerived.derived) {
             CPP.Add("NativeWindow::$base(this);");
         }
         /** This function is called during window creation. */

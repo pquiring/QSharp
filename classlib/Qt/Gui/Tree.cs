@@ -40,7 +40,7 @@ namespace Qt.Gui {
         "public: void $base(QTreeWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class Tree : Widget {
-        protected Tree(Derived derived) : base(Derived.derived) {}
+        protected Tree(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public Tree() {
             CPP.Add("$q = new QTreeWidget();");
             CPP.Add("Widget::$base($q);");

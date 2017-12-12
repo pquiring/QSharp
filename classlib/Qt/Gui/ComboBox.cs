@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QComboBox *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class ComboBox : Widget {
-        protected ComboBox(Derived derived) : base(Derived.derived) {}
+        protected ComboBox(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public ComboBox() {
             CPP.Add("$q = new QComboBox();");
             CPP.Add("Widget::$base($q);");

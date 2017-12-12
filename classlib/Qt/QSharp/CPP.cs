@@ -70,6 +70,12 @@ namespace Qt.QSharp {
         public CPPReplaceArgs(string s1) {}
     }
 
+    /* Passes values to real base constructor. */
+    [AttributeUsage(AttributeTargets.Constructor)]
+    public class CPPBaseConstructorArgs : System.Attribute {
+        public CPPBaseConstructorArgs(string s1) {}
+    }
+
     [AttributeUsage(AttributeTargets.Method)]
     public class CPPOmitMethod : System.Attribute {}
 

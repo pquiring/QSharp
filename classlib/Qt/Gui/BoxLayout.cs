@@ -8,7 +8,7 @@ namespace Qt.Gui {
         "public: void $base(QBoxLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class BoxLayout : Layout {
-        protected BoxLayout(Derived derived) {}
+        protected BoxLayout(QSharpDerived derived) {}
         public BoxLayout(Direction direction) {
             CPP.Add("$q = new QBoxLayout((QBoxLayout::Direction)direction);");
             CPP.Add("Layout::$base($q);");

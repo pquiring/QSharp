@@ -8,7 +8,7 @@ namespace Qt.Gui {
         "public: void $base(QAbstractButton *$d) {$q = $d; Widget::$base($q);}"
     )]
     public abstract class AbstractButton : Widget {
-        protected AbstractButton(Derived derived) : base(Derived.derived) {}
+        protected AbstractButton(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public void SetText(String text) {
             CPP.Add("$q->setText(text->qstring());");
         }

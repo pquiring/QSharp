@@ -10,7 +10,7 @@ namespace Qt.Gui {
         "public: std::shared_ptr<QMessageBox> $q;"
     )]
     public class MessageDialog : Dialog {
-        public MessageDialog(IconType icontype, String title, String msg) : base(Derived.derived) {
+        public MessageDialog(IconType icontype, String title, String msg) : base(QSharpDerived.derived) {
             CPP.Add("$q = std::make_shared<QMessageBox>();");
             CPP.Add("Dialog::$base($q);");
         }

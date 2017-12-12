@@ -8,12 +8,12 @@ namespace Qt.Gui {
         "public: void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class ToggleButton : AbstractButton {
-        public ToggleButton() : base(Derived.derived) {
+        public ToggleButton() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QPushButton();");
             CPP.Add("$q->setCheckable(true);");
             CPP.Add("AbstractButton::$base($q);");
         }
-        public ToggleButton(String text) : base(Derived.derived) {
+        public ToggleButton(String text) : base(QSharpDerived.derived) {
             CPP.Add("$q = new QPushButton();");
             CPP.Add("$q->setCheckable(true);");
             CPP.Add("AbstractButton::$base($q);");

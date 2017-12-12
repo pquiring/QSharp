@@ -6,7 +6,7 @@ namespace Qt.Gui {
         "public: void $base(QSplitter *$d) {$q = $d; Frame::$base($q);}"
     )]
     public class Splitter : Frame {
-        public Splitter() : base(Derived.derived) {
+        public Splitter() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QSplitter();");
             CPP.Add("Frame::$base($q);");
         }

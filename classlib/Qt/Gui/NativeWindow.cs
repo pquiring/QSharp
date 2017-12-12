@@ -14,7 +14,7 @@ namespace Qt.Gui {
           Since C# does not support multiple-inheritance and OpenGLWindow needs Window and OpenGLFunctions
           therefore Window must derive from OpenGLFunctions to make it available to OpenGLWindow
         */
-        protected NativeWindow(Derived derived) {}
+        protected NativeWindow(QSharpDerived derived) {}
         [CPPReplaceArgs("QWindow *$w")]
         private NativeWindow(NativeArg1 arg) {
             CPP.Add("if ($w == nullptr) return; $q = $w; init();");

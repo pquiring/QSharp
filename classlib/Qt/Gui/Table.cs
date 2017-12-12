@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QTableWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class Table : Widget {
-        protected Table(Derived derived) : base(Derived.derived) {}
+        protected Table(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public Table(int rows, int columns) {
             CPP.Add("$q = new QTableWidget(rows, columns);");
             CPP.Add("Widget::$base($q);");

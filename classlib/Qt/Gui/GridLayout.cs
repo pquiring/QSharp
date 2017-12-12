@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QGridLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class GridLayout : Layout {
-        protected GridLayout(Derived derived) {}
+        protected GridLayout(QSharpDerived derived) {}
         public GridLayout() {
             CPP.Add("$q = new QGridLayout();");
             CPP.Add("Layout::$base($q);");

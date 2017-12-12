@@ -6,7 +6,7 @@ namespace Qt.Gui {
         "public: void $base(QVBoxLayout *$d) {$q = $d; BoxLayout::$base($q);}"
     )]
     public class VBoxLayout : BoxLayout {
-        public VBoxLayout() : base(Derived.derived) {
+        public VBoxLayout() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QVBoxLayout(); BoxLayout::$base($q);");
         }
     }

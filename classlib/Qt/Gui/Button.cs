@@ -7,11 +7,11 @@ namespace Qt.Gui {
         "public: void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class Button : AbstractButton {
-        public Button() : base(Derived.derived) {
+        public Button() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QPushButton();");
             CPP.Add("AbstractButton::$base($q);");
         }
-        public Button(String text) : base(Derived.derived) {
+        public Button(String text) : base(QSharpDerived.derived) {
             CPP.Add("$q = new QPushButton();");
             CPP.Add("AbstractButton::$base($q);");
             SetText(text);

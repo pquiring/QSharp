@@ -9,7 +9,7 @@ namespace Qt.Gui {
         "public: void resizeGL(int x, int y) {ResizeGL(x, y);}"
     )]
     public class OpenGLWidget : Widget {
-        public OpenGLWidget() : base(Derived.derived) {
+        public OpenGLWidget() : base(QSharpDerived.derived) {
             CPP.Add("Widget::$base(this);");
         }
         /** This function is called during window creation. */

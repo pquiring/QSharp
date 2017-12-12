@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QProgressBar *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class ProgressBar : Widget {
-        protected ProgressBar(Derived derived) : base(Derived.derived) {}
+        protected ProgressBar(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public ProgressBar() {
             CPP.Add("$q = new QProgressBar();");
         }

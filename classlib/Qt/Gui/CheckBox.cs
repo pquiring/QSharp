@@ -8,11 +8,11 @@ namespace Qt.Gui {
         "public: void $base(QCheckBox *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class CheckBox : AbstractButton {
-        public CheckBox() : base(Derived.derived) {
+        public CheckBox() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QCheckBox();");
             CPP.Add("AbstractButton::$base($q);");
         }
-        public CheckBox(String text) : base(Derived.derived) {
+        public CheckBox(String text) : base(QSharpDerived.derived) {
             CPP.Add("$q = new QCheckBox();");
             CPP.Add("AbstractButton::$base($q);");
             SetText(text);

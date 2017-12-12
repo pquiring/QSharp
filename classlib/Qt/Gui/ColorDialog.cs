@@ -6,7 +6,7 @@ namespace Qt.Gui {
         "public: std::shared_ptr<QColorDialog> $q;"
     )]
     public class ColorDialog : Dialog {
-        public ColorDialog() : base(Derived.derived) {
+        public ColorDialog() : base(QSharpDerived.derived) {
             CPP.Add("$q = std::make_shared<QColorDialog>();");
             CPP.Add("Dialog::$base($q);");
         }

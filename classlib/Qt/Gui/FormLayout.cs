@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QFormLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class FormLayout : Layout {
-        protected FormLayout(Derived derived) {}
+        protected FormLayout(QSharpDerived derived) {}
         public FormLayout() {
             CPP.Add("$q = new QFormLayout();");
             CPP.Add("Layout::$base($q);");

@@ -7,6 +7,6 @@ namespace Qt.Gui {
         "public: void $base(QFrame *$d) {$q = $d; Widget::$base($q);}"
     )]
     public abstract class Frame : Widget {
-        protected Frame(Derived derived) : base(Derived.derived) {}
+        protected Frame(QSharpDerived derived) : base(QSharpDerived.derived) {}
     }
 }

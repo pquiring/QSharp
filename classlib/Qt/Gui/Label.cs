@@ -7,11 +7,11 @@ namespace Qt.Gui {
         "public: void $base(QLabel *$d) {$q = $d; Frame::$base($q);}"
     )]
     public class Label : Frame {
-        public Label() : base(Derived.derived) {
+        public Label() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QLabel();");
             CPP.Add("Frame::$base($q);");
         }
-        public Label(String text) : base(Derived.derived) {
+        public Label(String text) : base(QSharpDerived.derived) {
             CPP.Add("$q = new QLabel(text->qstring());");
             CPP.Add("Frame::$base($q);");
         }

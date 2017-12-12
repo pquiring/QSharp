@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: std::shared_ptr<QFileDialog> $q;"
     )]
     public class FileDialog : Dialog {
-        public FileDialog() : base(Derived.derived) {
+        public FileDialog() : base(QSharpDerived.derived) {
             CPP.Add("$q = std::make_shared<QFileDialog>();");
             CPP.Add("Dialog::$base($q);");
         }

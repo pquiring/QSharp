@@ -8,7 +8,7 @@ namespace Qt.Gui {
         "public: void $base(QAbstractSlider *$d) {$q = $d; Widget::$base($q);}"
     )]
     public abstract class AbstractSlider : Widget {
-        protected AbstractSlider(Derived derived) : base(Derived.derived) {}
+        protected AbstractSlider(QSharpDerived derived) : base(QSharpDerived.derived) {}
         private SliderMoved delegateSliderMoved;
         private void SliderMoved(int value) {
             if (delegateSliderMoved != null) delegateSliderMoved(value);

@@ -7,7 +7,7 @@ namespace Qt.Gui {
         "public: void $base(QGroupBox *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class GroupBox : Widget {
-        protected GroupBox(Derived derived) : base(Derived.derived) {}
+        protected GroupBox(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public GroupBox() {
             CPP.Add("$q = new QGroupBox();");
             CPP.Add("Widget::$base($q);");
