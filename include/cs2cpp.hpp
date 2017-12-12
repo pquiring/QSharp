@@ -148,7 +148,7 @@ public:
   QSharpArray(void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy;}
   QSharpArray(std::shared_ptr<Qt::Core::Object> ref, void *buf, int size) {t = (T*)buf; Length = size; alloced = false; this->ref = ref;}
   QSharpArray(std::shared_ptr<Qt::Core::Object> ref, void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy; this->ref = ref;}
-  QSharpArray(std::initializer_list<T> list) {int size = list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];} alloced = true; }
+  QSharpArray(std::initializer_list<T> list) {int size = (int)list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];} alloced = true; }
   ~QSharpArray() {if (alloced) delete[] t;}
   T& operator[](int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}
   T* data() {return t;}  //deprecated

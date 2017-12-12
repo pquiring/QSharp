@@ -1704,7 +1704,18 @@ namespace QSharpCompiler
                     ob.Append("nullptr");
                     break;
                 case SyntaxKind.NumericLiteralExpression:
-                    ob.Append(file.model.GetConstantValue(node).Value.ToString());
+                    String value = file.model.GetConstantValue(node).Value.ToString();
+                    String valueType = GetTypeName(node);
+                    switch (valueType) {
+                        case "float":
+                            if (value.IndexOf(".") == -1) value += ".0";
+                            value += "f";
+                            break;
+                        case "double":
+                            if (value.IndexOf(".") == -1) value += ".0";
+                            break;
+                    }
+                    ob.Append(value);
                     break;
                 case SyntaxKind.TrueLiteralExpression:
                     ob.Append("true");
