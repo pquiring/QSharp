@@ -11,7 +11,7 @@ namespace Qt.Gui {
             CPP.Add("Frame::$base($q);");
         }
         public Orientation GetOrientation() {
-            return (Orientation)CPP.ReturnInt("$q->orientation();");
+            return (Orientation)CPP.ReturnInt("$q->orientation()");
         }
         public void SetOrientation(Orientation orientation) {
             CPP.Add("$q->setOrientation((Qt::Orientation)orientation);");

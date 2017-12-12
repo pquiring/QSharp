@@ -35,7 +35,7 @@ namespace Qt.Gui {
             CPP.Add("$q->removeItem(layout->$q);");
         }
         public Alignment GetAlignment() {
-            return (Alignment)CPP.ReturnInt("(int)$q->alignment();");
+            return (Alignment)CPP.ReturnInt("(int)$q->alignment()");
         }
         public void SetAlignment(Alignment alignment) {
             CPP.Add("$q->setAlignment((Qt::AlignmentFlag)alignment);");

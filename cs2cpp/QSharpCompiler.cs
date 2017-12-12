@@ -2103,10 +2103,12 @@ namespace QSharpCompiler
                 expressionNode(value, ob);
                 ob.Append(")");
             } else {
-                ob.Append("(");
+                ob.Append("static_cast<");
                 ob.Append(type.GetTypeDeclaration());
-                ob.Append(")");
+                ob.Append(">");
+                ob.Append("(");
                 expressionNode(value, ob);
+                ob.Append(")");
             }
         }
 
