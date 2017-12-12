@@ -2086,8 +2086,6 @@ namespace QSharpCompiler
             ob.Append(")");
         }
 
-        private static bool CastCPP = false;
-
         private void castNode(SyntaxNode node, OutputBuffer ob) {
             SyntaxNode castType = GetChildNode(node, 1);
             SyntaxNode value = GetChildNode(node, 2);
@@ -2095,19 +2093,19 @@ namespace QSharpCompiler
             //C# (type)value
             //C++ std::dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
-            if (CastCPP) { //type.shared || cls.Generic) {
+            if (type.shared) {
                 ob.Append("std::dynamic_pointer_cast<");
-                ob.Append(type.GetTypeType());
+                String typestr = type.GetTypeDeclaration();
+                typestr = typestr.Substring(16, typestr.Length - 17);  //remove outter std::shared_ptr< ... >
+                ob.Append(typestr);
                 ob.Append(">");
                 ob.Append("(");
                 expressionNode(value, ob);
                 ob.Append(")");
             } else {
-//                ob.Append("reinterpret_cast<");
                 ob.Append("(");
                 ob.Append(type.GetTypeDeclaration());
                 ob.Append(")");
-//                ob.Append(">");
                 expressionNode(value, ob);
             }
         }
