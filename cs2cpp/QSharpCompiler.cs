@@ -649,9 +649,9 @@ namespace QSharpCompiler
             }
         }
 
-        private void classNode(SyntaxNode node, Class inner, Class otter, bool Interface) {
+        private void classNode(SyntaxNode node, Class inner, Class outter, bool Interface) {
             cls = inner;
-            cls.fullname = otter.fullname;
+            cls.fullname = outter.fullname;
             if (cls.fullname.Length > 0) {
                 cls.fullname += "::";
             }
@@ -663,6 +663,7 @@ namespace QSharpCompiler
                 Method init = new Method();
                 init.cls = cls;
                 init.type.type = "void";
+                init.type.cls = cls;
                 init.type.primative = true;
                 init.type.Private = true;
                 init.name = "$init";
@@ -788,6 +789,7 @@ namespace QSharpCompiler
 
         private void fieldNode(SyntaxNode node) {
             field = new Field();
+            field.cls = cls;
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             foreach(var child in nodes) {
                 switch (child.Kind()) {
@@ -828,6 +830,7 @@ namespace QSharpCompiler
         private void propertyNode(SyntaxNode node) {
             // type, AccessorList -> {GetAccessorDeclaration, SetAccessorDeclaration}
             field = new Field();
+            field.cls = cls;
             field.Property = true;
             Variable v = new Variable();
             v.type = field;
@@ -1049,6 +1052,7 @@ namespace QSharpCompiler
             method.cls = cls;
             method.name = "$ctor";  //C++ = cls.name;
             method.type.type = "void";
+            method.type.cls = cls;
             method.type.primative = true;
             method.ctor = true;
             cls.hasctor = true;
@@ -1097,6 +1101,7 @@ namespace QSharpCompiler
             method.type.Static = true;
             method.name = "$new";
             method.type.type = cls.name;
+            method.type.cls = cls;
             method.cls = cls;
             method.type.GenericArgs = cls.GenericArgs;
             method.Append("{\r\n");
@@ -1146,6 +1151,7 @@ namespace QSharpCompiler
         private void methodNode(SyntaxNode node, bool dtor, bool isDelegate, String name) {
             method = new Method();
             method.cls = cls;
+            method.type.cls = cls;
             if (isDelegate) {
                 method.isDelegate = true;
                 method.Namespace = Namespace;
@@ -2080,6 +2086,8 @@ namespace QSharpCompiler
             ob.Append(")");
         }
 
+        private static bool CastCPP = false;
+
         private void castNode(SyntaxNode node, OutputBuffer ob) {
             SyntaxNode castType = GetChildNode(node, 1);
             SyntaxNode value = GetChildNode(node, 2);
@@ -2087,12 +2095,21 @@ namespace QSharpCompiler
             //C# (type)value
             //C++ std::dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
-            if (type.shared) ob.Append("std::dynamic_pointer_cast<"); else ob.Append("static_cast<");
-            ob.Append(type.GetTypeType());
-            ob.Append(">");
-            ob.Append("(");
-            expressionNode(value, ob);
-            ob.Append(")");
+            if (CastCPP) { //type.shared || cls.Generic) {
+                ob.Append("std::dynamic_pointer_cast<");
+                ob.Append(type.GetTypeType());
+                ob.Append(">");
+                ob.Append("(");
+                expressionNode(value, ob);
+                ob.Append(")");
+            } else {
+//                ob.Append("reinterpret_cast<");
+                ob.Append("(");
+                ob.Append(type.GetTypeDeclaration());
+                ob.Append(")");
+//                ob.Append(">");
+                expressionNode(value, ob);
+            }
         }
 
         private void newArrayNode(SyntaxNode node, OutputBuffer ob) {
@@ -2556,6 +2573,7 @@ namespace QSharpCompiler
         public bool shared;
         public bool ptr;  //unsafe pointer
         public List<Type> GenericArgs = new List<Type>();
+        public Class cls;
 
         public virtual bool isField() {return false;}
         public virtual bool isMethod() {return false;}
@@ -2707,6 +2725,10 @@ namespace QSharpCompiler
                     sb.Append("std::weak_ptr<");
                 else
                     sb.Append("std::shared_ptr<");
+                if (cls != null && cls.outter != null) {
+                    sb.Append(cls.outter.fullname);
+                    sb.Append("::");
+                }
             }
             sb.Append(GetTypeType());
             if (ptr) sb.Append("*");
