@@ -2008,6 +2008,12 @@ namespace QSharpCompiler
                     expressionNode(GetChildNode(node), ob);
                     ob.Append("()");
                     break;
+                case SyntaxKind.TypeOfExpression:
+                    SyntaxNode typeOf = GetChildNode(node);
+                    ob.Append("$deref(");
+                    expressionNode(node, ob);
+                    ob.Append(")->$type");
+                    break;
                 default:
                     Console.WriteLine("Error:Unsupported expression:" + node.Kind());
                     Environment.Exit(0);
