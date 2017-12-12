@@ -13,15 +13,15 @@ folder layout:
 
 Build Tools:
   .Net Core 2.0 + Roslyn
-  cygwin/mingw gcc toolset (C++14 required)
-  cygwin/mingw qt5 libraries (Qt 5.4+ required)
-  cygwin/cmake
-  cygwin/make
+  C++ toolset (C++14 required for GCC, C++17 required for MSVC)
+  QT5 libraries (Qt 5.4+ required)
+  CMake (3.6 for GCC, 3.10 for MSVC)
+  Platform make tool (make for GCC, nmake for MSVC)
   ffmpeg/3.0+
 
-ffmpeg under cygwin/mingw:
-  Download ffmpeg extract to /usr/include/ffmpeg and run 'bash configure --disable-yasm'
-  You'll need gcc installed.
+ffmpeg:
+  Download ffmpeg extract to include folder and run 'bash configure --disable-yasm'
+  You'll need C++ compiler in path (use gcc for cygwin/mingw).
   The pre-built shared binaries can be downloaded from ffmpeg.org
 
 Notes:
@@ -33,7 +33,7 @@ C# features that differ:
  - lock () {} only work with Qt.Core.ThreadLock objects
 
 C# features not supported (yet):
- - reflection
+ - reflection (typeof is as)
  - operators
  - events
  - goto switch case label
@@ -47,17 +47,9 @@ First compile the compiler:
   build
   release
 
-Then build the classlib:
+Then build the classlib or any test:
 
-  cd classlib
-  setup
-  build
-  cmake {cmake options}
-  make | nmake
-
-To build any test:
-
-  cd test...
+  cd classlib | test...
   setup
   build
   cmake {cmake options}
@@ -69,13 +61,19 @@ cmake options (depends on platform):
   to build with MSVC++
     -G "NMake Makefiles"
 
+To compile with MSVC++
+  cs2cpp required options : --cxx=17 --msvc
+  Requires CMake/3.10
+
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
   set CXX=/usr/bin/x86_64-w64-mingw32-gcc.exe
+Note when you install the mingw versions of Qt5 it will also install the cygwin version of qt5 which version doesn't match.
+  You'll need to move the /usr/include/qt5 folder and then create the symlink below.
 If using cygwin/mingw you need to create a symlink /usr/include/qt5 to /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5
   cd \cygwin
+  mv qt5 qt5.cygwin
   ln -s /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5 /usr/include/qt5
-Do not install the cygwin version of qt5 since it's version is different and can cause unresolved linker errors.
 
 Under cygwin you should also define:
   set CMAKE_LEGACY_CYGWIN_WIN32=0
