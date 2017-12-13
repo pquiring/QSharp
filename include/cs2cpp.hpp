@@ -61,6 +61,7 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QColorDialog>
+#include <QtWidgets/QFontDialog>
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QTableWidget>
