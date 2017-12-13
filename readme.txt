@@ -31,6 +31,7 @@ Notes:
 
 C# features that differ:
  - lock () {} only work with Qt.Core.ThreadLock objects
+ - typeof(Class) must be enclosed in new Type() or Type.Convert() since it returns System.Type which needs to be converted to Qt.Core.Type
 
 C# features not supported (yet):
  - reflection (typeof is as)

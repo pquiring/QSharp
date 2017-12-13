@@ -20,6 +20,10 @@ namespace Qt.Core {
         public String GetName() {
             return CPP.ReturnString("String::$new($refType->name)");
         }
+        public Type GetBaseType() {
+            CPP.Add("if ($refType->base == nullptr) return std::shared_ptr<Type>();");
+            return (Type)CPP.ReturnObject("Type::$new($refType->base)");
+        }
         /** Matches exactly. */
         public bool Equals(Type type) {
             return CPP.ReturnBool("($refType == $deref(type)->$refType)");
