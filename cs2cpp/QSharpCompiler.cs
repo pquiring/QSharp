@@ -29,7 +29,6 @@ namespace QSharpCompiler
         public static bool single = false;  //generate monolithic cpp source file
         public static string cxx = "14";  //C++ version to use
         public static bool msvc = false;
-        public static bool reflection = true;
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -39,7 +38,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version] [--msvc] [--reflection=yes|no]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version] [--msvc]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -94,9 +93,6 @@ namespace QSharpCompiler
                 }
                 if (arg == "--msvc") {
                     msvc = true;
-                }
-                if (arg == "--reflection") {
-                    reflection = value == "yes";
                 }
             }
             csFolder = args[0];
@@ -533,9 +529,7 @@ namespace QSharpCompiler
                 string hppfile = "src/" + cls.name + ".hpp";
                 if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                if (Program.reflection) {
-                    sb.Append(cls.GetReflectionData());
-                }
+                sb.Append(cls.GetReflectionData());
                 if (!cls.Generic && !cls.Interface) {
                     sb.Append(cls.GetMethodsDefinitions());
                 }
