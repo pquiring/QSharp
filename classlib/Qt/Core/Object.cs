@@ -13,7 +13,14 @@ namespace Qt.Core {
             return CPP.ReturnString("String::$new($refType->name)");
         }
         public bool Equals(Type type) {
-            return CPP.ReturnBool("$refType->is(type->$refType)");
+            return CPP.ReturnBool("$refType->is($deref(type)->$refType)");
+        }
+        /** Use to convert System.Type to Qt.Core.Type for now.
+        * ie: Type type = Type.Convert(typeof(MyClass));
+        * This is a temporary work around.
+        */
+        public static Type Convert(System.Object sysType) {
+            return (Type)CPP.ReturnObject("sysType");
         }
     }
     public class Object {

@@ -2010,9 +2010,8 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.TypeOfExpression:
                     SyntaxNode typeOf = GetChildNode(node);
-                    ob.Append("$deref(");
-                    expressionNode(node, ob);
-                    ob.Append(")->$type");
+                    Symbol typeSymbol = new Symbol(typeOf);
+                    ob.Append("Type::$new(&$class_" + typeSymbol.full_name + ")");
                     break;
                 default:
                     Console.WriteLine("Error:Unsupported expression:" + node.Kind());
@@ -2133,8 +2132,9 @@ namespace QSharpCompiler
                 useEquals = true;
             }
             if (useEquals) {
+                ob.Append("$deref(");
                 expressionNode(left, ob);
-                ob.Append("->Equals(");
+                ob.Append(")->Equals(");
                 expressionNode(right, ob);
                 ob.Append(")");
             } else {
@@ -2517,14 +2517,10 @@ namespace QSharpCompiler
                 sb.Append("false,");
             }
             sb.Append("\"" + name + "\",");
-            if (fullname == "Qt::Core::Object") {
-                sb.Append("nullptr");
+            if (bases.Count == 0) {
+                sb.Append("nullptr,");
             } else {
-                if (bases.Count == 0) {
-                    sb.Append("&$class_Qt_Core_Object,");
-                } else {
-                    sb.Append("&$class_" + bases[0].full_name + ",");
-                }
+                sb.Append("&$class_" + bases[0].full_name + ",");
             }
             //relection data : interfaces list
             sb.Append("{");
