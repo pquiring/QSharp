@@ -179,13 +179,12 @@ struct $class {
     this->fields = new QVector<$field*>(fieldList);
     this->methods = new QVector<$method*>(methodList);
   }
-  bool is($class *cls) {
+  bool isDerivedFrom($class *cls) {
     if (std::strcmp(name, cls->name) == 0) return true;
     if (cls->base != nullptr) {
-      if (is(cls->base)) return true;
+      if (isDerivedFrom(cls->base)) return true;
     }
-    if (base == nullptr) return false;
-    return base->is(cls);
+    return false;
   }
   bool iface;
   const char *name;
