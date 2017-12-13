@@ -6,6 +6,5 @@ class MainClass : Object {
             Console.WriteLine(args[a]);
         }
         Console.WriteLine("Hello, world!");
-        Type type = new MainClass().GetType();
     }
 }

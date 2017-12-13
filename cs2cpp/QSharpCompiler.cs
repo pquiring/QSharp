@@ -2125,8 +2125,14 @@ namespace QSharpCompiler
         private void equalsNode(SyntaxNode node, OutputBuffer ob) {
             SyntaxNode left = GetChildNode(node, 1);
             SyntaxNode right = GetChildNode(node, 2);
+            bool useEquals = false;
             if (GetTypeName(left) == "Qt::Core::String" && GetTypeName(right) == "Qt::Core::String") {
-                //string comparison : invoke left.Equals(right) [NOTE: Use Object.ReferenceEquals() to compare pointers]
+                useEquals = true;
+            }
+            if (GetTypeName(left) == "Qt::Core::Type" && GetTypeName(right) == "Qt::Core::Type") {
+                useEquals = true;
+            }
+            if (useEquals) {
                 expressionNode(left, ob);
                 ob.Append("->Equals(");
                 expressionNode(right, ob);
@@ -2450,9 +2456,15 @@ namespace QSharpCompiler
             }
             return sb.ToString();
         }
+        public string FullName(String NameSpace, String name) {
+            String ret = NameSpace.Replace("::", "_");
+            if (ret.Length > 0) ret += "_";
+            ret += name.Replace("::", "_");
+            return ret;
+        }
         public string GetReflectionExtern() {
             StringBuilder sb = new StringBuilder();
-            String full_name = Namespace.Replace("::", "_") + "_" + fullname.Replace("::", "_");
+            String full_name = FullName(Namespace, fullname);
             sb.Append("extern $class $class_" + full_name + ";\r\n");
             return sb.ToString();
         }
@@ -2480,7 +2492,7 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             bool first;
             int idx;
-            String full_name = Namespace.Replace("::", "_") + "_" + fullname.Replace("::", "_");
+            String full_name = FullName(Namespace, fullname);
             //reflection data : fields
             foreach(Field i in fields) {
                 foreach(Variable v in i.variables) {
@@ -2555,7 +2567,7 @@ namespace QSharpCompiler
         public string GetDeclaration() {
             StringBuilder sb = new StringBuilder();
             bool first;
-            String full_name = Namespace.Replace("::", "_") + "_" + fullname.Replace("::", "_");
+            String full_name = FullName(Namespace, fullname);
             if (Generic) {
                 sb.Append("template< ");
                 first = true;

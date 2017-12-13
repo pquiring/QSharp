@@ -12,6 +12,9 @@ namespace Qt.Core {
         public String GetName() {
             return CPP.ReturnString("String::$new($refType->name)");
         }
+        public bool Equals(Type type) {
+            return CPP.ReturnBool("$refType->is(type->$refType)");
+        }
     }
     public class Object {
         public override string ToString() {return "Object";}
