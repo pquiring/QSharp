@@ -800,15 +800,7 @@ namespace QSharpCompiler
                             case SyntaxKind.GenericName:
                                 baseSymbol = new Symbol(baseNode);
                                 SyntaxNode argList = GetChildNode(baseNode);
-                                String generic = "<";
-                                bool first = true;
-                                foreach(var arg in argList.ChildNodes()) {
-                                    if (!first) generic += ","; else first = false;
-                                    Type type = new Type(arg);
-                                    generic += type.GetTypeDeclaration();
-                                }
-                                generic += ">";
-                                baseSymbol.generic = generic;
+                                baseSymbol.SetGenericArgs(argList);
                                 break;
                             default:
                                 Console.WriteLine("unknown baseList node:" + baseNode.Kind());
@@ -1128,7 +1120,7 @@ namespace QSharpCompiler
                             break;
                         case SyntaxKind.BaseConstructorInitializer:
                             SyntaxNode argList = GetChildNode(child);
-                            method.Append(cls.bases[0].full + cls.bases[0].generic);
+                            method.Append(cls.bases[0].GetDeclaration());
                             method.Append("::$ctor(");
                             outArgList(argList, method);
                             method.Append(");\r\n");
@@ -2402,7 +2394,7 @@ namespace QSharpCompiler
 
     class Class : Flags
     {
-        public string name = "";
+        public string name = "";  //TODO : replace with Symbol
         public string fullname = "";  //inner classes
         public string Namespace = "";
         public bool hasctor;
@@ -2586,7 +2578,7 @@ namespace QSharpCompiler
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(iface.full + iface.generic);
+                    sb.Append(iface.GetDeclaration());
                 }
             }
             sb.Append("{\r\n");
@@ -2760,15 +2752,37 @@ namespace QSharpCompiler
                 name = full.Substring(idx+2);
             }
         }
+        public void SetGenericArgs(SyntaxNode argList) {
+            GenericArgs = new List<Type>();
+            foreach(var arg in argList.ChildNodes()) {
+                GenericArgs.Add(new Type(arg));
+            }
+        }
+        public string GetDeclaration() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(full);
+            sb.Append(GetGenericArgs());
+            return sb.ToString();
+        }
+        public string GetGenericArgs() {
+            if (GenericArgs == null) return "";
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<");
+            foreach(var arg in GenericArgs) {
+                sb.Append(arg.GetTypeDeclaration());
+            }
+            sb.Append(">");
+            return sb.ToString();
+        }
         public SyntaxNode node;
-        public string generic = "";  //< generic types >
+        public List<Type> GenericArgs;
         public string full;  //full name
         public string full_name;  //full_name
         public string name;  //short name
     }
 
     class Type : Flags {
-        public string type;
+        public string type;  //TODO : replace with Symbol
         public TypeKind typekind;
         public SymbolKind symbolkind;
         public SyntaxNode node;
@@ -2951,7 +2965,7 @@ namespace QSharpCompiler
 
     class Variable : OutputBuffer {
         public Type type = new Type();
-        public string name;
+        public string name;  //replace with Symbol
         public SyntaxNode equals;
 
         public StringBuilder src = new StringBuilder();
