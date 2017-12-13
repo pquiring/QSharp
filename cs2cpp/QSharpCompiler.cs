@@ -2612,9 +2612,8 @@ namespace QSharpCompiler
                     sb.Append(">");
                 }
                 sb.Append("> $this;\r\n");
-                if (Program.reflection) {
-                    sb.Append("public: $class *$type = &$class_" + full_name + ";\r\n");
-                }
+                sb.Append("public: $class *$type = &$class_" + full_name + ";\r\n");
+                sb.Append("public: virtual $class* $getType() {return $type;}\r\n");
             }
             foreach(var field in fields) {
                 sb.Append(field.GetDeclaration());

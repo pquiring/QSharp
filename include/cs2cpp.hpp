@@ -181,8 +181,8 @@ struct $class {
   }
   bool isDerivedFrom($class *cls) {
     if (std::strcmp(name, cls->name) == 0) return true;
-    if (cls->base != nullptr) {
-      if (isDerivedFrom(cls->base)) return true;
+    if (base != nullptr) {
+      return (base->isDerivedFrom(cls));
     }
     return false;
   }
