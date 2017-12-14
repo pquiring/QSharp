@@ -2578,7 +2578,7 @@ namespace QSharpCompiler
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(iface.GetTypeDeclaration());
+                    sb.Append(iface.GetTypeType());
                 }
             }
             sb.Append("{\r\n");
