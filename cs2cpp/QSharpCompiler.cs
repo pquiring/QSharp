@@ -2568,7 +2568,7 @@ namespace QSharpCompiler
                 foreach(var basecls in bases) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(basecls.full);
+                    sb.Append(basecls.GetTypeType());
                 }
                 foreach(var cppcls in cppbases) {
                     if (!first) sb.Append(","); else first = false;

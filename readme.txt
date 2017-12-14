@@ -30,11 +30,11 @@ Notes:
  - classlib is a work in progress
 
 C# features that differ:
- - lock () {} only work with Qt.Core.ThreadLock objects
- - typeof(Class) must be enclosed in new Type() or Type.Convert() since it returns System.Type which needs to be converted to Qt.Core.Type
+ - lock () {} only works with Qt.Core.ThreadLock objects
+ - typeof(Class) must be enclosed in "new Type()" or "Type.Convert()" since it returns System.Type which needs to be converted to Qt.Core.Type
 
 C# features not supported (yet):
- - reflection (typeof is as)
+ - reflection (is as)
  - operators
  - events
  - goto switch case label
@@ -56,7 +56,7 @@ Then build the classlib or any test:
   make | nmake
 
 cmake options (depends on platform):
-  to specify build type:
+  to specify build type (Release recommended for faster compiling):
     -D CMAKE_BUILD_TYPE=Release | Debug
   to build with MSVC++
     -G "NMake Makefiles"
