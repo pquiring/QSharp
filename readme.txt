@@ -46,7 +46,6 @@ First compile the compiler:
   cd cs2cpp
   setup
   build
-  release
 
 Then build the classlib or any test:
 

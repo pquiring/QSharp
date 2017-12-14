@@ -10,7 +10,7 @@ namespace Qt.Gui {
     public abstract class AbstractSlider : Widget {
         protected AbstractSlider(QSharpDerived derived) : base(QSharpDerived.derived) {}
         private SliderMoved delegateSliderMoved;
-        private void SliderMoved(int value) {
+        private void SlotSliderMoved(int value) {
             if (delegateSliderMoved != null) delegateSliderMoved(value);
         }
         public Orientation GetOrientation() {
@@ -49,7 +49,7 @@ namespace Qt.Gui {
 
         public void OnSliderMoved(SliderMoved handler) {
             delegateSliderMoved = handler;
-            CPP.Add("connect($q, &QAbstractSlider::sliderMoved, this, &AbstractSlider::SliderMoved);");
+            CPP.Add("connect($q, &QAbstractSlider::sliderMoved, this, &AbstractSlider::SlotSliderMoved);");
         }
     }
 }
