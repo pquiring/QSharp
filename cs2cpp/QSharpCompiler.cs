@@ -38,7 +38,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [-cxx=version] [--msvc]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [--cxx=version] [--msvc]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {

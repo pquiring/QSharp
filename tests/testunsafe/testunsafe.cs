@@ -1,4 +1,4 @@
-using System;
+using Qt.Core;
 
 namespace testunsafe
 {
@@ -20,6 +20,7 @@ namespace testunsafe
                     ++ptr;
                 }
             }
+            Console.WriteLine("sum=" + cnt);
         }
     }
 }

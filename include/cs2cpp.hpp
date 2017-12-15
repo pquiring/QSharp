@@ -144,7 +144,7 @@ public:
   bool alloced;
   std::shared_ptr<Qt::Core::Object> ref;
   int $get_Length() {return Length;}
-  QSharpArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; Length = size; alloced = true; }
+  QSharpArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; std::memset(t, 0, size * sizeof(T)); Length = size; alloced = true; }
   QSharpArray(void *buf, int size) {t = (T*)buf; Length = size; alloced = false;}
   QSharpArray(void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy;}
   QSharpArray(std::shared_ptr<Qt::Core::Object> ref, void *buf, int size) {t = (T*)buf; Length = size; alloced = false; this->ref = ref;}
