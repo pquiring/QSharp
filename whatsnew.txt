@@ -1,6 +1,14 @@
 What's new
 ==========
 
+Dec 15, 2017 : 0.8
+ - added MSVC support
+ - compile to multiple or single source file
+ - initial reflection support GetType() typeof()
+   - typeof() has an issue (see readme.txt)
+ - more Qt classes
+ - more compiler fixes
+
 Dec 8, 2017 : 0.7
  - many ctor fixes
  - added Qt.Media (ffmpeg)
