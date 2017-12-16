@@ -112,10 +112,10 @@ namespace Qt.Core {
         public XML() {
             CPP.Add("$q = std::make_unique<QDomDocument>();");
         }
-        public bool Input(String input) {
+        public bool Load(String input) {
             return CPP.ReturnBool("$q->setContent(input->qstring());");
         }
-        public String Output() {
+        public String Save() {
             return CPP.ReturnString("String::$new($q->toString())");
         }
         public XMLTag GetRoot() {

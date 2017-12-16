@@ -64,6 +64,7 @@ cmake options (depends on platform):
 To compile with MSVC++
   cs2cpp required options : --cxx=17 --msvc
   Requires CMake/3.10
+  When using VS Build Tools installer for VC++ make sure to install the .Net Core 1.1 toolset even if you have .NET 2.0 Core installed or you'll get strange errors that will keep you up at night ;)
 
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
