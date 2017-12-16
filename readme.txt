@@ -68,12 +68,6 @@ To compile with MSVC++
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
   set CXX=/usr/bin/x86_64-w64-mingw32-gcc.exe
-Note when you install the mingw versions of Qt5 it will also install the cygwin version of qt5 which version doesn't match.
-  You'll need to move the /usr/include/qt5 folder and then create the symlink below.
-  cd \cygwin\usr\include
-  mv qt5 qt5.cygwin
-  cd \cygwin
-  ln -s /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5 /usr/include/qt5
 
 Under cygwin you should also define:
   set CMAKE_LEGACY_CYGWIN_WIN32=0
