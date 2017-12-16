@@ -1999,6 +1999,27 @@ namespace QSharpCompiler
                     Type typeSymbol = new Type(typeOf, false);
                     ob.Append("Type::$new(&$class_" + typeSymbol.full_name + ")");
                     break;
+                case SyntaxKind.IsExpression:
+                    SyntaxNode isObj = GetChildNode(node, 1);
+                    SyntaxNode isType = GetChildNode(node, 2);
+                    Type isTypeType = new Type(isType, false);
+                    ob.Append("$deref(");
+                    expressionNode(isObj, ob);
+                    ob.Append(")->GetType()");
+                    ob.Append("->IsDerivedFrom(");
+                    ob.Append("Type::$new(&$class_" + isTypeType.full_name + "))");
+                    break;
+                case SyntaxKind.AsExpression:
+                    SyntaxNode asObj = GetChildNode(node, 1);
+                    SyntaxNode asType = GetChildNode(node, 2);
+                    Type asTypeType = new Type(asType, false);
+                    ob.Append("(Type::$new(&$class_" + asTypeType.full_name + ")");
+                    ob.Append("->IsDerivedFrom($deref(");
+                    expressionNode(asObj, ob);
+                    ob.Append(")->GetType()) ? std::dynamic_pointer_cast<" + asTypeType.full_name + ">(");
+                    expressionNode(asObj, ob);
+                    ob.Append(") : nullptr)");
+                    break;
                 default:
                     Console.WriteLine("Error:Unsupported expression:" + node.Kind());
                     Environment.Exit(0);
