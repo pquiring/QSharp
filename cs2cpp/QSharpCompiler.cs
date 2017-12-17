@@ -463,7 +463,7 @@ namespace QSharpCompiler
                                 if (use == cls2.name) {
                                     //need to move idx2 before idx
                                     Source tmp = Program.files[fidx2];
-                                    Console.WriteLine("move:" + tmp.csFile + " before " + file.csFile);
+//                                    Console.WriteLine("move:" + tmp.csFile + " before " + file.csFile);
                                     Program.files.RemoveAt(fidx2);
                                     Program.files.Insert(Program.headidx, tmp);
                                     return true;
