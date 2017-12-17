@@ -212,10 +212,10 @@ struct FFContext {
 
   AVFrame *frame;
 
-  std::shared_ptr<QSharpArray<int>> video;
+  std::shared_ptr<Qt::QSharp::FixedArray<int>> video;
   int video_length;
 
-  std::shared_ptr<QSharpArray<short>> audio;
+  std::shared_ptr<Qt::QSharp::FixedArray<short>> audio;
   int audio_length;
 
   //additional raw video decoder fields
@@ -261,12 +261,12 @@ struct FFContext {
 #define ffiobufsiz (32 * 1024)
 
 static int read_packet(FFContext *ctx, void*buf, int size) {
-  std::shared_ptr<QSharpArray<uint8>> array = std::make_shared<QSharpArray<uint8>>(buf, size);
+  std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array = std::make_shared<Qt::QSharp::FixedArray<uint8>>(buf, size);
   return ctx->io->Read(ctx->coder, array);
 }
 
 static int write_packet(FFContext *ctx, void*buf, int size) {
-  std::shared_ptr<QSharpArray<uint8>> array = std::make_shared<QSharpArray<uint8>>(buf, size);
+  std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array = std::make_shared<Qt::QSharp::FixedArray<uint8>>(buf, size);
   return ctx->io->Write(ctx->coder, array);
 }
 

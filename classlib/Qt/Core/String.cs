@@ -1,6 +1,10 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
+    [CPPNonClassHPP(
+        "std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list);" +
+        "QStringList $StringArrayToQStringList(std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> array);"
+    )]
     [CPPClass(
         "private: std::unique_ptr<QString> $q;" +
         "public: QString* $value() {return $q.get();}" +
@@ -135,18 +139,18 @@ namespace Qt.Core {
         }
 
         public char[] ToCharArray() {
-            CPP.Add("std::shared_ptr<QSharpArray<char16>> array;");
+            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<char16>> array;");
             CPP.Add("int length = $get_Length();");
-            CPP.Add("array = std::make_shared<QSharpArray<char16>>(length);");
+            CPP.Add("array = std::make_shared<Qt::QSharp::FixedArray<char16>>(length);");
             CPP.Add("char16 *dest = array->data();");
             CPP.Add("const char16 *src = ustring();");
             CPP.Add("std::memcpy(dest, src, length * 2);");
             return CPP.ReturnCharArray("array");
         }
         public byte[] ToByteArray() {
-            CPP.Add("std::shared_ptr<QSharpArray<uint8>> array;");
+            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array;");
             CPP.Add("int length = $get_Length();");
-            CPP.Add("array = std::make_shared<QSharpArray<uint8>>(length);");
+            CPP.Add("array = std::make_shared<Qt::QSharp::FixedArray<uint8>>(length);");
             CPP.Add("uint8 *dest = array->data();");
             CPP.Add("const uint8 *src = (const uint8*)cstring();");
             CPP.Add("std::memcpy(dest, src, length);");

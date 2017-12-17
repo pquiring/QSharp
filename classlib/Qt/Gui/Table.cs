@@ -62,20 +62,20 @@ namespace Qt.Gui {
         }
         public String[] GetSelectedItems() {
             CPP.Add("QList<QTableWidgetItem*> list = $q->selectedItems();");
-            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<String>>> array;");
+            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<String>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<String>>>(cnt);");
+            CPP.Add("array = std::make_shared<Qt::QSharp::FixedArray<std::shared_ptr<String>>>(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = String::$new(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[][] GetSelectedIndexes() {
             CPP.Add("QModelIndexList list = $q->selectionModel()->selectedIndexes();");
-            CPP.Add("std::shared_ptr<QSharpArray<std::shared_ptr<QSharpArray<int32>>>> array;");
+            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::QSharp::FixedArray<int32>>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("array = std::make_shared<QSharpArray<std::shared_ptr<QSharpArray<int32>>>>(cnt);");
+            CPP.Add("array = std::make_shared<Qt::QSharp::FixedArray<std::shared_ptr<Qt::QSharp::FixedArray<int32>>>>(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {");
-            CPP.Add("  std::shared_ptr<QSharpArray<int>> row;");
-            CPP.Add("  row = std::make_shared<QSharpArray<int32>>(2);");
+            CPP.Add("  std::shared_ptr<Qt::QSharp::FixedArray<int>> row;");
+            CPP.Add("  row = std::make_shared<Qt::QSharp::FixedArray<int32>>(2);");
             CPP.Add("  row->at(0) = list[idx].row();");
             CPP.Add("  row->at(1) = list[idx].column();");
             CPP.Add("  array->at(idx) = row;");

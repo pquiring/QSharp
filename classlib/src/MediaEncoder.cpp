@@ -388,7 +388,7 @@ static bool addAudio(std::shared_ptr<Qt::Media::FFContext> ctx, short *sams, int
   return ok;
 }
 
-bool Qt::Media::MediaEncoder::AddAudio(std::shared_ptr<QSharpArray<short>> sams, int offset, int length)
+bool Qt::Media::MediaEncoder::AddAudio(std::shared_ptr<Qt::QSharp::FixedArray<short>> sams, int offset, int length)
 {
   if (ctx == nullptr) return false;
 
@@ -436,7 +436,7 @@ static bool addVideo(std::shared_ptr<Qt::Media::FFContext> ctx, int *px)
   return ret == 0;
 }
 
-bool Qt::Media::MediaEncoder::AddVideo(std::shared_ptr<QSharpArray<int>> px)
+bool Qt::Media::MediaEncoder::AddVideo(std::shared_ptr<Qt::QSharp::FixedArray<int>> px)
 {
   if (ctx == nullptr) return false;
 

@@ -135,27 +135,6 @@ namespace Qt::Media {
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
 
-//fixed arrays
-template<typename T>
-class QSharpArray {
-public:
-  T *t;
-  int Length;
-  bool alloced;
-  std::shared_ptr<Qt::Core::Object> ref;
-  int $get_Length() {return Length;}
-  QSharpArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; std::memset(t, 0, size * sizeof(T)); Length = size; alloced = true; }
-  QSharpArray(void *buf, int size) {t = (T*)buf; Length = size; alloced = false;}
-  QSharpArray(void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy;}
-  QSharpArray(std::shared_ptr<Qt::Core::Object> ref, void *buf, int size) {t = (T*)buf; Length = size; alloced = false; this->ref = ref;}
-  QSharpArray(std::shared_ptr<Qt::Core::Object> ref, void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy; this->ref = ref;}
-  QSharpArray(std::initializer_list<T> list) {int size = (int)list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];} alloced = true; }
-  ~QSharpArray() {if (alloced) delete[] t;}
-  T& operator[](int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}
-  T* data() {return t;}  //deprecated
-  T& at(int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}  //deprecated
-};
-
 //reflection data
 struct $field {
   $field(const char *name) {
@@ -219,11 +198,6 @@ inline int $hash(Qt::Core::Object *obj) {
   union {Qt::Core::Object* ptr; int hash;} u;
   u.ptr = obj;
   return u.hash;
-}
-
-template<typename T>
-void $checkArray(std::shared_ptr<QSharpArray<T>> array, int offset, int length) {
-  if (offset + length > array->Length) $abe();
 }
 
 //$mod
@@ -301,10 +275,5 @@ inline double $add(double x,uint32 y) {return x + y;}
 inline double $add(uint32 x,double y) {return x + y;}
 inline double $add(double x,uint64 y) {return x + y;}
 inline double $add(uint64 x,double y) {return x + y;}
-
-//string functions
-
-extern std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list);
-extern QStringList $StringArrayToQStringList(std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> array);
 
 #endif

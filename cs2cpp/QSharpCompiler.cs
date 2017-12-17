@@ -24,6 +24,7 @@ namespace QSharpCompiler
         public static bool library;
         public static string target;
         public static bool classlib;
+        public static int headidx = 0;
         public static string main;
         public static string home = ".";
         public static bool single = false;  //generate monolithic cpp source file
@@ -117,6 +118,7 @@ namespace QSharpCompiler
                 Console.WriteLine("Adding Reference:" + lib);
                 compiler = compiler.AddReferences(MetadataReference.CreateFromFile(lib));
             }
+            if (classlib) addHead();
             addFolder(csFolder);
             foreach(Source node in files)
             {
@@ -131,6 +133,17 @@ namespace QSharpCompiler
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        void addHead() {
+            headidx = 1;
+            Source node = new Source();
+            node.clss = new List<Class>();
+            node.src = "//head";
+            node.cppFile = "cpp\\$head.cpp";
+            node.tree = CSharpSyntaxTree.ParseText(node.src);
+            compiler = compiler.AddSyntaxTrees(node.tree);
+            files.Add(node);
         }
 
         void addFolder(string folder)
@@ -148,9 +161,8 @@ namespace QSharpCompiler
         void addFile(string file)
         {
             if (file.IndexOf("AssemblyInfo") != -1) return;
-//            Console.WriteLine("AddFile:" + file);
-            string src = System.IO.File.ReadAllText(file);
             Source node = new Source();
+            node.src = System.IO.File.ReadAllText(file);
             node.csFile = file;
             node.cppFile = cppFolder + "/" + node.csFile.Replace(".", "_").Replace("\\", "_") + ".cpp";
             node.csTimestamp = timestamp(node.csFile);
@@ -159,10 +171,9 @@ namespace QSharpCompiler
             int idx = csFolder.Length;
             int len = file.Length - idx - 3;
             file = file.Substring(idx, len);
-            node.src = src;
-            node.tree = CSharpSyntaxTree.ParseText(src);
-            files.Add(node);
+            node.tree = CSharpSyntaxTree.ParseText(node.src);
             compiler = compiler.AddSyntaxTrees(node.tree);
+            files.Add(node);
         }
 
         DateTime now = DateTime.Now;
@@ -300,6 +311,9 @@ namespace QSharpCompiler
             openOutput("cpp/" + Program.hppFile);
             writeForward();
             /** In C++ you can not use an undefined class, so they must be sorted by usage. */
+            if (Program.classlib) {
+                sortClasslib();
+            }
             while (sortClasses()) {};
             while (sortFiles()) {};
             writeNoClassTypes();
@@ -377,6 +391,31 @@ namespace QSharpCompiler
             fs.Write(bytes, 0, bytes.Length);
         }
 
+        private void MoveClass(String mvFile, String mvCls) {
+            foreach(var file in Program.files) {
+                if (file.csFile != mvFile) continue;
+                foreach(var cls in file.clss) {
+                    if (cls.name == mvCls) {
+//                        Console.WriteLine("Moving:" + mvFile + ":" + mvCls);
+                        file.clss.Remove(cls);
+                        Program.files[0].clss.Insert(0, cls);
+                        return;
+                    }
+                }
+            }
+            Console.WriteLine("Error:Can not find:" + mvFile + ":" + mvCls);
+        }
+
+        private void sortClasslib() {
+            //certain classes MUST come first
+            MoveClass("Qt\\Core\\String.cs", "String");
+            MoveClass("Qt\\QSharp\\FixedArray.cs", "FixedArrayEnumerator");
+            MoveClass("Qt\\QSharp\\FixedArray.cs", "FixedArray");
+            MoveClass("Qt\\Core\\IEnumerable.cs", "IEnumerable");
+            MoveClass("Qt\\Core\\IEnumerator.cs", "IEnumerator");
+            MoveClass("Qt\\Core\\Object.cs", "Object");
+        }
+
         private bool sortClasses() {
             int fcnt = Program.files.Count;
             for(int fidx = 0;fidx<fcnt;fidx++) {
@@ -424,9 +463,9 @@ namespace QSharpCompiler
                                 if (use == cls2.name) {
                                     //need to move idx2 before idx
                                     Source tmp = Program.files[fidx2];
-//                                    Console.WriteLine("move:" + tmp.csFile + " before " + file.csFile);
+                                    Console.WriteLine("move:" + tmp.csFile + " before " + file.csFile);
                                     Program.files.RemoveAt(fidx2);
-                                    Program.files.Insert(0, tmp);
+                                    Program.files.Insert(Program.headidx, tmp);
                                     return true;
                                 }
                             }
@@ -481,7 +520,6 @@ namespace QSharpCompiler
                     if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                     createDefaultCtor(cls);
                     if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-//                    Console.WriteLine("Class:" + cls.name);
                     sb.Append(cls.GetDeclaration());
                     if (cls.Namespace != "") sb.Append("}\r\n");
                     if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
@@ -557,7 +595,7 @@ namespace QSharpCompiler
             sb.Append("const char **g_argv;\r\n");
             sb.Append("}\r\n");
             sb.Append("int main(int argc, const char **argv) {\r\n");
-            sb.Append("std::shared_ptr<QSharpArray<std::shared_ptr<Qt::Core::String>>> args = std::make_shared<QSharpArray<std::shared_ptr<Qt::Core::String>>>(argc-1);\r\n");
+            sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = std::make_shared<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>>(argc-1);\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
@@ -893,9 +931,11 @@ namespace QSharpCompiler
                             switch (_etter.Kind()) {
                                 case SyntaxKind.GetAccessorDeclaration:
                                     methodNode(_etter, false, false, "$get_" + v.name);
-                                    method.type = field;
-                                    method.type.typekind = field.typekind;
+                                    method.type.CopyType(field);
+                                    method.type.CopyFlags(field);
                                     method.type.setTypes();
+                                    method.type.Virtual = true;
+                                    if (cls.Abstract) method.type.Abstract = true;
                                     field.get_Property = true;
                                     break;
                                 case SyntaxKind.SetAccessorDeclaration:
@@ -906,6 +946,8 @@ namespace QSharpCompiler
                                     method.args.Add(arg);
                                     method.type.type = "void";
                                     method.type.setTypes();
+                                    method.type.Virtual = true;
+                                    if (cls.Abstract) method.type.Abstract = true;
                                     field.set_Property = true;
                                     break;
                             }
@@ -2036,9 +2078,9 @@ namespace QSharpCompiler
             bool first = true;
             for(int a=0;a<dims;a++) {
                 if (a == 0)
-                    ob.Append("std::make_shared<QSharpArray<");
+                    ob.Append("std::make_shared<Qt::QSharp::FixedArray<");
                 else
-                    ob.Append("std::shared_ptr<QSharpArray<");
+                    ob.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
             }
             ob.Append(type);
             for(int a=0;a<dims;a++) {
@@ -2046,7 +2088,7 @@ namespace QSharpCompiler
             }
             ob.Append("(std::initializer_list<");
             for(int a=1;a<dims;a++) {
-                ob.Append("std::shared_ptr<QSharpArray<");
+                ob.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
             }
             ob.Append(type);
             for(int a=1;a<dims;a++) {
@@ -2239,7 +2281,7 @@ namespace QSharpCompiler
                 return;
             }
             for(int a=0;a<dims;a++) {
-              ob.Append("std::make_shared<QSharpArray<");
+              ob.Append("std::make_shared<Qt::QSharp::FixedArray<");
             }
             Type type = new Type(typeNode, true);
             ob.Append(type.GetTypeDeclaration());
@@ -2394,12 +2436,26 @@ namespace QSharpCompiler
             if (Static) sb.Append(" static");
             if (Abstract) {
                 if (!cls) {
-                    sb.Append(" virtual");
+                    if (!Virtual) {
+                        sb.Append(" virtual");
+                    }
                 }
             }
             if (Virtual) sb.Append(" virtual");
             if (Extern) sb.Append(" extern");
             return sb.ToString();
+        }
+        public void CopyFlags(Flags src) {
+            Public = src.Public;
+            Private = src.Private;
+            Protected = src.Protected;
+            Static = src.Static;
+            Abstract = src.Abstract;
+            Virtual = src.Virtual;
+            Extern = src.Extern;
+            Override = src.Override;
+            Definition = src.Definition;
+            Sealed = src.Sealed;
         }
     }
 
@@ -2486,7 +2542,7 @@ namespace QSharpCompiler
                     sb.Append("typename ");
                     sb.Append(arg.GetTypeDeclaration());
                 }
-                sb.Append(">");
+                sb.Append(">\r\n");
             }
             sb.Append("class " + name);
             sb.Append(";\r\n");
@@ -2810,6 +2866,46 @@ namespace QSharpCompiler
             set(sym);
             setTypes();
         }
+
+/*
+        public string type;
+        public string full;
+        public string full_name;
+        public TypeKind typekind;
+        public SymbolKind symbolkind;
+        public SyntaxNode node;
+        public ISymbol symbol, declSymbol;
+        public ITypeSymbol typeSymbol;
+        public bool primative;
+        public bool numeric;
+        public bool weakRef;
+        public bool array;
+        public int arrays;  //# of dimensions
+        public bool shared;
+        public bool ptr;  //unsafe pointer
+        public List<Type> GenericArgs = new List<Type>();
+        public Class cls;
+ */
+        public void CopyType(Type src) {
+            type = src.type;
+            full = src.full;
+            full_name = src.full_name;
+            typekind = src.typekind;
+            symbolkind = src.symbolkind;
+            node = src.node;
+            symbol = src.symbol;
+            declSymbol = src.declSymbol;
+            typeSymbol = src.typeSymbol;
+            primative = src.primative;
+            numeric = src.numeric;
+            weakRef = src.weakRef;
+            array = src.array;
+            arrays = src.arrays;
+            shared = src.shared;
+            ptr = src.ptr;
+            GenericArgs = src.GenericArgs;
+            cls = src.cls;
+        }
         public String GetSymbolFull() {
             return full;
         }
@@ -2934,7 +3030,7 @@ namespace QSharpCompiler
         public string GetTypeDeclaration() {
             StringBuilder sb = new StringBuilder();
             for(int a=0;a<arrays;a++) {
-                sb.Append("std::shared_ptr<QSharpArray<");
+                sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
             }
             if (shared) {
                 if (weakRef)
@@ -3005,7 +3101,7 @@ namespace QSharpCompiler
             if (array) {
                 sb.Append(" ");
                 for(int a=0;a<arrays;a++) {
-                    sb.Append("std::shared_ptr<QSharpArray<");
+                    sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
                 }
                 sb.Append(GetTypeDeclaration());
                 for(int a=0;a<arrays;a++) {
