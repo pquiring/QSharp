@@ -17,9 +17,9 @@ namespace QSharpCompiler
         public static string cppFolder;
         public static string hppFile;
         public static List<Source> files = new List<Source>();
-        public static bool debug = false;
-        public static bool debugToString = false;
-        public static bool debugTokens = false;
+        public static bool printTree = false;
+        public static bool printToString = false;
+        public static bool printTokens = false;
         public static string version = "0.8";
         public static bool library;
         public static string target;
@@ -39,7 +39,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--debug[=tokens,tostring,all]] [--single | --multi] [--cxx=version] [--msvc]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--print[=tokens,tostring,all]] [--single | --multi] [--cxx=version] [--msvc]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -75,12 +75,12 @@ namespace QSharpCompiler
                 if (arg == "--home") {
                     home = value.Replace("\\", "/");
                 }
-                if (arg == "--debug") {
-                    debug = true;
+                if (arg == "--print") {
+                    printTree = true;
                     switch (value) {
-                        case "all": debugToString = true; debugTokens = true; break;
-                        case "tokens": debugTokens = true; break;
-                        case "tostring": debugToString = true; break;
+                        case "all": printToString = true; printTokens = true; break;
+                        case "tokens": printTokens = true; break;
+                        case "tostring": printToString = true; break;
                     }
                 }
                 if (arg == "--single") {
@@ -123,7 +123,7 @@ namespace QSharpCompiler
             foreach(Source node in files)
             {
                 node.model = compiler.GetSemanticModel(node.tree);
-                if (debug) {
+                if (printTree) {
                     SyntaxNode root = node.tree.GetRoot();
                     printNodes(node, root.ChildNodes(), 0);
                 }
@@ -190,7 +190,7 @@ namespace QSharpCompiler
             int idx = 0;
             foreach(var node in nodes) {
                 printNode(file, node, lvl, idx);
-                if (debugTokens) printTokens(file, node.ChildTokens(), lvl);
+                if (printTokens) PrintTokens(file, node.ChildTokens(), lvl);
                 printNodes(file, node.ChildNodes(), lvl+1);
                 idx++;
             }
@@ -255,13 +255,13 @@ namespace QSharpCompiler
             if (value != null) {
                 ln += ",Constant=" + value.ToString().Replace("\r", "").Replace("\n", "");
             }
-            if (debugToString) {
+            if (printToString) {
                 ln += ",ToString=" + node.ToString().Replace("\r", "").Replace("\n", "");
             }
             Console.WriteLine(ln);
         }
 
-        void printTokens(Source file, IEnumerable<SyntaxToken> tokens, int lvl)
+        void PrintTokens(Source file, IEnumerable<SyntaxToken> tokens, int lvl)
         {
             int idx = 0;
             foreach(var token in tokens) {
@@ -300,7 +300,7 @@ namespace QSharpCompiler
 
         public void generate()
         {
-            if (Program.debug) {
+            if (Program.printTree) {
                 Console.WriteLine();
             }
             usings.Add("Qt::Core");
@@ -348,7 +348,7 @@ namespace QSharpCompiler
         private void generate(Source file)
         {
             SyntaxNode root = file.tree.GetRoot();
-            if (Program.debug) {
+            if (Program.printTree) {
                 Console.WriteLine("Compiling:" + file.csFile);
             }
             outputFile(file);
