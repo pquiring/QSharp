@@ -8,7 +8,7 @@ namespace Qt.QSharp {
     )]
     [CPPClass(
         "public: T *t;\r\n" +
-        "public: FixedArray(int size) {if (size < 0) throw new ArrayBoundsException(); t = (T*)new T[size]; std::memset(t, 0, size * sizeof(T)); Length = size; alloced = true; objRef = nullptr;}\r\n" +
+        "public: FixedArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; std::memset(t, 0, size * sizeof(T)); Length = size; alloced = true; objRef = nullptr;}\r\n" +
         "public: FixedArray(void *buf, int size) {t = (T*)buf; Length = size; alloced = false;}\r\n" +
         "public: FixedArray(void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy;}\r\n" +
         "public: FixedArray(std::shared_ptr<Qt::Core::Object> objRef, void *buf, int size) {t = (T*)buf; Length = size; alloced = false; this->objRef = objRef;}\r\n" +
