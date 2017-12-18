@@ -1075,6 +1075,13 @@ namespace QSharpCompiler
                                         cls.omitConstructors = true;
                                         break;
                                     }
+                                    case "Qt::QSharp::CPPAddUsage": {
+                                        SyntaxNode arg = GetChildNode(attrArgList);  //AttributeArgument
+                                        SyntaxNode str = GetChildNode(arg);  //StringLiteralExpression
+                                        String value = file.model.GetConstantValue(str).Value.ToString();
+                                        cls.addUsage(value);
+                                        break;
+                                    }
                                 }
                                 break;
                         }

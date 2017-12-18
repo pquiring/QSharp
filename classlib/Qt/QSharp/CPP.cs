@@ -61,6 +61,14 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Class)]
     public class CPPOmitBodies : System.Attribute {}
 
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CPPAddUsage : System.Attribute {
+        public CPPAddUsage(string s1) {}
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CPPFirst : System.Attribute {}
+
     [AttributeUsage(AttributeTargets.Field)]
     public class CPPOmitField : System.Attribute {}
 
