@@ -2204,7 +2204,13 @@ namespace QSharpCompiler
             SyntaxNode left = GetChildNode(node, 1);
             SyntaxNode right = GetChildNode(node, 2);
             bool useEquals = false;
-            if (GetTypeName(left) == "Qt::Core::String" && GetTypeName(right) == "Qt::Core::String") {
+            bool leftString = false;
+            bool rightString = false;
+            if (GetTypeName(left) == "Qt::Core::String") leftString = true;
+            else if (GetTypeName(left) == "string") leftString = true;
+            if (GetTypeName(right) == "Qt::Core::String") rightString = true;
+            else if (GetTypeName(right) == "string") rightString = true;
+            if (leftString && rightString) {
                 useEquals = true;
             }
             if (GetTypeName(left) == "Qt::Core::Type" && GetTypeName(right) == "Qt::Core::Type") {
