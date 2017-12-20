@@ -2,6 +2,30 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
+        "public: $field *$refType;"
+    )]
+    public class Field {
+        [CPPReplaceArgs("$field *$ref")]
+        private Field(NativeArg1 arg) {
+            CPP.Add("$refType = $ref;");
+        }
+        public String GetName() {
+            return CPP.ReturnString("String::$new($refType->name)");
+        }
+    }
+    [CPPClass(
+        "public: $method *$refType;"
+    )]
+    public class Method {
+        [CPPReplaceArgs("$method *$ref")]
+        private Method(NativeArg1 arg) {
+            CPP.Add("$refType = $ref;");
+        }
+        public String GetName() {
+            return CPP.ReturnString("String::$new($refType->name)");
+        }
+    }
+    [CPPClass(
         "public: $class *$refType;"
     )]
     public class Type {
@@ -23,6 +47,18 @@ namespace Qt.Core {
         public Type GetBaseType() {
             CPP.Add("if ($refType->base == nullptr) return std::shared_ptr<Type>();");
             return (Type)CPP.ReturnObject("Type::$new($refType->base)");
+        }
+        public Field[] GetFields() {
+            CPP.Add("int cnt = $refType->fields->size();");
+            CPP.Add("std::shared_ptr<FixedArray<std::shared_ptr<Field>>> fields = FixedArray<std::shared_ptr<Field>>::$new(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {fields->at(idx) = Field::$new($refType->fields->at(idx));}");
+            return (Field[])CPP.ReturnObject("fields");
+        }
+        public Method[] GetMethods() {
+            CPP.Add("int cnt = $refType->methods->size();");
+            CPP.Add("std::shared_ptr<FixedArray<std::shared_ptr<Method>>> methods = FixedArray<std::shared_ptr<Method>>::$new(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {methods->at(idx) = Method::$new($refType->methods->at(idx));}");
+            return (Method[])CPP.ReturnObject("methods");
         }
         /** Matches exactly. */
         public bool Equals(Type type) {
