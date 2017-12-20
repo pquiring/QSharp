@@ -14,7 +14,7 @@ folder layout:
 Build Tools:
   .Net Core 2.0 + Roslyn
   C++ toolset (C++14 required for GCC, C++17 required for MSVC)
-  QT5 libraries (Qt 5.4+ required)
+  Qt5 libraries (Qt 5.4+ required)
   CMake (3.6 for GCC, 3.10 for MSVC)
   Platform make tool (make for GCC, nmake for MSVC)
   ffmpeg/3.0+
