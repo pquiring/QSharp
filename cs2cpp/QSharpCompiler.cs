@@ -600,7 +600,9 @@ namespace QSharpCompiler
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
+            sb.Append("try {\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
+            sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Console::WriteLine($add(String::$new(\"Exception caught:\"), ex->ToString()));}");
             sb.Append("return 0;}\r\n");
 
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
@@ -1958,6 +1960,24 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.LogicalAndExpression:
                     binaryNode(node, ob, "&&");
+                    break;
+                case SyntaxKind.BitwiseOrExpression:
+                    if (isEnum(GetChildNode(node))) {
+                        //enums convert to int which must be type casted back to enum type
+                        ob.Append("(");
+                        ob.Append(GetTypeName(GetChildNode(node)));
+                        ob.Append(")");
+                    }
+                    ob.Append("(");
+                    binaryNode(node, ob, "|");
+                    ob.Append(")");
+                    break;
+                case SyntaxKind.BitwiseAndExpression:
+                    binaryNode(node, ob, "&");
+                    break;
+                case SyntaxKind.BitwiseNotExpression:
+                    ob.Append("!");
+                    expressionNode(GetChildNode(node), ob);
                     break;
                 case SyntaxKind.LeftShiftAssignmentExpression:
                     binaryAssignNode(node, ob, "<<");
