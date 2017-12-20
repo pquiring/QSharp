@@ -7,8 +7,9 @@ namespace Qt.Core {
     )]
     [CPPClass(
         "private: std::unique_ptr<QString> $q;" +
+        "private: QByteArray cstringbuffer;" +
         "public: QString* $value() {return $q.get();}" +
-        "public: const char* cstring() {return $q->toUtf8().constData();}" +
+        "public: const char* cstring() {cstringbuffer = $q->toUtf8(); return cstringbuffer.constData();}" +
         "public: QString qstring() {return *$q;}" +
         "public: const char16* ustring() {return (const char16*)$q->utf16();}"
     )]
