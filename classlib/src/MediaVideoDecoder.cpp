@@ -45,7 +45,7 @@ bool Qt::Media::MediaVideoDecoder::Start(int codec_id, int new_width, int new_he
 
   int px_count = new_width * new_height;
   ctx->video_length = px_count;
-  ctx->video = std::make_shared<Qt::QSharp::FixedArray<int>>(ctx->video_length);
+  ctx->video = Qt::QSharp::FixedArray<int>::$new(ctx->video_length);
 
   return true;
 }

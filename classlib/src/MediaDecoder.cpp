@@ -45,7 +45,7 @@ static bool open_codecs(std::shared_ptr<Qt::Media::FFContext> ctx, int new_width
       return false;
     }
     ctx->video_length = ctx->rgb_video_dst_bufsize/4;
-    ctx->video = std::make_shared<Qt::QSharp::FixedArray<int>>(ctx->video_length);
+    ctx->video = Qt::QSharp::FixedArray<int>::$new(ctx->video_length);
     //create video conversion context
     ctx->sws_ctx = (*_sws_getContext)(ctx->video_codec_ctx->width, ctx->video_codec_ctx->height, ctx->video_codec_ctx->pix_fmt
       , new_width, new_height, AV_PIX_FMT_BGRA
@@ -296,7 +296,7 @@ MediaFrameType MediaDecoder::Read()
     int count = converted_nb_samples * ctx->dst_nb_channels;
     if (ctx->audio == nullptr || ctx->audio_length != count) {
       ctx->audio_length = count;
-      ctx->audio = std::make_shared<Qt::QSharp::FixedArray<short>>(count);
+      ctx->audio = Qt::QSharp::FixedArray<short>::$new(count);
     }
     std::memcpy(ctx->audio->data(), (const short*)ctx->audio_dst_data[0], ctx->audio_length * 2);
     //free audio_dst_data
@@ -428,7 +428,7 @@ bool MediaDecoder::Resize(int new_width, int new_height)
     ctx->video = nullptr;
   }
   ctx->video_length = ctx->rgb_video_dst_bufsize/4;
-  ctx->video = std::make_shared<Qt::QSharp::FixedArray<int>>(ctx->video_length);
+  ctx->video = Qt::QSharp::FixedArray<int>::$new(ctx->video_length);
 
   if (ctx->sws_ctx != nullptr) {
     (*_sws_freeContext)(ctx->sws_ctx);

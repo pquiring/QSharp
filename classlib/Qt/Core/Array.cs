@@ -31,7 +31,7 @@ namespace Qt.Core {
         private Array<T> array;
         private int idx = -1;
         public bool MoveNext() {
-            if (idx == array.Size()) return false;
+            if (idx == array.Size()-1) return false;
             idx++;
             return true;
         }

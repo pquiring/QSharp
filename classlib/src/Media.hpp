@@ -261,12 +261,12 @@ struct FFContext {
 #define ffiobufsiz (32 * 1024)
 
 static int read_packet(FFContext *ctx, void*buf, int size) {
-  std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array = std::make_shared<Qt::QSharp::FixedArray<uint8>>(buf, size);
+  std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array = Qt::QSharp::FixedArray<uint8>::$new(buf, size);
   return ctx->io->Read(ctx->coder, array);
 }
 
 static int write_packet(FFContext *ctx, void*buf, int size) {
-  std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array = std::make_shared<Qt::QSharp::FixedArray<uint8>>(buf, size);
+  std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array = Qt::QSharp::FixedArray<uint8>::$new(buf, size);
   return ctx->io->Write(ctx->coder, array);
 }
 

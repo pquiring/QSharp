@@ -141,7 +141,7 @@ namespace Qt.Core {
         public char[] ToCharArray() {
             CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<char16>> array;");
             CPP.Add("int length = $get_Length();");
-            CPP.Add("array = std::make_shared<Qt::QSharp::FixedArray<char16>>(length);");
+            CPP.Add("array = Qt::QSharp::FixedArray<char16>::$new(length);");
             CPP.Add("char16 *dest = array->data();");
             CPP.Add("const char16 *src = ustring();");
             CPP.Add("std::memcpy(dest, src, length * 2);");
@@ -150,7 +150,7 @@ namespace Qt.Core {
         public byte[] ToByteArray() {
             CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array;");
             CPP.Add("int length = $get_Length();");
-            CPP.Add("array = std::make_shared<Qt::QSharp::FixedArray<uint8>>(length);");
+            CPP.Add("array = Qt::QSharp::FixedArray<uint8>::$new(length);");
             CPP.Add("uint8 *dest = array->data();");
             CPP.Add("const uint8 *src = (const uint8*)cstring();");
             CPP.Add("std::memcpy(dest, src, length);");

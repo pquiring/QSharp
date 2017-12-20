@@ -2,24 +2,54 @@ using Qt.Core;
 
 namespace Qt.QSharp {
     [CPPNonClassHPP(
-        "template<typename T>" +
+        "template<typename T>\r\n" +
         "void $checkArray(std::shared_ptr<Qt::QSharp::FixedArray<T>> array, int offset, int length)" +
-        "{if (offset + length > array->Length) $abe();}"
+        "{if (offset + length > array->Length) $abe();}\r\n"
     )]
     [CPPClass(
         "public: T *t;\r\n" +
-        "public: FixedArray(int size) {if (size < 0) $abe(); t = (T*)new T[size]; std::memset(t, 0, size * sizeof(T)); Length = size; alloced = true; objRef = nullptr;}\r\n" +
-        "public: FixedArray(void *buf, int size) {t = (T*)buf; Length = size; alloced = false;}\r\n" +
-        "public: FixedArray(void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy;}\r\n" +
-        "public: FixedArray(std::shared_ptr<Qt::Core::Object> objRef, void *buf, int size) {t = (T*)buf; Length = size; alloced = false; this->objRef = objRef;}\r\n" +
-        "public: FixedArray(std::shared_ptr<Qt::Core::Object> objRef, void *buf, int size, bool copy) {if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;} Length = size; alloced = copy; this->objRef = objRef;}\r\n" +
-        "public: FixedArray(std::initializer_list<T> list) {int size = (int)list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];} alloced = true; }\r\n" +
         "public: T& operator[](int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}\r\n" +
         "public: T* data() {return t;}\r\n" +
         "public: T& at(int pos) {if (pos < 0 || pos > Length) $abe(); return t[pos];}\r\n" +
         "public: int $get_Length() {return Length;}\r\n"
     )]
     public class FixedArray<T> : IEnumerable<T> {
+        public FixedArray(int size) {
+            Length = size;
+            alloced = true;
+            CPP.Add("if (size < 0) $abe(); t = (T*)new T[size]; std::memset(t, 0, size * sizeof(T));");
+        }
+        [CPPReplaceArgs("void *buf, int size")]
+        private FixedArray(NativeArg1 arg, int size) {
+            Length = size;
+            alloced = false;
+            CPP.Add("t = (T*)buf;");
+        }
+        [CPPReplaceArgs("void *buf, int size, bool copy")]
+        private FixedArray(NativeArg2 arg, int size, bool copy) {
+            Length = size;
+            alloced = copy;
+            CPP.Add("if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;}");
+        }
+        [CPPReplaceArgs("std::shared_ptr<Qt::Core::Object> objRef, void *buf, int size")]
+        private FixedArray(Object objRef, NativeArg3 arg, int size) {
+            Length = size;
+            alloced = false;
+            this.objRef = objRef;
+            CPP.Add("t = (T*)buf;");
+        }
+        [CPPReplaceArgs("std::shared_ptr<Qt::Core::Object> objRef, void *buf, int size, bool copy")]
+        private FixedArray(Object objRef, NativeArg4 arg, int size, bool copy) {
+            Length = size;
+            alloced = copy;
+            this.objRef = objRef;
+            CPP.Add("if (copy) {t = (T*)new T[size]; std::memcpy(t, buf, size * sizeof(T));} else {t = (T*)buf;}");
+        }
+        [CPPReplaceArgs("std::initializer_list<T> list")]
+        private FixedArray(NativeArg5 arg) {
+            alloced = true;
+            CPP.Add("int size = (int)list.size(); t = (T*)new T[size]; Length = size; T* ptr = (T*)list.begin(); for(int idx=0;idx<size;idx++) {t[idx] = ptr[idx];}");
+        }
         public int Length;
         public int Size() {return Length;}
         public Object objRef;
@@ -35,7 +65,7 @@ namespace Qt.QSharp {
                 CPP.Add("delete[] t;");
             }
         }
-    };
+    }
 
     public class FixedArrayEnumerator<T> : IEnumerator<T> {
         public FixedArrayEnumerator(FixedArray<T> array) {
@@ -44,7 +74,7 @@ namespace Qt.QSharp {
         private FixedArray<T> array;
         private int idx = -1;
         public bool MoveNext() {
-            if (idx == array.Size()) return false;
+            if (idx == array.Size()-1) return false;
             idx++;
             return true;
         }

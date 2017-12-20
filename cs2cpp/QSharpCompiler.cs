@@ -595,7 +595,7 @@ namespace QSharpCompiler
             sb.Append("const char **g_argv;\r\n");
             sb.Append("}\r\n");
             sb.Append("int main(int argc, const char **argv) {\r\n");
-            sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = std::make_shared<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>>(argc-1);\r\n");
+            sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
@@ -1402,7 +1402,7 @@ namespace QSharpCompiler
                 statementNode(child);
             }
             if (throwFinally) {
-                method.Append("throw std::make_shared<FinallyException>();");
+                method.Append("throw FinallyException::$new();");
             }
             method.Append("}\r\n");
         }
@@ -2085,15 +2085,18 @@ namespace QSharpCompiler
             bool first = true;
             for(int a=0;a<dims;a++) {
                 if (a == 0)
-                    ob.Append("std::make_shared<Qt::QSharp::FixedArray<");
+                    ob.Append("Qt::QSharp::FixedArray<");
                 else
                     ob.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
             }
             ob.Append(type);
             for(int a=0;a<dims;a++) {
-                ob.Append(">>");
+                if (a == 0)
+                    ob.Append(">");
+                else
+                    ob.Append(">>");
             }
-            ob.Append("(std::initializer_list<");
+            ob.Append("::$new(std::initializer_list<");
             for(int a=1;a<dims;a++) {
                 ob.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
             }
@@ -2288,14 +2291,14 @@ namespace QSharpCompiler
                 return;
             }
             for(int a=0;a<dims;a++) {
-              ob.Append("std::make_shared<Qt::QSharp::FixedArray<");
+              ob.Append("Qt::QSharp::FixedArray<");
             }
             Type type = new Type(typeNode, true);
             ob.Append(type.GetTypeDeclaration());
             for(int a=0;a<dims;a++) {
-                ob.Append(">>");
+                ob.Append(">");
             }
-            ob.Append("(");
+            ob.Append("::$new(");
             expressionNode(sizeNode, ob);
             ob.Append(")");
         }
@@ -2682,8 +2685,7 @@ namespace QSharpCompiler
                     sb.Append(">");
                 }
                 sb.Append("> $this;\r\n");
-                sb.Append("public: $class *$type = &$class_" + full_name + ";\r\n");
-                sb.Append("public: virtual $class* $getType() {return $type;}\r\n");
+                sb.Append("public: virtual $class* $getType() {return &$class_" + full_name + ";}\r\n");
             }
             foreach(var field in fields) {
                 sb.Append(field.GetDeclaration());

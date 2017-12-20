@@ -31,7 +31,7 @@ namespace Qt.Core {
             CPP.Add("$q->remove(pos, length);");
         }
         public byte[] ToArray() {
-            return (byte[])CPP.ReturnObject("std::make_shared<Qt::QSharp::FixedArray<uint8>>($q->data(), $q->size(), true)");
+            return (byte[])CPP.ReturnObject("Qt::QSharp::FixedArray<uint8>::$new($q->data(), $q->size(), true)");
         }
         public void Clear() {
             CPP.Add("$q->clear();");

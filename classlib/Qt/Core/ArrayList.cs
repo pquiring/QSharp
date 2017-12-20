@@ -32,7 +32,7 @@ namespace Qt.Core {
         private ArrayList<T> list;
         private int idx = -1;
         public bool MoveNext() {
-            if (idx == list.Size()) return false;
+            if (idx == list.Size()-1) return false;
             idx++;
             return true;
         }

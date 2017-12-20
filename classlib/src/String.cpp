@@ -111,7 +111,7 @@ std::shared_ptr<Qt::Core::String> $add(double x, std::shared_ptr<Qt::Core::Strin
 std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list) {
   std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> array;
   int cnt = list.count();
-  array = std::make_shared<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>>(cnt);
+  array = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(cnt);
   for(int idx=0;idx<cnt;idx++) {array->at(idx) = Qt::Core::String::$new(list[idx]);}
   return array;
 }

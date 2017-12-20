@@ -78,7 +78,7 @@ namespace Qt.Gui {
             return CPP.ReturnByte("$px8[offset]");
         }
         public int[] GetPixels() {
-            return (int[])CPP.ReturnObject("std::make_shared<Qt::QSharp::FixedArray<int>>($this, $px, _width * _height)");
+            return (int[])CPP.ReturnObject("Qt::QSharp::FixedArray<int>::$new($this, $px, _width * _height)");
         }
         public void SetPixels(int[] px) {
             int pxs = _width * _height;
