@@ -3,12 +3,10 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QTreeWidgetItem *$q;"
+        "private: QTreeWidgetItem *$q;" +
+        "public: QTreeWidgetItem* $value() {return $q;}"
     )]
     public class TreeItem {
-        public TreeItem() {
-            CPP.Add("$q = nullptr;");
-        }
         public TreeItem(String text) {
             CPP.Add("$q = new QTreeWidgetItem(QStringList(text->qstring()));");
         }
@@ -50,6 +48,15 @@ namespace Qt.Gui {
         }
         public TreeItem GetSelectedItem() {
             return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->currentItem())");
+        }
+        public void ExpandItem(TreeItem item) {
+            CPP.Add("$q->expandItem(item->$value());");
+        }
+        public void CollapseItem(TreeItem item) {
+            CPP.Add("$q->collapseItem(item->$value());");
+        }
+        public void ScrollToItem(TreeItem item) {
+            CPP.Add("$q->scrollToItem(item->$value());");
         }
 
         private ChangedEvent changed;
