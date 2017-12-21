@@ -13,7 +13,7 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data(), array->$get_Length());");
         }
         public ByteArray(String str) {
-            CPP.Add("$q = std::make_unique<QByteArray>(str->cstring(), str->$get_Length());");
+            CPP.Add("$q = std::make_unique<QByteArray>(str->cstring());");
         }
         [CPPReplaceArgs("QByteArray array")]
         private ByteArray(NativeArg1 arg) {

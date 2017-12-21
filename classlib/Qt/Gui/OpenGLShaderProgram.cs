@@ -13,10 +13,10 @@ namespace Qt.Gui {
             return CPP.ReturnBool("ret");
         }
         public int AttributeLocation(string name) {
-            return CPP.ReturnInt("$q->attributeLocation($deref(name)->cstring())");
+            return CPP.ReturnInt("$q->attributeLocation($deref(name)->cstring().constData())");
         }
         public int UniformLocation(string name) {
-            return CPP.ReturnInt("$q->uniformLocation($deref(name)->cstring())");
+            return CPP.ReturnInt("$q->uniformLocation($deref(name)->cstring().constData())");
         }
         public void SetUniformValue(int location, int value) {
             CPP.Add("$q->setUniformValue(location, value);");

@@ -12,7 +12,7 @@ namespace Qt.Gui {
 
         public void glActiveTexture(int texture) {CPP.Add("$q->glActiveTexture(texture);");}
         public void glAttachShader(int program, int shader) {CPP.Add("$q->glAttachShader(program, shader);");}
-        public void glBindAttribLocation(int program, int index, string name) {CPP.Add("$q->glBindAttribLocation(program,index,name->cstring());");}
+        public void glBindAttribLocation(int program, int index, string name) {CPP.Add("$q->glBindAttribLocation(program,index,$deref(name)->cstring().constData());");}
         public void glBindBuffer(int target, int buffer) {CPP.Add("$q->glBindBuffer(target, buffer);");}
         public void glBindFramebuffer(int target, int framebuffer) {CPP.Add("$q->glBindFramebuffer(target, framebuffer);");}
         public void glBindRenderbuffer(int target, int renderbuffer) {CPP.Add("$q->glBindRenderbuffer(target, renderbuffer);");}
@@ -67,7 +67,7 @@ namespace Qt.Gui {
         public void glGetActiveAttrib(int program, int index, int bufsize, int[] length, int[] size, int[] type, byte[] name) {CPP.Add("$q->glGetActiveAttrib(program, index, bufsize, length->data(), size->data(), (GLenum*)type->data(), (char*)name->data());");}
         public void glGetActiveUniform(int program, int index, int bufsize, int[] length, int[] size, int[] type, byte[] name) {CPP.Add("$q->glGetActiveUniform(program, index, bufsize, length->data(), size->data(), (GLenum*)type->data(), (char*)name->data());");}
         public void glGetAttachedShaders(int program, int maxcount, int[] count, int[] shaders) {CPP.Add("$q->glGetAttachedShaders(program, maxcount, count->data(), (GLuint*)shaders->data());");}
-        public int glGetAttribLocation(int program, string name) {return CPP.ReturnInt("$q->glGetAttribLocation(program, name->cstring())");}
+        public int glGetAttribLocation(int program, string name) {return CPP.ReturnInt("$q->glGetAttribLocation(program, $deref(name)->cstring().constData())");}
         public void glGetBooleanv(int pname, int[] args) {CPP.Add("$q->glGetBooleanv(pname, (GLboolean*)args->data());");}
         public void glGetBufferParameteriv(int target, int pname, int[] args) {CPP.Add("$q->glGetBufferParameteriv(target, pname, args->data());");}
         public int glGetError() {return CPP.ReturnInt("$q->glGetError()");}
@@ -84,7 +84,7 @@ namespace Qt.Gui {
         public string glGetString(int name) {return CPP.ReturnString("String::$new((const char*)$q->glGetString((GLenum)name))");}
         public void glGetTexParameterfv(int target, int pname, float[] args) {CPP.Add("$q->glGetTexParameterfv(target, pname, args->data());");}
         public void glGetTexParameteriv(int target, int pname, int[] args) {CPP.Add("$q->glGetTexParameteriv(target, pname, args->data());");}
-        public int glGetUniformLocation(int program, string name) {return CPP.ReturnInt("$q->glGetUniformLocation(program, name->cstring())");}
+        public int glGetUniformLocation(int program, string name) {return CPP.ReturnInt("$q->glGetUniformLocation(program, $deref(name)->cstring().constData())");}
         public void glGetUniformfv(int program, int location, float[] args) {CPP.Add("$q->glGetUniformfv(program, location, args->data());");}
         public void glGetUniformiv(int program, int location, int[] args) {CPP.Add("$q->glGetUniformiv(program, location, args->data());");}
         public void glGetVertexAttribPointerv(int index, int pname, long[] pointer) {CPP.Add("$q->glGetVertexAttribPointerv(index, pname, (GLvoid **)pointer->data());");}
@@ -110,7 +110,7 @@ namespace Qt.Gui {
         public void glShaderBinary(int n, int[] shaders, int binaryformat, byte[] binary, int length) {CPP.Add("$q->glShaderBinary(n, (const GLuint*)shaders->data(), binaryformat, binary->data(), length);");}
         public void glShaderSource(int shader, int count, string[] str, int[] length) {
             CPP.Add("QVector<const char*> src;");
-            CPP.Add("for(int a=0;a<count;a++) {src.append(str.get()->at(a).get()->cstring());}");
+            CPP.Add("for(int a=0;a<count;a++) {src.append($deref($deref(str)->at(a))->cstring().constData());}");
             CPP.Add("$q->glShaderSource(shader, count, (const char**)src.data(), length->data());");
         }
         public void glStencilFunc(int func, int refc, int mask) {CPP.Add("$q->glStencilFunc(func, refc, mask);");}

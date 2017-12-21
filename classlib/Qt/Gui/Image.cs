@@ -36,29 +36,26 @@ namespace Qt.Gui {
         public int GetWidth() {return CPP.ReturnInt("$q->width()");}
         public int GetHeight() {return CPP.ReturnInt("$q->height()");}
         public bool Load(String file, String fmt = null) {
-            CPP.Add("const char *cfmt = nullptr;  if (fmt.get() != nullptr) cfmt = fmt->cstring();");
             bool ok = false;
-            CPP.Add("ok = $q->load(file->qstring(), cfmt);");
+            CPP.Add("ok = $q->load(file->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
             if (ok) {
                 GetPtr();
             }
             return ok;
         }
         public bool Load(IOStream io, String fmt = null) {
-            CPP.Add("const char *cfmt = nullptr;  if (fmt.get() != nullptr) cfmt = fmt->cstring();");
             bool ok = false;
-            CPP.Add("ok = $q->load(io->$q.get(), cfmt)");
+            CPP.Add("ok = $q->load(io->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
             if (ok) {
                 GetPtr();
             }
             return ok;
         }
         public bool Save(String file, String fmt = null) {
-            CPP.Add("const char *cfmt = nullptr;  if (fmt.get() != nullptr) cfmt = fmt->cstring();");
-            return CPP.ReturnBool("$q->save(file->qstring(), cfmt)");
+            return CPP.ReturnBool("$q->save(file->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData())");
         }
         public bool Save(IOStream io, String fmt) {
-            return CPP.ReturnBool("$q->save(io->$q.get(), (const char*)$deref(fmt)->cstring())");
+            return CPP.ReturnBool("$q->save(io->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData())");
         }
         public void SetPixel(int x, int y, uint px) {
             px |= 0xff000000;

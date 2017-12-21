@@ -7,9 +7,8 @@ namespace Qt.Core {
     )]
     [CPPClass(
         "private: std::unique_ptr<QString> $q;" +
-        "private: QByteArray cstringbuffer;" +
         "public: QString* $value() {return $q.get();}" +
-        "public: const char* cstring() {cstringbuffer = $q->toUtf8(); return cstringbuffer.constData();}" +
+        "public: QByteArray cstring() {return $q->toUtf8();}" +
         "public: QString qstring() {return *$q;}" +
         "public: const char16* ustring() {return (const char16*)$q->utf16();}"
     )]
@@ -153,7 +152,8 @@ namespace Qt.Core {
             CPP.Add("int length = $get_Length();");
             CPP.Add("array = Qt::QSharp::FixedArray<uint8>::$new(length);");
             CPP.Add("uint8 *dest = array->data();");
-            CPP.Add("const uint8 *src = (const uint8*)cstring();");
+            CPP.Add("QByteArray cstr = cstring();");
+            CPP.Add("const uint8 *src = (const uint8*)cstr.constData();");
             CPP.Add("std::memcpy(dest, src, length);");
             return CPP.ReturnByteArray("array");
         }
