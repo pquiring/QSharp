@@ -58,6 +58,9 @@ namespace Qt.Gui {
         public void ScrollToItem(TreeItem item) {
             CPP.Add("$q->scrollToItem(item->$value());");
         }
+        public void Clear() {
+            CPP.Add("$q->clear();");
+        }
 
         private ChangedEvent changed;
         private void SlotChanged() {

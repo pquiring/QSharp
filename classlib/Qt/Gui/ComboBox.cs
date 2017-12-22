@@ -30,6 +30,9 @@ namespace Qt.Gui {
         public int GetSelectedIndex() {
             return CPP.ReturnInt("$q->currentIndex()");
         }
+        public void Clear() {
+            CPP.Add("$q->clear();");
+        }
 
         private ChangedEvent changed;
         private void SlotChanged(int idx) {

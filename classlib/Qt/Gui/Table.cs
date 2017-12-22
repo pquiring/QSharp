@@ -85,6 +85,12 @@ namespace Qt.Gui {
         public void SelectAll() {
             CPP.Add("$q->selectAll();");
         }
+        public void Clear() {
+            CPP.Add("$q->clear();");
+        }
+        public void ClearContents() {
+            CPP.Add("$q->clearContents();");
+        }
 
         private ChangedEvent changed;
         private void SlotChanged() {
