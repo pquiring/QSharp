@@ -914,7 +914,7 @@ namespace QSharpCompiler
             v.Append(" = ");
             SyntaxNode equalsChild = GetChildNode(v.equals);
             if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
-                arrayInitNode(equalsChild, v, field.type, field.arrays);
+                arrayInitNode(equalsChild, v, field.GetTypeDeclaration(false), field.arrays);
             } else {
                 expressionNode(equalsChild, v);
             }
@@ -1571,7 +1571,7 @@ namespace QSharpCompiler
                                         method.Append(" = ");
                                         SyntaxNode equalsChild = GetChildNode(equals);
                                         if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
-                                            arrayInitNode(equalsChild, method, type.type, type.arrays);
+                                            arrayInitNode(equalsChild, method, type.GetTypeDeclaration(false), type.arrays);
                                         } else {
                                             expressionNode(equalsChild, method);
                                         }
@@ -1775,7 +1775,7 @@ namespace QSharpCompiler
                             method.Append(" = ");
                             SyntaxNode equalsChild = GetChildNode(equals);
                             if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
-                                arrayInitNode(equalsChild, method, type.type, type.arrays);
+                                arrayInitNode(equalsChild, method, type.GetTypeDeclaration(false), type.arrays);
                             } else {
                                 expressionNode(equalsChild, method);
                             }
@@ -2316,7 +2316,8 @@ namespace QSharpCompiler
             SyntaxNode initList = GetChildNode(node, 2);
             if (initList != null && initList.Kind() == SyntaxKind.ArrayInitializerExpression) {
                 //ob.Append("=");
-                arrayInitNode(initList, ob, typeNode.ToString(), dims);
+                Type dataType = new Type(typeNode, true);
+                arrayInitNode(initList, ob, dataType.GetTypeDeclaration(false), dims);
                 return;
             }
             if (typeNode == null || sizeNode == null) {
@@ -3069,10 +3070,12 @@ namespace QSharpCompiler
             sb.Append(GetGenericArgs());
             return sb.ToString();
         }
-        public string GetTypeDeclaration() {
+        public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
-            for(int a=0;a<arrays;a++) {
-                sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
+            if (inc_arrays) {
+                for(int a=0;a<arrays;a++) {
+                    sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
+                }
             }
             if (shared) {
                 if (weakRef)
@@ -3089,8 +3092,10 @@ namespace QSharpCompiler
             if (shared) {
                 sb.Append(">");
             }
-            for(int a=0;a<arrays;a++) {
-                sb.Append(">>");
+            if (inc_arrays) {
+                for(int a=0;a<arrays;a++) {
+                    sb.Append(">>");
+                }
             }
             return sb.ToString();
         }

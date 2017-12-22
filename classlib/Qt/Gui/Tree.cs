@@ -68,6 +68,7 @@ namespace Qt.Gui {
             CPP.Add("$q->setHeaderHidden(hidden);");
         }
 
+
         private ChangedEvent changed;
         private void SlotChanged() {
             if (changed != null) changed();

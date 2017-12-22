@@ -91,6 +91,24 @@ namespace Qt.Gui {
         public void ClearContents() {
             CPP.Add("$q->clearContents();");
         }
+        public void SetHorizontalHeader(int col, String text) {
+            CPP.Add("$q->setHorizontalHeaderItem(col, new QTableWidgetItem($check(text)->qstring()));");
+        }
+        public void SetHorizontalHeaders(String[] headers) {
+            CPP.Add("$q->setHorizontalHeaderLabels($StringArrayToQStringList($check(headers)));");
+        }
+        public void SetHorizontalHeadersVisible(bool visible) {
+            CPP.Add("$q->horizontalHeader()->setVisible(visible);");
+        }
+        public void SetVerticalHeader(int row, String text) {
+            CPP.Add("$q->setVerticalHeaderItem(row, new QTableWidgetItem($check(text)->qstring()));");
+        }
+        public void SetVerticalHeaders(String[] headers) {
+            CPP.Add("$q->setVerticalHeaderLabels($StringArrayToQStringList($check(headers)));");
+        }
+        public void SetVerticalHeadersVisible(bool visible) {
+            CPP.Add("$q->verticalHeader()->setVisible(visible);");
+        }
 
         private ChangedEvent changed;
         private void SlotChanged() {

@@ -64,6 +64,7 @@
 #include <QtWidgets/QFontDialog>
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QListWidget>
+#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QSplitter>
