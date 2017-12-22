@@ -61,6 +61,12 @@ namespace Qt.Gui {
         public void Clear() {
             CPP.Add("$q->clear();");
         }
+        public bool IsHeaderHidden() {
+            return CPP.ReturnBool("$q->isHeaderHidden()");
+        }
+        public void SetHeaderHidden(bool hidden) {
+            CPP.Add("$q->setHeaderHidden(hidden);");
+        }
 
         private ChangedEvent changed;
         private void SlotChanged() {
