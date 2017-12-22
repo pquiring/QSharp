@@ -30,6 +30,7 @@ namespace QSharpCompiler
         public static bool single = false;  //generate monolithic cpp source file
         public static string cxx = "14";  //C++ version to use
         public static bool msvc = false;
+        public static bool debug = false;
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -39,7 +40,7 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--print[=tokens,tostring,all]] [--single | --multi] [--cxx=version] [--msvc]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--print[=tokens,tostring,all]] [--single | --multi] [--cxx=version] [--msvc] [--debug]");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -94,6 +95,9 @@ namespace QSharpCompiler
                 }
                 if (arg == "--msvc") {
                     msvc = true;
+                }
+                if (arg == "--debug") {
+                    debug = true;
                 }
             }
             csFolder = args[0];
@@ -595,6 +599,8 @@ namespace QSharpCompiler
             sb.Append("const char **g_argv;\r\n");
             sb.Append("}\r\n");
             sb.Append("int main(int argc, const char **argv) {\r\n");
+            sb.Append("g_argc = argc;\r\n");
+            sb.Append("g_argv = argv;\r\n");
             sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
@@ -661,6 +667,7 @@ namespace QSharpCompiler
                 sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml");
                 if (Program.msvc) {
                     sb.Append(" msvcrt");
+                    if (Program.debug) sb.Append("d");
                 } else {
                     sb.Append(" stdc++ z");
                 }
