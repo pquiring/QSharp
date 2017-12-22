@@ -1411,7 +1411,7 @@ namespace QSharpCompiler
                 statementNode(child);
             }
             if (throwFinally) {
-                method.Append("throw FinallyException::$new();");
+                method.Append("throw Qt::QSharp::FinallyException::$new();");
             }
             method.Append("}\r\n");
         }
@@ -1540,7 +1540,7 @@ namespace QSharpCompiler
                                 }
                                 break;
                             case SyntaxKind.FinallyClause:
-                                method.Append("} catch(std::shared_ptr<FinallyException> $finally" + cls.finallyCnt++ + ") ");
+                                method.Append("} catch(std::shared_ptr<Qt::QSharp::FinallyException> $finally" + cls.finallyCnt++ + ") ");
                                 statementNode(GetChildNode(child));
                                 break;
                         }
