@@ -1,6 +1,13 @@
 What's new
 ==========
 
+Dec 22, 2017 : 0.9
+ - fixed arrays now implement IEnumerable so they can be used with foreach() {}
+ - implemented is and as expressions (reflection)
+ - implemented Bitwise Or And Not expressions
+ - more Qt API
+ - fix major use after free bug - apps are finally stable
+
 Dec 15, 2017 : 0.8
  - added MSVC support
  - compile to multiple or single source file
