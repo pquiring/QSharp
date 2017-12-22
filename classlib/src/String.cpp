@@ -10,7 +10,7 @@ std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std
 std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::Object> y) {
   std::shared_ptr<Qt::Core::String> s = Qt::Core::String::$new();
   s->Append(s1);
-  s->Append($deref(y)->ToString());
+  s->Append($check(y)->ToString());
   return s;
 }
 
@@ -59,7 +59,7 @@ std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, dou
 
 std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::Object> x, std::shared_ptr<Qt::Core::String> s2) {
   std::shared_ptr<Qt::Core::String> s = Qt::Core::String::$new();
-  s->Append($deref(x)->ToString());
+  s->Append($check(x)->ToString());
   s->Append(s2);
   return s;
 }

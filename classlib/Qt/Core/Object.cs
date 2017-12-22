@@ -36,10 +36,10 @@ namespace Qt.Core {
         [CPPOmitConstructor]
         /** Converts System.Type to Qt.Core.Type */
         public Type(System.Type type) {
-            CPP.Add("$refType = $deref(type)->$refType;");
+            CPP.Add("$refType = $check(type)->$refType;");
         }
         public Type(Type type) {
-            CPP.Add("$refType = $deref(type)->$refType;");
+            CPP.Add("$refType = $check(type)->$refType;");
         }
         public String GetName() {
             return CPP.ReturnString("String::$new($refType->name)");
@@ -62,11 +62,11 @@ namespace Qt.Core {
         }
         /** Matches exactly. */
         public bool Equals(Type type) {
-            return CPP.ReturnBool("($refType == $deref(type)->$refType)");
+            return CPP.ReturnBool("($refType == $check(type)->$refType)");
         }
         /** Matches if same or derived from type. */
         public bool IsDerivedFrom(Type type) {
-            return CPP.ReturnBool("$refType->isDerivedFrom($deref(type)->$refType)");
+            return CPP.ReturnBool("$refType->isDerivedFrom($check(type)->$refType)");
         }
         /** Use to convert System.Type to Qt.Core.Type for now.
         * ie: Type type = Type.Convert(typeof(MyClass));

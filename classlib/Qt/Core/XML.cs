@@ -69,7 +69,7 @@ namespace Qt.Core {
         }
         public void RemoveAttr(int index) {
             CPP.Add("std::shared_ptr<XMLAttr> attr = GetAttr(index);");
-            CPP.Add("$q->removeAttribute($deref(attr)->GetName()->qstring());");
+            CPP.Add("$q->removeAttribute($check(attr)->GetName()->qstring());");
         }
         public void RemoveAttr(String name) {
             CPP.Add("$q->removeAttribute(name->qstring());");
@@ -89,11 +89,11 @@ namespace Qt.Core {
     )]
     public class XMLAttr {
         public XMLAttr(XMLTag tag, String name) {
-            CPP.Add("$q = new QDomAttr($deref(tag)->$q->attributeNode($deref(name)->qstring()));");
+            CPP.Add("$q = new QDomAttr($check(tag)->$q->attributeNode($check(name)->qstring()));");
         }
         public XMLAttr(XMLTag tag, int index) {
-            CPP.Add("QString name = $deref(tag)->$q->attributes().item(index).nodeName();");
-            CPP.Add("$q = new QDomAttr($deref(tag)->$q->attributeNode(name));");
+            CPP.Add("QString name = $check(tag)->$q->attributes().item(index).nodeName();");
+            CPP.Add("$q = new QDomAttr($check(tag)->$q->attributeNode(name));");
         }
         public String GetName() {
             return CPP.ReturnString("String::$new($q->name())");

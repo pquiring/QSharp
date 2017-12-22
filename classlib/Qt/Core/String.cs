@@ -34,17 +34,17 @@ namespace Qt.Core {
         }
         public String(char[] str, int idx, int length) {
             CPP.Add("$q = std::make_unique<QString>();");
-            CPP.Add("$q->append((const QChar*)$deref(str)->data()+idx,length);");
+            CPP.Add("$q->append((const QChar*)$check(str)->data()+idx,length);");
         }
         public String(byte[] utf8, int idx, int length) {
             CPP.Add("$q = std::make_unique<QString>();");
-            CPP.Add("$q->append(QByteArray((const char*)$deref(utf8)->data()+idx,length));");
+            CPP.Add("$q->append(QByteArray((const char*)$check(utf8)->data()+idx,length));");
         }
         public String(string s) {
-            CPP.Add("$q = std::make_unique<QString>(*$deref(s)->$value());");
+            CPP.Add("$q = std::make_unique<QString>(*$check(s)->$value());");
         }
         public String(ByteArray array) {
-            CPP.Add("$q = std::make_unique<QString>(*$deref(array)->$value());");
+            CPP.Add("$q = std::make_unique<QString>(*$check(array)->$value());");
         }
         public static implicit operator String(string s) {
             //convert builtin string to Qt.Core.String
@@ -57,7 +57,7 @@ namespace Qt.Core {
 
         public int Length {get{return CPP.ReturnInt("$q->length()");} set{CPP.Add("$q->resize(value);");}}
         public String Append(String s) {
-            CPP.Add("$q->append(*$deref(s)->$q);");
+            CPP.Add("$q->append(*$check(s)->$q);");
             return this;
         }
         public String Append(char ch) {
@@ -96,11 +96,11 @@ namespace Qt.Core {
         }
 
         public bool Equals(String s) {
-            return CPP.ReturnBool("$q->compare(*$deref(s)->$q) == 0");
+            return CPP.ReturnBool("$q->compare(*$check(s)->$q) == 0");
         }
 
         public bool EqualsIgnoreCase(String s) {
-            return CPP.ReturnBool("$q->compare(*$deref(s)->$q, Qt::CaseInsensitive) == 0");
+            return CPP.ReturnBool("$q->compare(*$check(s)->$q, Qt::CaseInsensitive) == 0");
         }
 
         public int IndexOf(char ch) {

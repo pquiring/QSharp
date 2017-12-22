@@ -175,20 +175,20 @@ struct $class {
 };
 
 template<typename T>
-inline std::shared_ptr<T> $deref(std::shared_ptr<T> sptr) {
+inline std::shared_ptr<T> $check(std::shared_ptr<T> sptr) {
   if (sptr == nullptr) $npe();
   return sptr;
 }
 
 template<typename T>
-inline std::shared_ptr<T> $deref(std::weak_ptr<T> wptr) {
+inline std::shared_ptr<T> $check(std::weak_ptr<T> wptr) {
   std::shared_ptr<T> sptr = wptr.lock();
   if (sptr == nullptr) $npe();
   return sptr;
 }
 
 template<typename T>
-std::function<T> $checkDelegate(std::function<T> func) {
+std::function<T> $check(std::function<T> func) {
   if (!func) $npe();
   return func;
 }

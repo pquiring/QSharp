@@ -1850,7 +1850,7 @@ namespace QSharpCompiler
                         ob.Append("::");
                         expressionNode(right, ob, lvalue);
                     } else {
-                        ob.Append("$deref(");  //NPE check
+                        ob.Append("$check(");  //NPE check
                         expressionNode(left, ob, lvalue);
                         ob.Append(")->");
                         expressionNode(right, ob, lvalue);
@@ -1869,7 +1869,7 @@ namespace QSharpCompiler
                     //IdentifierNode, BracketedArgumentList -> {Argument, ...}
                     SyntaxNode array = GetChildNode(node, 1);
                     SyntaxNode index = GetChildNode(node, 2);
-                    ob.Append("(*$deref(");  //NPE check
+                    ob.Append("(*$check(");  //NPE check
                     expressionNode(array, ob, lvalue);
                     ob.Append("))[");
                     expressionNode(index, ob, lvalue);
@@ -2079,7 +2079,7 @@ namespace QSharpCompiler
                     SyntaxNode isObj = GetChildNode(node, 1);
                     SyntaxNode isType = GetChildNode(node, 2);
                     Type isTypeType = new Type(isType, false);
-                    ob.Append("$deref(");
+                    ob.Append("$check(");
                     expressionNode(isObj, ob);
                     ob.Append(")->GetType()");
                     ob.Append("->IsDerivedFrom(");
@@ -2090,7 +2090,7 @@ namespace QSharpCompiler
                     SyntaxNode asType = GetChildNode(node, 2);
                     Type asTypeType = new Type(asType, false);
                     ob.Append("(Type::$new(&$class_" + asTypeType.full_name + ")");
-                    ob.Append("->IsDerivedFrom($deref(");
+                    ob.Append("->IsDerivedFrom($check(");
                     expressionNode(asObj, ob);
                     ob.Append(")->GetType()) ? std::dynamic_pointer_cast<" + asTypeType.full_name + ">(");
                     expressionNode(asObj, ob);
@@ -2224,7 +2224,7 @@ namespace QSharpCompiler
                 useEquals = true;
             }
             if (useEquals) {
-                ob.Append("$deref(");
+                ob.Append("$check(");
                 expressionNode(left, ob);
                 ob.Append(")->Equals(");
                 expressionNode(right, ob);
@@ -2366,7 +2366,7 @@ namespace QSharpCompiler
                 return;
             }
             if (isDelegate(id)) {
-                ob.Append("$checkDelegate(");
+                ob.Append("$check(");
             }
             expressionNode(id, ob, true, false, true);
             if (isDelegate(id)) {

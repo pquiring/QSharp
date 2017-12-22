@@ -107,7 +107,7 @@ namespace Qt.Gui {
         }
         public void DrawImage(int x, int y, Image src, int sx, int sy, int width = -1, int height = -1) {
             CPP.Add("$painter.begin($q.get());");
-            CPP.Add("$painter.drawImage(x,y,*$deref(src)->$q,sx,sy,width,height);");
+            CPP.Add("$painter.drawImage(x,y,*$check(src)->$q,sx,sy,width,height);");
             CPP.Add("$painter.end();");
         }
         public void DrawPie(int x, int y, int width, int height, int startAngle, int spanAngle) {
