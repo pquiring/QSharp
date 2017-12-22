@@ -175,17 +175,16 @@ struct $class {
 };
 
 template<typename T>
-inline T* $deref(std::shared_ptr<T> x) {
-  T* ptr = x.get();
-  if (ptr == nullptr) $npe();
-  return ptr;
+inline std::shared_ptr<T> $deref(std::shared_ptr<T> sptr) {
+  if (sptr == nullptr) $npe();
+  return sptr;
 }
 
 template<typename T>
-inline T* $deref(std::weak_ptr<T> x) {
-  T* ptr = x.lock.get();
-  if (ptr == nullptr) $npe();
-  return ptr;
+inline std::shared_ptr<T> $deref(std::weak_ptr<T> wptr) {
+  std::shared_ptr<T> sptr = wptr.lock();
+  if (sptr == nullptr) $npe();
+  return sptr;
 }
 
 template<typename T>
