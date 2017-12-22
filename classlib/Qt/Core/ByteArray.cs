@@ -20,11 +20,11 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QByteArray>(array);");
         }
         public void Append(byte[] buf, int offset, int length) {
-            CPP.Add("$checkArray(buf, offset, length);");
+            CPP.Add("$check(buf, offset, length);");
             CPP.Add("$q->append((const char*)(buf->data() + offset), length);");
         }
         public void Insert(int index, byte[] buf, int offset, int length) {
-            CPP.Add("$checkArray(buf, offset, length);");
+            CPP.Add("$check(buf, offset, length);");
             CPP.Add("$q->insert(index, (const char*)(buf->data() + offset), length);");
         }
         public void Remove(int pos, int length) {
