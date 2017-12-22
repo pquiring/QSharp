@@ -4,7 +4,7 @@ namespace Qt.QSharp {
     [CPPNonClassHPP(
         "template<typename T>\r\n" +
         "void $check(std::shared_ptr<Qt::QSharp::FixedArray<T>> array, int offset, int length)" +
-        "{if (offset + length > array->Length) $abe();}\r\n"
+        "{if (offset + length > $check(array)->Length) $abe();}\r\n"
     )]
     [CPPClass(
         "public: T *t;\r\n" +
