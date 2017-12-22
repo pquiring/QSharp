@@ -14,6 +14,6 @@ namespace Qt.Network {
         private SslSocket(NativeArg1 arg) {
             CPP.Add("$q.reset($s); TcpSocket::$base($q);");
         }
-        public new void Connect(String host, int port) {CPP.Add("$q->connectToHostEncrypted(host->qstring(), port);");}
+        public new void Connect(String host, int port) {CPP.Add("$q->connectToHostEncrypted($check(host)->qstring(), port);");}
     }
 }

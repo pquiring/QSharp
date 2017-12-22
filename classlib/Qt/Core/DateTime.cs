@@ -20,13 +20,13 @@ namespace Qt.Core {
             return (Date)CPP.ReturnObject("Date::$new($q->date())");
         }
         public void SetDate(Date date) {
-            CPP.Add("$q->setDate(*date->$date());");
+            CPP.Add("$q->setDate(*$check(date)->$date());");
         }
         public Time GetTime() {
             return (Time)CPP.ReturnObject("Time::$new($q->time())");
         }
         public void SetTime(Time time) {
-            CPP.Add("$q->setTime(*time->$time());");
+            CPP.Add("$q->setTime(*$check(time)->$time());");
         }
 
         public DateTime AddYears(int years) {
@@ -46,7 +46,7 @@ namespace Qt.Core {
         }
 
         public String ToString(String format) {
-            return CPP.ReturnString("String::$new($q->toString(format->qstring()))");
+            return CPP.ReturnString("String::$new($q->toString($check(format)->qstring()))");
         }
 
         public static DateTime GetCurrentDateTime() {

@@ -13,10 +13,10 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public void AddItem(String text) {
-            CPP.Add("$q->addItem(text->qstring());");
+            CPP.Add("$q->addItem($check(text)->qstring());");
         }
         public void InsertItem(int index, String text) {
-            CPP.Add("$q->insertItem(index, text->qstring());");
+            CPP.Add("$q->insertItem(index, $check(text)->qstring());");
         }
         public void RemoveItem(int index) {
             CPP.Add("$q->removeItemWidget($q->item(index));");

@@ -25,7 +25,7 @@ namespace Qt.Gui {
             return CPP.ReturnString("String::$new($q->text())");
         }
         public void SetText(String text) {
-            CPP.Add("$q->setText(text->qstring());");
+            CPP.Add("$q->setText($check(text)->qstring());");
         }
         public bool IsPasswordMode() {
             return CPP.ReturnBool("($q->echoMode() == QLineEdit::Password)");

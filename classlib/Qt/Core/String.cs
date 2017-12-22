@@ -32,13 +32,15 @@ namespace Qt.Core {
         private String(NativeArg4 arg) {
             CPP.Add("$q = std::make_unique<QString>(array);");
         }
-        public String(char[] str, int idx, int length) {
+        public String(char[] str, int offset, int length) {
+            CPP.Add("$check(str, offset, length);");
             CPP.Add("$q = std::make_unique<QString>();");
-            CPP.Add("$q->append((const QChar*)$check(str)->data()+idx,length);");
+            CPP.Add("$q->append((const QChar*)str->data()+offset,length);");
         }
-        public String(byte[] utf8, int idx, int length) {
+        public String(byte[] utf8, int offset, int length) {
+            CPP.Add("$check(utf8, offset, length);");
             CPP.Add("$q = std::make_unique<QString>();");
-            CPP.Add("$q->append(QByteArray((const char*)$check(utf8)->data()+idx,length));");
+            CPP.Add("$q->append(QByteArray((const char*)utf8->data()+offset,length));");
         }
         public String(string s) {
             CPP.Add("$q = std::make_unique<QString>(*$check(s)->$value());");
@@ -111,10 +113,10 @@ namespace Qt.Core {
         }
 
         public bool StartsWith(String s) {
-            return CPP.ReturnBool("$q->startsWith(s->qstring())");
+            return CPP.ReturnBool("$q->startsWith($check(s)->qstring())");
         }
         public bool EndsWith(String s) {
-            return CPP.ReturnBool("$q->endsWith(s->qstring())");
+            return CPP.ReturnBool("$q->endsWith($check(s)->qstring())");
         }
 
         public String[] Split(char ch) {
@@ -123,7 +125,7 @@ namespace Qt.Core {
         }
 
         public String[] Split(String str) {
-            CPP.Add("QStringList list = $q->split(str->qstring());");
+            CPP.Add("QStringList list = $q->split($check(str)->qstring());");
             return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
 

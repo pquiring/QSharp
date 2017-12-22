@@ -15,10 +15,10 @@ namespace Qt.Gui {
             CPP.Add("$q = $a");
         }
         public void AddChild(TreeItem item) {
-            CPP.Add("$q->addChild(item->$q);");
+            CPP.Add("$q->addChild($check(item)->$q);");
         }
         public void InsertChild(int index, TreeItem item) {
-            CPP.Add("$q->insertChild(index, item->$q);");
+            CPP.Add("$q->insertChild(index, $check(item)->$q);");
         }
         public void RemoveChild(int index) {
             CPP.Add("$q->removeChild($q->child(index));");

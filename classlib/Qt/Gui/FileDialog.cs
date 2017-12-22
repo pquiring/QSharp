@@ -19,7 +19,7 @@ namespace Qt.Gui {
             return CPP.ReturnString("String::$new($q->directory().absolutePath())");
         }
         public void SetDirectory(String dir) {
-            CPP.Add("$q->setDirectory(dir->qstring());");
+            CPP.Add("$q->setDirectory($check(dir)->qstring());");
         }
         public FileMode GetFileMode() {
             return (FileMode)CPP.ReturnInt("$q->fileMode()");
@@ -32,7 +32,7 @@ namespace Qt.Gui {
             return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
         public void SetFilters(String[] filters) {
-            CPP.Add("QStringList list = $StringArrayToQStringList(filters);");
+            CPP.Add("QStringList list = $StringArrayToQStringList($check(filters));");
             CPP.Add("$q->setNameFilters(list);");
         }
     }

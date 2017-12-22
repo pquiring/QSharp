@@ -13,41 +13,41 @@ namespace Qt.Gui {
             CPP.Add("Layout::$base($q);");
         }
         public void AddRow(Widget label, Widget field) {
-            CPP.Add("$q->addRow(label->$q, field->$q);");
+            CPP.Add("$q->addRow($check(label)->$q, $check(field)->$q);");
         }
         public void AddRow(Widget label, Layout field) {
-            CPP.Add("$q->addRow(label->$q, field->$q);");
+            CPP.Add("$q->addRow($check(label)->$q, $check(field)->$q);");
         }
         public void AddRow(String label, Widget field) {
-            CPP.Add("$q->addRow(label->qstring(), field->$q);");
+            CPP.Add("$q->addRow($check(label)->qstring(), $check(field)->$q);");
         }
         public void AddRow(String label, Layout field) {
-            CPP.Add("$q->addRow(label->qstring(), field->$q);");
+            CPP.Add("$q->addRow($check(label)->qstring(), $check(field)->$q);");
         }
         public void AddRow(Widget label) {
-            CPP.Add("$q->addRow(label->$q);");
+            CPP.Add("$q->addRow($check(label)->$q);");
         }
         public void AddRow(Layout label) {
-            CPP.Add("$q->addRow(label->$q);");
+            CPP.Add("$q->addRow($check(label)->$q);");
         }
 
         public void InsertRow(int row, Widget label, Widget field) {
-            CPP.Add("$q->insertRow(row, label->$q, field->$q);");
+            CPP.Add("$q->insertRow(row, $check(label)->$q, $check(field)->$q);");
         }
         public void InsertRow(int row, Widget label, Layout field) {
-            CPP.Add("$q->insertRow(row, label->$q, field->$q);");
+            CPP.Add("$q->insertRow(row, $check(label)->$q, $check(field)->$q);");
         }
         public void InsertRow(int row, String label, Widget field) {
-            CPP.Add("$q->insertRow(row, label->qstring(), field->$q);");
+            CPP.Add("$q->insertRow(row, $check(label)->qstring(), $check(field)->$q);");
         }
         public void InsertRow(int row, String label, Layout field) {
-            CPP.Add("$q->insertRow(row, label->qstring(), field->$q);");
+            CPP.Add("$q->insertRow(row, $check(label)->qstring(), $check(field)->$q);");
         }
         public void InsertRow(int row, Widget label) {
-            CPP.Add("$q->insertRow(row, label->$q);");
+            CPP.Add("$q->insertRow(row, $check(label)->$q);");
         }
         public void InsertRow(int row, Layout label) {
-            CPP.Add("$q->insertRow(row, label->$q);");
+            CPP.Add("$q->insertRow(row, $check(label)->$q);");
         }
     }
 }

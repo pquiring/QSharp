@@ -17,6 +17,7 @@ namespace Qt.Gui {
             CPP.Add("$q->setRowCount(row+1);");
         }
         public void AddRow(String[] text) {
+            if (text == null) throw new NullPointerException();
             CPP.Add("int row = $q->rowCount();");
             CPP.Add("$q->setRowCount(row+1);");
             for(int col=0;col<text.Length;col++) {
@@ -24,6 +25,7 @@ namespace Qt.Gui {
             }
         }
         public void InsertRow(int row, String[] text) {
+            if (text == null) throw new NullPointerException();
             CPP.Add("$q->insertRow(row);");
             for(int col=0;col<text.Length;col++) {
                 CPP.Add("$q->setItem(row, col, new QTableWidgetItem(text->at(col)->qstring()));");
@@ -49,7 +51,7 @@ namespace Qt.Gui {
             return CPP.ReturnString("String::$new($q->item(row, column)->text())");
         }
         public void SetData(int row, int column, String data) {
-            CPP.Add("$q->setItem(row, column, new QTableWidgetItem(data->qstring()));");
+            CPP.Add("$q->setItem(row, column, new QTableWidgetItem($check(data)->qstring()));");
         }
         public String GetSelectedItem() {
             return CPP.ReturnString("String::$new($q->currentItem()->text())");

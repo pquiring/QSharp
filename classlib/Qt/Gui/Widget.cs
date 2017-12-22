@@ -26,7 +26,7 @@ namespace Qt.Gui {
         public void Show() {CPP.Add("$q->show();");}
         public void Hide() {CPP.Add("$q->hide();");}
         public void SetLayout(Layout layout) {
-            CPP.Add("$q->setLayout(layout->$q);");
+            CPP.Add("$q->setLayout($check(layout)->$q);");
         }
         public void SetEnabled(bool state) {
             CPP.Add("$q->setEnabled(state);");
@@ -38,7 +38,7 @@ namespace Qt.Gui {
             return CPP.ReturnString("String::$new($q->windowTitle())");
         }
         public void SetWindowTitle(String title) {
-            CPP.Add("$q->setWindowTitle(title->qstring());");
+            CPP.Add("$q->setWindowTitle($check(title)->qstring());");
         }
     }
 }

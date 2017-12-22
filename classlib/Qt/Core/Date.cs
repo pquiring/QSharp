@@ -38,7 +38,7 @@ namespace Qt.Core {
             CPP.Add("$q->setDate(year, month, day);");
         }
         public String ToString(String format) {
-            return CPP.ReturnString("String::$new($q->toString(format->qstring()))");
+            return CPP.ReturnString("String::$new($q->toString($check(format)->qstring()))");
         }
 
         public static Date GetCurrentDate() {

@@ -7,7 +7,7 @@ namespace Qt.Core {
             CPP.Add("$base((std::shared_ptr<QIODevice>)$this);");
         }
         public void SetData(ByteArray data) {
-            CPP.Add("setBuffer(data->$value());");
+            CPP.Add("setBuffer($check(data)->$value());");
         }
         public ByteArray GetData() {
             return (ByteArray)CPP.ReturnObject("ByteArray::$new(buffer())");

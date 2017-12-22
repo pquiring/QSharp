@@ -16,11 +16,11 @@ namespace Qt.Gui {
         "public: void $base(QLayout *$d) {$q = $d;}"
     )]
     public abstract class Layout {
-        public void AddWidget(Widget w) {
-            CPP.Add("$q->addWidget(w->$q);");
+        public void AddWidget(Widget widget) {
+            CPP.Add("$q->addWidget($check(widget)->$q);");
         }
-        public void RemoveWidget(Widget w) {
-            CPP.Add("$q->removeWidget(w->$q);");
+        public void RemoveWidget(Widget widget) {
+            CPP.Add("$q->removeWidget($check(widget)->$q);");
         }
         public void SetEnabled(bool state) {
             CPP.Add("$q->setEnabled(state);");
@@ -29,10 +29,10 @@ namespace Qt.Gui {
             return CPP.ReturnBool("$q->isEnabled();");
         }
         public void AddLayout(Layout layout) {
-            CPP.Add("$q->addItem(layout->$q);");
+            CPP.Add("$q->addItem($check(layout)->$q);");
         }
         public void RemoveLayout(Layout layout) {
-            CPP.Add("$q->removeItem(layout->$q);");
+            CPP.Add("$q->removeItem($check(layout)->$q);");
         }
         public Alignment GetAlignment() {
             return (Alignment)CPP.ReturnInt("(int)$q->alignment()");

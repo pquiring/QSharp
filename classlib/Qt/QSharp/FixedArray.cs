@@ -3,8 +3,8 @@ using Qt.Core;
 namespace Qt.QSharp {
     [CPPNonClassHPP(
         "template<typename T>\r\n" +
-        "void $check(std::shared_ptr<Qt::QSharp::FixedArray<T>> array, int offset, int length)" +
-        "{if (offset + length > $check(array)->Length) $abe();}\r\n"
+        "std::shared_ptr<Qt::QSharp::FixedArray<T>> $check(std::shared_ptr<Qt::QSharp::FixedArray<T>> array, int offset, int length)" +
+        "{if (offset + length > $check(array)->Length) $abe(); return array;}\r\n"
     )]
     [CPPClass(
         "public: T *t;\r\n" +

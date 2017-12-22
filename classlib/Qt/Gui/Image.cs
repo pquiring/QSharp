@@ -16,11 +16,11 @@ namespace Qt.Gui {
         private int _width;
         private int _height;
         private Image(Image image, int x, int y, int width, int height) {
-            CPP.Add("$q = std::make_unique<QImage>(image->$q->copy(x,y,width,height));");
+            CPP.Add("$q = std::make_unique<QImage>($check(image)->$q->copy(x,y,width,height));");
             GetPtr();
         }
         private Image(Image image, int newWidth, int newHeight) {
-            CPP.Add("$q = std::make_unique<QImage>(image->$q->scaled(newWidth,newHeight));");
+            CPP.Add("$q = std::make_unique<QImage>($check(image)->$q->scaled(newWidth,newHeight));");
             GetPtr();
         }
         public Image(int width, int height) {
@@ -37,7 +37,7 @@ namespace Qt.Gui {
         public int GetHeight() {return CPP.ReturnInt("$q->height()");}
         public bool Load(String file, String fmt = null) {
             bool ok = false;
-            CPP.Add("ok = $q->load(file->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
+            CPP.Add("ok = $q->load($check(file)->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
             if (ok) {
                 GetPtr();
             }
@@ -45,17 +45,17 @@ namespace Qt.Gui {
         }
         public bool Load(IOStream io, String fmt = null) {
             bool ok = false;
-            CPP.Add("ok = $q->load(io->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
+            CPP.Add("ok = $q->load($check(io)->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
             if (ok) {
                 GetPtr();
             }
             return ok;
         }
         public bool Save(String file, String fmt = null) {
-            return CPP.ReturnBool("$q->save(file->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData())");
+            return CPP.ReturnBool("$q->save($check(file)->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData())");
         }
         public bool Save(IOStream io, String fmt) {
-            return CPP.ReturnBool("$q->save(io->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData())");
+            return CPP.ReturnBool("$q->save($check(io)->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData())");
         }
         public void SetPixel(int x, int y, uint px) {
             px |= 0xff000000;
@@ -79,6 +79,7 @@ namespace Qt.Gui {
         }
         public void SetPixels(int[] px) {
             int pxs = _width * _height;
+            if (px == null) throw new NullPointerException();
             if (px.Length != pxs) return;
             CPP.Add("std::memcpy($px, px->data(), pxs * 4);");
         }
@@ -133,11 +134,11 @@ namespace Qt.Gui {
         private Font font;
         public void SetFont(Font font) {
             this.font = font;
-            CPP.Add("$painter.setFont(*font->$q);");
+            CPP.Add("$painter.setFont(*$check(font)->$q);");
         }
         public void DrawText(int x, int y, String text) {
             CPP.Add("$painter.begin($q.get());");
-            CPP.Add("$painter.drawText(x,y,text->qstring());");
+            CPP.Add("$painter.drawText(x,y,$check(text)->qstring());");
             CPP.Add("$painter.end();");
         }
         public Image GetSubImage(int x, int y, int width, int height) {

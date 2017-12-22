@@ -16,11 +16,11 @@ namespace Qt.Gui {
         public void SetOrientation(Orientation orientation) {
             CPP.Add("$q->setOrientation((Qt::Orientation)orientation);");
         }
-        public void AddWidget(Widget w) {
-            CPP.Add("$q->addWidget(w->$q);");
+        public void AddWidget(Widget widget) {
+            CPP.Add("$q->addWidget($check(widget)->$q);");
         }
-        public void InsertWidget(int index, Widget w) {
-            CPP.Add("$q->insertWidget(index, w->$q);");
+        public void InsertWidget(int index, Widget widget) {
+            CPP.Add("$q->insertWidget(index, $check(widget)->$q);");
         }
     }
 }

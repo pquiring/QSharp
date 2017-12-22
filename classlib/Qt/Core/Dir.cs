@@ -9,8 +9,8 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QDir>(folder->qstring());");
         }
         public bool Exists() {return CPP.ReturnBool("$q->exists()");}
-        public bool Exists(String name) {return CPP.ReturnBool("$q->exists(name->qstring())");}
-        public bool Remove(String filename) {return CPP.ReturnBool("$q->remove(filename->qstring())");}
-        public bool Rename(String oldName, String newName) {return CPP.ReturnBool("$q->rename(oldName->qstring(), newName->qstring())");}
+        public bool Exists(String name) {return CPP.ReturnBool("$q->exists($check(name)->qstring())");}
+        public bool Remove(String filename) {return CPP.ReturnBool("$q->remove($check(filename)->qstring())");}
+        public bool Rename(String oldName, String newName) {return CPP.ReturnBool("$q->rename($check(oldName)->qstring(), $check(newName)->qstring())");}
     }
 }

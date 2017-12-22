@@ -11,11 +11,11 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public Menu AddMenu(Menu menu) {
-            CPP.Add("$q->addMenu(menu->$q);");
+            CPP.Add("$q->addMenu($check(menu)->$q);");
             return menu;
         }
         public MenuItem AddMenuItem(MenuItem item) {
-            CPP.Add("$q->addAction(item->$q);");
+            CPP.Add("$q->addAction($check(item)->$q);");
             return item;
         }
         public MenuItem AddSeparator() {

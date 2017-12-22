@@ -1,6 +1,8 @@
 using Qt.Core;
 using Qt.QSharp;
 
+//TODO : $check() all arrays
+
 namespace Qt.Gui {
     [CPPClass("private: std::unique_ptr<QOpenGLFunctions> $q;")]
     public class OpenGLFunctions : OpenGLConstants {
@@ -22,8 +24,8 @@ namespace Qt.Gui {
         public void glBlendEquationSeparate(int modeRGB, int modeAlpha) {CPP.Add("$q->glBlendEquationSeparate(modeRGB, modeAlpha);");}
         public void glBlendFunc(int sfactor, int dfactor) {CPP.Add("$q->glBlendFunc(sfactor, dfactor);");}
         public void glBlendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {CPP.Add("$q->glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);");}
-        public void glBufferData(int target, ref int size, byte[] data, int usage) {CPP.Add("$q->glBufferData(target, size, data->data(), usage);");}
-        public void glBufferSubData(int target, ref int offset, ref int size, byte[] data) {CPP.Add("$q->glBufferSubData(target, offset, size, data->data());");}
+        public void glBufferData(int target, int size, byte[] data, int usage) {CPP.Add("$q->glBufferData(target, size, $check(data, 0, size)->data(), usage);");}
+        public void glBufferSubData(int target, int offset, int size, byte[] data) {CPP.Add("$q->glBufferSubData(target, offset, size, $check(data, 0, size)->data());");}
         public int glCheckFramebufferStatus(int target) {return CPP.ReturnInt("$q->glCheckFramebufferStatus(target)");}
         public void glClear(int mask) {CPP.Add("$q->glClear(mask);");}
         public void glClearColor(float red, float green, float blue, float alpha) {CPP.Add("$q->glClearColor(red, green, blue, alpha);");}

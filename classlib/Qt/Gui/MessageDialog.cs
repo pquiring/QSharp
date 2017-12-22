@@ -11,7 +11,7 @@ namespace Qt.Gui {
     )]
     public class MessageDialog : Dialog {
         public MessageDialog(IconType icontype, String title, String msg) : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QMessageBox>();");
+            CPP.Add("$q = std::make_shared<QMessageBox>((QMessageBox::Icon)icontype, $check(title)->qstring(), $check(msg)->qstring());");
             CPP.Add("Dialog::$base($q);");
         }
         public void AddButton(ButtonType buttonType, KeyType keyType = KeyType.None) {

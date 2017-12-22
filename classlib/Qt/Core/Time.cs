@@ -29,7 +29,7 @@ namespace Qt.Core {
             CPP.Add("$q->setHMS(hour, minute, second, milli);");
         }
         public String ToString(String format) {
-            return CPP.ReturnString("String::$new($q->toString(format->qstring()))");
+            return CPP.ReturnString("String::$new($q->toString($check(format)->qstring()))");
         }
 
         public static Time GetCurrentTime() {

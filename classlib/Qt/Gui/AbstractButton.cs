@@ -10,7 +10,7 @@ namespace Qt.Gui {
     public abstract class AbstractButton : Widget {
         protected AbstractButton(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public void SetText(String text) {
-            CPP.Add("$q->setText(text->qstring());");
+            CPP.Add("$q->setText($check(text)->qstring());");
         }
         public String GetText() {
             return CPP.ReturnString("String::$new($q->text())");

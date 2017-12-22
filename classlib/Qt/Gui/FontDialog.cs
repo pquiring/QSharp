@@ -14,7 +14,7 @@ namespace Qt.Gui {
             return (Font)CPP.ReturnObject("Font::$new($q->selectedFont())");
         }
         public void SetFont(Font font) {
-            CPP.Add("$q->setCurrentFont(*font->$q);");
+            CPP.Add("$q->setCurrentFont(*$check(font)->$q);");
         }
     }
 }

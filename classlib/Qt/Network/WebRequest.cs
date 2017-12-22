@@ -21,7 +21,7 @@ namespace Qt.Network {
         }
         public void SetUrl(Url url) {
             this.url = url;
-            CPP.Add("$q = std::make_unique<QNetworkRequest>(*url->$value());");
+            CPP.Add("$q = std::make_unique<QNetworkRequest>(*$check(url)->$value());");
             GetArgs();
         }
         public Url GetUrl() {
@@ -43,10 +43,10 @@ namespace Qt.Network {
             }
         }
         public String GetHeader(String header) {
-            return CPP.ReturnString("String::$new($q->rawHeader(QByteArray(header->cstring())))");
+            return CPP.ReturnString("String::$new($q->rawHeader(QByteArray($check(header)->cstring())))");
         }
         public void SetHeader(String header, String value) {
-            CPP.Add("$q->setRawHeader(QByteArray(header->cstring()), QByteArray(value->cstring()));");
+            CPP.Add("$q->setRawHeader(QByteArray($check(header)->cstring()), QByteArray($check(value)->cstring()));");
         }
         public void SetData(ByteArray array) {
             data = array;

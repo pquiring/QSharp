@@ -10,10 +10,16 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QByteArray>();");
         }
         public ByteArray(byte[] array) {
-            CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data(), array->$get_Length());");
+            CPP.Add("$check(array);");
+            CPP.Add("int length = array->$get_Length();");
+            CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data(), length);");
+        }
+        public ByteArray(byte[] array, int offset, int length) {
+            CPP.Add("$check(array, offset, length);");
+            CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data() + offset, length);");
         }
         public ByteArray(String str) {
-            CPP.Add("$q = std::make_unique<QByteArray>(str->cstring());");
+            CPP.Add("$q = std::make_unique<QByteArray>($check(str)->cstring());");
         }
         [CPPReplaceArgs("QByteArray array")]
         private ByteArray(NativeArg1 arg) {

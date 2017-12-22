@@ -8,7 +8,7 @@ namespace Qt.Network {
     )]
     public class Url {
         public Url(String url) {
-            CPP.Add("$q = std::make_unique<QUrl>(url->qstring());");
+            CPP.Add("$q = std::make_unique<QUrl>($check(url)->qstring());");
         }
         public String GetQuery() {
             return CPP.ReturnString("String::$new($q->query())");
@@ -23,13 +23,13 @@ namespace Qt.Network {
             return CPP.ReturnString("String::$new($q->host())");
         }
         public void SetHost(String host) {
-            CPP.Add("$q->setHost(host->qstring())");
+            CPP.Add("$q->setHost($check(host)->qstring())");
         }
         public String GetProtocol() {
             return CPP.ReturnString("String::$new($q->scheme())");
         }
         public void SetProtcol(String protocol) {
-            CPP.Add("$q->setScheme(protocol->qstring())");
+            CPP.Add("$q->setScheme($check(protocol)->qstring())");
         }
         public int GetPort() {
             return CPP.ReturnInt("$q->port()");

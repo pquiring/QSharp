@@ -12,14 +12,14 @@ namespace Qt.Gui {
             CPP.Add("Frame::$base($q);");
         }
         public Label(String text) : base(QSharpDerived.derived) {
-            CPP.Add("$q = new QLabel(text->qstring());");
+            CPP.Add("$q = new QLabel($check(text)->qstring());");
             CPP.Add("Frame::$base($q);");
         }
         public String GetText() {
             return CPP.ReturnString("String::$new($q->text())");
         }
         public void SetText(String text) {
-            CPP.Add("$q->setText(text->qstring());");
+            CPP.Add("$q->setText($check(text)->qstring());");
         }
     }
 }

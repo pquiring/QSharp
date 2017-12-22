@@ -11,7 +11,7 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public void AddWidget(Widget widget) {
-            CPP.Add("$q->addWidget(widget->$q);");
+            CPP.Add("$q->addWidget($check(widget)->$q);");
         }
         public bool IsFloatable() {
             return CPP.ReturnBool("$q->isFloatable();");

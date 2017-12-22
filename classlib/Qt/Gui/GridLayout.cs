@@ -13,16 +13,16 @@ namespace Qt.Gui {
             CPP.Add("Layout::$base($q);");
         }
         public void AddLayout(Layout layout, int row, int column, Alignment alignment = Alignment.AlignDefault) {
-            CPP.Add("$q->addLayout(layout->$q, row, column, (Qt::Alignment)alignment);");
+            CPP.Add("$q->addLayout($check(layout)->$q, row, column, (Qt::Alignment)alignment);");
         }
         public void AddLayout(Layout layout, int row, int column, int rowSpan, int columnSpan, Alignment alignment = Alignment.AlignDefault) {
-            CPP.Add("$q->addLayout(layout->$q, row, column, rowSpan, columnSpan, (Qt::Alignment)alignment);");
+            CPP.Add("$q->addLayout($check(layout)->$q, row, column, rowSpan, columnSpan, (Qt::Alignment)alignment);");
         }
         public void AddWidget(Widget widget, int row, int column, Alignment alignment = Alignment.AlignDefault) {
-            CPP.Add("$q->addWidget(widget->$q, row, column, (Qt::Alignment)alignment);");
+            CPP.Add("$q->addWidget($check(widget)->$q, row, column, (Qt::Alignment)alignment);");
         }
         public void AddWidget(Widget widget, int row, int column, int rowSpan, int columnSpan, Alignment alignment = Alignment.AlignDefault) {
-            CPP.Add("$q->addWidget(widget->$q, row, column, rowSpan, columnSpan, (Qt::Alignment)alignment);");
+            CPP.Add("$q->addWidget($check(widget)->$q, row, column, rowSpan, columnSpan, (Qt::Alignment)alignment);");
         }
     }
 }

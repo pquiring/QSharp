@@ -12,7 +12,7 @@ namespace Qt.Gui {
             CPP.Add("$q = std::make_shared<QFont>($f)");
         }
         public Font(String family, int pointSize = -1, FontWeight weight = FontWeight.Normal, bool italic = false) {
-            CPP.Add("$q = std::make_shared<QFont>(family->qstring(), pointSize, (QFont::Weight)weight, italic);");
+            CPP.Add("$q = std::make_shared<QFont>($check(family)->qstring(), pointSize, (QFont::Weight)weight, italic);");
         }
     }
 }

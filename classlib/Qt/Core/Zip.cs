@@ -19,7 +19,7 @@ namespace Qt.Core {
     public class ZipFile {
         protected String filename;
         public ZipFile(String filename, OpenMode mode) {
-            CPP.Add("$q = std::make_shared<QuaZip>(filename->qstring());");
+            CPP.Add("$q = std::make_shared<QuaZip>($check(filename)->qstring());");
         }
         public bool Open(ZipMode mode) {
             return CPP.ReturnBool("$q->open((QuaZip::Mode)mode)");

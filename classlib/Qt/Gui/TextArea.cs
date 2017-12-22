@@ -20,13 +20,13 @@ namespace Qt.Gui {
             return CPP.ReturnString("String::$new($q->toPlainText())");
         }
         public void SetText(String text) {
-            CPP.Add("$q->setPlainText(text->qstring());");
+            CPP.Add("$q->setPlainText($check(text)->qstring());");
         }
         public String GetHtml() {
             return CPP.ReturnString("String::$new($q->toHtml())");
         }
         public void SetHtml(String html) {
-            CPP.Add("$q->setHtml(html->qstring());");
+            CPP.Add("$q->setHtml($check(html)->qstring());");
         }
     }
 }
