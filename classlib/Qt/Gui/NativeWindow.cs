@@ -17,18 +17,16 @@ namespace Qt.Gui {
         protected NativeWindow(QSharpDerived derived) {}
         [CPPReplaceArgs("QWindow *$w")]
         private NativeWindow(NativeArg1 arg) {
-            CPP.Add("if ($w == nullptr) return; $q = $w; init();");
+            CPP.Add("$q = $w; init();");
         }
+        private InputEvents events;
+        protected InputEvents GetInputEvents() {return events;}
         private void init() {
             CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen()); $q->installEventFilter(this);");
         }
-        public virtual void KeyPressed(KeyCode key) {}
-        public virtual void KeyReleased(KeyCode key) {}
-        public virtual void KeyTyped(char key) {}
-        public virtual void MousePressed(int x, int y, int button) {}
-        public virtual void MouseReleased(int x, int y, int button) {}
-        public virtual void MouseMoved(int x, int y, int button) {}
-        public virtual void MouseWheel(int x, int y) {}
+        public void OnInputEvents(InputEvents _events) {
+            events = _events;
+        }
         public float DevicePixelRatio() {
             return CPP.ReturnFloat("$q->devicePixelRatio()");
         }

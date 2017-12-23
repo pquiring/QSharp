@@ -69,30 +69,6 @@ public class TriangleWindow : OpenGLWindow
         Update();
     }
 
-    public override void KeyPressed(KeyCode key) {
-        Console.WriteLine("KeyPressed:" + (int)key);
-    }
-
-    public override void KeyReleased(KeyCode key) {
-        Console.WriteLine("KeyReleased:" + (int)key);
-    }
-
-    public override void KeyTyped(char key) {
-        Console.WriteLine("KeyTyped:" + key);
-    }
-
-    public override void MousePressed(int x, int y, int button) {
-        Console.WriteLine("MousePressed:" + x  + "," + y + ":" + button);
-    }
-
-    public override void MouseReleased(int x, int y, int button) {
-        Console.WriteLine("MouseReleased:" + x  + "," + y + ":" + button);
-    }
-
-    public override void MouseMoved(int x, int y, int button) {
-        Console.WriteLine("MouseMoved:" + x  + "," + y + ":" + button);
-    }
-
     public static void Main(string[] args)
     {
         OpenGLApplication app = new OpenGLApplication();
@@ -101,6 +77,7 @@ public class TriangleWindow : OpenGLWindow
         format.SetSamples(32);
 
         TriangleWindow window = new TriangleWindow();
+        window.OnInputEvents(new Events());
         window.SetFormat(format);
         window.SetSize(640, 480);
         window.Show();
@@ -125,4 +102,30 @@ public class TriangleWindow : OpenGLWindow
         "void main() {\n" +
         "   gl_FragColor = col;\n" +
         "}\n";
+}
+
+public class Events : InputEvents {
+    public override void KeyPressed(KeyCode key) {
+        Console.WriteLine("KeyPressed:" + (int)key);
+    }
+
+    public override void KeyReleased(KeyCode key) {
+        Console.WriteLine("KeyReleased:" + (int)key);
+    }
+
+    public override void KeyTyped(char key) {
+        Console.WriteLine("KeyTyped:" + key);
+    }
+
+    public override void MousePressed(int x, int y, int button) {
+        Console.WriteLine("MousePressed:" + x  + "," + y + ":" + button);
+    }
+
+    public override void MouseReleased(int x, int y, int button) {
+        Console.WriteLine("MouseReleased:" + x  + "," + y + ":" + button);
+    }
+
+    public override void MouseMoved(int x, int y, int button) {
+        Console.WriteLine("MouseMoved:" + x  + "," + y + ":" + button);
+    }
 }

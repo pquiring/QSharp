@@ -609,6 +609,9 @@ namespace QSharpCompiler
             sb.Append("try {\r\n");
             sb.Append(Program.main + "::Main(args);\r\n");
             sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Console::WriteLine($add(String::$new(\"Exception caught:\"), ex->ToString()));}");
+            sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Console::WriteLine($add(String::$new(\"Exception caught:\"), ex->ToString()));}");
+            sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Console::WriteLine($add(String::$new(\"Exception caught:\"), ex->ToString()));}");
+            sb.Append("catch (...) {Console::WriteLine(String::$new(\"Unknown exception thrown\"));}");
             sb.Append("return 0;}\r\n");
 
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
