@@ -5,6 +5,7 @@ namespace Qt.Gui {
     public enum ToolBarArea {NoToolBarArea = 0, LeftToolBarArea = 0x1, RightToolBarArea = 0x2, TopToolBarArea = 0x4, BottomToolBarArea = 0x8, AllToolBarAreas = 0xf}
     [CPPExtends("QMainWindow")]
     public class Window : Widget {
+        private NativeWindow nativeWindow;
         public Window() : base(QSharpDerived.derived) {
             CPP.Add("Widget::$base(this);");
         }
@@ -23,8 +24,14 @@ namespace Qt.Gui {
         public void AddToolBar(ToolBarArea toolbararea, ToolBar toolbar) {
             CPP.Add("addToolBar((Qt::ToolBarArea)toolbararea, $check(toolbar)->$q);");
         }
+        public void OnInputEvents(InputEvents events) {
+            GetNativeWindow().OnInputEvents(events);
+        }
         public NativeWindow GetNativeWindow() {
-            return (NativeWindow)CPP.ReturnObject("NativeWindow::$new(windowHandle())");
+            if (nativeWindow == null) {
+                nativeWindow = (NativeWindow)CPP.ReturnObject("NativeWindow::$new(windowHandle())");
+            }
+            return nativeWindow;
         }
     }
 }

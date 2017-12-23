@@ -11,6 +11,7 @@ namespace Qt.Gui {
         "public: void $base(std::shared_ptr<QDialog> $d) {$q = $d; Widget::$base($q.get());}"
     )]
     public class Dialog : Widget {
+        private NativeWindow nativeWindow;
         protected Dialog(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public Dialog() : base(QSharpDerived.derived) {
             CPP.Add("$q = std::make_shared<QDialog>();");
@@ -44,7 +45,13 @@ namespace Qt.Gui {
             CPP.Add("$q->reject();");
         }
         public NativeWindow GetNativeWindow() {
-            return (NativeWindow)CPP.ReturnObject("NativeWindow::$new($q->windowHandle())");
+            if (nativeWindow == null) {
+                nativeWindow = (NativeWindow)CPP.ReturnObject("NativeWindow::$new($q->windowHandle())");
+            }
+            return nativeWindow;
+        }
+        public void OnInputEvents(InputEvents events) {
+            GetNativeWindow().OnInputEvents(events);
         }
 
         private AcceptedEvent accepted;

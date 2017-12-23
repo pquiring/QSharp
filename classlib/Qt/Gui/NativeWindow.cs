@@ -24,8 +24,8 @@ namespace Qt.Gui {
         private void init() {
             CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen()); $q->installEventFilter(this);");
         }
-        public void OnInputEvents(InputEvents _events) {
-            events = _events;
+        public void OnInputEvents(InputEvents events) {
+            this.events = events;
         }
         public float DevicePixelRatio() {
             return CPP.ReturnFloat("$q->devicePixelRatio()");
