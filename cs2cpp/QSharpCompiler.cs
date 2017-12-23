@@ -772,7 +772,7 @@ namespace QSharpCompiler
                 init.type.type = "void";
                 init.type.cls = cls;
                 init.type.primative = true;
-                init.type.Private = true;
+                init.type.Public = true;
                 init.name = "$init";
                 init.type.setTypes();
                 cls.methods.Add(init);
@@ -2724,6 +2724,9 @@ namespace QSharpCompiler
                 if (Generic) {
                     if (method.name == "$init") {
                         sb.Append("{\r\n");
+                        if (method.cls.bases.Count > 0) {
+                            sb.Append(method.cls.bases[0].GetSymbolShort() + "::$init();\r\n");
+                        }
                         foreach(var field in fields) {
                             foreach(var v in field.variables) {
                                 if (v.Length() > 0 && !field.Static) {
@@ -2820,6 +2823,9 @@ namespace QSharpCompiler
                 if (method.Length() == 0) method.Append("{}\r\n");
                 if (method.name == "$init") {
                     sb.Append("{\r\n");
+                    if (method.cls.bases.Count > 0) {
+                        sb.Append(method.cls.bases[0].GetSymbolShort() + "::$init();\r\n");
+                    }
                     foreach(var field in method.cls.fields) {
                         foreach(var v in field.variables) {
                             if (v.Length() > 0 && !field.Static) {
