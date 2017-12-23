@@ -1223,7 +1223,7 @@ namespace QSharpCompiler
                 method.Append(">");
             }
             method.Append(">(" + cls.ctorArgs + ");\r\n");
-            method.Append("$this->$this = $this;\r\n");
+            method.Append("$this->$weak_this = $this;\r\n");
             method.Append("$this->$init();\r\n");
             method.Append("$this->$ctor(");
             if (replaceArgs == null) {
@@ -1405,7 +1405,7 @@ namespace QSharpCompiler
             method.Append("{\r\n");
             if (top) {
                 if (!method.type.Static) {
-                    method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = this->$this.lock();\r\n");
+                    method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = std::dynamic_pointer_cast<" + cls.GetTypeDeclaration() + ">(this->$weak_this.lock());\r\n");
                 }
                 if (method.basector != null) method.Append(method.basector);
             }
@@ -2711,17 +2711,6 @@ namespace QSharpCompiler
             }
             if (cpp != null) sb.Append(cpp);
             if (!Interface) {
-                sb.Append("public: std::weak_ptr<" + name);
-                if (Generic) {
-                    sb.Append("<");
-                    first = true;
-                    foreach(var arg in GenericArgs) {
-                        if (!first) sb.Append(","); else first = false;
-                        sb.Append(arg.GetTypeDeclaration());
-                    }
-                    sb.Append(">");
-                }
-                sb.Append("> $this;\r\n");
                 sb.Append("public: virtual $class* $getType() {return &$class_" + full_name + ";}\r\n");
             }
             foreach(var field in fields) {

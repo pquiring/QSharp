@@ -115,7 +115,7 @@ static bool open_codecs(std::shared_ptr<Qt::Media::FFContext> ctx, int new_width
 
 bool MediaDecoder::Start(std::shared_ptr<MediaIO> io, int new_width, int new_height, int new_chs, int new_freq, bool seekable)
 {
-  ctx = std::make_shared<FFContext>(io, $this.lock());
+  ctx = std::make_shared<FFContext>(io, std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
 
   ctx->ff_buffer = (*_av_malloc)(ffiobufsiz);
   ctx->io_ctx = (*_avio_alloc_context)(ctx->ff_buffer, ffiobufsiz, 0, (void*)ctx.get(), (void*)&read_packet, (void*)&write_packet, seekable ? (void*)&seek_packet : nullptr);
@@ -144,7 +144,7 @@ bool MediaDecoder::Start(std::shared_ptr<MediaIO> io, int new_width, int new_hei
 
 bool MediaDecoder::Start(std::shared_ptr<String> file, std::shared_ptr<String> input_format, int new_width, int new_height, int new_chs, int new_freq)
 {
-  ctx = std::make_shared<FFContext>($this.lock());
+  ctx = std::make_shared<FFContext>(std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
   int res;
   ctx->fmt_ctx = (*_avformat_alloc_context)();
   const char *cinput_format = input_format->cstring();

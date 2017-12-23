@@ -77,6 +77,9 @@ namespace Qt.Core {
             return (Type)CPP.ReturnObject("sysType");
         }
     }
+    [CPPClass(
+        "public: std::weak_ptr<Object> $weak_this;"
+    )]
     public class Object {
         public override string ToString() {return CPP.ReturnString("String::$new($getType()->name)");}
         public override bool Equals(object obj) {return this == obj;}

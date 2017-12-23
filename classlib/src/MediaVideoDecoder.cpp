@@ -4,7 +4,7 @@ namespace Qt::Media {
 
 bool Qt::Media::MediaVideoDecoder::Start(int codec_id, int new_width, int new_height)
 {
-  ctx = std::make_shared<FFContext>($this.lock());
+  ctx = std::make_shared<FFContext>(std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
 
   ctx->video_codec = (*_avcodec_find_decoder)(codec_id);
   if (ctx->video_codec == nullptr) {
