@@ -37,28 +37,34 @@ namespace testwidgets
         }
     }
     public class Events : InputEvents {
-        public override void KeyPressed(KeyCode key) {
+        public override bool KeyPressed(KeyCode key) {
             Console.WriteLine("KeyPressed:" + (int)key);
+            return false;
         }
 
-        public override void KeyReleased(KeyCode key) {
+        public override bool KeyReleased(KeyCode key) {
             Console.WriteLine("KeyReleased:" + (int)key);
+            return false;
         }
 
-        public override void KeyTyped(char key) {
+        public override bool KeyTyped(char key) {
             Console.WriteLine("KeyTyped:" + key);
+            return false;
         }
 
-        public override void MousePressed(int x, int y, int button) {
+        public override bool MousePressed(int x, int y, int button) {
             Console.WriteLine("MousePressed:" + x  + "," + y + ":" + button);
+            return false;
         }
 
-        public override void MouseReleased(int x, int y, int button) {
+        public override bool MouseReleased(int x, int y, int button) {
             Console.WriteLine("MouseReleased:" + x  + "," + y + ":" + button);
+            return false;
         }
 
-        public override void MouseMoved(int x, int y, int button) {
+        public override bool MouseMoved(int x, int y, int button) {
             Console.WriteLine("MouseMoved:" + x  + "," + y + ":" + button);
+            return false;
         }
     }
 }
