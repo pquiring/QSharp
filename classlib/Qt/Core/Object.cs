@@ -41,6 +41,10 @@ namespace Qt.Core {
         public Type(Type type) {
             CPP.Add("$refType = $check(type)->$refType;");
         }
+        public static implicit operator Type(System.Type type) {
+            //convert System.Type to Qt.Core.Type
+            return new Type(type);
+        }
         public String GetName() {
             return CPP.ReturnString("String::$new($refType->name)");
         }

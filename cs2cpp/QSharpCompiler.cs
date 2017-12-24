@@ -2075,7 +2075,7 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.TypeOfExpression:
                     SyntaxNode typeOf = GetChildNode(node);
-                    Type typeSymbol = new Type(typeOf, false);
+                    Type typeSymbol = new Type(typeOf, true);
                     ob.Append("Type::$new(&$class_" + typeSymbol.full_name + ")");
                     break;
                 case SyntaxKind.IsExpression:
