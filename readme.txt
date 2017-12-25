@@ -65,7 +65,14 @@ cmake options (depends on platform):
 To compile with MSVC++
   cs2cpp required options : --cxx=17 --msvc
   Requires CMake/3.10
-  When using VS Build Tools installer for VC++ make sure to install the .Net Core 1.1 toolset even if you have .NET 2.0 Core installed or you'll get strange errors that will keep you up at night ;)
+
+VS Code Bug
+  If you use VS Code and have either VS Build Tools or the full Visual Studio installed for the VC++ compiler
+  you MUST also install the .Net Core that comes with those installers.
+  Otherwise the OmniSharp extension in VS Code tries to use the wrong SDK.
+  See bug # https://github.com/Microsoft/vscode/issues/40721
+  VS BuildTools installs .Net Core 1.1 - you must install all components.
+  Visual Studio full edition installs .Net Core 2.0 which is a little outdated.
 
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
