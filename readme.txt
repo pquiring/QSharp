@@ -75,6 +75,8 @@ VS Code Bug
       https://github.com/OmniSharp/omnisharp-vscode/issues/1941
   VS BuildTools installs .Net Core 1.1 - you must install all components.
   Visual Studio full edition installs .Net Core 2.0 which is a little outdated.
+  Temporary work around to avoid installing older .Net SDKs:
+    Rename "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild" to MSBuild.disabled
 
 To compile under cygwin/mingw define these environment variables before calling cmake:
   set CC=/usr/bin/x86_64-w64-mingw32-gcc.exe
