@@ -35,6 +35,9 @@ namespace Qt.Gui {
         public String GetName() {
             return CPP.ReturnString("String::$new($q->text(0))");
         }
+        public void SetName(String text) {
+            CPP.Add("$q->setText(0, $check(text)->qstring());");
+        }
     }
     [CPPClass(
         "private: QTreeWidget *$q;" +
