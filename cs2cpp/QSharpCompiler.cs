@@ -820,6 +820,16 @@ namespace QSharpCompiler
                         classNode(child, _inner, _otter, node.Kind() == SyntaxKind.InterfaceDeclaration);
                         cls = _otter;
                         break;
+                    case SyntaxKind.ConversionOperatorDeclaration:
+                        //TODO
+                        break;
+                    case SyntaxKind.OperatorDeclaration:
+                        //TODO
+                        break;
+                    default:
+                        Console.WriteLine("Unknown Declaration:" + child.ToString());
+                        Environment.Exit(1);
+                        break;
                 }
             }
         }

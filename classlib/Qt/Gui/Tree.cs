@@ -32,6 +32,9 @@ namespace Qt.Gui {
         public TreeItem GetParent() {
             return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->parent())");
         }
+        public String GetName() {
+            return CPP.ReturnString("String::$new($q->text(0))");
+        }
     }
     [CPPClass(
         "private: QTreeWidget *$q;" +
