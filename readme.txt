@@ -70,7 +70,9 @@ VS Code Bug
   If you use VS Code and have either VS Build Tools or the full Visual Studio installed for the VC++ compiler
   you MUST also install the .Net Core that comes with those installers.
   Otherwise the OmniSharp extension in VS Code tries to use the wrong SDK.
-  See bug # https://github.com/Microsoft/vscode/issues/40721
+  See bug reports
+      https://github.com/Microsoft/vscode/issues/40721
+      https://github.com/OmniSharp/omnisharp-vscode/issues/1941
   VS BuildTools installs .Net Core 1.1 - you must install all components.
   Visual Studio full edition installs .Net Core 2.0 which is a little outdated.
 
