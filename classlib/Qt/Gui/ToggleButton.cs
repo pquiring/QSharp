@@ -25,7 +25,9 @@ namespace Qt.Gui {
 
         private ToggledEvent toggled;
         private void SlotToggled(bool selected) {
-            if (toggled != null) toggled(selected);
+            try {
+                if (toggled != null) toggled(selected);
+            } catch {}
         }
         public void OnToggled(ToggledEvent handler) {
             toggled = handler;

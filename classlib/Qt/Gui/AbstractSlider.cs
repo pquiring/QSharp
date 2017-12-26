@@ -11,7 +11,9 @@ namespace Qt.Gui {
         protected AbstractSlider(QSharpDerived derived) : base(QSharpDerived.derived) {}
         private SliderMoved delegateSliderMoved;
         private void SlotSliderMoved(int value) {
-            if (delegateSliderMoved != null) delegateSliderMoved(value);
+            try {
+                if (delegateSliderMoved != null) delegateSliderMoved(value);
+            } catch {}
         }
         public Orientation GetOrientation() {
             return (Orientation)CPP.ReturnInt("$q->orientation()");

@@ -6,9 +6,11 @@ namespace Qt.Network {
     public class TcpServer {
         private PendingEvent pending;
         private void SlotNewConnection() {
-            if (pending != null) {
-                pending(this);
-            }
+            try {
+                if (pending != null) {
+                    pending(this);
+                }
+            } catch {}
         }
         /** Starts listening on port. */
         public bool Listen(int port) {

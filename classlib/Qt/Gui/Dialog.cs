@@ -56,7 +56,9 @@ namespace Qt.Gui {
 
         private AcceptedEvent accepted;
         private void SlotAccepted() {
-            if (accepted != null) accepted();
+            try {
+                if (accepted != null) accepted();
+            } catch {}
         }
         public void OnAccepted(AcceptedEvent accepted) {
             this.accepted = accepted;
@@ -65,7 +67,9 @@ namespace Qt.Gui {
 
         private FinishedEvent finished;
         private void SlotFinished(int result) {
-            if (finished != null) finished(result);
+            try {
+                if (finished != null) finished(result);
+            } catch {}
         }
         public void OnFinished(FinishedEvent finished) {
             this.finished = finished;
@@ -74,7 +78,9 @@ namespace Qt.Gui {
 
         private RejectedEvent rejected;
         private void SlotRejected() {
-            if (rejected != null) accepted();
+            try {
+                if (rejected != null) accepted();
+            } catch {}
         }
         public void OnRejected(RejectedEvent rejected) {
             this.rejected = rejected;

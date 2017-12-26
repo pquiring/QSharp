@@ -5,8 +5,10 @@ namespace Qt.Core {
     [CPPExtends("QTimer")]
     public class Timer {
         private TimerEvent handler;
-        private void Timeout() {
-            if (handler != null) handler();
+        private void SlotTimeout() {
+            try {
+                if (handler != null) handler();
+            } catch {}
         }
         public void Start(int ms) {
             CPP.Add("start(ms);");
@@ -22,7 +24,7 @@ namespace Qt.Core {
         }
         public void OnEvent(TimerEvent handler) {
             this.handler = handler;
-            CPP.Add("connect(this, &QTimer::timeout, this, &Timer::Timeout);");
+            CPP.Add("connect(this, &QTimer::timeout, this, &Timer::SlotTimeout);");
         }
     }
 }

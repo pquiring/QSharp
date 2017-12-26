@@ -18,7 +18,9 @@ namespace Qt.Gui {
 
         private ClickedEvent clicked;
         private void SlotClicked(bool selected) {
-            if (clicked != null) clicked();
+            try {
+                if (clicked != null) clicked();
+            } catch {}
         }
         public void OnClicked(ClickedEvent handler) {
             clicked = handler;

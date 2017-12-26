@@ -17,9 +17,11 @@ namespace Qt.Network {
             return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)nextPendingConnection())");
         }
         private void SlotNewConnection() {
-            if (pending != null) {
-                pending(this);
-            }
+            try {
+                if (pending != null) {
+                    pending(this);
+                }
+            } catch {}
         }
         /** Calls pending delegate when a new connection arrives. */
         public void OnPending(SslPendingEvent pending) {

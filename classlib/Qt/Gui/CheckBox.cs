@@ -18,8 +18,10 @@ namespace Qt.Gui {
             SetText(text);
         }
         private StateChanged delegateStateChanged;
-        private void stateChanged(int state) {
-            if (delegateStateChanged != null) delegateStateChanged(state);
+        private void SlotStateChanged(int state) {
+            try {
+                if (delegateStateChanged != null) delegateStateChanged(state);
+            } catch {}
         }
         public CheckState GetState() {return (CheckState)CPP.ReturnInt("$q->checkState()");}
         public void SetState(CheckState state) {CPP.Add("$q->setCheckState((Qt::CheckState)state)");}
@@ -27,7 +29,7 @@ namespace Qt.Gui {
         public bool IsTriState() {return CPP.ReturnBool("$q->isTristate()");}
         public void OnStateChanged(StateChanged handler) {
             delegateStateChanged = handler;
-            CPP.Add("connect($q, &QCheckBox::stateChanged, this, &CheckBox::stateChanged);");
+            CPP.Add("connect($q, &QCheckBox::stateChanged, this, &CheckBox::SlotStateChanged);");
         }
     }
 }

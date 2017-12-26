@@ -1429,8 +1429,11 @@ namespace QSharpCompiler
             method.Append("}\r\n");
         }
 
-        private void statementNode(SyntaxNode node) {
+        private void statementNode(SyntaxNode node, bool top = false, bool throwFinally = false) {
             switch (node.Kind()) {
+                case SyntaxKind.Block:
+                    blockNode(node, top, throwFinally);
+                    break;
                 case SyntaxKind.ExpressionStatement:
                     expressionNode(GetChildNode(node), method);
                     method.Append(";\r\n");
@@ -1539,17 +1542,22 @@ namespace QSharpCompiler
                         SyntaxNode child = GetChildNode(node, a);
                         switch (child.Kind()) {
                             case SyntaxKind.CatchClause:
-                                SyntaxNode catchDecl = GetChildNode(child, 1);
-                                method.Append(" catch(std::shared_ptr<");
-                                expressionNode(GetChildNode(catchDecl), method);  //exception type
-                                method.Append("> ");
-                                method.Append(file.model.GetDeclaredSymbol(catchDecl).Name);  //exception variable name
-                                method.Append(")");
-                                SyntaxNode catchBlock = GetChildNode(child, 2);
-                                if (catchBlock.Kind() == SyntaxKind.Block) {
-                                    blockNode(catchBlock, false, hasFinally);
+                                int cc = GetChildCount(child);
+                                if (cc == 2) {
+                                    //catch (Exception ?)
+                                    SyntaxNode catchDecl = GetChildNode(child, 1);
+                                    method.Append(" catch(std::shared_ptr<");
+                                    expressionNode(GetChildNode(catchDecl), method);  //exception type
+                                    method.Append("> ");
+                                    method.Append(file.model.GetDeclaredSymbol(catchDecl).Name);  //exception variable name
+                                    method.Append(")");
+                                    SyntaxNode catchBlock = GetChildNode(child, 2);
+                                    statementNode(catchBlock, false, hasFinally);
                                 } else {
-                                    statementNode(catchBlock);
+                                    //catch all
+                                    method.Append(" catch (...)");
+                                    SyntaxNode catchBlock = GetChildNode(child, 1);
+                                    statementNode(catchBlock, false, hasFinally);
                                 }
                                 break;
                             case SyntaxKind.FinallyClause:
@@ -1560,12 +1568,14 @@ namespace QSharpCompiler
                     }
                     break;
                 case SyntaxKind.ThrowStatement:
+                    int tc = GetChildCount(node);
                     method.Append("throw ");
-                    expressionNode(GetChildNode(node), method);
+                    if (tc == 1) {
+                        expressionNode(GetChildNode(node), method);
+                    } else {
+                        method.Append("std::current_exception");
+                    }
                     method.Append(";");
-                    break;
-                case SyntaxKind.Block:
-                    blockNode(node);
                     break;
                 case SyntaxKind.FixedStatement:
                     method.inFixedBlock = true;

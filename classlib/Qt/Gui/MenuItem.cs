@@ -16,7 +16,9 @@ namespace Qt.Gui {
 
         private TriggeredEvent triggered;
         private void SlotTriggered(bool selected) {
-            if (triggered != null) triggered(selected);
+            try {
+                if (triggered != null) triggered(selected);
+            } catch {}
         }
         public void OnTriggered(TriggeredEvent handler) {
             triggered = handler;
