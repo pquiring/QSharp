@@ -1,6 +1,15 @@
 What's new
 ==========
 
+Dec 29, 2017 : 0.10
+ - add support for catch {} all exceptions
+ - add support for throw; current exception
+ - typeof() implicity converted to Qt.Core.Type
+ - $init() calls base class $init()
+ - $this only exists in Object class as $weak_this
+ - added InputEvents for top level Window events (NativeWindow)
+ - more Qt functions
+
 Dec 22, 2017 : 0.9
  - fixed arrays now implement IEnumerable so they can be used with foreach() {}
  - implemented is and as expressions (reflection)
