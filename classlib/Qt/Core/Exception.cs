@@ -5,5 +5,8 @@ namespace Qt.Core {
         public Exception(String msg) {
             this.msg = msg;
         }
+        public String GetMessage() {
+            return msg;
+        }
     }
 }

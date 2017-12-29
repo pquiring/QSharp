@@ -1569,11 +1569,11 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.ThrowStatement:
                     int tc = GetChildCount(node);
-                    method.Append("throw ");
                     if (tc == 1) {
+                        method.Append("throw ");
                         expressionNode(GetChildNode(node), method);
                     } else {
-                        method.Append("std::current_exception");
+                        method.Append("std::rethrow_exception(std::current_exception())");
                     }
                     method.Append(";");
                     break;
