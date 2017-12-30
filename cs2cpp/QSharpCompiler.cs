@@ -1941,10 +1941,10 @@ namespace QSharpCompiler
                     binaryNode(node, ob, ">=");
                     break;
                 case SyntaxKind.EqualsExpression:
-                    equalsNode(node, ob);
+                    equalsNode(node, ob, "==");
                     break;
                 case SyntaxKind.NotEqualsExpression:
-                    binaryNode(node, ob, "!=");
+                    equalsNode(node, ob, "!=");
                     break;
                 case SyntaxKind.LeftShiftExpression:
                     binaryNode(node, ob, "<<");
@@ -2230,7 +2230,7 @@ namespace QSharpCompiler
             expressionNode(GetChildNode(node, 2), ob);
         }
 
-        private void equalsNode(SyntaxNode node, OutputBuffer ob) {
+        private void equalsNode(SyntaxNode node, OutputBuffer ob, string op) {
             SyntaxNode left = GetChildNode(node, 1);
             SyntaxNode right = GetChildNode(node, 2);
             bool useEquals = false;
@@ -2247,13 +2247,14 @@ namespace QSharpCompiler
                 useEquals = true;
             }
             if (useEquals) {
+                if (op == "!=") ob.Append("!");
                 ob.Append("$check(");
                 expressionNode(left, ob);
                 ob.Append(")->Equals(");
                 expressionNode(right, ob);
                 ob.Append(")");
             } else {
-                binaryNode(node, ob, "==");
+                binaryNode(node, ob, op);
             }
         }
 
