@@ -1456,19 +1456,30 @@ namespace QSharpCompiler
                     statementNode(GetChildNode(node, 2));
                     break;
                 case SyntaxKind.ForStatement:
-                    //for(expression;expression;expression...) statement
-                    int Count = GetChildCount(node);
+                    //for(initializers;condition;incrementors) statement
+                    ForStatementSyntax ffs = (ForStatementSyntax)node;
+                    bool HasDecl = ffs.Declaration != null;
+                    int InitCount = ffs.Initializers.Count;
+                    if (HasDecl) InitCount++;
+                    bool HasCond = ffs.Condition != null;
+                    int IncreCount = ffs.Incrementors.Count;
                     method.Append("for(");
-                    expressionNode(GetChildNode(node, 1), method);
+                    int pos = 1;
+                    for(int idx=0;idx<InitCount;idx++) {
+                        if (idx > 0) method.Append(",");
+                        expressionNode(GetChildNode(node, pos++), method);
+                    }
                     method.Append(";");
-                    expressionNode(GetChildNode(node, 2), method);
+                    if (HasCond) {
+                        expressionNode(GetChildNode(node, pos++), method);
+                    }
                     method.Append(";");
-                    for(int idx=3;idx<Count;idx++) {
-                        if (idx > 3) method.Append(",");
-                        expressionNode(GetChildNode(node, idx), method);
+                    for(int idx=0;idx<IncreCount;idx++) {
+                        if (idx > 0) method.Append(",");
+                        expressionNode(GetChildNode(node, pos++), method);
                     }
                     method.Append(")");
-                    statementNode(GetChildNode(node, Count));
+                    statementNode(GetChildNode(node, pos));
                     break;
                 case SyntaxKind.ForEachStatement:
                     //foreach(var item in items) {}
