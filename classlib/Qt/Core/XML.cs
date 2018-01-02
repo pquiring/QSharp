@@ -13,7 +13,7 @@ namespace Qt.Core {
             CPP.Add("$q = new QDomElement(elem);");
         }
         public void SetName(String name) {
-            CPP.Add("$q->setTagName(name->qstring());");
+            CPP.Add("$q->setTagName($check(name)->qstring());");
         }
         public String GetName() {
             return CPP.ReturnString("String::$new($q->tagName())");
@@ -46,14 +46,14 @@ namespace Qt.Core {
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag InsertChild(int index, XMLTag child) {
-            CPP.Add("$q->insertBefore(*child->$q, $q->childNodes().at(index));");
+            CPP.Add("$q->insertBefore(*$check(child)->$q, $q->childNodes().at(index));");
             return (XMLTag)CPP.ReturnObject("child");
         }
         public void RemoveChild(int index) {
             CPP.Add("$q->removeChild($q->childNodes().at(index));");
         }
         public void RemoveChild(XMLTag child) {
-            CPP.Add("$q->removeChild(*child->$q);");
+            CPP.Add("$q->removeChild(*$check(child)->$q);");
         }
         public int GetChildCount() {
             return CPP.ReturnInt("$q->childNodes().size();");
@@ -65,14 +65,14 @@ namespace Qt.Core {
             return new XMLAttr(this, name);
         }
         public void SetAttr(String name, String value) {
-            CPP.Add("$q->setAttribute(name->qstring(), value->qstring());");
+            CPP.Add("$q->setAttribute($check(name)->qstring(), $check(value)->qstring());");
         }
         public void RemoveAttr(int index) {
             CPP.Add("std::shared_ptr<XMLAttr> attr = GetAttr(index);");
             CPP.Add("$q->removeAttribute($check(attr)->GetName()->qstring());");
         }
         public void RemoveAttr(String name) {
-            CPP.Add("$q->removeAttribute(name->qstring());");
+            CPP.Add("$q->removeAttribute($check(name)->qstring());");
         }
         public int GetAttrCount() {
             return CPP.ReturnInt("$q->attributes().count()");
@@ -81,7 +81,7 @@ namespace Qt.Core {
             return CPP.ReturnString("String::$new($q->nodeValue())");
         }
         public void SetContent(String text) {
-            CPP.Add("$q->setNodeValue(text->qstring());");
+            CPP.Add("$q->setNodeValue($check(text)->qstring());");
         }
     }
     [CPPClass(
@@ -102,7 +102,7 @@ namespace Qt.Core {
             return CPP.ReturnString("String::$new($q->value())");
         }
         public void SetValue(String text) {
-            CPP.Add("$q->setValue(text->qstring());");
+            CPP.Add("$q->setValue($check(text)->qstring());");
         }
     }
     [CPPClass(
@@ -113,7 +113,7 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QDomDocument>();");
         }
         public bool Load(String input) {
-            return CPP.ReturnBool("$q->setContent(input->qstring());");
+            return CPP.ReturnBool("$q->setContent($check(input)->qstring());");
         }
         public String Save() {
             return CPP.ReturnString("String::$new($q->toString())");
