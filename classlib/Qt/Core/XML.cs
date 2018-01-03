@@ -2,14 +2,18 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
+        "public: QDomDocument *$doc;" +
         "public: QDomElement *$q;"
     )]
     public class XMLTag {
-        public XMLTag() {
-            CPP.Add("$q = new QDomElement();");
+        [CPPReplaceArgs("QDomDocument *doc, QString name")]
+        private XMLTag(NativeArg1 arg1, NativeArg2 arg2) {
+            CPP.Add("$doc = doc;");
+            CPP.Add("$q = new QDomElement($doc->createElement(name));");
         }
-        [CPPReplaceArgs("QDomElement elem")]
-        private XMLTag(NativeArg1 arg) {
+        [CPPReplaceArgs("QDomDocument *doc, QDomElement elem")]
+        private XMLTag(NativeArg3 arg1, NativeArg4 arg2) {
+            CPP.Add("$doc = doc;");
             CPP.Add("$q = new QDomElement(elem);");
         }
         public void SetName(String name) {
@@ -19,7 +23,7 @@ namespace Qt.Core {
             return CPP.ReturnString("String::$new($q->tagName())");
         }
         public XMLTag GetChild(int idx) {
-            return (XMLTag)CPP.ReturnObject("XMLTag::$new($q->childNodes().at(idx).toElement())");
+            return (XMLTag)CPP.ReturnObject("XMLTag::$new($doc, $q->childNodes().at(idx).toElement())");
         }
         public XMLTag[] GetChilds() {
             int cnt = GetChildCount();
@@ -30,19 +34,17 @@ namespace Qt.Core {
             return childs;
         }
         public XMLTag AddChild(String name) {
-            CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new();");
-            CPP.Add("child->SetName(name);");
-            CPP.Add("$q->insertAfter(*child->$q, $q->lastChild());");
+            CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new($doc, $check(name)->qstring());");
+            CPP.Add("$q->appendChild(*$check(child)->$q);");
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag AddChild(XMLTag child) {
-            CPP.Add("$q->insertAfter(*child->$q, $q->lastChild());");
+            CPP.Add("$q->appendChild(*$check(child)->$q);");
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag InsertChild(int index, String name) {
-            CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new();");
-            CPP.Add("child->SetName(name);");
-            CPP.Add("$q->insertBefore(*child->$q, $q->childNodes().at(index));");
+            CPP.Add("std::shared_ptr<XMLTag> child = XMLTag::$new($doc, $check(name)->qstring());");
+            CPP.Add("$q->insertBefore(*$check(child)->$q, $q->childNodes().at(index));");
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag InsertChild(int index, XMLTag child) {
@@ -111,15 +113,16 @@ namespace Qt.Core {
     public class XML {
         public XML() {
             CPP.Add("$q = std::make_unique<QDomDocument>();");
+            CPP.Add("$q->appendChild($q->createElement(\"root\"));");
         }
         public bool Load(String input) {
-            return CPP.ReturnBool("$q->setContent($check(input)->qstring());");
+            return CPP.ReturnBool("$q->setContent($check(input)->qstring())");
         }
         public String Save() {
             return CPP.ReturnString("String::$new($q->toString())");
         }
         public XMLTag GetRoot() {
-            return (XMLTag)CPP.ReturnObject("XMLTag::$new($q->documentElement())");
+            return (XMLTag)CPP.ReturnObject("XMLTag::$new($q.get(), $q->documentElement())");
         }
     }
 }
