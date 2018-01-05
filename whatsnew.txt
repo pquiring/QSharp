@@ -1,6 +1,10 @@
 What's new
 ==========
 
+Jan 5, 2018 : 0.11
+ - fix ForStatement
+ - fix minor issues
+
 Dec 29, 2017 : 0.10
  - add support for catch {} all exceptions
  - add support for throw; current exception

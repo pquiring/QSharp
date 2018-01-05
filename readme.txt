@@ -93,6 +93,6 @@ WebSite : github.com/pquiring/qsharp
 
 Author : Peter Quiring (pquiring@gmail.com)
 
-Version 0.10
+Version 0.11
 
-Released Dec 29, 2017
+Released Jan 5, 2018
