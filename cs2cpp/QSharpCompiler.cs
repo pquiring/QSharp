@@ -1018,6 +1018,7 @@ namespace QSharpCompiler
                                         String value = file.model.GetConstantValue(str).Value.ToString();
                                         method.replaceArgs = value;
                                         method.type.Public = true;
+                                        method.type.Private = false;
                                         break;
                                     }
                                 }

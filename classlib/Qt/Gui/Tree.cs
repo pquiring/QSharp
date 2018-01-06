@@ -20,6 +20,9 @@ namespace Qt.Gui {
         public void InsertChild(int index, TreeItem item) {
             CPP.Add("$q->insertChild(index, $check(item)->$q);");
         }
+        public void RemoveChild(TreeItem item) {
+            CPP.Add("$q->removeChild($check(item)->$q);");
+        }
         public void RemoveChild(int index) {
             CPP.Add("$q->removeChild($q->child(index));");
         }
@@ -76,7 +79,6 @@ namespace Qt.Gui {
         public void SetHeaderHidden(bool hidden) {
             CPP.Add("$q->setHeaderHidden(hidden);");
         }
-
 
         private ChangedEvent changed;
         private void SlotChanged() {

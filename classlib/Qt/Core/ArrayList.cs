@@ -20,7 +20,8 @@ namespace Qt.Core {
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
-        public void Remove(int idx) {CPP.Add("$q->removeAt(idx);");}
+        public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
+        public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
 
         public IEnumerator<T> GetEnumerator() {
             return new ArrayListEnumerator<T>(this);

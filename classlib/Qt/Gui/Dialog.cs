@@ -2,7 +2,10 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
-    public enum DialogResult {Rejected, Accepted}
+    public class DialogResult {
+        public const int Rejected = 0;
+        public const int Accepted = 1;
+    }
     public delegate void AcceptedEvent();
     public delegate void FinishedEvent(int result);
     public delegate void RejectedEvent();
@@ -23,6 +26,7 @@ namespace Qt.Gui {
         public void SetModal(bool modal) {
             CPP.Add("$q->setModal(modal);");
         }
+        /** Returns DialogResult or ButtonType for MessageDialog. */
         public int Exec() {
             return CPP.ReturnInt("$q->exec();");
         }
