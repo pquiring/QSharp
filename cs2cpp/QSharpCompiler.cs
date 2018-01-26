@@ -568,6 +568,9 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             foreach(var cls in file.clss) {
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
+                if (cls.forward != null) {
+                    sb.Append("class " + cls.forward + ";\r\n");
+                }
                 string hppfile = "src/" + cls.name + ".hpp";
                 if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
                 if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
@@ -626,6 +629,9 @@ namespace QSharpCompiler
             else
                 sb.Append("cmake_minimum_required(VERSION 3.6)\r\n");
             sb.Append("set(CMAKE_CXX_STANDARD " + Program.cxx + ")\r\n");
+            if (Program.classlib) {
+                sb.Append("add_definitions(-DCLASSLIB)\r\n");
+            }
             sb.Append("include_directories(/usr/include/qt5)\r\n");
             sb.Append("include_directories(/usr/include/ffmpeg)\r\n");
             sb.Append("include_directories(" + Program.home + "/include)\r\n");
@@ -1058,6 +1064,15 @@ namespace QSharpCompiler
                                             if (arg.Kind() != SyntaxKind.StringLiteralExpression) continue;
                                             String value = file.model.GetConstantValue(arg).Value.ToString();
                                             cls.cppbases.Add(value);
+                                        }
+                                        break;
+                                    }
+                                    case "Qt::QSharp::CPPForward": {
+                                        IEnumerable<SyntaxNode> args = attrArgList.DescendantNodes();
+                                        foreach(var arg in args) {
+                                            if (arg.Kind() != SyntaxKind.StringLiteralExpression) continue;
+                                            String value = file.model.GetConstantValue(arg).Value.ToString();
+                                            cls.forward = value;
                                         }
                                         break;
                                     }
@@ -2572,6 +2587,7 @@ namespace QSharpCompiler
         public List<Type> GenericArgs = new List<Type>();
         public string cpp, ctorArgs = "", nonClassCPP, nonClassHPP;
         public bool omitFields, omitMethods, omitConstructors, omitBodies;
+        public string forward;
         //uses are used to sort classes
         public List<string> uses = new List<string>();
         public void addUsage(string cls) {

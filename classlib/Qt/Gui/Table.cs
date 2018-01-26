@@ -118,7 +118,7 @@ namespace Qt.Gui {
         }
         public void OnChanged(ChangedEvent changed) {
             this.changed = changed;
-            CPP.Add("$q->connect($q, &QTableWidget::itemSelectionChanged, this, &Table::SlotChanged);");
+            CPP.Add("QObject::connect($q, &QTableWidget::itemSelectionChanged, [=] () {this->SlotChanged();});");
         }
     }
 }

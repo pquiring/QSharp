@@ -4,17 +4,16 @@ using Qt.Core;
 namespace Qt.Network {
     public delegate void SslPendingEvent(SslServer server);
     [CPPClass(
-        "public: void incomingConnection(qintptr socket) {" +
-        "  QSslSocket *sslsocket = new QSslSocket();" +
-        "  sslsocket->setSocketDescriptor(socket);" +
-        "  addPendingConnection(sslsocket);" +
-        "  sslsocket->startServerEncryption();" +
-        "}"
+        "private: std::shared_ptr<$QSslServer> $q;"
     )]
     public class SslServer : TcpServer {
+        public SslServer() {
+            CPP.Add("$q = std::make_shared<$QSslServer>();");
+            CPP.Add("TcpServer::$base((std::shared_ptr<QTcpServer>)$q);");
+        }
         private SslPendingEvent pending;
         public new SslSocket Accept() {
-            return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)nextPendingConnection())");
+            return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)$q->nextPendingConnection())");
         }
         private void SlotNewConnection() {
             try {
@@ -26,7 +25,7 @@ namespace Qt.Network {
         /** Calls pending delegate when a new connection arrives. */
         public void OnPending(SslPendingEvent pending) {
             this.pending = pending;
-            CPP.Add("connect(this, &QTcpServer::newConnection, this, &SslServer::SlotNewConnection);");
+            CPP.Add("QObject::connect($q.get(), &QTcpServer::newConnection, [=] () {this->SlotNewConnection();});");
         }
     }
 }

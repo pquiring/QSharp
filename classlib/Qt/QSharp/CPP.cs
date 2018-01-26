@@ -25,6 +25,12 @@ namespace Qt.QSharp {
         public CPPExtends(string[] ss) {}
     }
 
+    /* Add forward declaration. */
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CPPForward : System.Attribute {
+        public CPPForward(string s1) {}
+    }
+
     /* Passes values to real C++ constructor. */
     [AttributeUsage(AttributeTargets.Class)]
     public class CPPConstructorArgs : System.Attribute {

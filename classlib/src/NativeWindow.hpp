@@ -1,8 +1,16 @@
 namespace Qt::Gui {
-  bool NativeWindow::eventFilter(QObject* obj, QEvent* event)
+
+class $EventFilter : public QObject {
+  private: NativeWindow *window;
+  public: $EventFilter(NativeWindow* window) {
+    this->window = window;
+  }
+
+  public: bool eventFilter(QObject* obj, QEvent* event)
   {
     Q_UNUSED(obj);
     bool discard = false;
+    std::shared_ptr<InputEvents> events = window->GetInputEvents();
     if (events == nullptr) return false;
     if (event->type() == QEvent::KeyPress) {
       QKeyEvent* keyEvent = (QKeyEvent*)(event);
@@ -29,4 +37,7 @@ namespace Qt::Gui {
     }
     return discard;
   }
+};
+
 }
+

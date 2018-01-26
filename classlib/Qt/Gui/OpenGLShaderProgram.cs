@@ -25,7 +25,7 @@ namespace Qt.Gui {
             CPP.Add("$q->setUniformValue(location, value);");
         }
         public void SetUniformValue(int location, Matrix4x4 value) {
-            CPP.Add("$q->setUniformValue(location, (QMatrix4x4)*$check(value));");
+            CPP.Add("$q->setUniformValue(location, (QMatrix4x4)*($check(value)->$value()));");
         }
         public void Link() {
             CPP.Add("$q->link();");

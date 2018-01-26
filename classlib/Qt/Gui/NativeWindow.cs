@@ -1,9 +1,9 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPExtends("QObject")]  //for eventFilter()
     [CPPClass(
         "private: QWindow *$q = nullptr;" +
+        "private: std::shared_ptr<$EventFilter> $events;" +
         "public: void $base(QWindow *$b) {$q = $b; init();}" +
         "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
         "public: bool eventFilter(QObject *obj, QEvent *event);"
@@ -12,7 +12,7 @@ namespace Qt.Gui {
     public class NativeWindow : OpenGLFunctions {
         /*
           Since C# does not support multiple-inheritance and OpenGLWindow needs Window and OpenGLFunctions
-          therefore Window must derive from OpenGLFunctions to make it available to OpenGLWindow
+          therefore NativeWindow must derive from OpenGLFunctions to make it available to OpenGLWindow
         */
         protected NativeWindow(QSharpDerived derived) {}
         [CPPReplaceArgs("QWindow *$w")]
@@ -20,9 +20,11 @@ namespace Qt.Gui {
             CPP.Add("$q = $w; init();");
         }
         private InputEvents events;
-        protected InputEvents GetInputEvents() {return events;}
+        public InputEvents GetInputEvents() {return events;}
         private void init() {
-            CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen()); $q->installEventFilter(this);");
+            CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen());");
+            CPP.Add("$events = std::make_shared<$EventFilter>(this);");
+            CPP.Add("$q->installEventFilter($events.get());");
         }
         public void OnInputEvents(InputEvents events) {
             this.events = events;
@@ -40,7 +42,7 @@ namespace Qt.Gui {
             return (Screen)CPP.ReturnObject("screen_ptr");
         }
         public void SetFormat(SurfaceFormat format) {
-            CPP.Add("$q->setFormat(*format.get());");
+            CPP.Add("$q->setFormat(*$check(format)->$value());");
         }
         public void Show() {
             CPP.Add("$q->show();");

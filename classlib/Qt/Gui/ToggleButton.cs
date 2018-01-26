@@ -31,7 +31,7 @@ namespace Qt.Gui {
         }
         public void OnToggled(ToggledEvent handler) {
             toggled = handler;
-            CPP.Add("connect($q, &QAbstractButton::toggled, this, &ToggleButton::SlotToggled);");
+            CPP.Add("QObject::connect($q, &QAbstractButton::toggled, [=] (bool selected) {this->SlotToggled(selected);});");
         }
     }
 }

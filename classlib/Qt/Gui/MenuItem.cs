@@ -6,7 +6,6 @@ namespace Qt.Gui {
     [CPPClass(
         "public: QAction *$q;"
     )]
-    [CPPExtends("QObject")]  //for connect
     public class MenuItem {
         private MenuItem() {}
         [CPPReplaceArgs("QAction *$a")]
@@ -22,7 +21,7 @@ namespace Qt.Gui {
         }
         public void OnTriggered(TriggeredEvent handler) {
             triggered = handler;
-            CPP.Add("connect($q, &QAction::triggered, this, &MenuItem::SlotTriggered);");
+            CPP.Add("QObject::connect($q, &QAction::triggered, [=] (bool selected) {this->SlotTriggered(selected);});");
         }
     }
 }

@@ -14,6 +14,9 @@
 
 //include Qt Headers
 #include <QtCore/qmath.h>
+#include <QtCore/QVector>
+#include <QtCore/QList>
+#include <QtCore/QMap>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
@@ -108,6 +111,18 @@ namespace Qt::Core {
   extern const char **g_argv;
   class Object;
   class String;
+  class $QThread;
+}
+
+namespace Qt::Gui {
+  class $EventFilter;
+  class $QOpenGLWidget;
+  class $QOpenGLWindow;
+}
+
+namespace Qt::Network {
+  class $QSslServer;
+  class $QWebReply;
 }
 
 namespace Qt::Media {

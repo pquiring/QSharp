@@ -24,7 +24,7 @@ namespace Qt.Gui {
         }
         public void OnClicked(ClickedEvent handler) {
             clicked = handler;
-            CPP.Add("connect($q, &QAbstractButton::clicked, this, &AbstractButton::SlotClicked);");
+            CPP.Add("QObject::connect($q, &QAbstractButton::clicked, [=] (bool selected) {this->SlotClicked(selected);});");
         }
     }
 }

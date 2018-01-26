@@ -40,7 +40,7 @@ namespace Qt.Gui {
         }
         public void OnChanged(ChangedEvent changed) {
             this.changed = changed;
-            CPP.Add("$q->connect($q, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &ComboBox::SlotChanged);");
+            CPP.Add("QObject::connect($q, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [=] (int idx) {this->SlotChanged(idx);});");
         }
     }
 }

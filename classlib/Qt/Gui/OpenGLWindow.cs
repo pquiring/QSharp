@@ -1,15 +1,13 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPExtends("QOpenGLWindow")]
     [CPPClass(
-        "public: void initializeGL() {InitializeGL();}" +
-        "public: void paintGL() {PaintGL();}" +
-        "public: void resizeGL(int x, int y) {ResizeGL(x, y);}"
+        "private: $QOpenGLWindow *$q;"
     )]
     public class OpenGLWindow : NativeWindow {
         public OpenGLWindow() : base(QSharpDerived.derived) {
-            CPP.Add("NativeWindow::$base(this);");
+            CPP.Add("$q = new $QOpenGLWindow(this);");
+            CPP.Add("NativeWindow::$base($q);");
         }
         /** This function is called during window creation. */
         public virtual void InitializeGL() { }
@@ -19,7 +17,7 @@ namespace Qt.Gui {
         public virtual void ResizeGL(int w, int h) { }
 
         public void Update() {
-            CPP.Add("update();");
+            CPP.Add("$q->update();");
         }
     }
 }

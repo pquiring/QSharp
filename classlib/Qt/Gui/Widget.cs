@@ -8,7 +8,6 @@ namespace Qt.Gui {
     public enum Orientation {Horizontal	= 1, Vertical}
     public enum IconType {NoIcon, Information, Warning, Critical, Question}
 
-    [CPPExtends("QObject")]  //for connect
     [CPPClass(
         "public: QWidget *$q;" +
         "public: void $base(QWidget *$d) {$q = $d;}"

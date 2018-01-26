@@ -29,7 +29,7 @@ namespace Qt.Gui {
         public bool IsTriState() {return CPP.ReturnBool("$q->isTristate()");}
         public void OnStateChanged(StateChanged handler) {
             delegateStateChanged = handler;
-            CPP.Add("connect($q, &QCheckBox::stateChanged, this, &CheckBox::SlotStateChanged);");
+            CPP.Add("QObject::connect($q, &QCheckBox::stateChanged, [=] (int state) {this->SlotStateChanged(state);});");
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Qt.Gui {
 
         public void OnSliderMoved(SliderMoved handler) {
             delegateSliderMoved = handler;
-            CPP.Add("connect($q, &QAbstractSlider::sliderMoved, this, &AbstractSlider::SlotSliderMoved);");
+            CPP.Add("QObject::connect($q, &QAbstractSlider::sliderMoved, [=] (int value) {this->SlotSliderMoved(value);});");
         }
     }
 }

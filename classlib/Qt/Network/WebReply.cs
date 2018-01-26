@@ -6,10 +6,14 @@ namespace Qt.Network {
         "public: std::shared_ptr<QNetworkReply> $q;"
     )]
     public abstract class WebReply : IOStream {
-        protected WebReply() {}
+        protected WebReply() {
+            CPP.Add("$q = std::make_shared<$QWebReply>();");
+            CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");
+        }
         [CPPReplaceArgs("QNetworkReply *reply")]
         private WebReply(NativeArg1 arg) {
-            CPP.Add("$q.reset(reply); IOStream::$base((std::shared_ptr<QIODevice>)$q);");
+            CPP.Add("$q.reset(reply);");
+            CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");
         }
         private ByteArray data;
         private Map<String, String> args = new Map<String, String>();

@@ -66,7 +66,7 @@ namespace Qt.Gui {
         }
         public void OnAccepted(AcceptedEvent accepted) {
             this.accepted = accepted;
-            CPP.Add("$q->connect($q.get(), &QDialog::accepted, this, &Dialog::SlotAccepted);");
+            CPP.Add("QObject::connect($q.get(), &QDialog::accepted, [=] () {this->SlotAccepted();});");
         }
 
         private FinishedEvent finished;
@@ -77,7 +77,7 @@ namespace Qt.Gui {
         }
         public void OnFinished(FinishedEvent finished) {
             this.finished = finished;
-            CPP.Add("$q->connect($q.get(), &QDialog::finished, this, &Dialog::SlotFinished);");
+            CPP.Add("QObject::connect($q.get(), &QDialog::finished, [=] (int result) {this->SlotFinished(result);});");
         }
 
         private RejectedEvent rejected;
@@ -88,7 +88,7 @@ namespace Qt.Gui {
         }
         public void OnRejected(RejectedEvent rejected) {
             this.rejected = rejected;
-            CPP.Add("$q->connect($q.get(), &QDialog::rejected, this, &Dialog::SlotRejected);");
+            CPP.Add("QObject::connect($q.get(), &QDialog::rejected, [=] () {this->SlotRejected();});");
         }
     }
 }
