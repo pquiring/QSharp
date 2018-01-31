@@ -80,6 +80,7 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QOpenGLWidget>
+#include <QtWidgets/QSpinBox>
 
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QBoxLayout>
