@@ -10,6 +10,7 @@ namespace Qt.Gui {
     public class SpinBox : Widget {
         public SpinBox() : base(QSharpDerived.derived) {
             CPP.Add("$q = new QSpinBox();");
+            CPP.Add("Widget::$base($q);");
         }
         private ValueChanged delegateValueChanged;
         private void SlotValueChanged(int value) {
