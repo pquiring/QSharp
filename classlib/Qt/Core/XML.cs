@@ -22,6 +22,9 @@ namespace Qt.Core {
         public String GetName() {
             return CPP.ReturnString("String::$new($q->tagName())");
         }
+        public XMLTag GetParent() {
+            return (XMLTag)CPP.ReturnObject("XMLTag::$new($doc, $q->parentNode().toElement())");
+        }
         public XMLTag GetChild(int idx) {
             return (XMLTag)CPP.ReturnObject("XMLTag::$new($doc, $q->childNodes().at(idx).toElement())");
         }
