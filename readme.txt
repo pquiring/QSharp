@@ -45,12 +45,14 @@ Compiling:
 First compile the compiler:
 
   cd cs2cpp
+  #run setup only once
   setup
   build
 
 Then build the classlib or any test:
 
   cd classlib | test...
+  #run setup only once
   setup
   build
   cmake {cmake options}
@@ -88,6 +90,15 @@ To compile under cygwin/mingw define these environment variables before calling 
 Under cygwin you should also define:
   set CMAKE_LEGACY_CYGWIN_WIN32=0
 to avoid cmake warnings.
+
+To create a new application:
+  dotnet new console
+
+To create a new library:
+  dotnet new library
+
+To add reference to another library:
+  dotnet add reference ..\library\library.csproj
 
 WebSite : github.com/pquiring/qsharp
 
