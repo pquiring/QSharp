@@ -31,6 +31,7 @@
 #include <QtCore/QBuffer>
 #include <QtCore/QLibrary>
 #include <QtCore/QCryptographicHash>
+#include <QtCore/QProcess>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
