@@ -99,6 +99,9 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 
+#include <QtWebSockets/QWebSocket>
+#include <QtWebSockets/QWebSocketServer>
+
 #include <QtXml/QDomNode>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomDocument>

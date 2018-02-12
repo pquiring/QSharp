@@ -1,7 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Network {
-    public delegate void PendingEvent(TcpServer server);
+    public delegate void PendingTcpEvent(TcpServer server);
     [CPPClass(
         "private: std::shared_ptr<QTcpServer> $q;" +
         "public: void $base(std::shared_ptr<QTcpServer> $b) {$q = $b;}"
@@ -10,7 +10,7 @@ namespace Qt.Network {
         public TcpServer() {
             CPP.Add("$q = std::make_shared<QTcpServer>();");
         }
-        private PendingEvent pending;
+        private PendingTcpEvent pending;
         private void SlotNewConnection() {
             try {
                 if (pending != null) {
@@ -35,7 +35,7 @@ namespace Qt.Network {
             CPP.Add("$q->close();");
         }
         /** Calls pending delegate when a new connection arrives. */
-        public void OnPending(PendingEvent pending) {
+        public void OnPending(PendingTcpEvent pending) {
             this.pending = pending;
             CPP.Add("QObject::connect($q.get(), &QTcpServer::newConnection, [=] () {this->SlotNewConnection();});");
         }
