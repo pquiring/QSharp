@@ -322,6 +322,7 @@ namespace QSharpCompiler
             while (sortFiles()) {};
             writeNoClassTypes();
             writeClasses();
+            writeEndIf();
             closeOutput();
             if (Program.single) openOutput("cpp/" + Program.target + ".cpp");
             if (Program.single) writeIncludes();
@@ -370,7 +371,14 @@ namespace QSharpCompiler
 
         private void writeForward() {
             StringBuilder sb = new StringBuilder();
+            sb.Append("#ifndef __" + Program.target + "__\r\n");
+            sb.Append("#define __" + Program.target + "__\r\n");
             sb.Append("#include <cs2cpp.hpp>\r\n");
+            if (Program.library) {
+                if (File.Exists("library.hpp")) {
+                    sb.Append(System.IO.File.ReadAllText("library.hpp"));
+                }
+            }
             foreach(var lib in Program.libs) {
                 sb.Append("#include <" + lib + ".hpp>\r\n");
             }
@@ -392,6 +400,11 @@ namespace QSharpCompiler
                 }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
+            fs.Write(bytes, 0, bytes.Length);
+        }
+
+        private void writeEndIf() {
+            byte[] bytes = new UTF8Encoding().GetBytes("#endif\r\n");
             fs.Write(bytes, 0, bytes.Length);
         }
 
@@ -673,7 +686,7 @@ namespace QSharpCompiler
                     sb.Append(" ");
                     sb.Append(lib);
                 }
-                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml");
+                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml Qt5WebSockets");
                 if (Program.msvc) {
                     sb.Append(" msvcrt");
                     if (Program.debug) sb.Append("d");
