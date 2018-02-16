@@ -142,7 +142,7 @@ bool MediaDecoder::Start(std::shared_ptr<MediaIO> io, int new_width, int new_hei
  * NOTE:input_format may be nullptr
  */
 
-bool MediaDecoder::Start(std::shared_ptr<String> file, std::shared_ptr<String> input_format, int new_width, int new_height, int new_chs, int new_freq)
+bool MediaDecoder::Start(std::shared_ptr<Qt::Core::String> file, std::shared_ptr<Qt::Core::String> input_format, int new_width, int new_height, int new_chs, int new_freq)
 {
   ctx = std::make_shared<FFContext>(std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
   int res;

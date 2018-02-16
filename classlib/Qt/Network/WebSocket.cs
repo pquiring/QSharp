@@ -37,11 +37,11 @@ namespace Qt.Network {
         }
         public void OnTextMessage(TextMessageReceived handler) {
             textReceived = handler;
-            CPP.Add("QObject::connect($q.get(), &QWebSocket::textMessageReceived, [=] (QString msg) {this->SlotTextMessageReceived(String::$new(msg));});");
+            CPP.Add("QObject::connect($q.get(), &QWebSocket::textMessageReceived, [=] (QString msg) {this->SlotTextMessageReceived(Qt::Core::String::$new(msg));});");
         }
         public void OnBinaryMessage(BinaryMessageReceived handler) {
             binaryReceived = handler;
-            CPP.Add("QObject::connect($q.get(), &QWebSocket::binaryMessageReceived, [=] (QByteArray msg) {this->SlotBinaryMessageReceived(ByteArray::$new(msg));});");
+            CPP.Add("QObject::connect($q.get(), &QWebSocket::binaryMessageReceived, [=] (QByteArray msg) {this->SlotBinaryMessageReceived(Qt::Core::ByteArray::$new(msg));});");
         }
     }
 }

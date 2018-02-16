@@ -252,7 +252,7 @@ static bool encoder_start(std::shared_ptr<Qt::Media::FFContext> ctx, const char 
   return true;
 }
 
-bool Qt::Media::MediaEncoder::Start(std::shared_ptr<MediaIO> io, int width, int height, int fps, int chs, int freq, std::shared_ptr<String> codec, bool doVideo, bool doAudio)
+bool Qt::Media::MediaEncoder::Start(std::shared_ptr<MediaIO> io, int width, int height, int fps, int chs, int freq, std::shared_ptr<Qt::Core::String> codec, bool doVideo, bool doAudio)
 {
   ctx = std::make_shared<FFContext>(io, std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
 

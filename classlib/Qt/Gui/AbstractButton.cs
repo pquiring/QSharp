@@ -13,7 +13,7 @@ namespace Qt.Gui {
             CPP.Add("$q->setText($check(text)->qstring());");
         }
         public String GetText() {
-            return CPP.ReturnString("String::$new($q->text())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->text())");
         }
 
         private ClickedEvent clicked;

@@ -48,13 +48,13 @@ namespace Qt.Gui {
             CPP.Add("$q->removeColumn(index);");
         }
         public String GetData(int row, int column) {
-            return CPP.ReturnString("String::$new($q->item(row, column)->text())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->item(row, column)->text())");
         }
         public void SetData(int row, int column, String data) {
             CPP.Add("$q->setItem(row, column, new QTableWidgetItem($check(data)->qstring()));");
         }
         public String GetSelectedItem() {
-            return CPP.ReturnString("String::$new($q->currentItem()->text())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->currentItem()->text())");
         }
         public int GetSelectedRow() {
             return CPP.ReturnInt("$q->currentRow()");
@@ -64,10 +64,10 @@ namespace Qt.Gui {
         }
         public String[] GetSelectedItems() {
             CPP.Add("QList<QTableWidgetItem*> list = $q->selectedItems();");
-            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<String>>> array;");
+            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("array = Qt::QSharp::FixedArray<std::shared_ptr<String>>::$new(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = String::$new(list[idx]->text());}");
+            CPP.Add("array = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = Qt::Core::String::$new(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[][] GetSelectedIndexes() {

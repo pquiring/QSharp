@@ -10,13 +10,13 @@ namespace Qt.Core {
             CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");
         }
         public String GetWorkingDirectory() {
-            return CPP.ReturnString("String::$new($q->workingDirectory())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->workingDirectory())");
         }
         public void SetWorkingDirectory(String directory) {
             CPP.Add("$q->setWorkingDirectory($check(directory)->qstring());");
         }
         public String GetProgram() {
-            return CPP.ReturnString("String::$new($q->program())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->program())");
         }
         public void SetProgram(String directory) {
             CPP.Add("$q->setProgram($check(directory)->qstring());");

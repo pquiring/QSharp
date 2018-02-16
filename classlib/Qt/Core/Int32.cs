@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Core {
     public class Int32 {
         public static string ToString(int x) {
-            return CPP.ReturnString("String::$new(std::to_string(x))");
+            return CPP.ReturnString("Qt::Core::String::$new(std::to_string(x))");
         }
         public static string ToString(int x, int radix) {
             char[] chs = new char[33];

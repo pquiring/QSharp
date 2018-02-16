@@ -25,7 +25,7 @@ namespace Qt.Gui {
             return CPP.ReturnInt("$q->count()");
         }
         public String GetSelectedText() {
-            return CPP.ReturnString("String::$new($q->currentText())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->currentText())");
         }
         public int GetSelectedIndex() {
             return CPP.ReturnInt("$q->currentIndex()");

@@ -38,7 +38,7 @@ namespace Qt.Gui {
             return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : TreeItem::$new(item)");
         }
         public String GetName() {
-            return CPP.ReturnString("String::$new($q->text(0))");
+            return CPP.ReturnString("Qt::Core::String::$new($q->text(0))");
         }
         public void SetName(String text) {
             CPP.Add("$q->setText(0, $check(text)->qstring());");

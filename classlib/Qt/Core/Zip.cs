@@ -27,7 +27,7 @@ namespace Qt.Core {
         public bool NextEntry() {
             bool next = CPP.ReturnBool("$q->goToNextFile()");
             if (next) {
-                CPP.Add("filename = String::$new($q->getCurrentFileName());");
+                CPP.Add("filename = Qt::Core::String::$new($q->getCurrentFileName());");
             } else {
                 filename = null;
             }

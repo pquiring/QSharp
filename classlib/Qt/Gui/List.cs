@@ -25,17 +25,17 @@ namespace Qt.Gui {
             return CPP.ReturnInt("$q->count()");
         }
         public String GetSelectedItem() {
-            return CPP.ReturnString("String::$new($q->currentItem()->text())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->currentItem()->text())");
         }
         public int GetSelectedIndex() {
             return CPP.ReturnInt("$q->currentRow()");
         }
         public String[] GetSelectedItems() {
             CPP.Add("QList<QListWidgetItem*> list = $q->selectedItems();");
-            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<String>>> array;");
+            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("array = Qt::QSharp::FixedArray<std::shared_ptr<String>>::$new(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = String::$new(list[idx]->text());}");
+            CPP.Add("array = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = Qt::Core::String::$new(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[] GetSelectedIndexes() {

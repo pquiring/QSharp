@@ -130,14 +130,14 @@ namespace Qt.Core {
         }
 
         public String Substring(int start, int len = -1) {
-            return CPP.ReturnString("String::$new($q->mid(start, len))");
+            return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, len))");
         }
 
         public String ToUpperCase() {
-            return CPP.ReturnString("String::$new($q->toUpper())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->toUpper())");
         }
         public String ToLowerCase() {
-            return CPP.ReturnString("String::$new($q->toLower())");
+            return CPP.ReturnString("Qt::Core::String::$new($q->toLower())");
         }
 
         public char[] ToCharArray() {

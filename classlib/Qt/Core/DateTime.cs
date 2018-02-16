@@ -46,7 +46,7 @@ namespace Qt.Core {
         }
 
         public String ToString(String format) {
-            return CPP.ReturnString("String::$new($q->toString($check(format)->qstring()))");
+            return CPP.ReturnString("Qt::Core::String::$new($q->toString($check(format)->qstring()))");
         }
 
         public static DateTime GetCurrentDateTime() {
