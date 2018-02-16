@@ -76,6 +76,7 @@ VS Code Bug
   See bug reports
       https://github.com/Microsoft/vscode/issues/40721
       https://github.com/OmniSharp/omnisharp-vscode/issues/1941
+      https://github.com/OmniSharp/omnisharp-roslyn/issues/1094
   VS BuildTools : install .Net Core 1.1 - you must install all components.
   VS IDE : install .Net Core 2.0 which is a little outdated.
   Temporary work around to avoid installing older .Net SDKs:

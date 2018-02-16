@@ -1,6 +1,12 @@
 What's new
 ==========
 
+Feb 16, 2018 : 0.12
+ - added SpinBox
+ - added Process
+ - added WebSocketServer and WebSocket
+ - many fixes
+
 Jan 5, 2018 : 0.11
  - fix ForStatement
  - fix minor issues
