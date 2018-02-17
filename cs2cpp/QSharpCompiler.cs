@@ -670,6 +670,7 @@ namespace QSharpCompiler
                     sb.Append(" cpp/" + Program.target + ".cpp");
                 }
                 sb.Append(")\r\n");
+                sb.Append("set_property(TARGET " + Program.target + " PROPERTY POSITION_INDEPENDENT_CODE ON)\r\n");
             } else {
                 sb.Append("link_directories(" + Program.home + "/lib)\r\n");
                 sb.Append("add_executable(" + Program.target + "\r\n");
