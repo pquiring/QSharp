@@ -22,6 +22,7 @@ namespace QSharpCompiler
         public static bool printTokens = false;
         public static string version = "0.12";
         public static bool library;
+        public static bool shared;
         public static string target;
         public static bool classlib;
         public static int headidx = 0;
@@ -40,7 +41,18 @@ namespace QSharpCompiler
         {
             if (args.Length < 2) {
                 Console.WriteLine("Q# Compiler/" + version);
-                Console.WriteLine("Usage : cs2cpp cs_folder project_name [--library | --main=class] [--ref=dll ...] [--home=folder] [--print[=tokens,tostring,all]] [--single | --multi] [--cxx=version] [--msvc] [--debug]");
+                Console.WriteLine("Usage : cs2cpp cs_folder project_name [options]");
+                Console.WriteLine("options:");
+                Console.WriteLine("  --library");
+                Console.WriteLine("  --shared");
+                Console.WriteLine("  --main=class");
+                Console.WriteLine("  --ref=dll");
+                Console.WriteLine("  --home=folder");
+                Console.WriteLine("  --print[=tokens,tostring,all]");
+                Console.WriteLine("  --single | --multi");
+                Console.WriteLine("  --cxx=version");
+                Console.WriteLine("  --msvc");
+                Console.WriteLine("  --debug");
                 return;
             }
             for(int a=2;a<args.Length;a++) {
@@ -56,6 +68,9 @@ namespace QSharpCompiler
                 }
                 if (arg == "--library") {
                     library = true;
+                }
+                if (arg == "--shared") {
+                    shared = true;
                 }
                 if (arg == "--classlib") {
                     classlib = true;
@@ -99,6 +114,18 @@ namespace QSharpCompiler
                 if (arg == "--debug") {
                     debug = true;
                 }
+            }
+            if (shared && !library) {
+                Console.WriteLine("Error:--shared requires --library");
+                return;
+            }
+            if (shared && main == null) {
+                Console.WriteLine("Error:--shared requires --main");
+                return;
+            }
+            if (!library && main == null) {
+                Console.WriteLine("Error:application requires --main");
+                return;
             }
             csFolder = args[0];
             target = args[1];
@@ -192,6 +219,26 @@ namespace QSharpCompiler
         void printNodes(Source file, IEnumerable<SyntaxNode> nodes, int lvl)
         {
             int idx = 0;
+            String diags = "";
+            foreach(var diag in file.model.GetDiagnostics()) {
+                diags += ",diag=" + diag.ToString();
+            }
+            foreach(var diag in file.model.GetSyntaxDiagnostics()) {
+                diags += ",syntaxdiag=" + diag.ToString();
+            }
+            foreach(var diag in file.model.GetDeclarationDiagnostics()) {
+                diags += ",decldiag=" + diag.ToString();
+            }
+            foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
+                diags += ",methoddiag=" + diag.ToString();
+            }
+            if (diags.Length > 0) {
+                for(int a=0;a<lvl;a++) {
+                    Console.Write("  ");
+                }
+                Console.WriteLine("Errors:");
+                Console.WriteLine(diags);
+            }
             foreach(var node in nodes) {
                 printNode(file, node, lvl, idx);
                 if (printTokens) PrintTokens(file, node.ChildTokens(), lvl);
@@ -243,18 +290,6 @@ namespace QSharpCompiler
                 }
             } else {
                 ln += ",Type=null";
-            }
-            foreach(var diag in file.model.GetDiagnostics()) {
-                ln += ",diag=" + diag.ToString();
-            }
-            foreach(var diag in file.model.GetSyntaxDiagnostics()) {
-                ln += ",syntaxdiag=" + diag.ToString();
-            }
-            foreach(var diag in file.model.GetDeclarationDiagnostics()) {
-                ln += ",decldiag=" + diag.ToString();
-            }
-            foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
-                ln += ",methoddiag=" + diag.ToString();
             }
             Object value = file.model.GetConstantValue(node).Value;
             if (value != null) {
@@ -342,7 +377,11 @@ namespace QSharpCompiler
             if (!Program.single) closeOutput();
             if (Program.main != null) {
                 if (!Program.single) openOutput("cpp/main.cpp");
-                writeMain();
+                if (!Program.library) {
+                    writeMain();
+                } else {
+                    writeLibraryMain();
+                }
                 if (!Program.single) closeOutput();
             }
             if (Program.single) closeOutput();
@@ -636,6 +675,25 @@ namespace QSharpCompiler
             fs.Write(bytes, 0, bytes.Length);
         }
 
+        private void writeLibraryMain() {
+            StringBuilder sb = new StringBuilder();
+
+            if (!Program.single) sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
+
+            sb.Append("namespace Qt::Core {\r\n");;
+            sb.Append("int g_argc;\r\n");
+            sb.Append("const char **g_argv;\r\n");
+            sb.Append("}\r\n");
+            sb.Append("extern \"C\" {\r\n");
+            sb.Append("__declspec(dllexport)");
+            sb.Append("void LibraryMain(std::shared_ptr<Qt::Core::Object> obj) {\r\n");
+            sb.Append(Program.main + "::LibraryMain(obj);}\r\n");
+            sb.Append("}\r\n");
+
+            byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
+            fs.Write(bytes, 0, bytes.Length);
+        }
+
         private void writeCMakeLists() {
             StringBuilder sb = new StringBuilder();
 
@@ -653,8 +711,12 @@ namespace QSharpCompiler
             if (Program.classlib) {
                 sb.Append("include_directories(" + Program.home + "/include/quazip)\r\n");
             }
+            sb.Append("link_directories(" + Program.home + "/lib)\r\n");
             if (Program.library) {
                 sb.Append("add_library(" + Program.target + "\r\n");
+                if (Program.shared) {
+                    sb.Append("SHARED\r\n");
+                }
                 if (Program.classlib) {
                     sb.Append("quazip/qioapi.cpp quazip/quaadler32.cpp quazip/quacrc32.cpp quazip/quagzipfile.cpp quazip/quaziodevice.cpp quazip/quazip.cpp quazip/quazipdir.cpp quazip/quazipfile.cpp quazip/quazipfileinfo.cpp quazip/quazipnewinfo.cpp\r\n");
                     sb.Append("quazip/release/moc_quagzipfile.cpp quazip/release/moc_quaziodevice.cpp quazip/release/moc_quazipfile.cpp\r\n");
@@ -672,7 +734,6 @@ namespace QSharpCompiler
                 sb.Append(")\r\n");
                 sb.Append("set_property(TARGET " + Program.target + " PROPERTY POSITION_INDEPENDENT_CODE ON)\r\n");
             } else {
-                sb.Append("link_directories(" + Program.home + "/lib)\r\n");
                 sb.Append("add_executable(" + Program.target + "\r\n");
                 if (!Program.single) {
                     sb.Append("cpp/main.cpp cpp/ctor.cpp");
@@ -684,6 +745,8 @@ namespace QSharpCompiler
                     sb.Append(" cpp/" + Program.target + ".cpp");
                 }
                 sb.Append(")\r\n");
+            }
+            if (!Program.library || Program.shared) {
                 sb.Append("target_link_libraries(" + Program.target + "\r\n");
                 foreach(var lib in Program.libs) {
                     sb.Append(" ");
@@ -698,7 +761,7 @@ namespace QSharpCompiler
                 }
                 sb.Append(")\r\n");
             }
-            if (Program.library) {
+            if (Program.library && !Program.shared) {
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy cpp/" + Program.target + ".hpp " + Program.home + "/include)\r\n");
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:" + Program.target + "> " + Program.home + "/lib)\r\n");
             }
@@ -1333,7 +1396,7 @@ namespace QSharpCompiler
                         ISymbol symbol = file.model.GetSymbolInfo(child).Symbol;
                         ISymbol declsymbol = file.model.GetDeclaredSymbol(child);
                         if (symbol == null && declsymbol == null) {
-                            Console.WriteLine("Error:Symbol not found for:" + child);
+                            Console.WriteLine("Error:methodNode():Symbol not found for:" + child);
                             Environment.Exit(0);
                         }
                         if (symbol != null) {
@@ -2219,7 +2282,7 @@ namespace QSharpCompiler
             if (type != null) {
                 return type.IsStatic;
             }
-            Console.WriteLine("Error:Symbol not found for:" + node.ToString());
+            Console.WriteLine("Error:isStatic():Symbol not found for:" + node.ToString());
             Environment.Exit(0);
             return true;
         }
