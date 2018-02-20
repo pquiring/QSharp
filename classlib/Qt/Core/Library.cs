@@ -19,7 +19,7 @@ namespace Qt.Core {
         }
         /** Returns a symbol as a delegate.*/
         public Symbol GetSymbol(String symname) {
-            return (Symbol)CPP.ReturnObject("$q->resolve($check(symname)->cstring())");
+            return (Symbol)CPP.ReturnObject("(void (*)())($q->resolve($check(symname)->cstring()))");
         }
         public LibraryMain GetLibraryMain() {
             return (LibraryMain)CPP.ReturnObject("(void (*)(std::shared_ptr<Qt::Core::Object>))($q->resolve(\"LibraryMain\"))");

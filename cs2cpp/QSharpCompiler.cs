@@ -23,6 +23,8 @@ namespace QSharpCompiler
         public static string version = "0.12";
         public static bool library;
         public static bool shared;
+        public static bool service;
+        public static String serviceName;
         public static string target;
         public static bool classlib;
         public static int headidx = 0;
@@ -46,6 +48,7 @@ namespace QSharpCompiler
                 Console.WriteLine("  --library");
                 Console.WriteLine("  --shared");
                 Console.WriteLine("  --main=class");
+                Console.WriteLine("  --service=name");
                 Console.WriteLine("  --ref=dll");
                 Console.WriteLine("  --home=folder");
                 Console.WriteLine("  --print[=tokens,tostring,all]");
@@ -72,13 +75,29 @@ namespace QSharpCompiler
                 if (arg == "--shared") {
                     shared = true;
                 }
+                if (arg == "--service") {
+                    service = true;
+                    if (value.Length == 0) {
+                        Console.WriteLine("Error:--service requires a name");
+                        return;
+                    }
+                    serviceName = value;
+                }
                 if (arg == "--classlib") {
                     classlib = true;
                 }
                 if (arg == "--main") {
+                    if (value.Length == 0) {
+                        Console.WriteLine("Error:--main requires a class");
+                        return;
+                    }
                     main = value.Replace(".", "::");
                 }
                 if (arg == "--ref") {
+                    if (value.Length == 0) {
+                        Console.WriteLine("Error:--ref requires a file");
+                        return;
+                    }
                     refs.Add(value);
                     int i1 = value.LastIndexOf("\\");
                     if (i1 != -1) {
@@ -89,6 +108,10 @@ namespace QSharpCompiler
                     libs.Add(value);
                 }
                 if (arg == "--home") {
+                    if (value.Length == 0) {
+                        Console.WriteLine("Error:--home requires a path");
+                        return;
+                    }
                     home = value.Replace("\\", "/");
                 }
                 if (arg == "--print") {
@@ -106,6 +129,10 @@ namespace QSharpCompiler
                     single = false;
                 }
                 if (arg == "--cxx") {
+                    if (value.Length == 0) {
+                        Console.WriteLine("Error:--cxx requires a version number (14 or 17)");
+                        return;
+                    }
                     cxx = value;
                 }
                 if (arg == "--msvc") {
@@ -119,8 +146,20 @@ namespace QSharpCompiler
                 Console.WriteLine("Error:--shared requires --library");
                 return;
             }
+            if (classlib && !library) {
+                Console.WriteLine("Error:--classlib requires --library");
+                return;
+            }
             if (shared && main == null) {
                 Console.WriteLine("Error:--shared requires --main");
+                return;
+            }
+            if (service && library) {
+                Console.WriteLine("Error:--service can not be a --library");
+                return;
+            }
+            if (service && main == null) {
+                Console.WriteLine("Error:--service requires --main");
                 return;
             }
             if (!library && main == null) {
@@ -650,6 +689,41 @@ namespace QSharpCompiler
             }
 
             if (!Program.single) sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
+            if (Program.service) {
+                sb.Append("#include <windows.h>\r\n");
+            }
+
+            if (Program.service) {
+                sb.Append("SERVICE_STATUS_HANDLE ServiceHandle;\r\n");
+
+                sb.Append("void ServiceStatus(int state) {\r\n");
+                sb.Append("  SERVICE_STATUS ss;\r\n");
+                sb.Append("  ss.dwServiceType = SERVICE_WIN32;\r\n");
+                sb.Append("  ss.dwWin32ExitCode = 0;\r\n");
+                sb.Append("  ss.dwCurrentState = state;\r\n");
+                sb.Append("  ss.dwControlsAccepted = SERVICE_ACCEPT_STOP;\r\n");
+                sb.Append("  ss.dwWin32ExitCode = 0;\r\n");
+                sb.Append("  ss.dwServiceSpecificExitCode = 0;\r\n");
+                sb.Append("  ss.dwCheckPoint = 0;\r\n");
+                sb.Append("  ss.dwWaitHint = 0;\r\n");
+                sb.Append("  SetServiceStatus(ServiceHandle, &ss);\r\n");
+                sb.Append("}\r\n");
+
+                sb.Append("void __stdcall ServiceControl(int OpCode) {\r\n");
+                sb.Append("  switch (OpCode) {\r\n");
+                sb.Append("    case SERVICE_CONTROL_STOP:\r\n");
+                sb.Append("      ServiceStatus(SERVICE_STOPPED);\r\n");
+                sb.Append("      " + Program.main + "::ServiceStop();\r\n");
+                sb.Append("      break;\r\n");
+                sb.Append("  }\r\n");
+                sb.Append("}\r\n");
+
+                sb.Append("void __stdcall ServiceMain(int argc, char **argv) {\r\n");
+                sb.Append("  ServiceHandle = RegisterServiceCtrlHandler(\"" + Program.serviceName + "\", (void (__stdcall *)(unsigned long))ServiceControl);\r\n");
+                sb.Append("  ServiceStatus(SERVICE_RUNNING);\r\n");
+                sb.Append(writeInvokeMain("ServiceStart"));
+                sb.Append("}\r\n");
+            }
 
             sb.Append("namespace Qt::Core {\r\n");;
             sb.Append("int g_argc;\r\n");
@@ -658,21 +732,37 @@ namespace QSharpCompiler
             sb.Append("int main(int argc, const char **argv) {\r\n");
             sb.Append("Qt::Core::g_argc = argc;\r\n");
             sb.Append("Qt::Core::g_argv = argv;\r\n");
-            sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
-            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
-            sb.Append("try {\r\n");
-            sb.Append(Program.main + "::Main(args);\r\n");
-            sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}");
-            sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}");
-            sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}");
-            sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}");
-            sb.Append("return 0;}\r\n");
+            if (!Program.service) {
+                sb.Append(writeInvokeMain("Main"));
+            } else {
+                sb.Append("void *ServiceTable[4];\r\n");
+                sb.Append("ServiceTable[0] = (void*)\"" + Program.serviceName + "\";\r\n");
+                sb.Append("ServiceTable[1] = (void*)ServiceMain;\r\n");
+                sb.Append("ServiceTable[2] = nullptr;\r\n");
+                sb.Append("ServiceTable[3] = nullptr;\r\n");
+                sb.Append("StartServiceCtrlDispatcher((LPSERVICE_TABLE_ENTRY)&ServiceTable);\r\n");  //does not return until service has been stopped
+            }
+            sb.Append("return 0;\r\n");
+            sb.Append("}\r\n");
 
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
+        }
+
+        private String writeInvokeMain(String name) {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
+            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
+            sb.Append("try {\r\n");
+            sb.Append(Program.main + "::" + name + "(args);\r\n");
+            sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+            sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+            sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+            sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
+            return sb.ToString();
         }
 
         private void writeLibraryMain() {
