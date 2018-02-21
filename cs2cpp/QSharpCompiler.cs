@@ -1956,17 +1956,21 @@ namespace QSharpCompiler
                         break;
                     } else {
                         if ((argument || assignment) && type.isSymbolMethod()) {
-                            ob.Append("std::bind(&");
-                        }
-                        ob.Append(type.GetTypeType(first));
-                        if ((argument || assignment) && type.isSymbolMethod()) {
-                            ob.Append(", this");
-                            //add std::placeholders::_1, ... for # of arguments to delegate
-                            int numArgs = GetNumArgs(node);
-                            for(int a=0;a<numArgs;a++) {
-                                ob.Append(", std::placeholders::_" + (a+1));
+                            if (isStatic(node)) {
+                                ob.Append(type.GetTypeType(first));
+                            } else {
+                                ob.Append("std::bind(&");
+                                ob.Append(type.GetTypeType(first));
+                                ob.Append(", this");
+                                //add std::placeholders::_1, ... for # of arguments to delegate
+                                int numArgs = GetNumArgs(node);
+                                for(int a=0;a<numArgs;a++) {
+                                    ob.Append(", std::placeholders::_" + (a+1));
+                                }
+                                ob.Append(")");
                             }
-                            ob.Append(")");
+                        } else {
+                            ob.Append(type.GetTypeType(first));
                         }
                     }
                     break;
@@ -2049,18 +2053,24 @@ namespace QSharpCompiler
                     SyntaxNode right = GetChildNode(node, 2);
                     if ((!invoke || assignment) && isMethod(right)) {
                         //delegate method
-                        int numArgs = GetNumArgs(right);
-                        ob.Append("std::bind(&");
-                        ITypeSymbol dtype = file.model.GetTypeInfo(left).Type;
-                        ob.Append(dtype.ToString().Replace(".", "::"));
-                        ob.Append("::");
-                        expressionNode(right, ob);
-                        ob.Append(",");
-                        expressionNode(left, ob);  //'this'
-                        for(int a=0;a<numArgs;a++) {
-                            ob.Append(", std::placeholders::_" + (a+1));
+                        if (isStatic(right)) {
+                            expressionNode(left, ob);
+                            ob.Append("::");
+                            expressionNode(right, ob);
+                        } else {
+                            int numArgs = GetNumArgs(right);
+                            ob.Append("std::bind(&");
+                            ITypeSymbol dtype = file.model.GetTypeInfo(left).Type;
+                            ob.Append(dtype.ToString().Replace(".", "::"));
+                            ob.Append("::");
+                            expressionNode(right, ob);
+                            ob.Append(",");
+                            expressionNode(left, ob);  //'this'
+                            for(int a=0;a<numArgs;a++) {
+                                ob.Append(", std::placeholders::_" + (a+1));
+                            }
+                            ob.Append(")");
                         }
-                        ob.Append(")");
                         break;
                     }
                     if (isStatic(right) || left.Kind() == SyntaxKind.BaseExpression || isEnum(left) || isNamespace(left) || (isNamedType(left) && isNamedType(right))) {
