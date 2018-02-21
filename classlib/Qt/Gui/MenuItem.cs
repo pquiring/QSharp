@@ -1,5 +1,4 @@
 using Qt.QSharp;
-using Qt.Core;
 
 namespace Qt.Gui {
     public delegate void TriggeredEvent(bool selected);

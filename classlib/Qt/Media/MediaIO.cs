@@ -1,6 +1,3 @@
-using Qt.QSharp;
-using Qt.Core;
-
 namespace Qt.Media {
     /** Interface for reading/writing files for media coders. */
     public interface MediaIO {

@@ -1,4 +1,3 @@
-using Qt.Core;
 using Qt.QSharp;
 
 //TODO : $check() all arrays

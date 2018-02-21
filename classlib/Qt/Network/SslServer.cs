@@ -1,5 +1,4 @@
 using Qt.QSharp;
-using Qt.Core;
 
 namespace Qt.Network {
     public delegate void PendingSslEvent(SslServer server);

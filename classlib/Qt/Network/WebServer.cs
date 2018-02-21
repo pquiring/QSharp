@@ -1,4 +1,3 @@
-using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Network {

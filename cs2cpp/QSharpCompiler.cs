@@ -194,8 +194,7 @@ namespace QSharpCompiler
             {
                 node.model = compiler.GetSemanticModel(node.tree);
                 if (printTree) {
-                    SyntaxNode root = node.tree.GetRoot();
-                    printNodes(node, root.ChildNodes(), 0);
+                    printNodes(node, node.tree.GetRoot().ChildNodes(), 0, true);
                 }
             }
             try {
@@ -255,33 +254,32 @@ namespace QSharpCompiler
             return (long)offset.TotalMilliseconds;
         }
 
-        void printNodes(Source file, IEnumerable<SyntaxNode> nodes, int lvl)
+        void printNodes(Source file, IEnumerable<SyntaxNode> nodes, int lvl, bool showDiag)
         {
             int idx = 0;
-            String diags = "";
-            foreach(var diag in file.model.GetDiagnostics()) {
-                diags += ",diag=" + diag.ToString();
-            }
-            foreach(var diag in file.model.GetSyntaxDiagnostics()) {
-                diags += ",syntaxdiag=" + diag.ToString();
-            }
-            foreach(var diag in file.model.GetDeclarationDiagnostics()) {
-                diags += ",decldiag=" + diag.ToString();
-            }
-            foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
-                diags += ",methoddiag=" + diag.ToString();
-            }
-            if (diags.Length > 0) {
-                for(int a=0;a<lvl;a++) {
-                    Console.Write("  ");
+            if (showDiag) {
+                String diags = "";
+                foreach(var diag in file.model.GetDiagnostics()) {
+                    diags += ",diag=" + diag.ToString();
                 }
-                Console.WriteLine("Errors:");
-                Console.WriteLine(diags);
+                foreach(var diag in file.model.GetSyntaxDiagnostics()) {
+                    diags += ",syntaxdiag=" + diag.ToString();
+                }
+                foreach(var diag in file.model.GetDeclarationDiagnostics()) {
+                    diags += ",decldiag=" + diag.ToString();
+                }
+                foreach(var diag in file.model.GetMethodBodyDiagnostics()) {
+                    diags += ",methoddiag=" + diag.ToString();
+                }
+                if (diags.Length > 0) {
+                    Console.WriteLine("Errors in file:" + file.csFile);
+                    Console.WriteLine(diags);
+                }
             }
             foreach(var node in nodes) {
                 printNode(file, node, lvl, idx);
                 if (printTokens) PrintTokens(file, node.ChildTokens(), lvl);
-                printNodes(file, node.ChildNodes(), lvl+1);
+                printNodes(file, node.ChildNodes(), lvl+1, false);
                 idx++;
             }
         }

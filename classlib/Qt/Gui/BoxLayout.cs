@@ -1,5 +1,4 @@
 using Qt.QSharp;
-using Qt.Core;
 
 namespace Qt.Gui {
     public enum Direction { LeftToRight, RightToLeft, TopToBottom, BottomToTop }

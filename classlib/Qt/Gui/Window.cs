@@ -1,5 +1,4 @@
 using Qt.QSharp;
-using Qt.Core;
 
 namespace Qt.Gui {
     public enum ToolBarArea {NoToolBarArea = 0, LeftToolBarArea = 0x1, RightToolBarArea = 0x2, TopToolBarArea = 0x4, BottomToolBarArea = 0x8, AllToolBarAreas = 0xf}
