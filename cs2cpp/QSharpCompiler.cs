@@ -1104,7 +1104,7 @@ namespace QSharpCompiler
             if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
                 arrayInitNode(equalsChild, v, field.GetTypeDeclaration(false), field.arrays);
             } else {
-                expressionNode(equalsChild, v);
+                expressionNode(equalsChild, v, false, false, false, true);
             }
             v.Append(";\r\n");
         }
@@ -1791,7 +1791,7 @@ namespace QSharpCompiler
                                         if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
                                             arrayInitNode(equalsChild, method, type.GetTypeDeclaration(false), type.arrays);
                                         } else {
-                                            expressionNode(equalsChild, method);
+                                            expressionNode(equalsChild, method, false, false, false, true);
                                         }
                                     }
                                     method.Append(".get()->data();\r\n");
@@ -1955,13 +1955,15 @@ namespace QSharpCompiler
                             ob.Append("$get_" + type.type + "()");
                         break;
                     } else {
-                        if ((argument || assignment) && type.isSymbolMethod()) {
+                        if ((argument || assignment) && isMethod(node)) {
                             if (isStatic(node)) {
+                                ob.Append("&");
                                 ob.Append(type.GetTypeType(first));
                             } else {
+                                type = new Type(node, true);
                                 ob.Append("std::bind(&");
-                                ob.Append(type.GetTypeType(first));
-                                ob.Append(", this");
+                                ob.Append(type.GetTypeType(true));
+                                ob.Append(", $this");
                                 //add std::placeholders::_1, ... for # of arguments to delegate
                                 int numArgs = GetNumArgs(node);
                                 for(int a=0;a<numArgs;a++) {
@@ -1999,7 +2001,7 @@ namespace QSharpCompiler
                             if (equalsChild.Kind() == SyntaxKind.ArrayInitializerExpression) {
                                 arrayInitNode(equalsChild, method, type.GetTypeDeclaration(false), type.arrays);
                             } else {
-                                expressionNode(equalsChild, method);
+                                expressionNode(equalsChild, method, false, false, false, true);
                             }
                         }
                     }
@@ -2054,6 +2056,7 @@ namespace QSharpCompiler
                     if ((!invoke || assignment) && isMethod(right)) {
                         //delegate method
                         if (isStatic(right)) {
+                            ob.Append("&");
                             expressionNode(left, ob);
                             ob.Append("::");
                             expressionNode(right, ob);
@@ -3189,6 +3192,8 @@ namespace QSharpCompiler
             int idx;
             full = sym;
             idx = full.IndexOf("<");
+            if (idx != -1) full = full.Substring(0, idx);
+            idx = full.IndexOf("(");
             if (idx != -1) full = full.Substring(0, idx);
             full_name = full.Replace("::", "_");
 //            full = "::" + full;
