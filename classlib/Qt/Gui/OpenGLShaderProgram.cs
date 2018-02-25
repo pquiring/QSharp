@@ -11,10 +11,11 @@ namespace Qt.Gui {
             CPP.Add("bool ret = $q->addShaderFromSourceCode((QOpenGLShader::ShaderType)type, $check(src)->qstring());");
             return CPP.ReturnBool("ret");
         }
-        public int AttributeLocation(string name) {
+
+        public int GetAttributeLocation(string name) {
             return CPP.ReturnInt("$q->attributeLocation($check(name)->cstring().constData())");
         }
-        public int UniformLocation(string name) {
+        public int GetUniformLocation(string name) {
             return CPP.ReturnInt("$q->uniformLocation($check(name)->cstring().constData())");
         }
         public void SetUniformValue(int location, int value) {

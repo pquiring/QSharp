@@ -19,9 +19,9 @@ public class TriangleWindow : OpenGLWindow
             Console.WriteLine("Fragment Failed!");
         }
         m_program.Link();
-        m_posAttr = m_program.AttributeLocation("posAttr");
-        m_colAttr = m_program.AttributeLocation("colAttr");
-        m_matrixUniform = m_program.UniformLocation("matrix");
+        m_posAttr = m_program.GetAttributeLocation("posAttr");
+        m_colAttr = m_program.GetAttributeLocation("colAttr");
+        m_matrixUniform = m_program.GetUniformLocation("matrix");
     }
 
     public override void PaintGL() {

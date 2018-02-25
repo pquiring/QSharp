@@ -40,6 +40,10 @@ C# features not supported (yet):
  - linq
  - etc.
 
+Environment setup:
+  set MSBuildSDKsPath=C:\Program Files\dotnet\sdk\2.x.x\Sdks
+  set QSHARP={cs2cpp options}
+
 Compiling:
 
 First compile the compiler:
