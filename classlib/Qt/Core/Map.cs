@@ -17,5 +17,6 @@ namespace Qt.Core {
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool Contains(K k) {return CPP.ReturnBool("$q->contains(k)");}
         public void Remove(K k) {CPP.Add("$q->remove(k);");}
+        public void Clear() {CPP.Add("$q->clear();");}
     }
 }

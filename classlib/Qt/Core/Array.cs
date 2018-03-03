@@ -23,6 +23,7 @@ namespace Qt.Core {
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
+        public void Clear() {CPP.Add("$q->clear();");}
         public IEnumerator<T> GetEnumerator() {
             return new ArrayEnumerator<T>(this);
         }
