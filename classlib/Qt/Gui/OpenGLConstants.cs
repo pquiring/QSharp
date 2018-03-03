@@ -646,6 +646,8 @@ namespace Qt.Gui {
 
         public static int GL_FOG_SPECULAR_TEXTURE_WIN = 0x80EC;
 
+        public static int GL_TEXTURE0 = 0x84C0;
+
         public static int GL_LOGIC_OP = GL_INDEX_LOGIC_OP;
         public static int GL_TEXTURE_COMPONENTS = GL_TEXTURE_INTERNAL_FORMAT;
     }
