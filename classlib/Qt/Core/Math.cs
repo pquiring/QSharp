@@ -9,49 +9,49 @@ namespace Qt.Core {
         public const double LN2 = 0.69314718055994530942;
         public const double LN10 = 2.30258509299404568402;
 
-        public double Sin(double x) {
+        public static double Sin(double x) {
             return CPP.ReturnDouble("qSin(x)");
         }
-        public double Cos(double x) {
+        public static double Cos(double x) {
             return CPP.ReturnDouble("qCos(x)");
         }
-        public double Tan(double x) {
+        public static double Tan(double x) {
             return CPP.ReturnDouble("qTan(x)");
         }
-        public double Asin(double x) {
+        public static double Asin(double x) {
             return CPP.ReturnDouble("qAsin(x)");
         }
-        public double Acos(double x) {
+        public static double Acos(double x) {
             return CPP.ReturnDouble("qAcos(x)");
         }
-        public double Atan(double x) {
+        public static double Atan(double x) {
             return CPP.ReturnDouble("qAtan(x)");
         }
-        public double Sqrt(double x) {
+        public static double Sqrt(double x) {
             return CPP.ReturnDouble("qSqrt(x)");
         }
-        public double Pow(double x, double y) {
+        public static double Pow(double x, double y) {
             return CPP.ReturnDouble("qPow(x, y)");
         }
-        public double Abs(double x) {
+        public static double Abs(double x) {
             return CPP.ReturnDouble("qFabs(x)");
         }
-        public int Floor(double x) {
+        public static int Floor(double x) {
             return CPP.ReturnInt("qFloor(x)");
         }
-        public int Ceil(double x) {
+        public static int Ceil(double x) {
             return CPP.ReturnInt("qCeil(x)");
         }
-        public double Ln(double x) {
+        public static double Ln(double x) {
             return CPP.ReturnDouble("qLn(x)");
         }
-        public double Exp(double x) {
+        public static double Exp(double x) {
             return CPP.ReturnDouble("qExp(x)");
         }
-        public double DegreesToRadians(double x) {
+        public static double DegreesToRadians(double x) {
             return CPP.ReturnDouble("qDegreesToRadians(x)");
         }
-        public double RadiansToDegrees(double x) {
+        public static double RadiansToDegrees(double x) {
             return CPP.ReturnDouble("qRadiansToDegrees(x)");
         }
     }
