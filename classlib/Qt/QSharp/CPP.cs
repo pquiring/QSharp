@@ -103,11 +103,14 @@ namespace Qt.QSharp {
         //these special functions will inject code directly into source
         public static void Add(string s) {}
         public static bool ReturnBool(string s) {return false;}
+        public static char ReturnChar(string s) {return ' ';}
         public static byte ReturnByte(string s) {return 0;}
         public static sbyte ReturnSByte(string s) {return 0;}
         public static short ReturnShort(string s) {return 0;}
         public static int ReturnInt(string s) {return 0;}
+        public static uint ReturnUInt(string s) {return 0;}
         public static long ReturnLong(string s) {return 0;}
+        public static ulong ReturnULong(string s) {return 0;}
         public static float ReturnFloat(string s) {return 0;}
         public static double ReturnDouble(string s) {return 0;}
         public static object ReturnObject(string s) {return null;}

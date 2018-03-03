@@ -21,8 +21,14 @@ namespace Qt.Gui {
         public void SetUniformValue(int location, int value) {
             CPP.Add("$q->setUniformValue(location, value);");
         }
+        public void SetUniformValue(int location, int[] value) {
+            CPP.Add("$q->setUniformValueArray(location, (const GLint*)value->data(), value->Size());");
+        }
         public void SetUniformValue(int location, float value) {
             CPP.Add("$q->setUniformValue(location, value);");
+        }
+        public void SetUniformValue(int location, float[] value) {
+            CPP.Add("$q->setUniformValueArray(location, (const GLfloat*)value->data(), value->Size(), 1);");
         }
         public void SetUniformValue(int location, Matrix4x4 value) {
             CPP.Add("$q->setUniformValue(location, (QMatrix4x4)*($check(value)->$value()));");

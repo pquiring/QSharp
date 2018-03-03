@@ -12,6 +12,9 @@ namespace Qt.Gui {
         public void Perspective(float verticalAngle, float aspectRatio, float nearPlane, float farPlane) {
             CPP.Add("$q->perspective(verticalAngle, aspectRatio, nearPlane, farPlane);");
         }
+        public void Ortho(float left, float right, float bottom, float top, float nearPlane, float farPlane) {
+            CPP.Add("$q->ortho(left, right, bottom, top, nearPlane, farPlane);");
+        }
         public void Translate(float x, float y, float z) {
             CPP.Add("$q->translate(x, y, z);");
         }

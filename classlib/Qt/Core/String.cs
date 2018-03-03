@@ -132,6 +132,9 @@ namespace Qt.Core {
         public String Substring(int start, int len = -1) {
             return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, len))");
         }
+        public char CharAt(int idx) {
+            return CPP.ReturnChar("$q->at(idx).unicode()");
+        }
 
         public String ToUpperCase() {
             return CPP.ReturnString("Qt::Core::String::$new($q->toUpper())");
