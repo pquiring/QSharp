@@ -3382,13 +3382,7 @@ namespace QSharpCompiler
             sb.Append(GetFlags(false));
             if (array) {
                 sb.Append(" ");
-                for(int a=0;a<arrays;a++) {
-                    sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
-                }
                 sb.Append(GetTypeDeclaration());
-                for(int a=0;a<arrays;a++) {
-                    sb.Append(">>");
-                }
                 sb.Append(" ");
                 bool first = true;
                 foreach(var v in variables) {

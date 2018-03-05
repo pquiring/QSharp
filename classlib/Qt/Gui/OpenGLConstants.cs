@@ -619,8 +619,8 @@ namespace Qt.Gui {
         public static int GL_EDGE_FLAG_ARRAY_POINTER_EXT = 0x8093;
         public static int GL_DOUBLE_EXT = GL_DOUBLE;
 
-        public static int GL_BGR_EXT = 0x80E0;
-        public static int GL_BGRA_EXT = 0x80E1;
+        public static int GL_BGR = 0x80E0;
+        public static int GL_BGRA = 0x80E1;
 
         public static int GL_COLOR_TABLE_FORMAT_EXT = 0x80D8;
         public static int GL_COLOR_TABLE_WIDTH_EXT = 0x80D9;

@@ -97,6 +97,10 @@
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomAttr>
 
+#include <QtMultimedia/QAudioDecoder>
+#include <QtMultimedia/QAudioFormat>
+#include <QtMultimedia/QAudioBuffer>
+
 //include Quazip Headers
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
