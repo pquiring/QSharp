@@ -52,7 +52,7 @@ namespace Qt.Core {
         public static DateTime GetCurrentDateTime() {
             return (DateTime)CPP.ReturnObject("DateTime::$new(QDateTime::currentDateTime())");
         }
-        public static long GetMiliSecondsSinceEpoch() {
+        public static long GetMilliSecondsSinceEpoch() {
             return CPP.ReturnLong("QDateTime::currentMSecsSinceEpoch()");
         }
     }
