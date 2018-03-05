@@ -23,6 +23,20 @@ namespace Qt.Media {
             CPP.Add("std::memcpy(sams->data(), buffer.data(), length * 2);");
             return true;
         }
+        public bool Load(IOStream io) {
+            CPP.Add("QAudioDecoder decoder;");
+            CPP.Add("decoder.setSourceDevice($check(io)->$value());");
+            CPP.Add("QAudioBuffer buffer = decoder.read();");
+            CPP.Add("QAudioFormat format = buffer.format();");
+            CPP.Add("length = buffer.sampleCount();");
+            CPP.Add("channels = format.channelCount();");
+            CPP.Add("rate = format.sampleRate();");
+            CPP.Add("bits = format.sampleSize();");
+            if (bits != 16) return false;  //only 16bit supported
+            sams = new short[length];
+            CPP.Add("std::memcpy(sams->data(), buffer.data(), length * 2);");
+            return true;
+        }
         public short[] GetSamples() {
             return sams;
         }

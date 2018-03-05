@@ -33,11 +33,30 @@ namespace Qt.Core {
             }
             return next;
         }
+        public bool FirstEntry() {
+            bool first = CPP.ReturnBool("$q->goToFirstFile()");
+            if (first) {
+                CPP.Add("filename = Qt::Core::String::$new($q->getCurrentFileName());");
+            } else {
+                filename = null;
+            }
+            return first;
+        }
         public ZipEntry GetEntry() {
             CPP.Add("std::shared_ptr<QuaZipFile> zf = std::make_shared<QuaZipFile>($q.get());");
             CPP.Add("std::shared_ptr<ZipEntry> ze = ZipEntry::$new(filename);");
             CPP.Add("ze->$base(zf);");
             return (ZipEntry)CPP.ReturnObject("ze");
+        }
+        public ZipEntry GetEntry(String filename) {
+            IEnumerator<ZipEntry> zipEnum = GetEnumerator();
+            ZipEntry zipEntry;
+            while((zipEntry = zipEnum.Current) != null) {
+                if (zipEntry.filename == filename) {
+                    return zipEntry;
+                }
+            }
+            return null;
         }
         //TODO : AddEntry()
         public IEnumerator<ZipEntry> GetEnumerator() {
@@ -48,6 +67,8 @@ namespace Qt.Core {
         private ZipFile zip;
         public ZipEnumerator(ZipFile zf) {
             zip = zf;
+            zf.FirstEntry();
+            zipEntry = zf.GetEntry();
         }
         private ZipEntry zipEntry;
         public ZipEntry Current {get {return zipEntry;}}
