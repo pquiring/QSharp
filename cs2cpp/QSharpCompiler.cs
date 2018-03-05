@@ -840,7 +840,7 @@ namespace QSharpCompiler
                     sb.Append(" ");
                     sb.Append(lib);
                 }
-                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml Qt5WebSockets");
+                sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml Qt5WebSockets Qt5Multimedia");
                 if (Program.msvc) {
                     sb.Append(" msvcrt");
                     if (Program.debug) sb.Append("d");
