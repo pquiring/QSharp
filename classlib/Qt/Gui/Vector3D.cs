@@ -1,0 +1,52 @@
+using Qt.QSharp;
+
+namespace Qt.Gui {
+    [CPPClass(
+        "private: std::shared_ptr<QVector3D> $q;" +
+        "public: QVector3D* $value() {return $q.get();}"
+    )]
+    public class Vector3D {
+        public Vector3D() {
+            CPP.Add("$q = std::make_shared<QVector3D>();");
+        }
+        public Vector3D(float x, float y, float z) {
+            CPP.Add("$q = std::make_shared<QVector3D>(x,y,z);");
+        }
+        [CPPReplaceArgs("QVector3D arg1")]
+        private Vector3D(NativeArg1 arg1) {
+            CPP.Add("$q = std::make_shared<QVector3D>(arg1);");
+        }
+        public void Set(float x, float y, float z) {
+            CPP.Add("$q->setX(x);");
+            CPP.Add("$q->setY(y);");
+            CPP.Add("$q->setZ(z);");
+        }
+        public float Length() {
+            return CPP.ReturnFloat("$q->length()");
+        }
+        public float LengthSquared() {
+            return CPP.ReturnFloat("$q->lengthSquared()");
+        }
+        public void Normalize() {
+            CPP.Add("$q->normalize();");
+        }
+        public void Add(Vector3D other) {
+            CPP.Add("(*$q.get())+=(*(other->$value()));");
+        }
+        public void Sub(Vector3D other) {
+            CPP.Add("(*$q.get())-=(*(other->$value()));");
+        }
+        public void Multiply(float factor) {
+            CPP.Add("(*$q.get())*=factor;");
+        }
+        public void Divide(float divsor) {
+            CPP.Add("(*$q.get())/=divsor;");
+        }
+        public static float DotProduct(Vector3D a, Vector3D b) {
+            return CPP.ReturnFloat("QVector3D::dotProduct(*(a->$q), *(b->$q))");
+        }
+        public static Vector3D CrossProduct(Vector3D a, Vector3D b) {
+            return (Vector3D)CPP.ReturnObject("Vector3D::$new(QVector3D::crossProduct(*(a->$q), *(b->$q)))");
+        }
+    }
+}

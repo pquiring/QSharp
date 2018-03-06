@@ -115,8 +115,13 @@ namespace Qt.Gui {
             m[2+1*4] = (one_c * yz) + xs;
             m[2+2*4] = (one_c * zz) + c;
         }
-        public void Mult4x4(Matrix4x4 other) {
+        public void Multiply(Matrix4x4 other) {
             CPP.Add("(*$q.get())*=(*(other->$value()));");
+        }
+        public void ReverseTranslate() {
+            m[0+3*4] *= -1.0f;
+            m[1+3*4] *= -1.0f;
+            m[2+3*4] *= -1.0f;
         }
     }
 }

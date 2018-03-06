@@ -12,11 +12,25 @@ namespace Qt.Core {
         public void Add(T t) {
             CPP.Add("$q->append(t);");
         }
+        public void Add(T[] t) {
+            for(int idx=0;idx<t.Length;idx++) {
+                CPP.Add("$q->append(t[idx]);");
+            }
+        }
         public void Insert(int idx, T t) {
             CPP.Add("$q->insert(idx, t);");
         }
+        public void Insert(int idx, T[] t) {
+            for(int tidx=0;tidx<t.Length;tidx++) {
+                CPP.Add("$q->insert(idx, t[tidx]);");
+            }
+        }
         public T Get(int idx) {
             return (T)CPP.ReturnObject("$q->at(idx)");
+        }
+        /** Returns unsafe backing buffer. */
+        public T[] GetBuffer() {
+            return (T[])CPP.ReturnObject("Qt::Core::FixedArray::$new($q->data(), $q->size())");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public int Count {get {return Size();}}

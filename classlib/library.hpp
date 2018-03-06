@@ -29,6 +29,9 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QMatrix4x4>
+#include <QtGui/QVector2D>
+#include <QtGui/QVector3D>
+#include <QtGui/QVector4D>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
 #include <QtGui/QImage>
