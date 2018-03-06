@@ -35,8 +35,8 @@ namespace Qt.Gui {
         public void SetIdentity3x3() {
             for(int a=0;a<11;a++) {if (a % 5 == 0) m[a] = 1.0f; else m[a] = 0.0f;}
         }
-        /** Set matrix using angle-axis(vector) (see http://en.wikipedia.org/wiki/Axis_angle) */
-        public void SetAA(float angle, float x, float y, float z) {
+        /** Set matrix using axis-angle(vector) (see http://en.wikipedia.org/wiki/Axis_angle) */
+        public void SetAxisAngle(float angle, float x, float y, float z) {
             float xx, yy, zz, xy, yz, zx, xs, ys, zs, one_c, s, c;
 
             s = (float)Math.Sin( angle * (float)Math.PI / 180.0f );
@@ -114,6 +114,9 @@ namespace Qt.Gui {
             m[2+0*4] = (one_c * zx) - ys;
             m[2+1*4] = (one_c * yz) + xs;
             m[2+2*4] = (one_c * zz) + c;
+        }
+        public void Mult4x4(Matrix4x4 other) {
+            CPP.Add("(*$q.get())*=(*(other->$value()));");
         }
     }
 }
