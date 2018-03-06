@@ -97,6 +97,16 @@ namespace Qt.Core {
             return this;
         }
 
+        public String Insert(int pos, char ch) {
+            CPP.Add("$q->insert(pos, (QChar)ch);");
+            return this;
+        }
+
+        public String Remove(int pos, int count = 1) {
+            CPP.Add("$q->remove(pos, count);");
+            return this;
+        }
+
         public bool Equals(String s) {
             return CPP.ReturnBool("$q->compare(*$check(s)->$q) == 0");
         }
