@@ -106,7 +106,7 @@ namespace Qt.Gui {
             CPP.Add("$painter.drawEllipse(x,y,width,height);");
             CPP.Add("$painter.end();");
         }
-        public void DrawImage(int x, int y, Image src, int sx, int sy, int width = -1, int height = -1) {
+        public void DrawImage(int x, int y, Image src, int sx = 0, int sy = 0, int width = -1, int height = -1) {
             CPP.Add("$painter.begin($q.get());");
             CPP.Add("$painter.drawImage(x,y,*$check(src)->$q,sx,sy,width,height);");
             CPP.Add("$painter.end();");

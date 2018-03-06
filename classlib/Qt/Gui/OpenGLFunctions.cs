@@ -54,7 +54,7 @@ namespace Qt.Gui {
         public void glDisable(int cap) {CPP.Add("$q->glDisable(cap);");}
         public void glDisableVertexAttribArray(int index) {CPP.Add("$q->glDisableVertexAttribArray(index);");}
         public void glDrawArrays(int mode, int first, int count) {CPP.Add("$q->glDrawArrays(mode, first, count);");}
-        public void glDrawElements(int mode, int count, int type, int[] indices) {CPP.Add("$q->glDrawElements(mode, count, type, (const GLvoid*)indices->data());");}
+        public void glDrawElements(int mode, int count, int type) {CPP.Add("$q->glDrawElements(mode, count, type, (const GLvoid*)null;");}
         public void glEnable(int cap) {CPP.Add("$q->glEnable(cap);");}
         public void glEnableVertexAttribArray(int index) {CPP.Add("$q->glEnableVertexAttribArray(index);");}
         public void glFinish() {CPP.Add("$q->glFinish();");}
