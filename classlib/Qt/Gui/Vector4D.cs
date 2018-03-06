@@ -16,6 +16,10 @@ namespace Qt.Gui {
         private Vector4D(NativeArg1 arg1) {
             CPP.Add("$q = std::make_shared<QVector4D>(arg1);");
         }
+        public float GetX() {return CPP.ReturnFloat("$q->x()");}
+        public float GetY() {return CPP.ReturnFloat("$q->y()");}
+        public float GetZ() {return CPP.ReturnFloat("$q->z()");}
+        public float GetW() {return CPP.ReturnFloat("$q->w()");}
         public void Set(float x, float y, float z, float w) {
             CPP.Add("$q->setX(x);");
             CPP.Add("$q->setY(y);");

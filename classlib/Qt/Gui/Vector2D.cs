@@ -12,6 +12,8 @@ namespace Qt.Gui {
         public Vector2D(float x, float y) {
             CPP.Add("$q = std::make_shared<QVector2D>(x,y);");
         }
+        public float GetX() {return CPP.ReturnFloat("$q->x()");}
+        public float GetY() {return CPP.ReturnFloat("$q->y()");}
         public void Set(float x, float y) {
             CPP.Add("$q->setX(x);");
             CPP.Add("$q->setY(y);");
