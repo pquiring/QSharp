@@ -650,5 +650,12 @@ namespace Qt.Gui {
 
         public static int GL_LOGIC_OP = GL_INDEX_LOGIC_OP;
         public static int GL_TEXTURE_COMPONENTS = GL_TEXTURE_INTERNAL_FORMAT;
+
+        public static int GL_ARRAY_BUFFER = 0x8892;
+        public static int GL_ELEMENT_ARRAY_BUFFER = 0x8893;
+
+        public static int GL_STREAM_DRAW = 0x88e0;
+        public static int GL_STATIC_DRAW = 0x88e4;
+
     }
 }

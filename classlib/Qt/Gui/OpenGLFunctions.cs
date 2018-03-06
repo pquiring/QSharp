@@ -24,6 +24,8 @@ namespace Qt.Gui {
         public void glBlendFunc(int sfactor, int dfactor) {CPP.Add("$q->glBlendFunc(sfactor, dfactor);");}
         public void glBlendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {CPP.Add("$q->glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);");}
         public void glBufferData(int target, int size, byte[] data, int usage) {CPP.Add("$q->glBufferData(target, size, $check(data, 0, size)->data(), usage);");}
+        public void glBufferData(int target, int size, int[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size)->data(), usage);");}
+        public void glBufferData(int target, int size, float[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size)->data(), usage);");}
         public void glBufferSubData(int target, int offset, int size, byte[] data) {CPP.Add("$q->glBufferSubData(target, offset, size, $check(data, 0, size)->data());");}
         public int glCheckFramebufferStatus(int target) {return CPP.ReturnInt("$q->glCheckFramebufferStatus(target)");}
         public void glClear(int mask) {CPP.Add("$q->glClear(mask);");}
@@ -157,8 +159,7 @@ namespace Qt.Gui {
         public void glVertexAttrib3fv(int index, float[] values) {CPP.Add("$q->glVertexAttrib3fv(index, values->data());");}
         public void glVertexAttrib4f(int index, float x, float y, float z, float w) {CPP.Add("$q->glVertexAttrib4f(index, x, y, z, w);");}
         public void glVertexAttrib4fv(int index, float[] values) {CPP.Add("$q->glVertexAttrib4fv(index, values->data());");}
-        public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride, byte[] ptr) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, ptr->data());");}
-        public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride, float[] ptr) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, ptr->data());");}
+        public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, nullptr);");}
         public void glViewport(int x, int y, int width, int height) {CPP.Add("$q->glViewport(x, y, width, height);");}
 //        public bool hasOpenGLFeature($q->OpenGLFeature feature) { }  //TODO
     }
