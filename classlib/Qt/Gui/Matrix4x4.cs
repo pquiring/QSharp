@@ -115,8 +115,19 @@ namespace Qt.Gui {
             m[2+1*4] = (one_c * yz) + xs;
             m[2+2*4] = (one_c * zz) + c;
         }
-        public void Multiply(Matrix4x4 other) {
+        /** this = this * other */
+        public void Multiply4x4(Matrix4x4 other) {
             CPP.Add("(*$q.get())*=(*(other->$value()));");
+        }
+        /** vec = this * vec */
+        public void Multiply4x4(Vector3D vec) {
+            CPP.Add("QVector3D res = $q->map(*($check(vec)->$value()));");
+            CPP.Add("vec->Set(res.x(), res.y(), res.z());");
+        }
+        /** vec = this * vec (3x3 matrix only - ignores translation/projection) */
+        public void Multiply3x3(Vector3D vec) {
+            CPP.Add("QVector3D res = $q->mapVector(*($check(vec)->$value()));");
+            CPP.Add("vec->Set(res.x(), res.y(), res.z());");
         }
         public void ReverseTranslate() {
             m[0+3*4] *= -1.0f;
