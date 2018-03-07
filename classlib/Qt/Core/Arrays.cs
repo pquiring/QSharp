@@ -1,6 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
+    public delegate int SortCompare(Object o1, Object o2);
     /** Array functions */
     public class Arrays {
         public static byte[] CopyOf(byte[] array, int pos, int length = -1) {
@@ -111,6 +112,105 @@ namespace Qt.Core {
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * 8);");
+        }
+
+        public static void Sort(byte[] array) {
+            int length = array.Length;
+            byte tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (array[i1] > array[i2]) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
+        }
+        public static void Sort(short[] array) {
+            int length = array.Length;
+            short tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (array[i1] > array[i2]) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
+        }
+        public static void Sort(int[] array) {
+            int length = array.Length;
+            int tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (array[i1] > array[i2]) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
+        }
+        public static void Sort(long[] array) {
+            int length = array.Length;
+            long tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (array[i1] > array[i2]) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
+        }
+        public static void Sort(float[] array) {
+            int length = array.Length;
+            float tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (array[i1] > array[i2]) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
+        }
+        public static void Sort(double[] array) {
+            int length = array.Length;
+            double tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (array[i1] > array[i2]) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
+        }
+        public static void Sort(Object[] array, SortCompare cmp) {
+            int length = array.Length;
+            Object tmp;
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    if (cmp(array[i1], array[i2]) > 0) {
+                        //swap values
+                        tmp = array[i1];
+                        array[i1] = array[i2];
+                        array[i2] = tmp;
+                    }
+                }
+            }
         }
 
     }
