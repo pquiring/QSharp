@@ -64,49 +64,49 @@ namespace Qt.Core {
             return copy;
         }
 
-        public static void Copy(byte[] dest, int destPos, byte[] src, int srcPos, int length = -1) {
+        public static void Copy(byte[] src, int srcPos, byte[] dest, int destPos, int length = -1) {
             if (length == -1) {
-                length = src.Length;
+                length = src.Length - srcPos;
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length);");
         }
-        public static void Copy(short[] dest, int destPos, short[] src, int srcPos, int length = -1) {
+        public static void Copy(short[] src, int srcPos, short[] dest, int destPos, int length = -1) {
             if (length == -1) {
-                length = src.Length;
+                length = src.Length - srcPos;
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * 2);");
         }
-        public static void Copy(int[] dest, int destPos, int[] src, int srcPos, int length = -1) {
+        public static void Copy(int[] src, int srcPos, int[] dest, int destPos, int length = -1) {
             if (length == -1) {
-                length = src.Length;
+                length = src.Length - srcPos;
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * 4);");
         }
-        public static void Copy(long[] dest, int destPos, long[] src, int srcPos, int length = -1) {
+        public static void Copy(long[] src, int srcPos, long[] dest, int destPos, int length = -1) {
             if (length == -1) {
-                length = src.Length;
+                length = src.Length - srcPos;
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * 8);");
         }
-        public static void Copy(float[] dest, int destPos, float[] src, int srcPos, int length = -1) {
+        public static void Copy(float[] src, int srcPos, float[] dest, int destPos, int length = -1) {
             if (length == -1) {
-                length = src.Length;
+                length = src.Length - srcPos;
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * 4);");
         }
-        public static void Copy(double[] dest, int destPos, double[] src, int srcPos, int length = -1) {
+        public static void Copy(double[] src, int srcPos, double[] dest, int destPos, int length = -1) {
             if (length == -1) {
-                length = src.Length;
+                length = src.Length - srcPos;
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
