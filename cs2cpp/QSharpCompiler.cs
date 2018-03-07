@@ -2029,6 +2029,9 @@ namespace QSharpCompiler
                         case "double":
                             if (value.IndexOf(".") == -1) value += ".0";
                             break;
+                        case "long":
+                            value += "LL";
+                            break;
                     }
                     ob.Append(value);
                     break;
@@ -2712,9 +2715,10 @@ namespace QSharpCompiler
         public bool Sealed;
         public string GetFlags(bool cls) {
             StringBuilder sb = new StringBuilder();
-            if (Public) sb.Append("public:");
-            if (Private) sb.Append("private:");
-            if (Protected) sb.Append("protected:");
+            //if (Public) sb.Append("public:");
+            //if (Private) sb.Append("private:");
+            //if (Protected) sb.Append("protected:");
+            sb.Append("public:");
             if (Static) sb.Append(" static");
             if (Abstract) {
                 if (!cls) {

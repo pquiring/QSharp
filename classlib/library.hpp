@@ -22,6 +22,7 @@
 #include <QtCore/QLibrary>
 #include <QtCore/QCryptographicHash>
 #include <QtCore/QProcess>
+#include <QtCore/QRandomGenerator>
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
@@ -276,3 +277,9 @@ inline double $add(double x,uint32 y) {return x + y;}
 inline double $add(uint32 x,double y) {return x + y;}
 inline double $add(double x,uint64 y) {return x + y;}
 inline double $add(uint64 x,double y) {return x + y;}
+
+inline int64 $add(int64 x,int32 y) {return x + y;}
+inline int64 $add(int32 x,int64 y) {return x + y;}
+
+inline int64 $add(uint64 x,uint32 y) {return x + y;}
+inline int64 $add(uint32 x,uint64 y) {return x + y;}
