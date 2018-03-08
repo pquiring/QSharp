@@ -931,13 +931,22 @@ namespace QSharpCompiler
             }
         }
 
+        //convert reserved C++ names
+        public static String ConvertName(String name) {
+            switch (name) {
+                case "near": return "$near";
+                case "far": return "$far";
+            }
+            return name;
+        }
+
         private void classNode(SyntaxNode node, Class inner, Class outter, bool Interface) {
             cls = inner;
             cls.fullname = outter.fullname;
             if (cls.fullname.Length > 0) {
                 cls.fullname += "::";
             }
-            cls.name = file.model.GetDeclaredSymbol(node).Name;
+            cls.name = ConvertName(file.model.GetDeclaredSymbol(node).Name);
             cls.fullname += cls.name;
             cls.Namespace = Namespace;
             cls.Interface = Interface;
@@ -1327,7 +1336,7 @@ namespace QSharpCompiler
                     case SyntaxKind.QualifiedName:
                         ITypeSymbol typesym = file.model.GetTypeInfo(child).Type;
                         if (typesym != null) {
-                            type.set(typesym.ToString().Replace(".", "::"));
+                            type.set(ConvertName(typesym.ToString().Replace(".", "::")));
                             type.typekind = typesym.TypeKind;
                         }
                         type.setTypes();
@@ -1464,7 +1473,7 @@ namespace QSharpCompiler
                     method.name = "~" + cls.name;
                     method.type.set("");
                 } else {
-                    method.name = file.model.GetDeclaredSymbol(node).Name;
+                    method.name = ConvertName(file.model.GetDeclaredSymbol(node).Name);
                 }
             }
             getFlags(method.type, file.model.GetDeclaredSymbol(node));
@@ -1541,7 +1550,7 @@ namespace QSharpCompiler
                             type.set("auto");
                         }
                         Argument arg = new Argument();
-                        arg.name.name = file.model.GetDeclaredSymbol(param).Name.Replace(".", "::");
+                        arg.name.name = ConvertName(file.model.GetDeclaredSymbol(param).Name.Replace(".", "::"));
                         arg.type = type;
                         method.args.Add(arg);
                         SyntaxNode equals = GetChildNode(param, 2);
@@ -3300,7 +3309,7 @@ namespace QSharpCompiler
                 case "System::object":
                 case "Qt::Core::object":
                     return "Qt::Core::Object";
-                default: return use_full ? full : type;
+                default: return Generate.ConvertName(use_full ? full : type);
             }
         }
         public string GetTypeType(bool use_full = false) {

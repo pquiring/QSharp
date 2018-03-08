@@ -19,6 +19,9 @@ namespace Qt.Gui {
         public float GetX() {return CPP.ReturnFloat("$q->x()");}
         public float GetY() {return CPP.ReturnFloat("$q->y()");}
         public float GetZ() {return CPP.ReturnFloat("$q->z()");}
+        public void Set(Vector3D other) {
+            Set(other.GetX(), other.GetY(), other.GetZ());
+        }
         public void Set(float x, float y, float z) {
             CPP.Add("$q->setX(x);");
             CPP.Add("$q->setY(y);");
