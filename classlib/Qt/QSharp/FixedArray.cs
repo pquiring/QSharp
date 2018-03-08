@@ -57,6 +57,9 @@ namespace Qt.QSharp {
         public T Get(int idx) {
             return (T)CPP.ReturnObject("at(idx)");
         }
+        public void Set(int idx, T t) {
+            CPP.Add("at(idx) = t;");
+        }
         public IEnumerator<T> GetEnumerator() {
             return new FixedArrayEnumerator<T>(this);
         }
