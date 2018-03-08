@@ -83,4 +83,22 @@ namespace Qt.Core {
         }
         public void Reset() {}
     }
+    [CPPClass(
+        "private: std::shared_ptr<QuaZIODevice> $q;"
+    )]
+    public class Compress : IOStream {
+        public Compress(ByteArrayStream input) {
+            CPP.Add("$q = std::make_shared<QuaZIODevice>($check(input)->$value());");
+            CPP.Add("$base($q);");
+        }
+    }
+    [CPPClass(
+        "private: std::shared_ptr<QuaZIODevice> $q;"
+    )]
+    public class Decompress : IOStream {
+        public Decompress(ByteArrayStream input) {
+            CPP.Add("$q = std::make_shared<QuaZIODevice>($check(input)->$value());");
+            CPP.Add("$base($q);");
+        }
+    }
 }

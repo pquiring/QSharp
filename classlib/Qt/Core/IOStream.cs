@@ -15,5 +15,8 @@ namespace Qt.Core {
         public ByteArray ReadAll() {
             return (ByteArray)CPP.ReturnObject("ByteArray::$new($q->readAll())");
         }
+        public int Available() {
+            return CPP.ReturnInt("$q->bytesAvailable()");
+        }
     }
 }

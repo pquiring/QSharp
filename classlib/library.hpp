@@ -108,6 +108,7 @@
 //include Quazip Headers
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
+#include <quazip/quaziodevice.h>
 
 #undef int64
 #define int64 signed long long
