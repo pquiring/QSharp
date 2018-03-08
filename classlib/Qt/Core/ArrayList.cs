@@ -29,10 +29,11 @@ namespace Qt.Core {
         public void Clear() {CPP.Add("$q->clear();");}
         public void Sort(ArrayListSortCompare cmp) {
             int length = Size();
+            T o1, o2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    T o1 = Get(i1);
-                    T o2 = Get(i2);
+                    o1 = Get(i1);
+                    o2 = Get(i2);
                     if (cmp(o1, o2) > 0) {
                         //swap values
                         Set(i1, o2);

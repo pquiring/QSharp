@@ -200,14 +200,14 @@ namespace Qt.Core {
         }
         public static void Sort(Object[] array, SortCompare cmp) {
             int length = array.Length;
-            Object tmp;
+            Object o1, o2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (cmp(array[i1], array[i2]) > 0) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    o1 = array[i1];
+                    o2 = array[i2];
+                    if (cmp(o1, o2) > 0) {
+                        array[i1] = o2;
+                        array[i2] = o1;
                     }
                 }
             }
