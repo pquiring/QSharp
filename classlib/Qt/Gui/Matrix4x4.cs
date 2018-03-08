@@ -13,6 +13,9 @@ namespace Qt.Gui {
             CPP.Add("$q = std::make_shared<QMatrix4x4>();");
             CPP.Add("m = Qt::QSharp::FixedArray<float>::$new($q->data(), 16);");
         }
+        public float[] GetBuffer() {
+            return m;
+        }
         public void Perspective(float verticalAngle, float aspectRatio, float nearPlane, float farPlane) {
             CPP.Add("$q->perspective(verticalAngle, aspectRatio, nearPlane, farPlane);");
         }
