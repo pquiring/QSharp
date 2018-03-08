@@ -6,6 +6,7 @@ namespace Qt.Core {
     )]
     /** Stores an array of objects in a resizable continuous memory. */
     public class Array<T> : IEnumerable<T> {
+        public delegate int ArraySortCompare(T t1, T t2);
         public Array() {
             CPP.Add("$q = std::make_unique<QVector<T>>();");
         }
@@ -28,6 +29,9 @@ namespace Qt.Core {
         public T Get(int idx) {
             return (T)CPP.ReturnObject("$q->at(idx)");
         }
+        public void Set(int idx, T t) {
+            CPP.ReturnObject("(*$q.get())[idx] = t;");
+        }
         /** Returns unsafe backing buffer. */
         public T[] GetBuffer() {
             return (T[])CPP.ReturnObject("Qt::Core::FixedArray::$new($q->data(), $q->size())");
@@ -38,6 +42,20 @@ namespace Qt.Core {
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
         public void Clear() {CPP.Add("$q->clear();");}
+        public void Sort(ArraySortCompare cmp) {
+            int length = Size();
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    T o1 = Get(i1);
+                    T o2 = Get(i2);
+                    if (cmp(o1, o2) > 0) {
+                        //swap values
+                        Set(i1, o2);
+                        Set(i2, o1);
+                    }
+                }
+            }
+        }
         public IEnumerator<T> GetEnumerator() {
             return new ArrayEnumerator<T>(this);
         }

@@ -6,6 +6,7 @@ namespace Qt.Core {
     )]
     /** Stores an array of objects in a linked-list style. */
     public class ArrayList<T> : IEnumerable<T> {
+        public delegate int ArrayListSortCompare(T t1, T t2);
         public ArrayList() {
             CPP.Add("$q = std::make_unique<QList<T>>();");
         }
@@ -18,12 +19,28 @@ namespace Qt.Core {
         public T Get(int idx) {
             return (T)CPP.ReturnObject("$q->value(idx)");
         }
+        public void Set(int idx, T t) {
+            CPP.Add("(*$q.get())[idx] = t;");
+        }
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
         public void Clear() {CPP.Add("$q->clear();");}
-
+        public void Sort(ArrayListSortCompare cmp) {
+            int length = Size();
+            for(int i1=0;i1<length;i1++) {
+                for(int i2=i1+1;i2<length;i2++) {
+                    T o1 = Get(i1);
+                    T o2 = Get(i2);
+                    if (cmp(o1, o2) > 0) {
+                        //swap values
+                        Set(i1, o2);
+                        Set(i2, o1);
+                    }
+                }
+            }
+        }
         public IEnumerator<T> GetEnumerator() {
             return new ArrayListEnumerator<T>(this);
         }

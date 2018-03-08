@@ -1569,7 +1569,7 @@ namespace QSharpCompiler
                 case SyntaxKind.QualifiedName:
                     ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
                     if (symbol != null) {
-                        type.set(symbol.ToString().Replace(".", "::"));
+                        type.set(symbol.ToString().Replace(".", "::"), true);
                     }
                     ITypeSymbol typesym = file.model.GetTypeInfo(node).Type;
                     if (typesym != null) {
@@ -3201,11 +3201,21 @@ namespace QSharpCompiler
         public String GetSymbolShort() {
             return type;
         }
-        public void set(String sym) {
+        public void set(String sym, bool parameter = false) {
             int idx;
             full = sym;
-            idx = full.IndexOf("<");
-            if (idx != -1) full = full.Substring(0, idx);
+            if (!parameter) {
+                idx = full.IndexOf("<");
+                if (idx != -1) full = full.Substring(0, idx);
+            } else {
+                idx = full.IndexOf(">");
+                if (idx != -1) {
+                    full = full.Substring(idx + 1);
+                    if (full.StartsWith("::")) {
+                        full = full.Substring(2);
+                    }
+                }
+            }
             idx = full.IndexOf("(");
             if (idx != -1) full = full.Substring(0, idx);
             full_name = full.Replace("::", "_");
