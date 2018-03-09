@@ -1,6 +1,10 @@
 What's new
 ==========
 
+Mar 9, 2018 : 0.13
+ - added many new classes
+ - fixed many bugs
+
 Feb 16, 2018 : 0.12
  - added SpinBox
  - added Process
