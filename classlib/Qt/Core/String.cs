@@ -127,6 +127,14 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->compare(*$check(s)->$q, Qt::CaseInsensitive) == 0");
         }
 
+        public bool Contains(String s) {
+            return CPP.ReturnBool("$q->contains(*$check(s)->$q)");
+        }
+
+        public bool ContainsIgnoreCase(String s) {
+            return CPP.ReturnBool("$q->contains(*$check(s)->$q, Qt::CaseInsensitive)");
+        }
+
         public void Replace(char before, char after) {
             CPP.Add("$q->replace((QChar)before, (QChar)after);");
         }
