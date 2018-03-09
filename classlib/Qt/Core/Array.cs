@@ -58,6 +58,14 @@ namespace Qt.Core {
                 }
             }
         }
+        public T[] ToArray() {
+            int size = Size();
+            T[] array = new T[size];
+            for(int a=0;a<size;a++) {
+                array[a] = Get(a);
+            }
+            return array;
+        }
         public IEnumerator<T> GetEnumerator() {
             return new ArrayEnumerator<T>(this);
         }
