@@ -37,10 +37,22 @@ namespace Qt.Core {
             CPP.Add("$q = std::make_unique<QString>();");
             CPP.Add("$q->append((const QChar*)str->data()+offset,length);");
         }
+        public String(char[] str) {
+            CPP.Add("$check(str);");
+            CPP.Add("int length = str->$get_Length();");
+            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q->append((const QChar*)str->data(),length);");
+        }
         public String(byte[] utf8, int offset, int length) {
             CPP.Add("$check(utf8, offset, length);");
             CPP.Add("$q = std::make_unique<QString>();");
             CPP.Add("$q->append(QByteArray((const char*)utf8->data()+offset,length));");
+        }
+        public String(byte[] utf8) {
+            CPP.Add("$check(utf8);");
+            CPP.Add("int length = utf8->$get_Length();");
+            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q->append(QByteArray((const char*)utf8->data(),length));");
         }
         public String(string s) {
             CPP.Add("$q = std::make_unique<QString>(*$check(s)->$value());");
