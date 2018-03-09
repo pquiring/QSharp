@@ -161,6 +161,7 @@ namespace Qt.Gui {
         public void glVertexAttrib4fv(int index, float[] values) {CPP.Add("$q->glVertexAttrib4fv(index, values->data());");}
         public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride, byte[] ptr) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, ptr->data());");}
         public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride, float[] ptr) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, ptr->data());");}
+        public void glVertexAttribPointer(int index, int size, int type, int normalized, int stride) {CPP.Add("$q->glVertexAttribPointer(index, size, type, normalized, stride, nullptr);");}
         public void glViewport(int x, int y, int width, int height) {CPP.Add("$q->glViewport(x, y, width, height);");}
 //        public bool hasOpenGLFeature($q->OpenGLFeature feature) { }  //TODO
     }
