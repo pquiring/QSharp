@@ -23,6 +23,7 @@ namespace Qt.Core {
             CPP.Add("(*$q.get())[idx] = t;");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
+        public bool IsEmpty() {return Size() == 0;}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}

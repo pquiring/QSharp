@@ -37,6 +37,7 @@ namespace Qt.Core {
             return (T[])CPP.ReturnObject("Qt::Core::FixedArray::$new($q->data(), $q->size())");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
+        public bool IsEmpty() {return Size() == 0;}
         public int Count {get {return Size();}}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
