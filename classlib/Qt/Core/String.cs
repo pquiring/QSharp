@@ -127,6 +127,22 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->compare(*$check(s)->$q, Qt::CaseInsensitive) == 0");
         }
 
+        public void Replace(char before, char after) {
+            CPP.Add("$q->replace((QChar)before, (QChar)after);");
+        }
+
+        public void Replace(String before, String after) {
+            CPP.Add("$q->replace($check(before)->qstring(), $check(after)->qstring());");
+        }
+
+        public void ReplaceIgnoreCase(char before, char after) {
+            CPP.Add("$q->replace((QChar)before, (QChar)after, Qt::CaseInsensitive);");
+        }
+
+        public void ReplaceIgnoreCase(String before, String after) {
+            CPP.Add("$q->replace($check(before)->qstring(), $check(after)->qstring(), Qt::CaseInsensitive);");
+        }
+
         public int IndexOf(char ch) {
             return CPP.ReturnInt("$q->indexOf((QChar)ch)");
         }
