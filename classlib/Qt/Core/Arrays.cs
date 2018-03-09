@@ -64,6 +64,18 @@ namespace Qt.Core {
             CPP.Add("std::memcpy(copy->data(), array->data() + pos, length * 8);");
             return copy;
         }
+        public static Object[] CopyOf(Object[] array, int pos, int length = -1) {
+            if (length == -1) {
+                length = array.Length - pos;
+            }
+            if (length < 0) return null;
+            if (pos == 0 && length == array.Length) return array;
+            Object[] copy = new Object[length];
+            for(int a=0;a<length;a++) {
+                copy[a] = array[pos++];
+            }
+            return copy;
+        }
 
         public static void Copy(byte[] src, int srcPos, byte[] dest, int destPos, int length = -1) {
             if (length == -1) {
@@ -113,87 +125,113 @@ namespace Qt.Core {
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
             CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * 8);");
         }
+        public static void Copy(Object[] src, int srcPos, Object[] dest, int destPos, int length = -1) {
+            if (length == -1) {
+                length = src.Length - srcPos;
+            }
+            if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
+            if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
+            if (src == dest && destPos > srcPos) {
+                //copy backwards
+                srcPos += length;
+                destPos += length;
+                for(int a=0;a<length;a++) {
+                    dest[--destPos] = src[--srcPos];
+                }
+            } else {
+                //copy forwards
+                for(int a=0;a<length;a++) {
+                    dest[destPos++] = src[srcPos++];
+                }
+            }
+        }
 
         public static void Sort(byte[] array) {
             int length = array.Length;
-            byte tmp;
+            byte v1;
+            byte v2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (array[i1] > array[i2]) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    v1 = array[i1];
+                    v2 = array[i2];
+                    if (v1 > v2) {
+                        array[i1] = v2;
+                        array[i2] = v1;
                     }
                 }
             }
         }
         public static void Sort(short[] array) {
             int length = array.Length;
-            short tmp;
+            short v1;
+            short v2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (array[i1] > array[i2]) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    v1 = array[i1];
+                    v2 = array[i2];
+                    if (v1 > v2) {
+                        array[i1] = v2;
+                        array[i2] = v1;
                     }
                 }
             }
         }
         public static void Sort(int[] array) {
             int length = array.Length;
-            int tmp;
+            int v1;
+            int v2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (array[i1] > array[i2]) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    v1 = array[i1];
+                    v2 = array[i2];
+                    if (v1 > v2) {
+                        array[i1] = v2;
+                        array[i2] = v1;
                     }
                 }
             }
         }
         public static void Sort(long[] array) {
             int length = array.Length;
-            long tmp;
+            long v1;
+            long v2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (array[i1] > array[i2]) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    v1 = array[i1];
+                    v2 = array[i2];
+                    if (v1 > v2) {
+                        array[i1] = v2;
+                        array[i2] = v1;
                     }
                 }
             }
         }
         public static void Sort(float[] array) {
             int length = array.Length;
-            float tmp;
+            float v1;
+            float v2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (array[i1] > array[i2]) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    v1 = array[i1];
+                    v2 = array[i2];
+                    if (v1 > v2) {
+                        array[i1] = v2;
+                        array[i2] = v1;
                     }
                 }
             }
         }
         public static void Sort(double[] array) {
             int length = array.Length;
-            double tmp;
+            double v1;
+            double v2;
             for(int i1=0;i1<length;i1++) {
                 for(int i2=i1+1;i2<length;i2++) {
-                    if (array[i1] > array[i2]) {
-                        //swap values
-                        tmp = array[i1];
-                        array[i1] = array[i2];
-                        array[i2] = tmp;
+                    v1 = array[i1];
+                    v2 = array[i2];
+                    if (v1 > v2) {
+                        array[i1] = v2;
+                        array[i2] = v1;
                     }
                 }
             }
