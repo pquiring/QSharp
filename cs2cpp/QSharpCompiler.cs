@@ -1818,15 +1818,15 @@ namespace QSharpCompiler
                     //lock, block
                     SyntaxNode lockId = GetChildNode(node, 1);
                     string lockIdName = GetTypeName(lockId);
-                    if (lockIdName != "Qt::Core::ThreadLock") {
+                    if ((lockIdName != "Qt::Core::ThreadLock") && (lockIdName != "Qt::Core::ThreadSignal")) {
                         Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock");
                         Environment.Exit(0);
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
-                    method.Append("for($ThreadLockHolder " + holder + "(");
+                    method.Append("for($QMutexHolder " + holder + "($check(");
                     expressionNode(lockId, method);
-                    method.Append(");" + holder + ".Condition();" + holder + ".Signal())");
+                    method.Append(")->$value());" + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock);
                     break;
                 case SyntaxKind.SwitchStatement:

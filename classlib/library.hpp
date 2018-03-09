@@ -11,6 +11,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 #include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
 #include <QtCore/QTimer>
 #include <QtCore/QThread>
 #include <QtCore/QDate>
@@ -175,6 +176,15 @@ struct $class {
   QVector<$class*> *ifaces;
   QVector<$field*> *fields;
   QVector<$method*> *methods;
+};
+
+struct $QMutexHolder {
+  $QMutexHolder(std::shared_ptr<QMutex> lock) {this->lock = lock; lock->lock();}
+  std::shared_ptr<QMutex> lock;
+  bool signal = true;
+  bool Condition() {return signal;}
+  void Signal() {signal = false;}
+  ~$QMutexHolder() {lock->unlock();}
 };
 
 template<typename T>

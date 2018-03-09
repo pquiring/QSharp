@@ -30,7 +30,7 @@ Notes:
  - classlib is a work in progress
 
 C# features that differ:
- - lock () {} only works with Qt.Core.ThreadLock objects
+ - lock () {} only works with Qt.Core.ThreadLock or Qt.Core.ThreadSignal objects
 
 C# features not supported (yet):
  - reflection (partially supported)
