@@ -135,6 +135,10 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->contains(*$check(s)->$q, Qt::CaseInsensitive)");
         }
 
+        public bool ContainsEx(String s) {
+            return CPP.ReturnBool("$q->contains(QRegExp(*$check(s)->$q))");
+        }
+
         public void Replace(char before, char after) {
             CPP.Add("$q->replace((QChar)before, (QChar)after);");
         }
@@ -149,6 +153,10 @@ namespace Qt.Core {
 
         public void ReplaceIgnoreCase(String before, String after) {
             CPP.Add("$q->replace($check(before)->qstring(), $check(after)->qstring(), Qt::CaseInsensitive);");
+        }
+
+        public void ReplaceEx(String before, String after) {
+            CPP.Add("$q->replace(QRegExp($check(before)->qstring()), $check(after)->qstring());");
         }
 
         public int IndexOf(char ch) {
@@ -172,6 +180,11 @@ namespace Qt.Core {
 
         public String[] Split(String str) {
             CPP.Add("QStringList list = $q->split($check(str)->qstring());");
+            return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
+        }
+
+        public String[] SplitEx(String str) {
+            CPP.Add("QStringList list = $q->split(QRegExp($check(str)->qstring()));");
             return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
 
