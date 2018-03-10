@@ -13,8 +13,18 @@ namespace Qt.Core {
         public void Add(T t) {
             CPP.Add("$q->append(t);");
         }
+        public void Add(T[] t) {
+            for(int idx=0;idx<t.Length;idx++) {
+                CPP.Add("$q->append(t->at(idx));");
+            }
+        }
         public void Insert(int idx, T t) {
             CPP.Add("$q->insert(idx, t);");
+        }
+        public void Insert(int idx, T[] t) {
+            for(int tidx=0;tidx<t.Length;tidx++) {
+                CPP.Add("$q->insert(idx, t->at(tidx));");
+            }
         }
         public T Get(int idx) {
             return (T)CPP.ReturnObject("$q->value(idx)");
