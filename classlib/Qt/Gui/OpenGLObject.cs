@@ -3,6 +3,7 @@ using Qt.Core;
 namespace Qt.Gui {
 
 public class OpenGLObject : OpenGLFunctions {
+    //TODO : these public fields should be private
     public Array<float> vpl;    //vertex position list
     public Array<int> vil;    //vertex index list
     public int vpb = -1, vib = -1;    //GL Buffers
@@ -39,7 +40,7 @@ public class OpenGLObject : OpenGLFunctions {
         maxframeCount = 0;
         m = new Matrix4x4();
     }
-    public Object Clone() {
+    public OpenGLObject Clone() {
         OpenGLObject cln = new OpenGLObject();
         cln.vpl = vpl;
         cln.vil = vil;
@@ -56,7 +57,7 @@ public class OpenGLObject : OpenGLFunctions {
         cln.parent = parent;
         cln.maxframeCount = maxframeCount;
         cln.type = type;
-        return (Object)cln;
+        return cln;
     }
     public void SetVisible(bool state) {visible = state;}
     public void AddRotate(float angle, float x, float y, float z, Vertex org) {
@@ -116,7 +117,7 @@ public class OpenGLObject : OpenGLFunctions {
         maps.Get(0).uvl.Add(uv1);
         maps.Get(1).uvl.Add(uv2);
     }
-    public void addVertex(Vertex v) {
+    public void AddVertex(Vertex v) {
         vpl.Add(v.x);
         vpl.Add(v.y);
         vpl.Add(v.z);
@@ -136,7 +137,7 @@ public class OpenGLObject : OpenGLFunctions {
     public void AddPoly(int[] pts) {
         vil.Add(pts);
     }
-    public void copyBuffers() {
+    public void CopyBuffers() {
         int[] ids = new int[1];
 
         if (vpb == -1) {
@@ -180,22 +181,22 @@ public class OpenGLObject : OpenGLFunctions {
         }
         glDrawElements(type, vil.Size(), GL_UNSIGNED_INT);
     }
-    public OpenGLUVMap createUVMap() {
+    public OpenGLUVMap CreateUVMap() {
         OpenGLUVMap map = new OpenGLUVMap(maps.Size());
         maps.Add(map);
         return map;
     }
-    public OpenGLUVMap getUVMap(int idx) {
+    public OpenGLUVMap GetUVMap(int idx) {
         return maps.Get(idx);
     }
-    public OpenGLUVMap getUVMap(String name) {
+    public OpenGLUVMap GetUVMap(String name) {
         for(int a=0;a<maps.Size();a++) {
             OpenGLUVMap map = maps.Get(a);
             if (map.name.Equals(name)) return map;
         }
         return null;
     }
-    public int getUVMaps() {
+    public int GetUVMaps() {
         return maps.Size();
     }
 /*

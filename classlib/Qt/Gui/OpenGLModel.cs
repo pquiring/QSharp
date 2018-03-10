@@ -23,12 +23,12 @@ public class OpenGLModel : Object {
     * Clones deep enough so that the cloned object will include seperate GLObjects, but share vertex, vertex point,
     * and animation data (except for the frame position).
     */
-    public Object Clone() {
+    public OpenGLModel Clone() {
         OpenGLModel c = new OpenGLModel((Matrix4x4)m.Clone());
         int objs = ol.Size();
         for(int a=0;a<objs;a++) c.ol.Add((OpenGLObject)ol.Get(a).Clone());
         c.textures = textures;
-        return (Object)c;
+        return c;
     }
     public void SetVisible(bool state) {visible = state;}
     public void AddObject(OpenGLObject obj) {

@@ -139,7 +139,7 @@ public class OpenGL_BLEND : OpenGLConstants {
         return m.typelen;
     }
 
-    public OpenGLModel load(String filename) {
+    public OpenGLModel Load(String filename) {
         try {
             return loadBlend(new File(filename));
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class OpenGL_BLEND : OpenGLConstants {
             return null;
         }
     }
-    public OpenGLModel load(IOStream fis) {
+    public OpenGLModel Load(IOStream fis) {
         try {
             return loadBlend(fis);
         } catch (Exception e) {
@@ -560,10 +560,10 @@ public class OpenGL_BLEND : OpenGLConstants {
                     BlendImage image = new BlendImage(this);
                     image.read();
                     OpenGLUVMap map;
-                    if (a < obj.getUVMaps())
-                        map = obj.getUVMap(a);
+                    if (a < obj.GetUVMaps())
+                        map = obj.GetUVMap(a);
                     else
-                        map = obj.createUVMap();
+                        map = obj.CreateUVMap();
                     String tn = image.name;
                     //string texture path for now
                     int tnidx = tn.LastIndexOf('/');
@@ -582,8 +582,8 @@ public class OpenGL_BLEND : OpenGLConstants {
                 }
                 case CD_MLOOPUV: { //16
                     //There fis a UV per face per vertex
-                    if (a >= obj.getUVMaps()) {
-                        obj.createUVMap();
+                    if (a >= obj.GetUVMaps()) {
+                        obj.CreateUVMap();
                     }
 //                    Console.WriteLine("loopuv.nr=" + layer_data.nr);
                     for(int b=0;b<layer_data.nr;b++) {

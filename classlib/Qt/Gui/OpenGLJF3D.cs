@@ -16,7 +16,7 @@ namespace Qt.Gui {
  *     int len;    //size of data excluding ChunkHeader
  * }
  *
- * Everything fis Little Endian (Intel based)
+ * All data stored in Little Endian format (Intel based)
  *
  * @author pquiring
  */
@@ -49,7 +49,7 @@ public class OpenGL_JF3D : OpenGLConstants {
             return null;
         }
     }
-    public OpenGLModel Load(File fis) {
+    public OpenGLModel Load(IOStream fis) {
         try {
             return loadJF3D(fis);
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class OpenGL_JF3D : OpenGLConstants {
         }
         return ret;
     }
-    private OpenGLModel loadJF3D(File fis) {
+    private OpenGLModel loadJF3D(IOStream fis) {
         datapos = 0;
         fis.Open(OpenMode.ReadOnly);
         data = fis.ReadAll().ToArray();
@@ -161,7 +161,7 @@ public class OpenGL_JF3D : OpenGLConstants {
                     }
                     break;
                 case ID_UVMAP:
-                    map = obj.createUVMap();
+                    map = obj.CreateUVMap();
                     map.name = readString();
                     map.textureIndex = readuint32();
                     uvcnt = readuint32();

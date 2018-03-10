@@ -36,7 +36,7 @@ public class OpenGLTexture : OpenGLFunctions {
         }
     }
 
-    public bool Load(File fis) {
+    public bool Load(IOStream fis) {
         if (!bitmap.Load(fis)) {
             return false;
         }

@@ -24,12 +24,11 @@ public class OpenGL_3DS : OpenGLConstants {
     private const int _3DS_FLG_EASE_FROM     =    0x10;
     //*.3DS loading (loades meshes, textures and animation - lights are not supported)
     //You should now use GLSCene.load3DS() instead
-    public byte[] data;
-    public int datapos;
+    private byte[] data;
+    private int datapos;
+    private static bool debug = false;
 
-    public static bool debug = false;
-
-    public OpenGLModel load(String filename) {
+    public OpenGLModel Load(String filename) {
         try {
             return load3ds(new File(filename));
         } catch (Exception e) {
@@ -37,7 +36,7 @@ public class OpenGL_3DS : OpenGLConstants {
             return null;
         }
     }
-    public OpenGLModel load(File fis) {
+    public OpenGLModel Load(IOStream fis) {
         try {
             return load3ds(fis);
         } catch (Exception e) {
@@ -61,7 +60,7 @@ public class OpenGL_3DS : OpenGLConstants {
     private float readfloat() {
         return Float.IntBitsToFloat(readuint32());
     }
-    private OpenGLModel load3ds(File fis) {
+    private OpenGLModel load3ds(IOStream fis) {
         OpenGLObject obj = null;
         int head_id;
         int head_len;
@@ -191,7 +190,7 @@ public class OpenGL_3DS : OpenGLConstants {
                 case 0x4130:    //object material name
                     name = readname(head_len);
                     mapidx++;
-                    map = obj.createUVMap();
+                    map = obj.CreateUVMap();
                     map.name = "uvmap" + mapidx;
                     if (obj != null) {
                         //find name in matlist

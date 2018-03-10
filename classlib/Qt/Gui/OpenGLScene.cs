@@ -237,7 +237,7 @@ public class OpenGLScene : OpenGLFunctions {
         }
 
         OpenGL_3DS loader = new OpenGL_3DS();
-        mod = loader.load(fn);
+        mod = loader.Load(fn);
         if (mod == null) return null;
         mtl.Set(fn, mod);
         mod.refcnt = 1;
@@ -258,7 +258,7 @@ public class OpenGLScene : OpenGLFunctions {
         }
 
         OpenGL_BLEND loader = new OpenGL_BLEND();
-        mod = loader.load(fn);
+        mod = loader.Load(fn);
         if (mod == null) return null;
         mtl.Set(fn, mod);
         mod.refcnt = 1;
