@@ -575,8 +575,8 @@ public class OpenGL_BLEND : OpenGLConstants {
                         tn = tn.Substring(tnidx+1);
                     }
                     int tidx = model.AddTexture(tn);
-                    map.textureIndex = tidx;
-                    map.name = layer_name;
+                    map.SetTextureIndex(tidx);
+                    map.SetName(layer_name);
 //                    Console.WriteLine("texpoly=" + map.name);
                     break;
                 }

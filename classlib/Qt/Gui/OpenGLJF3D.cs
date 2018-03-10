@@ -162,8 +162,8 @@ public class OpenGL_JF3D : OpenGLConstants {
                     break;
                 case ID_UVMAP:
                     map = obj.CreateUVMap();
-                    map.name = readString();
-                    map.textureIndex = readuint32();
+                    map.SetName(readString());
+                    map.SetTextureIndex(readuint32());
                     uvcnt = readuint32();
                     if (uvcnt != obj.GetVertexCount()) {
                         Console.WriteLine("Warning:UVMAP size != vertex count");
@@ -281,13 +281,13 @@ public class OpenGL_JF3D : OpenGLConstants {
             for(int m=0;m<maps;m++) {
                 OpenGLUVMap map = obj.GetUVMaps().Get(m);
                 writeuint32(ID_UVMAP);
-                int uvcnt = map.uvl.Size();
-                size = map.name.Length + 1 + 4 + (4 + (uvcnt * 4));
+                int uvcnt = map.GetUVCount() * 2;
+                size = map.GetName().Length + 1 + 4 + (4 + (uvcnt * 4));
                 writeuint32(size);
-                writeString(map.name);
-                writeuint32(map.textureIndex);
+                writeString(map.GetName());
+                writeuint32(map.GetTextureIndex());
                 writeuint32(uvcnt/2);
-                float[] uv = map.uvl.ToArray();
+                float[] uv = map.GetBuffer();
                 for(int a=0;a<uvcnt;a++) {
                     writefloat(uv[a]);
                 }

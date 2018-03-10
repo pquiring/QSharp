@@ -114,9 +114,9 @@ public class OpenGLScene : OpenGLFunctions {
                 int mapCnt = obj.GetUVMapCount();
                 for(int m=0;m<mapCnt;m++) {
                     OpenGLUVMap map = obj.GetUVMap(m);
-                    if (map.texloaded) continue;
-                    if (loadTexture(mod.GetTexture(map.textureIndex), map.idx)) {
-                        map.texloaded = true;
+                    if (map.IsLoaded()) continue;
+                    if (loadTexture(mod.GetTexture(map.GetTextureIndex()), map.GetMapIndex())) {
+                        map.SetLoaded(true);
                     } else {
                         ret = false;
                     }
@@ -208,7 +208,7 @@ public class OpenGLScene : OpenGLFunctions {
             obj = mod.ol.Get(a);
             for(int m=0;m<obj.GetUVMapCount();m++) {
                 OpenGLUVMap map = obj.GetUVMap(m);
-                tl.Get(mod.GetTexture(map.textureIndex)).refcnt--;
+                tl.Get(mod.GetTexture(map.GetTextureIndex())).refcnt--;
             }
         }
         ml.RemoveAt(idx);

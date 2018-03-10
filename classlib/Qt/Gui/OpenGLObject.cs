@@ -150,20 +150,20 @@ public class OpenGLObject : OpenGLFunctions {
     }
     public void AddVertex(float[] xyz, float[] uv) {
         vpl.Add(xyz);
-        maps.Get(0).uvl.Add(uv);
+        maps.Get(0).Add(uv);
     }
     public void AddVertex(float[] xyz, float[] uv1, float[] uv2) {
         vpl.Add(xyz);
-        maps.Get(0).uvl.Add(uv1);
-        maps.Get(1).uvl.Add(uv2);
+        maps.Get(0).Add(uv1);
+        maps.Get(1).Add(uv2);
     }
     public void AddVertex(Vertex v) {
         vpl.Add(v.x);
         vpl.Add(v.y);
         vpl.Add(v.z);
         OpenGLUVMap map = maps.Get(0);
-        map.uvl.Add(v.u);
-        map.uvl.Add(v.v);
+        map.Add(v.u);
+        map.Add(v.v);
     }
     public int GetVertexCount() {
         return vpl.Size() / 3;
@@ -240,7 +240,7 @@ public class OpenGLObject : OpenGLFunctions {
     public OpenGLUVMap GetUVMap(String name) {
         for(int a=0;a<maps.Size();a++) {
             OpenGLUVMap map = maps.Get(a);
-            if (map.name.Equals(name)) return map;
+            if (map.GetName().Equals(name)) return map;
         }
         return null;
     }

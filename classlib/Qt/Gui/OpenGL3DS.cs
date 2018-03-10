@@ -191,14 +191,14 @@ public class OpenGL_3DS : OpenGLConstants {
                     name = readname(head_len);
                     mapidx++;
                     map = obj.CreateUVMap();
-                    map.name = "uvmap" + mapidx;
+                    map.SetName("uvmap" + mapidx);
                     if (obj != null) {
                         //find name in matlist
                         ok = false;
                         for(a=0;a<matlist.Size();a++) {
                             if (matlist.Get(a).name.Equals(name)) {
                                 int idx = mod.AddTexture(matlist.Get(a).filename);
-                                map.textureIndex = idx;
+                                map.SetTextureIndex(idx);
                                 ok = true;
                                 break;
                             }
@@ -206,7 +206,7 @@ public class OpenGL_3DS : OpenGLConstants {
 //                        if (!ok) throw new Exception("0x4130 : object material name not found in list : " + name);
                     }
                     if (debug) {
-                        Console.WriteLine("mat=" + map.textureIndex);
+                        Console.WriteLine("mat=" + map.GetTextureIndex());
                     }
                     break;
                 case 0x4140:    //texture vertex list (UV)
