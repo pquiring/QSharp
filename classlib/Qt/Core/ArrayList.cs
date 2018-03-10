@@ -20,11 +20,13 @@ namespace Qt.Core {
             return (T)CPP.ReturnObject("$q->value(idx)");
         }
         public void Set(int idx, T t) {
-            CPP.Add("(*$q.get())[idx] = t;");
+            CPP.Add("$q->replace(idx, t);");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool IsEmpty() {return Size() == 0;}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
+        public int IndexOf(T t) {return CPP.ReturnInt("$q->indexOf(t)");}
+        public int LastIndexOf(T t) {return CPP.ReturnInt("$q->lastIndexOf(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
         public void Clear() {CPP.Add("$q->clear();");}

@@ -470,11 +470,6 @@ namespace QSharpCompiler
                     if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
                     sb.Append(cls.GetForwardDeclaration());
                     if (cls.Namespace != "") sb.Append("}\r\n");
-                    if (!cls.Interface && cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
-                        cls.bases.Add(new Type("Qt::Core::Object"));
-                        cls.addUsage("Object");
-                        if (cls.Namespace.StartsWith("Qt")) cls.addUsage("QSharpDerived");  //temp fix
-                    }
                 }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
@@ -579,7 +574,7 @@ namespace QSharpCompiler
                     sb.Append(dgate.Namespace);
                     sb.Append("{\r\n");
                 }
-                sb.Append(dgate.GetDeclaration());
+                sb.Append(dgate.GetMethodDeclaration());
                 sb.Append(";\r\n");
                 if (dgate.Namespace.Length > 0) sb.Append("}\r\n");
             }
@@ -615,7 +610,7 @@ namespace QSharpCompiler
                     if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                     createDefaultCtor(cls);
                     if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
-                    sb.Append(cls.GetDeclaration());
+                    sb.Append(cls.GetClassDeclaration());
                     if (cls.Namespace != "") sb.Append("}\r\n");
                     if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
                 }
@@ -849,6 +844,9 @@ namespace QSharpCompiler
                 }
                 sb.Append(")\r\n");
             }
+            if (Program.msvc) {
+                sb.Append("target_compile_options(" + Program.target + " PRIVATE /bigobj)\r\n");
+            }
             if (Program.library && !Program.shared) {
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy cpp/" + Program.target + ".hpp " + Program.home + "/include)\r\n");
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:" + Program.target + "> " + Program.home + "/lib)\r\n");
@@ -1015,6 +1013,11 @@ namespace QSharpCompiler
                         Environment.Exit(1);
                         break;
                 }
+            }
+            if (!cls.Interface && cls.bases.Count == 0 && (!(cls.Namespace == "Qt::Core" && cls.name == "Object"))) {
+                cls.bases.Add(new Type("Qt::Core::Object"));
+                cls.addUsage("Object");
+                if (cls.Namespace.StartsWith("Qt")) cls.addUsage("QSharpDerived");  //temp fix
             }
         }
 
@@ -1751,7 +1754,7 @@ namespace QSharpCompiler
                                     //catch (Exception ?)
                                     SyntaxNode catchDecl = GetChildNode(child, 1);
                                     method.Append(" catch(std::shared_ptr<");
-                                    expressionNode(GetChildNode(catchDecl), method);  //exception type
+                                    expressionNode(GetChildNode(catchDecl), method, false, false, false, false, true);  //exception type
                                     method.Append("> ");
                                     method.Append(file.model.GetDeclaredSymbol(catchDecl).Name);  //exception variable name
                                     method.Append(")");
@@ -1845,7 +1848,7 @@ namespace QSharpCompiler
                             switch (child.Kind()) {
                                 case SyntaxKind.CaseSwitchLabel:
                                     method.Append("case ");
-                                    expressionNode(GetChildNode(child), method);
+                                    numericNode(GetChildNode(child), method);
                                     method.Append(":");
                                     break;
                                 case SyntaxKind.DefaultSwitchLabel:
@@ -1949,6 +1952,35 @@ namespace QSharpCompiler
             return args.Length;
         }
 
+        private String ConvertChar(String value) {
+            if (value == "\\") return "'\\\\'";
+            if (value == "\t") return "'\\t'";
+            if (value == "\r") return "'\\r'";
+            if (value == "\n") return "'\\n'";
+            return "'" + value + "'";
+        }
+
+        private void numericNode(SyntaxNode node, OutputBuffer ob) {
+            String value = file.model.GetConstantValue(node).Value.ToString();
+            String valueType = GetTypeName(node);
+            switch (valueType) {
+                case "char":
+                    value = ConvertChar(value);
+                    break;
+                case "float":
+                    if (value.IndexOf(".") == -1) value += ".0";
+                    value += "f";
+                    break;
+                case "double":
+                    if (value.IndexOf(".") == -1) value += ".0";
+                    break;
+                case "long":
+                    value += "LL";
+                    break;
+            }
+            ob.Append(value);
+        }
+
         private void expressionNode(SyntaxNode node, OutputBuffer ob, bool lvalue = false, bool argument = false, bool invoke = false, bool assignment = false, bool first = false) {
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             Type type;
@@ -2028,21 +2060,7 @@ namespace QSharpCompiler
                     ob.Append("nullptr");
                     break;
                 case SyntaxKind.NumericLiteralExpression:
-                    String value = file.model.GetConstantValue(node).Value.ToString();
-                    String valueType = GetTypeName(node);
-                    switch (valueType) {
-                        case "float":
-                            if (value.IndexOf(".") == -1) value += ".0";
-                            value += "f";
-                            break;
-                        case "double":
-                            if (value.IndexOf(".") == -1) value += ".0";
-                            break;
-                        case "long":
-                            value += "LL";
-                            break;
-                    }
-                    ob.Append(value);
+                    numericNode(node, ob);
                     break;
                 case SyntaxKind.TrueLiteralExpression:
                     ob.Append("true");
@@ -2058,9 +2076,8 @@ namespace QSharpCompiler
                     ob.Append(")");
                     break;
                 case SyntaxKind.CharacterLiteralExpression:
-                    ob.Append("(char16)\'");
-                    outString(file.model.GetConstantValue(node).Value.ToString(), ob);
-                    ob.Append("\'");
+                    ob.Append("(char16)");
+                    outString(ConvertChar(file.model.GetConstantValue(node).Value.ToString()), ob);
                     break;
                 case SyntaxKind.SimpleMemberAccessExpression:
                     SyntaxNode left = GetChildNode(node, 1);
@@ -2918,7 +2935,7 @@ namespace QSharpCompiler
             }
             return sb.ToString();
         }
-        public string GetDeclaration() {
+        public string GetClassDeclaration() {
             StringBuilder sb = new StringBuilder();
             bool first;
             String full_name = FullName(Namespace, fullname);
@@ -2955,20 +2972,20 @@ namespace QSharpCompiler
             }
             sb.Append("{\r\n");
             foreach(var inner in inners) {
-                sb.Append(inner.GetDeclaration());
+                sb.Append(inner.GetClassDeclaration());
             }
             if (cpp != null) sb.Append(cpp);
             if (!Interface) {
                 sb.Append("public: virtual $class* $getType() {return &$class_" + full_name + ";}\r\n");
             }
             foreach(var field in fields) {
-                sb.Append(field.GetDeclaration());
+                sb.Append(field.GetFieldDeclaration());
             }
             foreach(var method in methods) {
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
-                sb.Append(method.GetDeclaration());
+                sb.Append(method.GetMethodDeclaration());
                 if (Generic) {
                     if (method.name == "$init") {
                         sb.Append("{\r\n");
@@ -3062,7 +3079,7 @@ namespace QSharpCompiler
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
-                sb.Append(method.type.GetTypeDeclaration());
+                sb.Append(method.type.GetTypeDeclaration(true, true));
                 sb.Append(" ");
                 sb.Append(method.cls.fullname);
                 sb.Append("::");
@@ -3215,11 +3232,9 @@ namespace QSharpCompiler
                         full = full.Substring(2);
                     }
                 }
-            }
-            idx = full.IndexOf("(");
+            }            idx = full.IndexOf("(");
             if (idx != -1) full = full.Substring(0, idx);
             full_name = full.Replace("::", "_");
-//            full = "::" + full;
             idx = full.LastIndexOf("::");
             if (idx == -1) {
                 type = full;
@@ -3328,7 +3343,7 @@ namespace QSharpCompiler
             sb.Append(GetGenericArgs());
             return sb.ToString();
         }
-        public string GetTypeDeclaration(bool inc_arrays = true) {
+        public string GetTypeDeclaration(bool inc_arrays = true, bool inc_outter = false) {
             StringBuilder sb = new StringBuilder();
             if (inc_arrays) {
                 for(int a=0;a<arrays;a++) {
@@ -3340,7 +3355,7 @@ namespace QSharpCompiler
                     sb.Append("std::weak_ptr<");
                 else
                     sb.Append("std::shared_ptr<");
-                if (cls != null && cls.outter != null) {
+                if (cls != null && cls.outter != null && inc_outter) {
                     sb.Append(cls.outter.fullname);
                     sb.Append("::");
                 }
@@ -3400,7 +3415,7 @@ namespace QSharpCompiler
         public bool get_Property;
         public bool set_Property;
 
-        public string GetDeclaration() {
+        public string GetFieldDeclaration() {
             StringBuilder sb = new StringBuilder();
             sb.Append(GetFlags(false));
             if (array) {
@@ -3464,12 +3479,12 @@ namespace QSharpCompiler
             sb.Append(")");
             return sb.ToString();
         }
-        public string GetDeclaration() {
+        public string GetMethodDeclaration() {
             StringBuilder sb = new StringBuilder();
             if (!isDelegate) sb.Append(type.GetFlags(false));
             sb.Append(" ");
             if (isDelegate) sb.Append("typedef std::function<");
-            sb.Append(type.GetTypeDeclaration());
+            sb.Append(type.GetTypeDeclaration(true, true));
             sb.Append(" ");
             if (!isDelegate) sb.Append(name);
             sb.Append(GetArgs(true));

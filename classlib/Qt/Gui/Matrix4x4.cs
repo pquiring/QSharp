@@ -13,6 +13,16 @@ namespace Qt.Gui {
             CPP.Add("$q = std::make_shared<QMatrix4x4>();");
             CPP.Add("m = Qt::QSharp::FixedArray<float>::$new($q->data(), 16);");
         }
+        public Matrix4x4(Matrix4x4 other) {
+            CPP.Add("$q = std::make_shared<QMatrix4x4>();");
+            CPP.Add("m = Qt::QSharp::FixedArray<float>::$new($q->data(), 16);");
+            for(int a=0;a<16;a++) {
+                m[a] = other.m[a];
+            }
+        }
+        public Matrix4x4 Clone() {
+            return new Matrix4x4(this);
+        }
         public float[] GetBuffer() {
             return m;
         }

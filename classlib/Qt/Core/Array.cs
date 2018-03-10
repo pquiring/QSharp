@@ -15,7 +15,7 @@ namespace Qt.Core {
         }
         public void Add(T[] t) {
             for(int idx=0;idx<t.Length;idx++) {
-                CPP.Add("$q->append(t[idx]);");
+                CPP.Add("$q->append(t->at(idx));");
             }
         }
         public void Insert(int idx, T t) {
@@ -23,14 +23,14 @@ namespace Qt.Core {
         }
         public void Insert(int idx, T[] t) {
             for(int tidx=0;tidx<t.Length;tidx++) {
-                CPP.Add("$q->insert(idx, t[tidx]);");
+                CPP.Add("$q->insert(idx, t->at(tidx));");
             }
         }
         public T Get(int idx) {
             return (T)CPP.ReturnObject("$q->at(idx)");
         }
         public void Set(int idx, T t) {
-            CPP.ReturnObject("(*$q.get())[idx] = t;");
+            CPP.ReturnObject("$q->replace(idx, t);");
         }
         /** Returns unsafe backing buffer. */
         public T[] GetBuffer() {
@@ -40,6 +40,8 @@ namespace Qt.Core {
         public bool IsEmpty() {return Size() == 0;}
         public int Count {get {return Size();}}
         public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
+        public int IndexOf(T t) {return CPP.ReturnInt("$q->indexOf(t)");}
+        public int LastIndexOf(T t) {return CPP.ReturnInt("$q->lastIndexOf(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
         public void Clear() {CPP.Add("$q->clear();");}
