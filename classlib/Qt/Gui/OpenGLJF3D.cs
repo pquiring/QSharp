@@ -128,11 +128,11 @@ public class OpenGL_JF3D : OpenGLConstants {
                 case ID_OBJECT:
                     obj = new OpenGLObject();
                     model.AddObject(obj);
-                    obj.name = readString();
-                    obj.type = readuint32();
-                    obj.org.x = readfloat();
-                    obj.org.y = readfloat();
-                    obj.org.z = readfloat();
+                    obj.SetName(readString());
+                    obj.SetType(readuint32());
+                    obj.GetOrigin().x = readfloat();
+                    obj.GetOrigin().y = readfloat();
+                    obj.GetOrigin().z = readfloat();
                     vcnt = readuint32();    //vertex count
                     for(int v=0;v<vcnt;v++) {
                         float fx = readfloat();
@@ -141,7 +141,7 @@ public class OpenGL_JF3D : OpenGLConstants {
                         obj.AddVertex(new float[] {fx, fy, fz});
                     }
                     pcnt = readuint32();    //poly count
-                    switch (obj.type) {
+                    switch (obj.GetType()) {
                         case GL_TRIANGLES:
                             pcnt *= 3;
                             break;
@@ -149,7 +149,7 @@ public class OpenGL_JF3D : OpenGLConstants {
                             pcnt *= 4;
                             break;
                         default:
-                            Console.WriteLine("GL_JF3D:Error Unknown GL Type:" + obj.type);
+                            Console.WriteLine("GL_JF3D:Error Unknown GL Type:" + obj.GetType());
                             return null;
                     }
                     for(int p=0;p<pcnt;p++) {
@@ -248,21 +248,21 @@ public class OpenGL_JF3D : OpenGLConstants {
         for(int o=0;o<model.ol.Size();o++) {
             OpenGLObject obj = model.ol.Get(o);
             writeuint32(ID_OBJECT);
-            int vcnt = obj.vpl.Size();
-            int pcnt = obj.vil.Size();
-            size = obj.name.Length + 1 + 4 + (4*3) + (4 + (vcnt * 4)) + (4 + (pcnt * 4));
+            int vcnt = obj.GetVertexCount() * 3;
+            int pcnt = obj.GetPolyCount();
+            size = obj.GetName().Length + 1 + 4 + (4*3) + (4 + (vcnt * 4)) + (4 + (pcnt * 4));
             writeuint32(size);
-            writeString(obj.name);
-            writeuint32(obj.type);
-            writefloat(obj.org.x);
-            writefloat(obj.org.y);
-            writefloat(obj.org.z);
+            writeString(obj.GetName());
+            writeuint32(obj.GetType());
+            writefloat(obj.GetOrigin().x);
+            writefloat(obj.GetOrigin().y);
+            writefloat(obj.GetOrigin().z);
             writeuint32(vcnt / 3);
-            float[] xyz = obj.vpl.ToArray();
+            float[] xyz = obj.GetVertexBuffer();
             for(int a=0;a<vcnt;a++) {
                 writefloat(xyz[a]);
             }
-            switch (obj.type) {
+            switch (obj.GetType()) {
                 case GL_TRIANGLES:
                     writeuint32(pcnt / 3);
                     break;
@@ -270,16 +270,16 @@ public class OpenGL_JF3D : OpenGLConstants {
                     writeuint32(pcnt / 4);
                     break;
             }
-            int[] pts = obj.vil.ToArray();
+            int[] pts = obj.GetPolyBuffer();
             for(int a=0;a<pcnt;a++) {
                 writeuint32(pts[a]);
             }
-            int maps = obj.maps.Size();
+            int maps = obj.GetUVMaps().Size();
             if (maps == 0) {
-                Console.WriteLine("GL_JF3D:Warning:No UVMaps found for object:" + obj.name);
+                Console.WriteLine("GL_JF3D:Warning:No UVMaps found for object:" + obj.GetName());
             }
             for(int m=0;m<maps;m++) {
-                OpenGLUVMap map = obj.maps.Get(m);
+                OpenGLUVMap map = obj.GetUVMaps().Get(m);
                 writeuint32(ID_UVMAP);
                 int uvcnt = map.uvl.Size();
                 size = map.name.Length + 1 + 4 + (4 + (uvcnt * 4));

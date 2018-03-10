@@ -422,7 +422,7 @@ public class OpenGL_BLEND : OpenGLConstants {
         if (bObj.type != 1) return;    //not a mesh bobject (could be camera, light, etc.)
         obj = new OpenGLObject();
         model.AddObject(obj);
-        obj.name = bObj.id.name.Substring(2);
+        obj.SetName(bObj.id.name.Substring(2));
 //        Console.WriteLine("bobject=" + obj.name);
         chunk = findChunkByPtr(bObj.data);
         if (chunk == null) {
@@ -432,11 +432,11 @@ public class OpenGL_BLEND : OpenGLConstants {
         setData(chunk.raw);
 //                Console.WriteLine("Mesh@" + Int32.toString(raw.fileOffset, 16));
         mesh.read();
-        obj.org.x = bObj.loc[0];
+        obj.GetOrigin().x = bObj.loc[0];
         org[0] = bObj.loc[0];
-        obj.org.y = bObj.loc[1];
+        obj.GetOrigin().y = bObj.loc[1];
         org[1] = bObj.loc[1];
-        obj.org.z = bObj.loc[2];
+        obj.GetOrigin().z = bObj.loc[2];
         org[2] = bObj.loc[2];
         //find mvert
         chunk = findChunkByPtr(mesh.mvert);
@@ -515,7 +515,7 @@ public class OpenGL_BLEND : OpenGLConstants {
                 obj.AddPoly(new int[] {vidx++});
             }
         }
-        obj.type = type;
+        obj.SetType(type);
         //find customdata types
         readLayer(mesh.vdata.layers, "vdata");
         readLayer(mesh.edata.layers, "edata");
@@ -560,7 +560,7 @@ public class OpenGL_BLEND : OpenGLConstants {
                     BlendImage image = new BlendImage(this);
                     image.read();
                     OpenGLUVMap map;
-                    if (a < obj.GetUVMaps())
+                    if (a < obj.GetUVMapCount())
                         map = obj.GetUVMap(a);
                     else
                         map = obj.CreateUVMap();
@@ -582,7 +582,7 @@ public class OpenGL_BLEND : OpenGLConstants {
                 }
                 case CD_MLOOPUV: { //16
                     //There fis a UV per face per vertex
-                    if (a >= obj.GetUVMaps()) {
+                    if (a >= obj.GetUVMapCount()) {
                         obj.CreateUVMap();
                     }
 //                    Console.WriteLine("loopuv.nr=" + layer_data.nr);

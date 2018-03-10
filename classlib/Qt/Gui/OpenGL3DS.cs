@@ -141,14 +141,14 @@ public class OpenGL_3DS : OpenGLConstants {
                     skip = head_len;
                     if (done_vertex) {Console.WriteLine("Warning : 2 vertex lists found for 1 object?");break;}
                     obj = new OpenGLObject();
-                    obj.type = GL_TRIANGLES;    //3ds only supports triangles
-                    obj.name = objname;
+                    obj.SetType(GL_TRIANGLES);    //3ds only supports triangles
+                    obj.SetName(objname);
                     mapidx = -1;
                     mod.ol.Add(obj);
                     objlist.Add(objname);
                     _siz = readuint16();
                     skip-=2;
-                    vertexidx = obj.vpl.Size();
+                    vertexidx = obj.GetVertexCount() * 3;
                     vertexcnt = _siz;
                     if (_siz == 0) break;
                     _float = new float[_siz * 3];
@@ -238,10 +238,10 @@ public class OpenGL_3DS : OpenGLConstants {
 //                        obj.m.m[a+s] = readfloat();
 //                        if (debug) Console.WriteLine("m=" + obj.m.m[a+s]);
                     }
-                    obj.org.x = readfloat();
-                    obj.org.y = readfloat();
-                    obj.org.z = readfloat();
-                    if (debug) Console.WriteLine("pos=" + obj.org.x + "," + obj.org.y + "," + obj.org.z);
+                    obj.GetOrigin().x = readfloat();
+                    obj.GetOrigin().y = readfloat();
+                    obj.GetOrigin().z = readfloat();
+                    if (debug) Console.WriteLine("pos=" + obj.GetOrigin().x + "," + obj.GetOrigin().y + "," + obj.GetOrigin().z);
                     break;
                 case 0xb000:    //keyframe header
                     break;
@@ -267,7 +267,7 @@ public class OpenGL_3DS : OpenGLConstants {
                         objidx = -1;
                     } else {
                         obj = mod.ol.Get(objidx);
-                        if (parent != 65535) obj.parent = parent;
+                        if (parent != 65535) obj.SetParent(parent);
                         obj = null;
                     }
 //Console.WriteLine("0xb010 : name=" + name + ":objidx=" + objidx + ":parent=" + parent);
@@ -309,8 +309,8 @@ public class OpenGL_3DS : OpenGLConstants {
                         trans.y = _float[1];
                         trans.z = _float[2];
 //Console.WriteLine("pos["+frameno+"]:"+pos.x+","+pos.y+","+pos.z+":flgs="+u16);
-                        obj.tl.Set(frameno, trans);
-                        if (obj.maxframeCount < frameno) obj.maxframeCount = frameno;
+                        obj.GetTranslateMap().Set(frameno, trans);
+                        if (obj.GetMaxFrameCount() < frameno) obj.SetMaxFrameCount(frameno);
                     }
                     _float = null;
                     obj = null;
@@ -353,8 +353,8 @@ public class OpenGL_3DS : OpenGLConstants {
                         rot.y = _float[2];
                         rot.z = _float[3];
 //Console.WriteLine("rot["+frameno+"]:"+rot.angle+","+rot.x+","+rot.y+","+rot.z+":flgs="+u16);
-                        obj.rl.Set(frameno, rot);
-                        if (obj.maxframeCount < frameno) obj.maxframeCount = frameno;
+                        obj.GetRotateMap().Set(frameno, rot);
+                        if (obj.GetMaxFrameCount() < frameno) obj.SetMaxFrameCount(frameno);
                     }
                     _float = null;
                     obj = null;
@@ -396,8 +396,8 @@ public class OpenGL_3DS : OpenGLConstants {
                         scale.y = _float[1];
                         scale.z = _float[2];
 //Console.WriteLine("scale["+frameno+"]:"+scale.x+","+scale.y+","+scale.z+":flgs="+u16);
-                        obj.sl.Set(frameno, scale);
-                        if (obj.maxframeCount < frameno) obj.maxframeCount = frameno;
+                        obj.GetScaleMap().Set(frameno, scale);
+                        if (obj.GetMaxFrameCount() < frameno) obj.SetMaxFrameCount(frameno);
                     }
                     _float = null;
                     obj = null;

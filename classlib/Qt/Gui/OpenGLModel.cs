@@ -37,7 +37,7 @@ public class OpenGLModel : Object {
     public OpenGLObject GetObject(String name) {
         for(int a=0;a<ol.Size();a++) {
             OpenGLObject o = ol.Get(a);
-            if (o.name.Equals(name)) {
+            if (o.GetName().Equals(name)) {
                 return o;
             }
         }

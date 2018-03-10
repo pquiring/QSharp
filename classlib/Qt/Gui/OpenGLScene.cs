@@ -111,9 +111,9 @@ public class OpenGLScene : OpenGLFunctions {
             int objCnt = mod.ol.Size();
             for(int b=0;b<objCnt;b++) {
                 obj = mod.ol.Get(b);
-                int mapCnt = obj.maps.Size();
+                int mapCnt = obj.GetUVMapCount();
                 for(int m=0;m<mapCnt;m++) {
-                    OpenGLUVMap map = obj.maps.Get(m);
+                    OpenGLUVMap map = obj.GetUVMap(m);
                     if (map.texloaded) continue;
                     if (loadTexture(mod.GetTexture(map.textureIndex), map.idx)) {
                         map.texloaded = true;
@@ -206,8 +206,8 @@ public class OpenGLScene : OpenGLFunctions {
         int size = mod.ol.Size();
         for(int a=0;a<size;a++) {
             obj = mod.ol.Get(a);
-            for(int m=0;m<obj.maps.Size();m++) {
-                OpenGLUVMap map = obj.maps.Get(m);
+            for(int m=0;m<obj.GetUVMapCount();m++) {
+                OpenGLUVMap map = obj.GetUVMap(m);
                 tl.Get(mod.GetTexture(map.textureIndex)).refcnt--;
             }
         }

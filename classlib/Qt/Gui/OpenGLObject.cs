@@ -4,27 +4,26 @@ namespace Qt.Gui {
 
 public class OpenGLObject : OpenGLFunctions {
     //TODO : these public fields should be private
-    public Array<float> vpl;    //vertex position list
-    public Array<int> vil;    //vertex index list
-    public int vpb = -1, vib = -1;    //GL Buffers
+    private Array<float> vpl;    //vertex position list
+    private Array<int> vil;    //vertex index list (poly)
+    private int vpb = -1, vib = -1;    //GL Buffers
 
-    public int type = GL_TRIANGLES;    //GL_TRIANGLES or GL_QUADS
+    private int type = GL_TRIANGLES;    //GL_TRIANGLES or GL_QUADS
 
-    public ArrayList<OpenGLUVMap> maps = new ArrayList<OpenGLUVMap>();
+    private ArrayList<OpenGLUVMap> maps = new ArrayList<OpenGLUVMap>();
 
-    public bool visible = true;
-    public bool needCopyBuffers = true;
+    private bool visible = true;
 //animation data
-    public Map<int, OpenGLTranslate> tl;    //move list
-    public Map<int, OpenGLRotate> rl;    //rotation list
-    public Map<int, OpenGLScale> sl;    //scale list
-    public int frameIndex;
-    public Matrix4x4 m;    //current rotation, translation, scale
-    public float[] color;    //RGBA (default = 1.0f,1.0f,1.0f,1.0f)
-    public Vertex org;    //origin (default = 0.0f,0.0f,0.0f)
-    public String name;
-    public int parent;    //a 3ds file field (not used)
-    public int maxframeCount;
+    private Map<int, OpenGLTranslate> tl;    //move list
+    private Map<int, OpenGLRotate> rl;    //rotation list
+    private Map<int, OpenGLScale> sl;    //scale list
+    private int frameIndex;
+    private Matrix4x4 m;    //current rotation, translation, scale
+    private float[] color;    //RGBA (default = 1.0f,1.0f,1.0f,1.0f)
+    private Vertex org;    //origin (default = 0.0f,0.0f,0.0f)
+    private String name;
+    private int parent;    //a 3ds file field (not used)
+    private int maxframeCount;
     public OpenGLObject() {
         frameIndex = 0;
         vpl = new Array<float>();
@@ -39,6 +38,44 @@ public class OpenGLObject : OpenGLFunctions {
         parent = -1;
         maxframeCount = 0;
         m = new Matrix4x4();
+    }
+    public void SetName(String name) {
+        this.name = name;
+    }
+    public String GetName() {
+        return name;
+    }
+    /** Get Polygone type (default = GL_TRIANGLES) */
+    public new int GetType() {
+        return type;
+    }
+    /** Set Polygon type (default = GL_TRIANGLES) */
+    public void SetType(int type) {
+        this.type = type;
+    }
+    public ArrayList<OpenGLUVMap> GetUVMaps() {
+        return maps;
+    }
+    public Map<int, OpenGLTranslate> GetTranslateMap() {
+        return tl;
+    }
+    public Map<int, OpenGLRotate> GetRotateMap() {
+        return rl;
+    }
+    public Map<int, OpenGLScale> GetScaleMap() {
+        return sl;
+    }
+    public int GetParent() {
+        return parent;
+    }
+    public void SetParent(int parent) {
+        this.parent = parent;
+    }
+    public int GetMaxFrameCount() {
+        return maxframeCount;
+    }
+    public void SetMaxFrameCount(int maxframeCount) {
+        this.maxframeCount = maxframeCount;
     }
     public OpenGLObject Clone() {
         OpenGLObject cln = new OpenGLObject();
@@ -58,6 +95,9 @@ public class OpenGLObject : OpenGLFunctions {
         cln.maxframeCount = maxframeCount;
         cln.type = type;
         return cln;
+    }
+    public Vertex GetOrigin() {
+        return org;
     }
     public void SetVisible(bool state) {visible = state;}
     public void AddRotate(float angle, float x, float y, float z, Vertex org) {
@@ -128,6 +168,9 @@ public class OpenGLObject : OpenGLFunctions {
     public int GetVertexCount() {
         return vpl.Size() / 3;
     }
+    public float[] GetVertexBuffer() {
+        return vpl.ToArray();
+    }
     public void AddUV(float[] uv) {
         maps.Get(0).Add(uv);
     }
@@ -136,6 +179,12 @@ public class OpenGLObject : OpenGLFunctions {
     }
     public void AddPoly(int[] pts) {
         vil.Add(pts);
+    }
+    public int GetPolyCount() {
+        return vil.Size();
+    }
+    public int[] GetPolyBuffer() {
+        return vil.ToArray();
     }
     public void CopyBuffers() {
         int[] ids = new int[1];
@@ -157,7 +206,6 @@ public class OpenGLObject : OpenGLFunctions {
         }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vib);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, vil.Size() * 4, vil.ToArray(), GL_STREAM_DRAW);
-        needCopyBuffers = false;
     }
     public void BindBuffers(OpenGLScene scene) {
         glBindBuffer(GL_ARRAY_BUFFER, vpb);
@@ -196,7 +244,7 @@ public class OpenGLObject : OpenGLFunctions {
         }
         return null;
     }
-    public int GetUVMaps() {
+    public int GetUVMapCount() {
         return maps.Size();
     }
 /*
