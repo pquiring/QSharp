@@ -52,10 +52,10 @@ namespace Qt.Gui {
             CPP.Add("(*$q.get())/=divsor;");
         }
         public static float DotProduct(Vector3D a, Vector3D b) {
-            return CPP.ReturnFloat("QVector3D::dotProduct(*(a->$q), *(b->$q))");
+            return CPP.ReturnFloat("QVector3D::dotProduct(*($check(a)->$q), *($check(b)->$q))");
         }
         public static Vector3D CrossProduct(Vector3D a, Vector3D b) {
-            return (Vector3D)CPP.ReturnObject("Vector3D::$new(QVector3D::crossProduct(*(a->$q), *(b->$q)))");
+            return (Vector3D)CPP.ReturnObject("Vector3D::$new(QVector3D::crossProduct(*($check(a)->$q), *($check(b)->$q)))");
         }
     }
 }

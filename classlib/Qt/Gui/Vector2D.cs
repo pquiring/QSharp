@@ -25,10 +25,10 @@ namespace Qt.Gui {
             CPP.Add("$q->normalize();");
         }
         public void Add(Vector2D other) {
-            CPP.Add("(*$q.get())+=(*(other->$value()));");
+            CPP.Add("(*$q.get())+=(*($check(other)->$value()));");
         }
         public void Sub(Vector2D other) {
-            CPP.Add("(*$q.get())-=(*(other->$value()));");
+            CPP.Add("(*$q.get())-=(*($check(other)->$value()));");
         }
         public void Multiply(float factor) {
             CPP.Add("(*$q.get())*=factor;");
@@ -37,7 +37,7 @@ namespace Qt.Gui {
             CPP.Add("(*$q.get())/=divsor;");
         }
         public static float DotProduct(Vector2D a, Vector2D b) {
-            return CPP.ReturnFloat("QVector2D::dotProduct(*(a->$q), *(b->$q))");
+            return CPP.ReturnFloat("QVector2D::dotProduct(*($check(a)->$q), *($check(b)->$q))");
         }
     }
 }

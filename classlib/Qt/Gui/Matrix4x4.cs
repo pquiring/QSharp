@@ -180,7 +180,7 @@ namespace Qt.Gui {
         }
         /** this = this * other */
         public void Multiply4x4(Matrix4x4 other) {
-            CPP.Add("(*$q.get())*=(*(other->$value()));");
+            CPP.Add("(*$q.get())*=(*($check(other)->$value()));");
         }
         /** vec = this * vec */
         public void Multiply4x4(Vector3D vec) {

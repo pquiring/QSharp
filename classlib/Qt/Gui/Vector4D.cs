@@ -48,7 +48,7 @@ namespace Qt.Gui {
             CPP.Add("(*$q.get())/=divsor;");
         }
         public static float DotProduct(Vector4D a, Vector4D b) {
-            return CPP.ReturnFloat("QVector4D::dotProduct(*(a->$q), *(b->$q))");
+            return CPP.ReturnFloat("QVector4D::dotProduct(*($check(a)->$q), *($check(b)->$q))");
         }
     }
 }
