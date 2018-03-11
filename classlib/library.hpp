@@ -104,6 +104,9 @@
 #include <QtMultimedia/QAudioDecoder>
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioBuffer>
+#include <QtMultimedia/QAudioInput>
+#include <QtMultimedia/QAudioOutput>
+#include <QtMultimedia/QAudioDeviceInfo>
 
 //include Quazip Headers
 #include <quazip/quazip.h>

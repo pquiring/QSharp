@@ -2397,6 +2397,16 @@ namespace QSharpCompiler
                     expressionNode(asObj, ob);
                     ob.Append(") : nullptr)");
                     break;
+                case SyntaxKind.ConditionalExpression:
+                    // (cond ? val1 : val2)
+                    method.Append("(");
+                    expressionNode(GetChildNode(node, 1), method);
+                    method.Append("?");
+                    expressionNode(GetChildNode(node, 2), method);
+                    method.Append(":");
+                    expressionNode(GetChildNode(node, 3), method);
+                    method.Append(")");
+                    break;
                 default:
                     Console.WriteLine("Error:Unsupported expression:" + node.Kind());
                     Environment.Exit(0);
