@@ -36,6 +36,12 @@ namespace Qt.Core {
         public static double Abs(double x) {
             return CPP.ReturnDouble("qFabs(x)");
         }
+        public static double Min(double v1, double v2) {
+            return v1 < v2 ? v1 : v2;
+        }
+        public static double Max(double v1, double v2) {
+            return v1 > v2 ? v1 : v2;
+        }
         public static int Floor(double x) {
             return CPP.ReturnInt("qFloor(x)");
         }
