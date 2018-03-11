@@ -36,7 +36,6 @@ C# features not supported (yet):
  - reflection (partially supported)
  - operators
  - events
- - goto switch case label
  - linq
  - etc.
 

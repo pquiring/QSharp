@@ -846,6 +846,7 @@ namespace QSharpCompiler
             }
             if (Program.msvc) {
                 sb.Append("target_compile_options(" + Program.target + " PRIVATE /bigobj)\r\n");
+                sb.Append("target_compile_options(" + Program.target + " PRIVATE /wd4102)\r\n");  //$case labels not used
             }
             if (Program.library && !Program.shared) {
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy cpp/" + Program.target + ".hpp " + Program.home + "/include)\r\n");
@@ -1842,6 +1843,9 @@ namespace QSharpCompiler
                     method.Append("switch (");
                     expressionNode(var, method);
                     method.Append(") {\r\n");
+                    method.currentSwitch++;
+                    method.switchIDs[method.currentSwitch] = method.nextSwitchID++;
+                    int caseIdx = 0;
                     foreach(var section in node.ChildNodes()) {
                         if (section.Kind() != SyntaxKind.SwitchSection) continue;
                         foreach(var child in section.ChildNodes()) {
@@ -1849,17 +1853,25 @@ namespace QSharpCompiler
                                 case SyntaxKind.CaseSwitchLabel:
                                     method.Append("case ");
                                     numericNode(GetChildNode(child), method);
-                                    method.Append(":");
+                                    method.Append(":\r\n");
+                                    method.Append("$case_" + method.switchIDs[method.currentSwitch] + "_" + caseIdx++);
+                                    method.Append(":\r\n");
+                                    method.Append("{\r\n");
                                     break;
                                 case SyntaxKind.DefaultSwitchLabel:
-                                    method.Append("default:");
+                                    method.Append("default:\r\n");
+                                    method.Append("$default_" + method.switchIDs[method.currentSwitch]);
+                                    method.Append(":\r\n");
+                                    method.Append("{\r\n");
                                     break;
                                 default:
                                     statementNode(child);
                                     break;
                             }
                         }
+                        method.Append("}\r\n");
                     }
+                    method.currentSwitch--;
                     method.Append("}\r\n");
                     break;
                 case SyntaxKind.BreakStatement:
@@ -1868,11 +1880,40 @@ namespace QSharpCompiler
                 case SyntaxKind.ContinueStatement:
                     method.Append("continue;\r\n");
                     break;
+                case SyntaxKind.GotoCaseStatement:
+                    String value = file.model.GetConstantValue(GetChildNode(node)).Value.ToString();
+                    String index = FindCase(node, value);
+                    method.Append("goto $case_" + + method.switchIDs[method.currentSwitch] + "_" + index + ";\r\n");
+                    break;
+                case SyntaxKind.GotoDefaultStatement:
+                    method.Append("goto $default_" + method.switchIDs[method.currentSwitch] + ";\r\n");
+                    break;
                 default:
                     Console.WriteLine("Error:Statement not supported:" + node.Kind());
                     Environment.Exit(0);
                     break;
             }
+        }
+
+        public String FindCase(SyntaxNode node, String value) {
+            //first find parent SwitchStatement
+            while (node.Kind() != SyntaxKind.SwitchStatement) {
+                node = node.Parent;
+            }
+            int caseIdx = 0;
+            //interate over SwitchSection/CaseSwitchLabel to find matching value
+            foreach(var section in node.ChildNodes()) {
+                if (section.Kind() != SyntaxKind.SwitchSection) continue;
+                SyntaxNode caseSwitch = GetChildNode(section);
+                if (caseSwitch.Kind() != SyntaxKind.CaseSwitchLabel) continue;
+                SyntaxNode caseValue = GetChildNode(caseSwitch);
+                String caseConst = file.model.GetConstantValue(caseValue).Value.ToString();
+                if (caseConst == value) return "" + caseIdx;
+                caseIdx++;
+            }
+            Console.WriteLine("Failed to find goto case target");
+            Environment.Exit(0);
+            return null;
         }
 
         public void switchString(SyntaxNode node) {
@@ -3458,6 +3499,9 @@ namespace QSharpCompiler
         public String version;
         public String replaceArgs;
         public bool omitBody;
+        public int[] switchIDs = new int[32];  //up to 32 nested switch statements
+        public int currentSwitch = -1;
+        public int nextSwitchID = 0;
         public string GetArgs(bool decl) {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
