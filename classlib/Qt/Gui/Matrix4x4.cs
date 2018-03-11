@@ -4,11 +4,13 @@ using Qt.Core;
 namespace Qt.Gui {
     [CPPClass(
         "private: std::shared_ptr<QMatrix4x4> $q;" +
+        "private: std::shared_ptr<QMatrix4x4> $t;" +
         "public: QMatrix4x4* $value() {return $q.get();}"
     )]
     //NOTE : Data is stored internally as column-major format (OpenGL standard).
     public class Matrix4x4 {
         private float[] m = null;
+        private Vector3D vector = new Vector3D();
         public Matrix4x4() {
             CPP.Add("$q = std::make_shared<QMatrix4x4>();");
             CPP.Add("m = Qt::QSharp::FixedArray<float>::$new($q->data(), 16);");
@@ -32,10 +34,58 @@ namespace Qt.Gui {
         public void Ortho(float left, float right, float bottom, float top, float nearPlane, float farPlane) {
             CPP.Add("$q->ortho(left, right, bottom, top, nearPlane, farPlane);");
         }
+        /** Adds translation to matrix ignoring current rotation/scale. */
         public void Translate(float x, float y, float z) {
+            m[0+3*4] += x;
+            m[1+3*4] += y;
+            m[2+3*4] += z;
+        }
+        /** Adds translation to matrix with current rotation/scale. */
+        public void Translate2(float x, float y, float z) {
             CPP.Add("$q->translate(x, y, z);");
         }
+        /** Adds rotatation to matrix ignoring current translation. */
         public void Rotate(float a, float x, float y, float z) {
+            float tx = m[12];
+            float ty = m[13];
+            float tz = m[14];
+            m[12] = 0;
+            m[13] = 0;
+            m[14] = 0;
+            CPP.Add("$q->rotate(a, x, y, z);");
+            m[12] = tx;
+            m[13] = ty;
+            m[14] = tz;
+        }
+        /** Adds rotation to matrix with current translation. */
+        public void Rotate2(float a, float x, float y, float z) {
+            CPP.Add("$q->rotate(a, x, y, z);");
+        }
+        /** Adds rotation adjusted to current rotation but ignoring translation. */
+        public void Rotate3(float a, float x, float y, float z) {
+            vector.Set(x,y,z);
+            Multiply3x3(vector);
+            x = vector.GetX();
+            y = vector.GetX();
+            z = vector.GetX();
+            float tx = m[12];
+            float ty = m[13];
+            float tz = m[14];
+            m[12] = 0;
+            m[13] = 0;
+            m[14] = 0;
+            CPP.Add("$q->rotate(a, x, y, z);");
+            m[12] = tx;
+            m[13] = ty;
+            m[14] = tz;
+        }
+        /** Adds rotation adjusted to current rotation with current translation. */
+        public void Rotate4(float a, float x, float y, float z) {
+            vector.Set(x,y,z);
+            Multiply3x3(vector);
+            x = vector.GetX();
+            y = vector.GetX();
+            z = vector.GetX();
             CPP.Add("$q->rotate(a, x, y, z);");
         }
         public void Scale(float x, float y, float z) {

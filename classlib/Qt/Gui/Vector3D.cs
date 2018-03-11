@@ -27,6 +27,9 @@ namespace Qt.Gui {
             CPP.Add("$q->setY(y);");
             CPP.Add("$q->setZ(z);");
         }
+        public void SetX(float x) {CPP.Add("$q->setX(x);");}
+        public void SetY(float y) {CPP.Add("$q->setY(y);");}
+        public void SetZ(float z) {CPP.Add("$q->setZ(z);");}
         public float Length() {
             return CPP.ReturnFloat("$q->length()");
         }

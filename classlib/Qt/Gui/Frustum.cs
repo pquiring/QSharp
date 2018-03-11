@@ -43,7 +43,7 @@ public class Frustum {
 
     private const float ANG2RAD = (float) Math.PI / 180f;
 
-    public void setPerspecive(float angle, float ratio, float near, float far) {
+    public void SetPerspecive(float angle, float ratio, float near, float far) {
         nearD = near;
         farD = far;
 
@@ -61,7 +61,7 @@ public class Frustum {
     private const int NEARP = 4;
     private const int FARP = 5;
 
-    public void setPosition(Vector3D p, Vector3D l, Vector3D u) {
+    public void SetPosition(Vector3D p, Vector3D l, Vector3D u) {
         _p = p;
         _l = l;
         _u = u;
@@ -139,7 +139,7 @@ public class Frustum {
     public const int INTERSECT = 1;
     public const int INSIDE = 2;
 
-    public int pointInside(Vector3D p) {
+    public int PointInside(Vector3D p) {
         int result = INSIDE;
         float d;
         for(int i=0; i < 6; i++) {
@@ -154,7 +154,7 @@ public class Frustum {
      * @param p = center if sphere
      * @param size = size of sphere (radius or diameter?)
      */
-    public int sphereInside(Vector3D p, float size) {
+    public int SphereInside(Vector3D p, float size) {
         float distance;
         int result = INSIDE;
 
@@ -169,7 +169,7 @@ public class Frustum {
     /** Tests if box is within frustum.
      * @param pts = 8 points of box
      */
-    public int boxInside(Vector3D[] pts) {
+    public int BoxInside(Vector3D[] pts) {
         int result = INSIDE, _in, _out;
         for(int i=0; i < 6; i++) {
             // reset counters for corners _in and _out
