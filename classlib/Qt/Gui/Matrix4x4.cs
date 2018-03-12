@@ -101,7 +101,7 @@ namespace Qt.Gui {
         /** Set matrix using axis-angle(vector) (see http://en.wikipedia.org/wiki/Axis_angle) */
         public void SetAxisAngle(float angle, float x, float y, float z) {
             SetIdentity();
-            Rotate(angle, x, y, z);
+            Rotate2(angle, x, y, z);
         }
         /** this = this * other */
         public void Multiply4x4(Matrix4x4 other) {
@@ -121,6 +121,9 @@ namespace Qt.Gui {
             m[0+3*4] *= -1.0f;
             m[1+3*4] *= -1.0f;
             m[2+3*4] *= -1.0f;
+        }
+        public void LookAt(Vector3D eye, Vector3D at, Vector3D up) {
+            CPP.Add("$q->lookAt(*$check(eye)->$value(),*$check(at)->$value(),*$check(up)->$value());");
         }
     }
 }
