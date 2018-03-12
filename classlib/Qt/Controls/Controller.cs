@@ -29,7 +29,7 @@ public class Controller {
 
     public Exception lastException;
 
-    public void setRate(float rate) {
+    public void SetRate(float rate) {
         Controller.rate = rate;
     }
 
@@ -41,7 +41,7 @@ public class Controller {
      * url = "NI:device/options"
      *
      */
-    public bool connect(String url) {
+    public bool Connect(String url) {
         Console.WriteLine("Info:" + DateTime.GetMilliSecondsSinceEpoch() + ":Controller.connect():" + url);
         connected = false;
         if (url == null) {
@@ -144,7 +144,7 @@ public class Controller {
     }
 
     /** Disconnects from PLC. */
-    public bool disconnect() {
+    public bool Disconnect() {
         if (!connected) return false;
         switch (plc) {
             case ControllerType.JF:
@@ -166,21 +166,16 @@ public class Controller {
         return true;
     }
 
-    /** Data types for write() function.    Only AB protocol requires these. */
-    public enum datatype {
-        ANY, INTEGER16, INTEGER32, FLOAT, BOOLEAN
-    }
-
     /** Writes data to PLC. */
-    public bool write(String addr, byte[] data) {
-        return write(addr, data, datatype.ANY);
+    public bool Write(String addr, byte[] data) {
+        return Write(addr, data, DataType.ANY);
     }
 
     /** Writes data to PLC.
      *
      * datatype is required for AB controllers.
      */
-    public bool write(String addr, byte[] data, datatype type) {
+    public bool Write(String addr, byte[] data, DataType type) {
         addr = addr.ToUpperCase();
         lock(tlock) {
             if (!connected) return false;
@@ -222,7 +217,7 @@ public class Controller {
                     return true;
                 }
                 case ControllerType.AB: {
-                    if (type == datatype.ANY) return false;
+                    if (type == DataType.ANY) return false;
                     byte[] packet = ABPacket.makeWritePacket(addr, ABPacket.getType(type), data, ab_context);
                     try {
                         socket.Write(packet);
@@ -257,12 +252,12 @@ public class Controller {
                     return true;
                 }
             }
-            return false;
         }
+        return false;
     }
 
     /** Reads data from PLC. */
-    public byte[] read(String addr) {
+    public byte[] Read(String addr) {
         addr = addr.ToUpperCase();
         lock(tlock) {
             if (!connected) return null;
@@ -364,12 +359,12 @@ public class Controller {
                     return tag.data;
                 }
             }
-            return null;
         }
+        return null;
     }
 
- /** Reads multiple data tags from PLC. (only S7 is currently supported) */
-    public byte[][] read(String[] addr) {
+    /** Reads multiple data tags from PLC. (only S7 is currently supported) */
+    public byte[][] Read(String[] addr) {
         if (!connected) return null;
         for(int a=0;a<addr.Length;a++) {
             addr[a] = addr[a].ToUpperCase();
@@ -489,7 +484,7 @@ public class Controller {
         return null;
     }
 
-    public bool isConnected() {
+    public bool IsConnected() {
         if (plc == 0) return false;
         try {
             switch (plc) {

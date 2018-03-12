@@ -9,7 +9,7 @@ namespace Qt.Controls {
 
 public interface TagListener {
     /** Invoked when a tag's value has changed. */
-    void tagChanged(Tag tag, String value);
+    void TagChanged(Tag tag, String value);
 }
 
 }

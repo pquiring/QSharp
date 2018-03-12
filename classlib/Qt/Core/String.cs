@@ -211,8 +211,8 @@ namespace Qt.Core {
         */
         public String SubstringIdx(int start, int end) {
             if (start > end) return null;
-            end -= start;
-            return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, len))");
+            int length = end - start;
+            return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, length))");
         }
         public char CharAt(int idx) {
             return CPP.ReturnChar("$q->at(idx).unicode()");

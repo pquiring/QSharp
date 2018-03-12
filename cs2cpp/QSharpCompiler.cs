@@ -1846,6 +1846,7 @@ namespace QSharpCompiler
                     method.currentSwitch++;
                     method.switchIDs[method.currentSwitch] = method.nextSwitchID++;
                     int caseIdx = 0;
+                    bool block = false;
                     foreach(var section in node.ChildNodes()) {
                         if (section.Kind() != SyntaxKind.SwitchSection) continue;
                         foreach(var child in section.ChildNodes()) {
@@ -1856,20 +1857,23 @@ namespace QSharpCompiler
                                     method.Append(":\r\n");
                                     method.Append("$case_" + method.switchIDs[method.currentSwitch] + "_" + caseIdx++);
                                     method.Append(":\r\n");
-                                    method.Append("{\r\n");
                                     break;
                                 case SyntaxKind.DefaultSwitchLabel:
                                     method.Append("default:\r\n");
                                     method.Append("$default_" + method.switchIDs[method.currentSwitch]);
                                     method.Append(":\r\n");
-                                    method.Append("{\r\n");
                                     break;
                                 default:
+                                    if (!block) {
+                                        method.Append("{\r\n");
+                                        block = true;
+                                    }
                                     statementNode(child);
                                     break;
                             }
                         }
                         method.Append("}\r\n");
+                        block = false;
                     }
                     method.currentSwitch--;
                     method.Append("}\r\n");
@@ -2643,11 +2647,13 @@ namespace QSharpCompiler
                 return;
             }
             for(int a=0;a<dims;a++) {
-              ob.Append("Qt::QSharp::FixedArray<");
+                if (a > 0) ob.Append("std::shared_ptr<");
+                ob.Append("Qt::QSharp::FixedArray<");
             }
             Type type = new Type(typeNode, true);
             ob.Append(type.GetTypeDeclaration());
             for(int a=0;a<dims;a++) {
+                if (a > 0) ob.Append(">");
                 ob.Append(">");
             }
             ob.Append("::$new(");

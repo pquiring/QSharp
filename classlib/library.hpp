@@ -296,3 +296,15 @@ inline int64 $add(int32 x,int64 y) {return x + y;}
 
 inline int64 $add(uint64 x,uint32 y) {return x + y;}
 inline int64 $add(uint32 x,uint64 y) {return x + y;}
+
+inline int32 $add(int32 x,int8 y) {return x + y;}
+inline int32 $add(int8 x,int32 y) {return x + y;}
+
+inline int64 $add(int64 x,int8 y) {return x + y;}
+inline int64 $add(int8 x,int64 y) {return x + y;}
+
+inline int32 $add(int32 x,uint8 y) {return x + y;}
+inline int32 $add(uint8 x,int32 y) {return x + y;}
+
+inline int64 $add(int64 x,uint8 y) {return x + y;}
+inline int64 $add(uint8 x,int64 y) {return x + y;}

@@ -99,12 +99,12 @@ public class ABPacket {
         }
     }
 
-    public static byte getType(Controller.datatype type) {
+    public static byte getType(DataType type) {
         switch (type) {
-            case datatype.INTEGER16: return ABTypes.INT;
-            case datatype.INTEGER32: return ABTypes.DINT;
-            case datatype.FLOAT: return ABTypes.REAL;
-            case datatype.BOOLEAN: return ABTypes.BOOL;
+            case DataType.INTEGER16: return ABTypes.INT;
+            case DataType.INTEGER32: return ABTypes.DINT;
+            case DataType.FLOAT: return ABTypes.REAL;
+            case DataType.BOOLEAN: return ABTypes.BOOL;
         }
         return 0;
     }

@@ -11,40 +11,40 @@ namespace Qt.Controls {
 
 public class Tag {
     /** Host (usually IP Address) */
-    public String host;
+    public String Host;
     /** Type of host (S7, AB, MB, NI) */
-    public int type;
+    public int Type;
     /** Tag name. */
-    public String tag;
+    public String Name;
     /** Size of tag. */
     public int Size;
     /** Color of tag (for reporting) */
-    public int color;
+    public int Color;
     /** int min/max values (for reporting) */
-    public int min, max;
+    public int Min, Max;
     /** float min/max values (for reporting) */
-    public float fmin, fmax;
+    public float FloatMin, FloatMax;
     /** Speed to poll data (delay = ms delay between polls) (min = 25ms) */
-    public int delay;
+    public int Delay;
 
     private byte[] pending;
-    private Object pendingLock = new Object();
+    private ThreadLock pendingLock = new ThreadLock();
 
     /** Get user data. */
-    public Object getData(String key) {
+    public Object GetData(String key) {
         return user.Get(key);
     }
     /** Set user data. */
-    public void setData(String key, Object value) {
+    public void SetData(String key, Object value) {
         user.Set(key, value);
     }
     /** Set host,type,tag,Size,delay(ms). */
-    public void setTag(String host, int type, String _tag, int Size, int delay) {
-        this.host = host;
-        this.type = type;
-        this.tag = _tag;
+    public void SetTag(String host, int type, String _tag, int Size, int delay) {
+        this.Host = host;
+        this.Type = type;
+        this.Name = _tag;
         this.Size = Size;
-        this.delay = delay;
+        this.Delay = delay;
     }
 
     private Controller c;
@@ -58,16 +58,17 @@ public class Tag {
     private ArrayList<Tag> children = new ArrayList<Tag>();
     private byte[][] childData;
     private ArrayList<Tag> queue = new ArrayList<Tag>();
+    private ThreadLock queueLock = new ThreadLock();
     private bool multiRead = true;
 
     /** Returns true if data type is float32 or float64 */
-    public bool isFloat() {
-        return Size == TagType.float32 || Size == TagType.float64;
+    public bool IsFloat() {
+        return Size == TagType.Float32 || Size == TagType.Float64;
     }
 
     /** Returns true is controller is Big Endian byte order. */
-    public bool isBE() {
-        switch (type) {
+    public bool IsBE() {
+        switch (Type) {
             case ControllerType.JF: return false;
             case ControllerType.S7: return true;
             case ControllerType.AB: return false;
@@ -77,53 +78,53 @@ public class Tag {
     }
 
     /** Returns true is controller is Little Endian byte order. */
-    public bool isLE() {
-        return !isBE();
+    public bool IsLE() {
+        return !IsBE();
     }
 
     /** Enables reading multiple tags in one request (currently only S7 supported) */
-    public void setMultiRead(bool state) {
-        if (type != ControllerType.S7) return;
+    public void SetMultiRead(bool state) {
+        if (Type != ControllerType.S7) return;
         //multiRead = state;  //TODO
     }
 
     /** Adds a child tag and returns index. */
-    public int addChild(Tag child) {
+    public int AddChild(Tag child) {
         children.Add(child);
         return children.Size() - 1;
     }
 
-    private void addQueue(Tag tag) {
-        lock(queue) {
+    private void AddQueue(Tag tag) {
+        lock(queueLock) {
             queue.Add(tag);
         }
     }
 
     /** Returns # of bytes tag uses. */
-    public int getSize() {
+    public int GetSize() {
         switch (Size) {
-            case TagType.bit: return 1;
-            case TagType.int8: return 1;
-            case TagType.int16: return 2;
-            case TagType.int32: return 4;
-            case TagType.float32: return 4;
-            case TagType.float64: return 8;
+            case TagType.Bit: return 1;
+            case TagType.Int8: return 1;
+            case TagType.Int16: return 2;
+            case TagType.Int32: return 4;
+            case TagType.Float32: return 4;
+            case TagType.Float64: return 8;
         }
         return 0;
     }
 
-    public String getURL() {
-        switch (type) {
-            case ControllerType.JF: return "JF:" + host;
-            case ControllerType.S7: return "S7:" + host;
-            case ControllerType.AB: return "AB:" + host;
-            case ControllerType.MB: return "MB:" + host;
+    public String GetURL() {
+        switch (Type) {
+            case ControllerType.JF: return "JF:" + Host;
+            case ControllerType.S7: return "S7:" + Host;
+            case ControllerType.AB: return "AB:" + Host;
+            case ControllerType.MB: return "MB:" + Host;
         }
         Console.WriteLine("Tag:Error:type unknown");
         return null;
     }
 
-    public Controller getController() {
+    public Controller GetController() {
         if (parent != null) {
             return parent.c;
         } else {
@@ -131,27 +132,27 @@ public class Tag {
         }
     }
 
-    public void setListener(TagListener listener) {
+    public void SetListener(TagListener listener) {
         this.listener = listener;
     }
 
     public new String ToString() {
-        return tag;
+        return Name;
     }
 
-    public String getmin() {
-        if (isFloat()) {
-            return Float.ToString(fmin);
+    public String GetMin() {
+        if (IsFloat()) {
+            return Float.ToString(FloatMin);
         } else {
-            return Int32.ToString(min);
+            return Int32.ToString(Min);
         }
     }
 
-    public String getmax() {
-        if (isFloat()) {
-            return Float.ToString(fmax);
+    public String GetMax() {
+        if (IsFloat()) {
+            return Float.ToString(FloatMax);
         } else {
-            return Int32.ToString(max);
+            return Int32.ToString(Max);
         }
     }
 
@@ -165,30 +166,30 @@ public class Tag {
         timer = new Timer();
         reader = new Reader();
         reader.tag = this;
-        if (delay < 25) delay = 25;
+        if (Delay < 25) Delay = 25;
         timer.OnEvent(() => {reader.run();});
-        timer.Start(delay);
+        timer.Start(Delay);
         return true;
     }
 
     /** Start reading tag at interval (delay). */
-    public bool start() {
+    public bool Start() {
         parent = null;
         return startTimer();
     }
 
     /** Start reading tag at interval (delay) using another Tags connection. */
-    public bool start(Tag parent) {
+    public bool Start(Tag parent) {
         this.parent = parent;
         if (parent != null) {
-            if (parent.type != type) return false;
-            childIdx = parent.addChild(this);
+            if (parent.Type != Type) return false;
+            childIdx = parent.AddChild(this);
         }
         return startTimer();
     }
 
     /** Stop monitoring tag value. */
-    public void stop() {
+    public void Stop() {
         if (timer != null) {
             timer.Stop();
             timer = null;
@@ -196,22 +197,22 @@ public class Tag {
         if (reader != null) {
             reader = null;
         }
-        disconnect();
+        Disconnect();
     }
 
-    public bool connect() {
+    public bool Connect() {
         if (parent != null) return false;    //wait for parent to connect
-        if (c.connect(getURL())) return true;
+        if (c.Connect(GetURL())) return true;
         return false;
     }
 
-    public void disconnect() {
+    public void Disconnect() {
         if (parent != null) {
             parent = null;
             return;
         }
         if (c != null) {
-            c.disconnect();
+            c.Disconnect();
             c = null;
         }
         children.Clear();
@@ -220,30 +221,30 @@ public class Tag {
     private String value = "0";
 
     /** Returns current value (only valid if start() has been called). */
-    public String getValue() {
+    public String GetValue() {
         return value;
     }
 
     /** Queues pending data to be written on next cycle. (only valid if start() has been called). */
-    public void setValue(String value) {
+    public void SetValue(String value) {
         byte[] data = null;
-        if (isBE()) {
+        if (IsBE()) {
             switch (Size) {
-                case TagType.bit: data = new byte[] {(byte)(value.Equals("0") ? 0 : 1)}; break;
-                case TagType.int8: data = new byte[] {Byte.ValueOf(value)}; break;
-                case TagType.int16: data = new byte[2]; BE.setuint16(data, 0, Int32.ValueOf(value)); break;
-                case TagType.int32: data = new byte[4]; BE.setuint32(data, 0, Int32.ValueOf(value)); break;
-                case TagType.float32: data = new byte[4]; BE.setuint32(data, 0, Float.FloatToIntBits(Float.ValueOf(value))); break;
-                case TagType.float64: data = new byte[4]; BE.setuint64(data, 0, Double.DoubleToLongBits(Double.ValueOf(value))); break;
+                case TagType.Bit: data = new byte[] {(byte)(value.Equals("0") ? 0 : 1)}; break;
+                case TagType.Int8: data = new byte[] {Byte.ValueOf(value)}; break;
+                case TagType.Int16: data = new byte[2]; BE.setuint16(data, 0, Int32.ValueOf(value)); break;
+                case TagType.Int32: data = new byte[4]; BE.setuint32(data, 0, Int32.ValueOf(value)); break;
+                case TagType.Float32: data = new byte[4]; BE.setuint32(data, 0, Float.FloatToIntBits(Float.ValueOf(value))); break;
+                case TagType.Float64: data = new byte[4]; BE.setuint64(data, 0, Double.DoubleToLongBits(Double.ValueOf(value))); break;
             }
         } else {
             switch (Size) {
-                case TagType.bit: data = new byte[] {(byte)(value.Equals("0") ? 0 : 1)}; break;
-                case TagType.int8: data = new byte[] {Byte.ValueOf(value)}; break;
-                case TagType.int16: data = new byte[2]; LE.setuint16(data, 0, Int32.ValueOf(value)); break;
-                case TagType.int32: data = new byte[4]; LE.setuint32(data, 0, Int32.ValueOf(value)); break;
-                case TagType.float32: data = new byte[4]; LE.setuint32(data, 0, Float.FloatToIntBits(Float.ValueOf(value))); break;
-                case TagType.float64: data = new byte[4]; LE.setuint64(data, 0, Double.DoubleToLongBits(Double.ValueOf(value))); break;
+                case TagType.Bit: data = new byte[] {(byte)(value.Equals("0") ? 0 : 1)}; break;
+                case TagType.Int8: data = new byte[] {Byte.ValueOf(value)}; break;
+                case TagType.Int16: data = new byte[2]; LE.setuint16(data, 0, Int32.ValueOf(value)); break;
+                case TagType.Int32: data = new byte[4]; LE.setuint32(data, 0, Int32.ValueOf(value)); break;
+                case TagType.Float32: data = new byte[4]; LE.setuint32(data, 0, Float.FloatToIntBits(Float.ValueOf(value))); break;
+                case TagType.Float64: data = new byte[4]; LE.setuint64(data, 0, Double.DoubleToLongBits(Double.ValueOf(value))); break;
             }
         }
         lock(pendingLock) {
@@ -252,48 +253,48 @@ public class Tag {
     }
 
     /** Returns current value as int (only valid if start() has been called). */
-    public int intValue() {
+    public int IntValue() {
         return Int32.ValueOf(value);
     }
 
     /** Returns current value as float (only valid if start() has been called). */
-    public float floatValue() {
+    public float FloatValue() {
         return Float.ValueOf(value);
     }
 
     /** Returns current value as double (float64) (only valid if start() has been called). */
-    public double doubleValue() {
+    public double DoubleValue() {
         return Double.ValueOf(value);
     }
 
     /** Reads value directly. */
-    public byte[] read() {
+    public byte[] Read() {
         if (parent != null) {
             if (parent.c == null) return null;
             if (multiRead) {
-                return parent.read(childIdx);
+                return parent.Read(childIdx);
             } else {
                 //queue read with parent to prevent some threads from starving
                 lock(tlock) {
-                    parent.addQueue(this);
+                    parent.AddQueue(this);
                     try {tlock.Wait();} catch (Exception e) {Console.WriteLine(e.ToString());}
-                    return parent.c.read(tag);
+                    return parent.c.Read(Name);
                 }
             }
         } else {
-            if (multiRead && type == ControllerType.S7 && children.Size() > 0) {
+            if (multiRead && Type == ControllerType.S7 && children.Size() > 0) {
                 int cnt = children.Size();
                 String[] tags = new String[cnt+1];
-                tags[cnt] = tag;
+                tags[cnt] = Name;
                 for(int a=0;a<cnt;a++) {
-                    tags[a] = children.Get(a).tag;
+                    tags[a] = children.Get(a).Name;
                 }
-                childData = c.read(tags);
+                childData = c.Read(tags);
                 if (childData == null) return null;
                 return childData[cnt];
             } else {
                 //allow queued children to proceed
-                lock(queue) {
+                lock(queueLock) {
                     while (queue.Size() > 0) {
                         Tag child = queue.Get(0);
                         queue.RemoveAt(0);
@@ -302,22 +303,22 @@ public class Tag {
                         }
                     }
                 }
-                return c.read(tag);
+                return c.Read(Name);
             }
         }
     }
 
     /** Writes data to tag. */
-    public void write(byte[] data) {
+    public void Write(byte[] data) {
         if (parent != null) {
             if (parent.c == null) return;
-            parent.c.write(tag, data);
+            parent.c.Write(Name, data);
         } else {
-            c.write(tag, data);
+            c.Write(Name, data);
         }
     }
 
-    private byte[] read(int idx) {
+    private byte[] Read(int idx) {
         if (childData == null || idx >= childData.Length) return null;
         return childData[idx];
     }
@@ -329,44 +330,44 @@ public class Tag {
             try {
                 String lastValue = tag.value;
                 if (tag.parent == null) {
-                    if (!tag.c.isConnected()) {
-                        if (!tag.connect()) {
+                    if (!tag.c.IsConnected()) {
+                        if (!tag.Connect()) {
                             return;
                         }
                     }
                 }
-                data = tag.read();
+                data = tag.Read();
                 if (data == null) {
-                    Console.WriteLine("Error:" + DateTime.GetMilliSecondsSinceEpoch() + ":data==null:host=" + tag.host + ":tag=" + tag.tag);
+                    Console.WriteLine("Error:" + DateTime.GetMilliSecondsSinceEpoch() + ":data==null:host=" + tag.Host + ":tag=" + tag.Name);
                     return;
                 }
-                if (tag.isBE()) {
+                if (tag.IsBE()) {
                     switch (tag.Size) {
-                        case TagType.bit: tag.value = data[0] == 0 ? "0" : "1"; break;
-                        case TagType.int8: tag.value = Byte.ToString(data[0]); break;
-                        case TagType.int16: tag.value = Int32.ToString(BE.getuint16(data, 0)); break;
-                        case TagType.int32: tag.value = Int32.ToString(BE.getuint32(data, 0)); break;
-                        case TagType.float32: tag.value = Float.ToString(Float.IntBitsToFloat(BE.getuint32(data, 0))); break;
-                        case TagType.float64: tag.value = Double.ToString(Double.LongBitsToDouble(BE.getuint64(data, 0))); break;
+                        case TagType.Bit: tag.value = data[0] == 0 ? "0" : "1"; break;
+                        case TagType.Int8: tag.value = Byte.ToString(data[0]); break;
+                        case TagType.Int16: tag.value = Int32.ToString(BE.getuint16(data, 0)); break;
+                        case TagType.Int32: tag.value = Int32.ToString(BE.getuint32(data, 0)); break;
+                        case TagType.Float32: tag.value = Float.ToString(Float.IntBitsToFloat(BE.getuint32(data, 0))); break;
+                        case TagType.Float64: tag.value = Double.ToString(Double.LongBitsToDouble(BE.getuint64(data, 0))); break;
                     }
                 } else {
                     switch (tag.Size) {
-                        case TagType.bit: tag.value = data[0] == 0 ? "0" : "1"; break;
-                        case TagType.int8: tag.value = Byte.ToString(data[0]); break;
-                        case TagType.int16: tag.value = Int32.ToString((short)LE.getuint16(data, 0)); break;
-                        case TagType.int32: tag.value = Int32.ToString(LE.getuint32(data, 0)); break;
-                        case TagType.float32: tag.value = Float.ToString(Float.IntBitsToFloat(LE.getuint32(data, 0))); break;
-                        case TagType.float64: tag.value = Double.ToString(Double.LongBitsToDouble(LE.getuint64(data, 0))); break;
+                        case TagType.Bit: tag.value = data[0] == 0 ? "0" : "1"; break;
+                        case TagType.Int8: tag.value = Byte.ToString(data[0]); break;
+                        case TagType.Int16: tag.value = Int32.ToString((short)LE.getuint16(data, 0)); break;
+                        case TagType.Int32: tag.value = Int32.ToString(LE.getuint32(data, 0)); break;
+                        case TagType.Float32: tag.value = Float.ToString(Float.IntBitsToFloat(LE.getuint32(data, 0))); break;
+                        case TagType.Float64: tag.value = Double.ToString(Double.LongBitsToDouble(LE.getuint64(data, 0))); break;
                     }
                 }
                 lock(tag.pendingLock) {
                     if (tag.pending != null) {
-                        tag.write(tag.pending);
+                        tag.Write(tag.pending);
                     }
                 }
                 if (tag.listener == null) return;
                 if (lastValue == null || !tag.value.Equals(lastValue)) {
-                    tag.listener.tagChanged(tag, tag.value);
+                    tag.listener.TagChanged(tag, tag.value);
                 }
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
