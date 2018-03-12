@@ -166,6 +166,13 @@ namespace Qt.Core {
             return CPP.ReturnInt("$q->lastIndexOf((QChar)ch)");
         }
 
+        public int IndexOf(String str) {
+            return CPP.ReturnInt("$q->indexOf($check(str)->qstring())");
+        }
+        public int LastIndexOf(String str) {
+            return CPP.ReturnInt("$q->lastIndexOf($check(str)->qstring())");
+        }
+
         public bool StartsWith(String s) {
             return CPP.ReturnBool("$q->startsWith($check(s)->qstring())");
         }
@@ -187,8 +194,24 @@ namespace Qt.Core {
             CPP.Add("QStringList list = $q->split(QRegExp($check(str)->qstring()));");
             return (String[])CPP.ReturnObject("$QStringListToStringArray(list)");
         }
-
-        public String Substring(int start, int len = -1) {
+        /**
+            Substring()
+                int start
+                int length
+         */
+        public String Substring(int start, int length = -1) {
+            return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, length))");
+        }
+        /**
+            Substring()
+                int start
+                int end
+            Return : String from start to end-1
+            Compatible with Java String.substring()
+        */
+        public String SubstringIdx(int start, int end) {
+            if (start > end) return null;
+            end -= start;
             return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, len))");
         }
         public char CharAt(int idx) {
