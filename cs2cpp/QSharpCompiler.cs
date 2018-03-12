@@ -1828,10 +1828,11 @@ namespace QSharpCompiler
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
-                    method.Append("for($QMutexHolder " + holder + "($check(");
+                    method.Append("{$QMutexHolder " + holder + "($check(");
                     expressionNode(lockId, method);
-                    method.Append(")->$value());" + holder + ".Condition();" + holder + ".Signal())");
+                    method.Append(")->$value());"); // + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock);
+                    method.Append("}\r\n");
                     break;
                 case SyntaxKind.SwitchStatement:
                     // var, [SwitchSection...]
