@@ -20,8 +20,24 @@ namespace Qt.Core {
             CPP.Add("$check(data, offset, length);");
             return CPP.ReturnInt("$q->write((char*)data->data() + offset, length)");
         }
+        public bool SetPosition(long pos) {
+            return CPP.ReturnBool("$q->seek(pos)");
+        }
+        public long GetPosition() {
+            return CPP.ReturnLong("$q->pos()");
+        }
         public ByteArray ReadAll() {
             return (ByteArray)CPP.ReturnObject("ByteArray::$new($q->readAll())");
+        }
+        public bool ReadAll(byte[] buf, int pos = 0, int length = -1) {
+            if (length == -1) length = buf.Length - pos;
+            while (length > 0) {
+                int read = Read(buf, pos, length);
+                if (read < 0) return false;
+                pos += read;
+                length -= read;
+            }
+            return true;
         }
         public int Available() {
             return CPP.ReturnInt("$q->bytesAvailable()");
