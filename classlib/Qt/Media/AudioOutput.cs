@@ -58,5 +58,11 @@ namespace Qt.Media {
             CPP.Add("$check(data, offset, length);");
             return CPP.ReturnInt("$io->write((char*)data->data() + offset, length)");
         }
+        public int Write(short[] data, int offset = 0, int length = -1) {
+            if (length == -1) length = data.Length;
+            CPP.Add("if ($io == nullptr) return -1;");
+            CPP.Add("$check(data, offset, length);");
+            return CPP.ReturnInt("$io->write((char*)data->data() + offset, length * 2) / 2");
+        }
     }
 }
