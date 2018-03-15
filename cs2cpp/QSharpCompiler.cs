@@ -2940,7 +2940,7 @@ namespace QSharpCompiler
                 if (name.StartsWith("~")) {
                     name = name.Replace("~", "$");
                 }
-                sb.Append("$method $method_" + full_name + "_" + name + (idx++) + "(\"" + m.name + "\");\r\n");
+                sb.Append("static $method $method_" + full_name + "_" + name + (idx++) + "(\"" + m.name + "\");\r\n");
             }
             //reflection data : class
             sb.Append("$class $class_" + full_name + "(");
@@ -2987,6 +2987,24 @@ namespace QSharpCompiler
                 sb.Append("&$method_" + full_name + "_" + name + (idx++));
             }
             sb.Append("}");
+            //newInstance
+            Method _new = null;
+            if (!Generic) {
+                foreach(Method m in methods) {
+                    if (m.replaceArgs != null) continue;
+                    if (m.name == "$new") {
+                        if (m.args.Count == 0) {
+                            _new = m;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (_new == null) {
+                sb.Append(",[] () {return nullptr;}");
+            } else {
+                sb.Append(",[] () {return " + this.Namespace + "::" + this.fullname + "::$new();}");
+            }
             sb.Append(");\r\n");
             foreach(var inner in inners) {
                 sb.Append(inner.GetReflectionData());

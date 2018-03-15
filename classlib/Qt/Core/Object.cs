@@ -72,6 +72,10 @@ namespace Qt.Core {
         public bool IsDerivedFrom(Type type) {
             return CPP.ReturnBool("$refType->isDerivedFrom($check(type)->$refType)");
         }
+        /** Returns if type represents an interface */
+        public bool IsInterface() {
+            return CPP.ReturnBool("$refType->iface");
+        }
         /** Use to convert System.Type to Qt.Core.Type for now.
         * ie: Type type = Type.Convert(typeof(MyClass));
         * This is a temporary work around.
@@ -79,6 +83,10 @@ namespace Qt.Core {
         */
         public static Type Convert(System.Object sysType) {
             return (Type)CPP.ReturnObject("sysType");
+        }
+        /** Returns new instance of Type if class accepts zero arguments (arguments not supported yet) */
+        public Object NewInstance() {
+            return (Object)CPP.ReturnObject("$refType->newInstance()");
         }
     }
     [CPPClass(

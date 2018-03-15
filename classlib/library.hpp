@@ -158,13 +158,14 @@ struct $method {
 };
 
 struct $class {
-  $class(bool isInterface, const char*name, $class *base, std::initializer_list<$class*> ifaceList, std::initializer_list<$field*> fieldList, std::initializer_list<$method*> methodList) {
+  $class(bool isInterface, const char*name, $class *base, std::initializer_list<$class*> ifaceList, std::initializer_list<$field*> fieldList, std::initializer_list<$method*> methodList, std::function<std::shared_ptr<Qt::Core::Object>()> newInstance) {
     this->iface = isInterface;
     this->name = name;
     this->base = base;
     this->ifaces = new QVector<$class*>(ifaceList);
     this->fields = new QVector<$field*>(fieldList);
     this->methods = new QVector<$method*>(methodList);
+    this->newInstance = newInstance;
   }
   bool isDerivedFrom($class *cls) {
     if (std::strcmp(name, cls->name) == 0) return true;
@@ -179,6 +180,7 @@ struct $class {
   QVector<$class*> *ifaces;
   QVector<$field*> *fields;
   QVector<$method*> *methods;
+  std::function<std::shared_ptr<Qt::Core::Object>()> newInstance;
 };
 
 struct $QMutexHolder {

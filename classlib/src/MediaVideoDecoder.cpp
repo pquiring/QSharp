@@ -2,6 +2,10 @@
 
 namespace Qt::Media {
 
+std::shared_ptr<MediaVideoDecoder> MediaVideoDecoder::$new() {
+  return std::make_shared<MediaVideoDecoder>();
+}
+
 bool Qt::Media::MediaVideoDecoder::Start(int codec_id, int new_width, int new_height)
 {
   ctx = std::make_shared<FFContext>(std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));

@@ -2,6 +2,10 @@
 
 namespace Qt::Media {
 
+std::shared_ptr<MediaDecoder> MediaDecoder::$new() {
+  return std::make_shared<MediaDecoder>();
+}
+
 //returns stream idx >= 0
 static int open_codec_context(std::shared_ptr<Qt::Media::FFContext> ctx, AVFormatContext *fmt_ctx, int type)
 {
