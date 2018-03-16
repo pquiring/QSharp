@@ -1,6 +1,13 @@
 What's new
 ==========
 
+Mar 16, 2018 : 0.14
+ - add new classes (OpenGL, Controls, ThreadSignal, etc.)
+ - add Type.NewInstance() for simple classes
+ - add support for goto case/goto default in switch blocks
+ - add many new functions
+ - fixed many bugs
+
 Mar 9, 2018 : 0.13
  - added many new classes
  - fixed many bugs

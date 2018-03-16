@@ -20,7 +20,7 @@ Build Tools:
   ffmpeg/3.0+
 
 ffmpeg:
-  Download ffmpeg extract to include folder and run 'bash configure --disable-yasm'
+  Download ffmpeg, extract to include folder and run 'bash configure --disable-yasm'
   You'll need C++ compiler in path (use gcc for cygwin/mingw).
   The pre-built shared binaries can be downloaded from ffmpeg.org
 
@@ -109,6 +109,6 @@ WebSite : github.com/pquiring/qsharp
 
 Author : Peter Quiring (pquiring@gmail.com)
 
-Version 0.13
+Version 0.14
 
-Released Mar 9, 2018
+Released Mar 16, 2018
