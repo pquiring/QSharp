@@ -1421,7 +1421,7 @@ namespace QSharpCompiler
             method.type.Public = true;
             method.type.Static = true;
             method.name = "$new";
-            method.type.set(cls.name);
+            method.type.set(cls.fullname);
             method.type.cls = cls;
             method.cls = cls;
             method.type.GenericArgs = cls.GenericArgs;
@@ -3180,7 +3180,7 @@ namespace QSharpCompiler
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
-                sb.Append(method.type.GetTypeDeclaration(true, true));
+                sb.Append(method.type.GetTypeDeclaration(true));
                 sb.Append(" ");
                 sb.Append(method.cls.fullname);
                 sb.Append("::");
@@ -3444,7 +3444,7 @@ namespace QSharpCompiler
             sb.Append(GetGenericArgs());
             return sb.ToString();
         }
-        public string GetTypeDeclaration(bool inc_arrays = true, bool inc_outter = false) {
+        public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
             if (inc_arrays) {
                 for(int a=0;a<arrays;a++) {
@@ -3456,10 +3456,6 @@ namespace QSharpCompiler
                     sb.Append("std::weak_ptr<");
                 else
                     sb.Append("std::shared_ptr<");
-                if (cls != null && cls.outter != null && inc_outter) {
-                    sb.Append(cls.outter.fullname);
-                    sb.Append("::");
-                }
             }
             sb.Append(GetTypeType(true));
             if (ptr) sb.Append("*");
@@ -3588,7 +3584,7 @@ namespace QSharpCompiler
             if (!isDelegate) sb.Append(type.GetFlags(false));
             sb.Append(" ");
             if (isDelegate) sb.Append("typedef std::function<");
-            sb.Append(type.GetTypeDeclaration(true, true));
+            sb.Append(type.GetTypeDeclaration(true));
             sb.Append(" ");
             if (!isDelegate) sb.Append(name);
             sb.Append(GetArgs(true));
