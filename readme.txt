@@ -5,6 +5,8 @@ Q# is a new experiment to convert C# to C++ using the Qt library as the classlib
 
 C# + C++ + Qt = Q#
 
+The project has no relation to Microsofts new Q# (Quantum) programming language.
+
 folder layout:
   /cs2cpp - C# .NET Core program to convert C# to C++ using Roslyn code analyzer
   /classlib - Qt wrapper classes
