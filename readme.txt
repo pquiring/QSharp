@@ -66,6 +66,7 @@ cmake options (depends on platform):
     -D CMAKE_BUILD_TYPE=Release | Debug
   to build with MSVC++
     -G "NMake Makefiles"
+  there are scripts in /bin for each platform (gcc and msvc)
 
 To compile with MSVC++
   Install either VS BuildTools or VS IDE with VC++ toolchain.
