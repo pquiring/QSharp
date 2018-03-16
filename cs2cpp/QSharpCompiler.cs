@@ -942,6 +942,7 @@ namespace QSharpCompiler
             switch (name) {
                 case "near": return "$near";
                 case "far": return "$far";
+                case "delete": return "$delete";
             }
             return name;
         }
