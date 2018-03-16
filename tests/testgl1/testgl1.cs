@@ -34,8 +34,8 @@ public class TriangleWindow : OpenGLWindow
 
         Matrix4x4 matrix = new Matrix4x4();
         matrix.Perspective(60.0f, 4.0f/3.0f, 0.1f, 100.0f);
-        matrix.Translate(0, 0, -2);
-        matrix.Rotate(100.0f * m_frame / GetScreen().RefreshRate(), 0, 1, 0);
+        matrix.Translate2(0, 0, -2);
+        matrix.Rotate2(100.0f * m_frame / GetScreen().RefreshRate(), 0, 1, 0);
 
         m_program.SetUniformValue(m_matrixUniform, matrix);
 
