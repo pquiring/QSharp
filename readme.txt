@@ -105,6 +105,9 @@ To create a new library:
 To add reference to another library:
   dotnet add reference ..\library\library.csproj
 
+To test C# compilation (not really necessary) (the /clp:NoSummary option avoids outputting errors/warnings twice)
+  dotnet build /clp:NoSummary
+
 WebSite : github.com/pquiring/qsharp
 
 Author : Peter Quiring (pquiring@gmail.com)

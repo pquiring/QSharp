@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace QSharpCompiler
 {
@@ -366,6 +367,7 @@ namespace QSharpCompiler
     class Generate
     {
         public static Source file;
+        public int errors = 0;
 
         private FileStream fs;
         private string Namespace = "";
@@ -383,6 +385,10 @@ namespace QSharpCompiler
 //            usings.Add("Qt::Core");
             foreach(Source file in Program.files) {
                 generate(file);
+            }
+            if (errors > 0) {
+                Console.WriteLine("Errors:" + errors);
+                Environment.Exit(1);
             }
             Directory.CreateDirectory("cpp");
             openOutput("cpp/" + Program.hppFile);
@@ -494,6 +500,7 @@ namespace QSharpCompiler
                 }
             }
             Console.WriteLine("Error:Can not find:" + mvFile + ":" + mvCls);
+            errors++;
         }
 
         private void sortClasslib() {
@@ -1498,7 +1505,9 @@ namespace QSharpCompiler
                         ISymbol declsymbol = file.model.GetDeclaredSymbol(child);
                         if (symbol == null && declsymbol == null) {
                             Console.WriteLine("Error:methodNode():Symbol not found for:" + child);
-                            Environment.Exit(0);
+                            WriteFileLine(child);
+                            errors++;
+                            break;
                         }
                         if (symbol != null) {
                             method.type.set(symbol.ToString().Replace(".", "::"));
@@ -1823,8 +1832,10 @@ namespace QSharpCompiler
                     SyntaxNode lockId = GetChildNode(node, 1);
                     string lockIdName = GetTypeName(lockId);
                     if ((lockIdName != "Qt::Core::ThreadLock") && (lockIdName != "Qt::Core::ThreadSignal")) {
-                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock or ThreadSignal");
-                        Environment.Exit(0);
+                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock or ThreadSignal (Type=" + lockIdName + " id=" + GetSymbol(lockId) + ")");
+                        WriteFileLine(lockId);
+                        errors++;
+                        break;
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
@@ -1895,6 +1906,7 @@ namespace QSharpCompiler
                     break;
                 default:
                     Console.WriteLine("Error:Statement not supported:" + node.Kind());
+                    WriteFileLine(node);
                     Environment.Exit(0);
                     break;
             }
@@ -2414,6 +2426,7 @@ namespace QSharpCompiler
                     break;
                 default:
                     Console.WriteLine("Error:Unsupported expression:" + node.Kind());
+                    WriteFileLine(node);
                     Environment.Exit(0);
                     break;
             }
@@ -2469,7 +2482,8 @@ namespace QSharpCompiler
                 return type.IsStatic;
             }
             Console.WriteLine("Error:isStatic():Symbol not found for:" + node.ToString());
-            Environment.Exit(0);
+            WriteFileLine(node);
+            errors++;
             return true;
         }
 
@@ -2626,7 +2640,11 @@ namespace QSharpCompiler
                             case SyntaxKind.OmittedArraySizeExpression:
                                 break;
                             default:
-                                if (sizeNode != null) Console.WriteLine("Error:multiple sizes for ArrayCreationExpression");
+                                if (sizeNode != null) {
+                                    Console.WriteLine("Error:multiple sizes for ArrayCreationExpression");
+                                    WriteFileLine(node);
+                                    errors++;
+                                }
                                 sizeNode = rank;  //*Expression
                                 break;
                         }
@@ -2645,6 +2663,8 @@ namespace QSharpCompiler
             }
             if (typeNode == null || sizeNode == null) {
                 Console.WriteLine("Error:Invalid ArrayCreationExpression : " + typeNode + " : " + sizeNode);
+                WriteFileLine(node);
+                errors++;
                 return;
             }
             for(int a=0;a<dims;a++) {
@@ -2774,6 +2794,11 @@ namespace QSharpCompiler
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
             if (type == null) return TypeKind.Error;
             return type.TypeKind;
+        }
+
+        private void WriteFileLine(SyntaxNode node) {
+            FileLinePositionSpan span = file.tree.GetLineSpan(node.Span);
+            Console.WriteLine("  in " + file.csFile + " @ " + (span.StartLinePosition.Line + 1));
         }
     }
 
