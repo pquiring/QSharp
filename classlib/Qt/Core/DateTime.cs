@@ -35,13 +35,13 @@ namespace Qt.Core {
         public DateTime AddMonths(int months) {
             return (DateTime)CPP.ReturnObject("DateTime::$new($q->addMonths(months))");
         }
-        public DateTime AddDays(int days) {
+        public DateTime AddDays(long days) {
             return (DateTime)CPP.ReturnObject("DateTime::$new($q->addDays(days))");
         }
-        public DateTime AddSeconds(int seconds) {
+        public DateTime AddSeconds(long seconds) {
             return (DateTime)CPP.ReturnObject("DateTime::$new($q->addSecs(seconds))");
         }
-        public DateTime AddMilliSeconds(int ms) {
+        public DateTime AddMilliSeconds(long ms) {
             return (DateTime)CPP.ReturnObject("DateTime::$new($q->addMSecs(ms))");
         }
 

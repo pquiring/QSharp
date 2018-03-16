@@ -1823,7 +1823,7 @@ namespace QSharpCompiler
                     SyntaxNode lockId = GetChildNode(node, 1);
                     string lockIdName = GetTypeName(lockId);
                     if ((lockIdName != "Qt::Core::ThreadLock") && (lockIdName != "Qt::Core::ThreadSignal")) {
-                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock");
+                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock or ThreadSignal");
                         Environment.Exit(0);
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);

@@ -12,8 +12,18 @@ namespace Qt.Core {
         public bool Exists() {return CPP.ReturnBool("$q->exists()");}
         public bool Remove() {return CPP.ReturnBool("$q->remove()");}
         public bool Rename(String newName) {return CPP.ReturnBool("$q->rename($check(newName)->qstring())");}
+        public bool Copy(String newName) {return CPP.ReturnBool("$q->copy($check(newName)->qstring())");}
         public bool Resize(long newSize) {return CPP.ReturnBool("$q->resize(newSize)");}
         public long Size() {return CPP.ReturnLong("$q->size()");}
         public bool SetSize(long newSize) {return CPP.ReturnBool("$q->resize(newSize)");}
+        public DateTime GetLastModified() {
+            return (DateTime)CPP.ReturnObject("Qt::Core::DateTime::$new(QFileInfo(*($q.get())).lastModified())");
+        }
+        public DateTime GetLastRead() {
+            return (DateTime)CPP.ReturnObject("Qt::Core::DateTime::$new(QFileInfo(*($q.get())).lastRead())");
+        }
+        public String AbsolutePath() {
+            return CPP.ReturnString("Qt::Core::String::$new(QFileInfo(*($q.get())).absoluteFilePath())");
+        }
     }
 }
