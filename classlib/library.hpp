@@ -139,6 +139,26 @@ namespace Qt::Media {
   struct FFContext;
 }
 
+namespace Qt::QSharp {
+  template<typename T>
+  struct Property {
+    T $value;
+    std::function<T(void)> _get;
+    std::function<void(T)> _set;
+    Property<T>& operator=(T t) {_set(t); return *this;}
+    operator T() {return _get();}
+    bool operator==(T t) {return _get() == t;}
+    bool operator!=(T t) {return _get() != t;}
+    T operator->() {return _get();}
+    void Get(std::function<T()> get) {
+      _get = get;
+    }
+    void Set(std::function<void(T)> set) {
+      _set = set;
+    }
+  };
+}
+
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
 
@@ -206,9 +226,15 @@ inline std::shared_ptr<T> $check(std::weak_ptr<T> wptr) {
 }
 
 template<typename T>
-std::function<T> $check(std::function<T> func) {
+inline std::function<T> $check(std::function<T> func) {
   if (!func) $npe();
   return func;
+}
+
+template<typename T>
+inline Qt::QSharp::Property<T> $check(Qt::QSharp::Property<T> pptr) {
+  if (pptr == nullptr) $npe();
+  return pptr;
 }
 
 inline int $hash(Qt::Core::Object *obj) {

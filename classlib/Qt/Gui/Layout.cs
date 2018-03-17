@@ -1,6 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
+    [CPPEnum("Qt::AlignmentFlag")]
     public enum Alignment {
         AlignDefault = 0,
         AlignLeft = 0x1, AlignRight = 0x2, AlignHCenter = 0x4, AlignJustify = 0x8,

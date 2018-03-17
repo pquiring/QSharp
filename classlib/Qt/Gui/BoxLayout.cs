@@ -1,6 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
+    [CPPEnum("QBoxLayout::Direction")]
     public enum Direction { LeftToRight, RightToLeft, TopToBottom, BottomToTop }
     [CPPClass(
         "public: QBoxLayout *$q;" +

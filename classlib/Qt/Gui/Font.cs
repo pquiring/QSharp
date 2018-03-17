@@ -2,6 +2,7 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
+    [CPPEnum("QFont::Weight")]
     public enum FontWeight {Light, Normal, DemiBold, Bold, Black}
     [CPPClass(
         "public: std::shared_ptr<QFont> $q;"

@@ -2,6 +2,7 @@ using Qt.Core;
 using Qt.QSharp;
 
 namespace Qt.Media {
+    [CPPEnum("QAudio::Mode")]
     public enum AudioMode {
         AudioModeInput = 0,
         AudioModeOutput = 1

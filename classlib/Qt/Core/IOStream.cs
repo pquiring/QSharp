@@ -1,6 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
+    [CPPEnum("QIODevice::OpenMode")]
     public enum OpenMode {NotOpen, ReadOnly, WriteOnly, ReadWrite, Append, Truncate, Text, Unbuffered}
     [CPPClass(
         "public: std::shared_ptr<QIODevice> $q;" +

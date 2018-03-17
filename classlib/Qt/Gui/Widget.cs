@@ -4,8 +4,11 @@ using Qt.Core;
 namespace Qt.Gui {
     public delegate void ChangedEvent();
 
+    [CPPEnum("Qt::CheckState")]
     public enum CheckState {Unchecked, PartiallyChecked, Checked}
+    [CPPEnum("Qt::Orientation")]
     public enum Orientation {Horizontal	= 1, Vertical}
+    [CPPEnum("QMessageBox::Icon")]  //also QSystemTrayIcon::MessageIcon
     public enum IconType {NoIcon, Information, Warning, Critical, Question}
 
     [CPPClass(

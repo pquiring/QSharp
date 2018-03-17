@@ -1,6 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
+    [CPPEnum("QuaZip::Mode")]
     public enum ZipMode { mdNotOpen, mdUnzip, mdCreate, mdAppend, mdAdd }
     [CPPClass(
         "private: std::shared_ptr<QuaZipFile> $q;" +
@@ -51,7 +52,8 @@ namespace Qt.Core {
         public ZipEntry GetEntry(String filename) {
             IEnumerator<ZipEntry> zipEnum = GetEnumerator();
             ZipEntry zipEntry;
-            while((zipEntry = zipEnum.Current) != null) {
+            while(zipEnum.MoveNext()) {
+                zipEntry = zipEnum.Current;
                 if (zipEntry.filename == filename) {
                     return zipEntry;
                 }

@@ -2,6 +2,7 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Gui {
+    [CPPEnum("QFileDialog::FileMode")]
     public enum FileMode {AnyFile, ExistingFile, Directory, ExistingFiles}
     [CPPClass(
         "public: std::shared_ptr<QFileDialog> $q;"

@@ -16,12 +16,11 @@ namespace Qt.Gui {
             CPP.Add("$q->setIcon($check(icon)->$icon());");
         }
         public void ShowMessage(String title, String msg, IconType iconType = IconType.Information, int msTimeout = 10000) {
-            CPP.Add("$q->showMessage($check(title)->qstring(), $check(msg)->qstring(), (QSystemTrayIcon::MessageIcon)iconType, msTimeout);");
+            CPP.Add("$q->showMessage($check(title)->qstring(), $check(msg)->qstring(), (QSystemTrayIcon::MessageIcon)(QMessageBox::Icon)iconType, msTimeout);");
         }
         [CPPVersion("0x050900")]  //Qt 5.9+
         public void ShowMessage(String title, String msg, Image icon, int msTimeout = 10000) {
             CPP.Add("$q->showMessage($check(title)->qstring(), $check(msg)->qstring(), $check(icon)->$icon(), msTimeout);");
         }
-
     }
 }

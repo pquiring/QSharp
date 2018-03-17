@@ -12,6 +12,12 @@ namespace Qt.QSharp {
         public CPPClass(string src) {}
     }
 
+    /* Allows C# enum to be converted to Qt C++ enum. */
+    [AttributeUsage(AttributeTargets.Enum)]
+    public class CPPEnum : System.Attribute {
+        public CPPEnum(string src) {}
+    }
+
     /* Places #if QT_VERSION >= version directive around method. */
     [AttributeUsage(AttributeTargets.Method)]
     public class CPPVersion : System.Attribute {
