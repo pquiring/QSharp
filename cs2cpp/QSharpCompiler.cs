@@ -1130,6 +1130,9 @@ namespace QSharpCompiler
                                     if (cls.Abstract) method.type.Abstract = true;
                                     field.get_Property = true;
                                     v.Append(v.name + ".Get([=] () {return $get_" + v.name + "();});\r\n");
+                                    if (method.src.Length == 0) {
+                                        method.Append("{return " + v.name + ";}");
+                                    }
                                     break;
                                 case SyntaxKind.SetAccessorDeclaration:
                                     methodNode(_etter, false, false, "$set_" + v.name);
@@ -1143,6 +1146,9 @@ namespace QSharpCompiler
                                     if (cls.Abstract) method.type.Abstract = true;
                                     field.set_Property = true;
                                     v.Append(v.name + ".Set([=] (" + field.GetTypeType() + " t) {$set_" + v.name + "(t);});\r\n");
+                                    if (method.src.Length == 0) {
+                                        method.Append("{" + v.name + " = value;}");
+                                    }
                                     break;
                             }
                         }
