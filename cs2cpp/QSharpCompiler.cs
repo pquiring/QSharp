@@ -1130,7 +1130,7 @@ namespace QSharpCompiler
                                     if (cls.Abstract) method.type.Abstract = true;
                                     field.get_Property = true;
                                     v.Append(v.name + ".Get([=] () {return $get_" + v.name + "();});\r\n");
-                                    if (method.src.Length == 0) {
+                                    if (method.src.Length == 0 && !cls.Abstract) {
                                         method.Append("{return " + v.name + ";}");
                                     }
                                     break;
@@ -1146,7 +1146,7 @@ namespace QSharpCompiler
                                     if (cls.Abstract) method.type.Abstract = true;
                                     field.set_Property = true;
                                     v.Append(v.name + ".Set([=] (" + field.GetTypeType() + " t) {$set_" + v.name + "(t);});\r\n");
-                                    if (method.src.Length == 0) {
+                                    if (method.src.Length == 0 && !cls.Abstract) {
                                         method.Append("{" + v.name + " = value;}");
                                     }
                                     break;
@@ -3231,7 +3231,7 @@ namespace QSharpCompiler
                 typekind = typeSymbol.TypeKind;
                 switch (typekind) {
                     case TypeKind.Delegate:
-                        useName = true;
+                        if (Generate.cls.Generic) useName = true;  //for MSVC bug
                         break;
                 }
             }
