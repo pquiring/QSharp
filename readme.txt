@@ -15,9 +15,9 @@ folder layout:
 
 Build Tools:
   .Net Core 2.0 + Roslyn
-  C++ toolset (C++14 required for GCC, C++17 required for MSVC)
-  Qt5 libraries (Qt 5.4+ required)
-  CMake (3.6 for GCC, 3.10 for MSVC)
+  C++14 toolset (gcc or MSVC)
+  Qt5.4+ libraries
+  CMake/3.6+
   Platform make tool (make for GCC, nmake for MSVC)
   ffmpeg/3.0+
 
@@ -72,8 +72,7 @@ cmake options (depends on platform):
 
 To compile with MSVC++
   Install either VS BuildTools or VS IDE with VC++ toolchain.
-  cs2cpp required options : --cxx=17 --msvc
-  Requires CMake/3.10
+  cs2cpp required options : --msvc
 
 VS Code Bug
   If you use VS Code and have either VS Build Tools or VS IDE installed

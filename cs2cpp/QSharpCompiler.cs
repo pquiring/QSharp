@@ -461,9 +461,9 @@ namespace QSharpCompiler
                 foreach(var cls in file.clss) {
                     if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                     sb.Append(cls.GetReflectionExtern());
-                    if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                    if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
                     sb.Append(cls.GetForwardDeclaration());
-                    if (cls.Namespace != "") sb.Append("}\r\n");
+                    if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
                 }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
@@ -473,6 +473,26 @@ namespace QSharpCompiler
         private void writeEndIf() {
             byte[] bytes = new UTF8Encoding().GetBytes("#endif\r\n");
             fs.Write(bytes, 0, bytes.Length);
+        }
+
+        public static string OpenNamespace(String Namespace) {
+            StringBuilder sb = new StringBuilder();
+            String[] strs = Namespace.Split("::");
+            for(int a=0;a<strs.Length;a++) {
+                sb.Append("namespace " + strs[a] + "{");
+            }
+            sb.Append("\r\n");
+            return sb.ToString();
+        }
+
+        public static string CloseNamespace(String Namespace) {
+            StringBuilder sb = new StringBuilder();
+            String[] strs = Namespace.Split("::");
+            for(int a=0;a<strs.Length;a++) {
+                sb.Append("}");
+            }
+            sb.Append("\r\n");
+            return sb.ToString();
         }
 
         private void MoveClass(String mvFile, String mvCls) {
@@ -562,22 +582,18 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             foreach(var dgate in NoClass.methods) {
                 if (dgate.Namespace.Length > 0) {
-                    sb.Append("namespace ");
-                    sb.Append(dgate.Namespace);
-                    sb.Append("{\r\n");
+                    sb.Append(OpenNamespace(dgate.Namespace));
                 }
                 sb.Append(dgate.GetMethodDeclaration());
                 sb.Append(";\r\n");
-                if (dgate.Namespace.Length > 0) sb.Append("}\r\n");
+                if (dgate.Namespace.Length > 0) sb.Append(CloseNamespace(dgate.Namespace));
             }
             foreach(var e in NoClass.enums) {
                 if (e.Namespace.Length > 0) {
-                    sb.Append("namespace ");
-                    sb.Append(e.Namespace);
-                    sb.Append("{\r\n");
+                    sb.Append(OpenNamespace(e.Namespace));
                 }
                 sb.Append(GetEnumStruct(e) + e.name + ";\r\n");
-                if (e.Namespace.Length > 0) sb.Append("}\r\n");
+                if (e.Namespace.Length > 0) sb.Append(CloseNamespace(e.Namespace));
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -600,9 +616,9 @@ namespace QSharpCompiler
                 foreach(var cls in file.clss) {
                     if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                     createDefaultCtor(cls);
-                    if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                    if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
                     sb.Append(cls.GetClassDeclaration());
-                    if (cls.Namespace != "") sb.Append("}\r\n");
+                    if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
                     if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
                 }
             }
@@ -620,9 +636,9 @@ namespace QSharpCompiler
         private void writeStaticFields() {
             StringBuilder sb = new StringBuilder();
             foreach(var cls in file.clss) {
-                if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
                 sb.Append(cls.GetStaticFields());
-                if (cls.Namespace != "") sb.Append("}\r\n");
+                if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -651,11 +667,11 @@ namespace QSharpCompiler
                 string hppfile = "src/" + cls.name + ".hpp";
                 if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
                 sb.Append(cls.GetReflectionData());
-                if (cls.Namespace != "") sb.Append("namespace " + cls.Namespace + "{\r\n");
+                if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
                 if (!cls.Generic && !cls.Interface) {
                     sb.Append(cls.GetMethodsDefinitions());
                 }
-                if (cls.Namespace != "") sb.Append("}\r\n");
+                if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
                 if (cls.nonClassCPP != null) sb.Append(cls.nonClassCPP);
                 string cppfile = "src/" + cls.name + ".cpp";
                 if (File.Exists(cppfile)) sb.Append("#include \"../" + cppfile + "\"\r\n");
@@ -708,10 +724,10 @@ namespace QSharpCompiler
                 sb.Append("}\r\n");
             }
 
-            sb.Append("namespace Qt::Core {\r\n");;
+            sb.Append("namespace Qt { namespace Core {\r\n");;
             sb.Append("int g_argc;\r\n");
             sb.Append("const char **g_argv;\r\n");
-            sb.Append("}\r\n");
+            sb.Append("}}\r\n");
             sb.Append("int main(int argc, const char **argv) {\r\n");
             sb.Append("Qt::Core::g_argc = argc;\r\n");
             sb.Append("Qt::Core::g_argv = argv;\r\n");
@@ -753,10 +769,10 @@ namespace QSharpCompiler
 
             if (!Program.single) sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
 
-            sb.Append("namespace Qt::Core {\r\n");;
+            sb.Append("namespace Qt { namespace Core {\r\n");;
             sb.Append("int g_argc;\r\n");
             sb.Append("const char **g_argv;\r\n");
-            sb.Append("}\r\n");
+            sb.Append("}}\r\n");
             sb.Append("extern \"C\" {\r\n");
             sb.Append("__declspec(dllexport)");
             sb.Append("void LibraryMain(std::shared_ptr<Qt::Core::Object> obj) {\r\n");

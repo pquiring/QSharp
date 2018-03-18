@@ -1,4 +1,4 @@
-namespace Qt::Gui {
+namespace Qt { namespace Gui {
 
 class $QOpenGLWidget : public QOpenGLWidget {
   private: OpenGLWidget *widget;
@@ -10,4 +10,4 @@ class $QOpenGLWidget : public QOpenGLWidget {
   public: void resizeGL(int x, int y) {widget->ResizeGL(x, y);}
 };
 
-}
+} } //namespace Qt::Gui

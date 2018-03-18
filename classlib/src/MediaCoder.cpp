@@ -1,6 +1,6 @@
 #include "Media.hpp"
 
-namespace Qt::Media {
+namespace Qt { namespace Media {
 
 static void register_vpx() {
   vpx = (*_av_guess_format)("vpx", nullptr, nullptr);
@@ -194,4 +194,4 @@ bool MediaCoder::Init()
   return true;
 }
 
-}  //namespace Qt::Media
+} }  //namespace Qt::Media

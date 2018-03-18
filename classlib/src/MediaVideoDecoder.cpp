@@ -1,6 +1,6 @@
 #include "Media.hpp"
 
-namespace Qt::Media {
+namespace Qt { namespace Media {
 
 std::shared_ptr<MediaVideoDecoder> MediaVideoDecoder::$new() {
   return std::make_shared<MediaVideoDecoder>();
@@ -149,4 +149,4 @@ float Qt::Media::MediaVideoDecoder::GetFrameRate()
   return ctx->video_codec_ctx->time_base.den / ctx->video_codec_ctx->time_base.num / ctx->video_codec_ctx->ticks_per_frame;
 }
 
-}  //namespace Qt::Media
+} }  //namespace Qt::Media

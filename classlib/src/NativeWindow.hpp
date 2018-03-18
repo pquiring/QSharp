@@ -1,4 +1,4 @@
-namespace Qt::Gui {
+namespace Qt { namespace Gui {
 
 class $EventFilter : public QObject {
   private: NativeWindow *window;
@@ -39,5 +39,5 @@ class $EventFilter : public QObject {
   }
 };
 
-}
+} }  //namespace Qt::Gui
 

@@ -12,7 +12,7 @@
 #include <libavutil/mathematics.h>
 #include <libswscale/swscale.h>
 
-namespace Qt::Media {
+namespace Qt { namespace Media {
 
 static bool libav_org = false;
 static bool loaded = false;
@@ -286,6 +286,6 @@ static int64 seek_packet(FFContext *ctx, int64 offset, int how) {
   }
 }
 
-} //namespace Qt::Media
+} } //namespace Qt::Media
 
 #endif

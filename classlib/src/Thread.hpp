@@ -1,4 +1,4 @@
-namespace Qt::Core {
+namespace Qt { namespace Core {
 
 typedef std::function<void()> $thread_run;
 
@@ -11,4 +11,4 @@ class $QThread : public QThread {
   public: void exec() {QThread::exec();}  //QThread::exec() is protected
 };
 
-}
+} }  //namespace Qt::Core

@@ -1,4 +1,4 @@
-namespace Qt::Network {
+namespace Qt { namespace Network {
 
 class $QSslServer : public QTcpServer {
   public: void incomingConnection(qintptr socket) {
@@ -9,4 +9,4 @@ class $QSslServer : public QTcpServer {
   }
 };
 
-}
+} } //namespace Qt::Network

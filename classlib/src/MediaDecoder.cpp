@@ -1,6 +1,6 @@
 #include "Media.hpp"
 
-namespace Qt::Media {
+namespace Qt { namespace Media {
 
 std::shared_ptr<MediaDecoder> MediaDecoder::$new() {
   return std::make_shared<MediaDecoder>();
@@ -453,4 +453,4 @@ bool MediaDecoder::Resize(int new_width, int new_height)
   return true;
 }
 
-}  //namespace Qt::Media
+} }  //namespace Qt::Media

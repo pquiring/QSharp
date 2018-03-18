@@ -116,30 +116,30 @@
 #undef int64
 #define int64 signed long long
 
-namespace Qt::Core {
+namespace Qt { namespace Core {
   extern int g_argc;
   extern const char **g_argv;
   class Object;
   class String;
   class $QThread;
-}
+}}
 
-namespace Qt::Gui {
+namespace Qt { namespace Gui {
   class $EventFilter;
   class $QOpenGLWidget;
   class $QOpenGLWindow;
-}
+}}
 
-namespace Qt::Network {
+namespace Qt { namespace Network {
   class $QSslServer;
   class $QWebReply;
-}
+}}
 
-namespace Qt::Media {
+namespace Qt { namespace Media {
   struct FFContext;
-}
+}}
 
-namespace Qt::QSharp {
+namespace Qt { namespace QSharp {
   template<typename T>
   struct Property {
     T $value;
@@ -157,7 +157,7 @@ namespace Qt::QSharp {
       _set = set;
     }
   };
-}
+}}
 
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException

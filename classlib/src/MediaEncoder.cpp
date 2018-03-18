@@ -1,6 +1,6 @@
 #include "Media.hpp"
 
-namespace Qt::Media {
+namespace Qt { namespace Media {
 
 //AVPicture was deprecated in ffmpeg/3.0 - use AVFrame instead - this function does the same as avpicture_alloc() except using AVFrame
 static int _avframe_alloc(AVFrame *picture, enum AVPixelFormat pix_fmt, int width, int height)
@@ -538,4 +538,4 @@ void Qt::Media::MediaEncoder::Stop()
   ctx = nullptr;
 }
 
-}  //namespace Qt::Media
+} }  //namespace Qt::Media
