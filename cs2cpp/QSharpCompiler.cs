@@ -1131,7 +1131,7 @@ namespace QSharpCompiler
                                     field.get_Property = true;
                                     v.Append(v.name + ".Get([=] () {return $get_" + v.name + "();});\r\n");
                                     if (method.src.Length == 0 && !cls.Abstract) {
-                                        method.Append("{return " + v.name + ";}");
+                                        method.Append("{return " + v.name + ".$value;}");
                                     }
                                     break;
                                 case SyntaxKind.SetAccessorDeclaration:
@@ -1147,7 +1147,7 @@ namespace QSharpCompiler
                                     field.set_Property = true;
                                     v.Append(v.name + ".Set([=] (" + field.GetTypeType() + " t) {$set_" + v.name + "(t);});\r\n");
                                     if (method.src.Length == 0 && !cls.Abstract) {
-                                        method.Append("{" + v.name + " = value;}");
+                                        method.Append("{" + v.name + ".$value = value;}");
                                     }
                                     break;
                             }
@@ -2027,6 +2027,9 @@ namespace QSharpCompiler
                     }
                     type = new Type(node, useName);
                     ob.Append(type.GetTypeType());
+                    if (isProperty(node)) {
+                        ob.Append(".$value");
+                    }
                     break;
                 case SyntaxKind.VariableDeclaration:
                     //local variable
@@ -2423,12 +2426,13 @@ namespace QSharpCompiler
         private bool isProperty(SyntaxNode node) {
             ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
             if (symbol == null) return false;
+            if (symbol.Kind != SymbolKind.Property) return false;
             String name = symbol.Name;
             if (method != null) {
-                if (method.name == "$set_" + name) return false;
-                if (method.name == "$get_" + name) return false;
+                if (method.name == "$set_" + name) return true;
+                if (method.name == "$get_" + name) return true;
             }
-            return (symbol.Kind == SymbolKind.Property);
+            return false;
         }
 
         private bool isDelegate(SyntaxNode node) {
