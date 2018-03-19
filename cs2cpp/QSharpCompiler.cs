@@ -3031,6 +3031,9 @@ namespace QSharpCompiler
             if (!Interface) {
                 sb.Append("public: virtual $class* $getType() {return &$class_" + full_name + ";}\r\n");
             }
+            foreach(var e in enums) {
+                sb.Append(Generate.GetEnumStruct(e) + e.name + ";\r\n");
+            }
             foreach(var field in fields) {
                 sb.Append(field.GetFieldDeclaration());
             }
@@ -3061,9 +3064,6 @@ namespace QSharpCompiler
                 if (method.version != null) {
                     sb.Append("#endif\r\n");
                 }
-            }
-            foreach(var e in enums) {
-                sb.Append(Generate.GetEnumStruct(e) + e.name + ";\r\n");
             }
             sb.Append("};\r\n");
             return sb.ToString();
