@@ -16,6 +16,7 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Enum)]
     public class CPPEnum : System.Attribute {
         public CPPEnum(string src) {}
+        public CPPEnum(string[] src) {}
     }
 
     /* Places #if QT_VERSION >= version directive around method. */
@@ -76,6 +77,7 @@ namespace Qt.QSharp {
     [AttributeUsage(AttributeTargets.Class)]
     public class CPPAddUsage : System.Attribute {
         public CPPAddUsage(string s1) {}
+        public CPPAddUsage(string[] s1) {}
     }
 
     [AttributeUsage(AttributeTargets.Class)]
