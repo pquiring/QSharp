@@ -3215,6 +3215,10 @@ namespace QSharpCompiler
             cls = src.cls;
         }
         public void set(String sym) {
+            int idx = sym.IndexOf("(");
+            if (idx != -1) {
+                sym = sym.Substring(0, idx);
+            }
             type = sym.Replace(".", "::");
         }
         public void set(SyntaxNode node, bool useName = false) {
@@ -3237,7 +3241,6 @@ namespace QSharpCompiler
             }
             switch (symbol.Kind) {
                 case SymbolKind.Parameter:
-                case SymbolKind.Method:
                     useName = true;
                     break;
             }
