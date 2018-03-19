@@ -916,6 +916,9 @@ namespace QSharpCompiler
                 case "far": return "$far";
                 case "delete": return "$delete";
                 case "slots": return "$slots";
+                case "BUFSIZ": return "$BUFSIZ";
+                case "TRUE": return "$TRUE";
+                case "FALSE": return "$FALSE";
             }
             return name;
         }
