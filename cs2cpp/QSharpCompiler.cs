@@ -294,6 +294,12 @@ namespace QSharpCompiler
             if (decl != null) {
                 ln += ",DeclSymbol=" + decl.ToString();
                 ln += ",DeclSymbol.Name=" + decl.Name;
+                ln += ",DeclSymbol.Kind=" + decl.Kind;
+                ln += ",DeclSymbol.IsStatic=" + decl.IsStatic;
+                ITypeSymbol containing = decl.ContainingType;
+                if (containing != null) {
+                    ln += ",DeclSymbol.ContainingType.TypeKind=" + containing.TypeKind;
+                }
             }
             ISymbol symbol = file.model.GetSymbolInfo(node).Symbol;
             if (symbol != null) {
@@ -909,6 +915,7 @@ namespace QSharpCompiler
                 case "near": return "$near";
                 case "far": return "$far";
                 case "delete": return "$delete";
+                case "slots": return "$slots";
             }
             return name;
         }
@@ -1072,7 +1079,7 @@ namespace QSharpCompiler
                         if (attributeListNode(child, field)) return;
                         break;
                     case SyntaxKind.VariableDeclaration:
-                        field.variables = variableDeclaration(child, field);
+                        field.variables = variableDeclaration(child, field, true);
                         foreach(var v in field.variables) {
                             if (v.equals != null) fieldEquals(v);
                         }
@@ -1332,7 +1339,7 @@ namespace QSharpCompiler
             }
         }
 
-        private List<Variable> variableDeclaration(SyntaxNode node, Type type) {
+        private List<Variable> variableDeclaration(SyntaxNode node, Type type, bool field = false) {
             List<Variable> vars = new List<Variable>();
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             foreach(var child in nodes) {
@@ -1350,15 +1357,11 @@ namespace QSharpCompiler
                         variableDeclaration(child, type);
                         break;
                     case SyntaxKind.PredefinedType:
-                        type.set(child);
-                        type.setTypes();
-                        break;
                     case SyntaxKind.IdentifierName:
                     case SyntaxKind.QualifiedName:
                     case SyntaxKind.GenericName:
                         type.set(child);
                         type.setTypes();
-                        cls.addUsage(type.GetSymbol());
                         break;
                     case SyntaxKind.VariableDeclarator:
                         getFlags(type, file.model.GetDeclaredSymbol(child));
@@ -1366,7 +1369,7 @@ namespace QSharpCompiler
                         Variable var = new Variable();
                         vars.Add(var);
                         if (symbol2 != null) {
-                            var.name = symbol2.Name;
+                            var.name = ConvertName(symbol2.Name);
                         }
                         var.equals = GetChildNode(child);
                         break;
