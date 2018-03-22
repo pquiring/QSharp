@@ -2672,33 +2672,40 @@ namespace QSharpCompiler
             expressionNode(GetChildNode(node, 2), ob);
         }
 
-        private String getModType(SyntaxNode node) {
-            if (isFloat(node)) return "f";
-            if (isDouble(node)) return "d";
-            if (isLong(node)) return "l";
+        private String getModType(SyntaxNode left, SyntaxNode right) {
+            if (isDouble(left)) return "d";
+            if (isDouble(right)) return "d";
+            if (isFloat(left)) return "f";
+            if (isFloat(right)) return "f";
+            if (isLong(left)) return "l";
+            if (isLong(right)) return "l";
             return "i";
         }
 
         //C++ does not support float % -- must use a special function
         private void modNode(SyntaxNode node, OutputBuffer ob, string op) {
+            SyntaxNode left = GetChildNode(node, 1);
+            SyntaxNode right = GetChildNode(node, 2);
             ob.Append("$mod");
-            ob.Append(getModType(GetChildNode(node, 1)));
+            ob.Append(getModType(left, right));
             ob.Append("(");
-            expressionNode(GetChildNode(node, 1), ob);
+            expressionNode(left, ob);
             ob.Append(",");
-            expressionNode(GetChildNode(node, 2), ob);
+            expressionNode(right, ob);
             ob.Append(")");
         }
 
         //C++ does not support float % -- must use a special function
         private void modAssignNode(SyntaxNode node, OutputBuffer ob, string op) {
-            expressionNode(GetChildNode(node, 1), ob, true);
+            SyntaxNode left = GetChildNode(node, 1);
+            SyntaxNode right = GetChildNode(node, 2);
+            expressionNode(left, ob, true);
             ob.Append("= $mod");
-            ob.Append(getModType(GetChildNode(node, 1)));
+            ob.Append(getModType(left, right));
             ob.Append("(");
-            expressionNode(GetChildNode(node, 1), ob);
+            expressionNode(left, ob);
             ob.Append(",");
-            expressionNode(GetChildNode(node, 2), ob);
+            expressionNode(right, ob);
             ob.Append(")");
         }
 
