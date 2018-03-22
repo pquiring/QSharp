@@ -34,7 +34,7 @@ namespace Qt.Core {
         }
         /** Returns unsafe backing buffer. */
         public T[] GetBuffer() {
-            return (T[])CPP.ReturnObject("Qt::Core::FixedArray::$new($q->data(), $q->size())");
+            return (T[])CPP.ReturnObject("Qt::QSharp::FixedArray1D<T>::$new($q->data(), $q->size())");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool IsEmpty() {return Size() == 0;}
