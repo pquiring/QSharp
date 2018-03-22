@@ -2517,9 +2517,14 @@ namespace QSharpCompiler
             ob.Append(type);
             ob.Append(">::$new");
             ob.Append("(std::initializer_list<");
-//            ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
+            dims--;
+            if (dims > 0) {
+                ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
+            }
             ob.Append(type);
-//            ob.Append(">");
+            if (dims > 0) {
+                ob.Append(">");
+            }
             ob.Append(">{");
             foreach(var elem in list) {
                 if (!first) ob.Append(","); else first = false;
@@ -2609,6 +2614,24 @@ namespace QSharpCompiler
             return false;
         }
 
+        private bool isFloat(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            return type.ToString() == "float";
+        }
+
+        private bool isDouble(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            return type.ToString() == "double";
+        }
+
+        private bool isLong(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            return type.ToString() == "long";
+        }
+
         private void binaryNode(SyntaxNode node, OutputBuffer ob, string op) {
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(op);
@@ -2649,9 +2672,18 @@ namespace QSharpCompiler
             expressionNode(GetChildNode(node, 2), ob);
         }
 
+        private String getModType(SyntaxNode node) {
+            if (isFloat(node)) return "f";
+            if (isDouble(node)) return "d";
+            if (isLong(node)) return "l";
+            return "i";
+        }
+
         //C++ does not support float % -- must use a special function
         private void modNode(SyntaxNode node, OutputBuffer ob, string op) {
-            ob.Append("$mod(");
+            ob.Append("$mod");
+            ob.Append(getModType(GetChildNode(node, 1)));
+            ob.Append("(");
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(",");
             expressionNode(GetChildNode(node, 2), ob);
@@ -2661,7 +2693,9 @@ namespace QSharpCompiler
         //C++ does not support float % -- must use a special function
         private void modAssignNode(SyntaxNode node, OutputBuffer ob, string op) {
             expressionNode(GetChildNode(node, 1), ob, true);
-            ob.Append("= $mod(");
+            ob.Append("= $mod");
+            ob.Append(getModType(GetChildNode(node, 1)));
+            ob.Append("(");
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(",");
             expressionNode(GetChildNode(node, 2), ob);

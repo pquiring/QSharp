@@ -10,7 +10,8 @@ namespace Qt.QSharp {
         "public: bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "public: bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "public: FixedArray1D<T>* operator->() {return this;}\r\n" +
-        "public: operator FixedArray1D<std::shared_ptr<Qt::Core::Object>>() {return (FixedArray1D<std::shared_ptr<Qt::Core::Object>>)this;}\r\n" +
+        "public: operator std::shared_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
+        "public: std::shared_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
         "public: T* data() {return t.get()->t;}\r\n" +
         "public: FixedArray1D() {$init();}\r\n" +
         "public: FixedArray1D(nullptr_t np) {$init();}\r\n" +
@@ -92,6 +93,8 @@ namespace Qt.QSharp {
         "public: bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "public: bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "public: FixedArray2D<T>* operator->() {return this;}\r\n" +
+        "public: operator std::shared_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
+        "public: std::shared_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
         "public: FixedArray2D() {$init();}\r\n" +
         "public: FixedArray2D(nullptr_t np) {$init();}\r\n" +
         "public: FixedArray2D(const FixedArray2D &o) {$init(); t = o.t;}\r\n" +
@@ -107,6 +110,10 @@ namespace Qt.QSharp {
         public int Length {get {return CPP.ReturnInt("t->length");}}
         public FixedArray2D(int size) {
             CPP.Add("if (size < 0) $abe(); t = std::make_shared<FixedData<FixedArray1D<T>>>(size);\r\n");
+        }
+        [CPPReplaceArgs("std::initializer_list<FixedArray1D<T>> list")]
+        private FixedArray2D(NativeArg5 arg) {
+            CPP.Add("t = std::make_shared<FixedData<FixedArray1D<T>>>(list);");
         }
         public int Size() {return Length;}
         public FixedArray1D<T> Get(int idx) {
@@ -152,6 +159,8 @@ namespace Qt.QSharp {
         "public: bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "public: bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "public: FixedArray3D<T>* operator->() {return this;}\r\n" +
+        "public: operator std::shared_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
+        "public: std::shared_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
         "public: FixedArray3D() {$init();}\r\n" +
         "public: FixedArray3D(nullptr_t np) {$init();}\r\n" +
         "public: FixedArray3D(const FixedArray3D &o) {$init();t = o.t;}\r\n" +
@@ -167,6 +176,10 @@ namespace Qt.QSharp {
         public int Length {get {return CPP.ReturnInt("t->length");}}
         public FixedArray3D(int size) {
             CPP.Add("if (size < 0) $abe(); t = std::make_shared<FixedData<FixedArray2D<T>>(size);");
+        }
+        [CPPReplaceArgs("std::initializer_list<FixedArray2D<T>> list")]
+        private FixedArray3D(NativeArg5 arg) {
+            CPP.Add("t = std::make_shared<FixedData<FixedArray2D<T>>>(list);");
         }
         public int Size() {return Length;}
         public FixedArray2D<T> Get(int idx) {

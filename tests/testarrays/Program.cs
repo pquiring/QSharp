@@ -26,6 +26,8 @@ namespace testarrays
                 i2[3][a] = a;
             }
             Console.WriteLine("sum=" + sum(i2[3]));
+            i2[0] = new int[]{1,2,3};
+            i2 = new int[][] {new int[]{1,2,3}, new int[] {4,5,6}};
 
             B[][] b2 = new B[4][];
             func(b2);

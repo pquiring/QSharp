@@ -318,10 +318,15 @@ inline int $hash(Qt::Core::Object *obj) {
 }
 
 //$mod
-inline int $mod(int x, int y) {return x % y;}
-inline uint32 $mod(uint32 x, uint32 y) {return x % y;}
-inline float $mod(float x, float y) {return std::fmod(x, y);}
-inline double $mod(double x, double y) {return std::fmod(x, y);}
+template<typename T1, typename T2>
+inline int $modi(T1 x, T2 y) {return x % y;}
+
+template<typename T1, typename T2>
+inline int64 $modl(T1 x, T2 y) {return x % y;}
+
+inline float $modf(float x, float y) {return std::fmod(x, y);}
+
+inline double $modd(double x, double y) {return std::fmod(x, y);}
 
 //$add
 extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
