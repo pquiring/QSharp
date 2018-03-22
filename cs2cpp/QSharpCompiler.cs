@@ -766,9 +766,9 @@ namespace QSharpCompiler
             }
             sb.Append(Program.main + "::" + name + "(args);\r\n");
             if (!Program.debug) {
-                sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
                 sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
             }
             return sb.ToString();
@@ -1936,7 +1936,7 @@ namespace QSharpCompiler
                 case SyntaxKind.SwitchStatement:
                     // var, [SwitchSection...]
                     SyntaxNode var = GetChildNode(node);
-                    if (GetTypeName(var) == "Qt::Core::String") {
+                    if (isString(var)) {
                         switchString(node);
                         break;
                     }
@@ -2255,10 +2255,16 @@ namespace QSharpCompiler
                     expressionNode(GetChildNode(node), ob);
                     break;
                 case SyntaxKind.AddExpression:
-                    ob.Append("$add(");
-                    expressionNode(GetChildNode(node, 1), ob);
+                    SyntaxNode addleft = GetChildNode(node, 1);
+                    SyntaxNode addright = GetChildNode(node, 2);
+                    if (isString(addleft) || isString(addright)) {
+                        ob.Append("$addstr(");
+                    } else {
+                        ob.Append("$addnum(");
+                    }
+                    expressionNode(addleft, ob);
                     ob.Append(",");
-                    expressionNode(GetChildNode(node, 2), ob);
+                    expressionNode(addright, ob);
                     ob.Append(")");
                     break;
                 case SyntaxKind.SubtractExpression:
@@ -2301,11 +2307,17 @@ namespace QSharpCompiler
                     binaryNode(node, ob, ">>");
                     break;
                 case SyntaxKind.AddAssignmentExpression:
-                    expressionNode(GetChildNode(node, 1), ob, true);
-                    ob.Append("= $add(");
-                    expressionNode(GetChildNode(node, 1), ob);
+                    SyntaxNode addassignleft = GetChildNode(node, 1);
+                    SyntaxNode addassignright = GetChildNode(node, 2);
+                    expressionNode(addassignleft, ob, true);
+                    if (isString(addassignleft) || isString(addassignright)) {
+                        ob.Append("= $addstr(");
+                    } else {
+                        ob.Append("= $addnum(");
+                    }
+                    expressionNode(addassignleft, ob);
                     ob.Append(",");
-                    expressionNode(GetChildNode(node, 2), ob);
+                    expressionNode(addassignright, ob);
                     ob.Append(")");
                     break;
                 case SyntaxKind.SubtractAssignmentExpression:
@@ -2578,6 +2590,17 @@ namespace QSharpCompiler
             return symbol.Kind == SymbolKind.Namespace;
         }
 
+        private bool isString(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            switch (type.ToString()) {
+                case "string": return true;
+                case "System.String": return true;
+                case "Qt.Core.String": return true;
+            }
+            return false;
+        }
+
         private void binaryNode(SyntaxNode node, OutputBuffer ob, string op) {
             expressionNode(GetChildNode(node, 1), ob);
             ob.Append(op);
@@ -2590,10 +2613,8 @@ namespace QSharpCompiler
             bool useEquals = false;
             bool leftString = false;
             bool rightString = false;
-            if (GetTypeName(left) == "Qt::Core::String") leftString = true;
-            else if (GetTypeName(left) == "string") leftString = true;
-            if (GetTypeName(right) == "Qt::Core::String") rightString = true;
-            else if (GetTypeName(right) == "string") rightString = true;
+            if (isString(left)) leftString = true;
+            if (isString(right)) rightString = true;
             if (leftString && rightString) {
                 useEquals = true;
             }

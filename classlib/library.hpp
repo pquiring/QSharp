@@ -324,89 +324,33 @@ inline float $mod(float x, float y) {return std::fmod(x, y);}
 inline double $mod(double x, double y) {return std::fmod(x, y);}
 
 //$add
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
 
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::Object> y);
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, int32 y);
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, int64 y);
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, uint32 y);
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, uint64 y);
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, float y);
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::String> s1, double y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::Object> y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, int32 y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, int64 y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, uint32 y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, uint64 y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, float y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, double y);
 
-extern std::shared_ptr<Qt::Core::String> $add(std::shared_ptr<Qt::Core::Object> x, std::shared_ptr<Qt::Core::String> s2);
-extern std::shared_ptr<Qt::Core::String> $add(int32 x, std::shared_ptr<Qt::Core::String> s2);
-extern std::shared_ptr<Qt::Core::String> $add(int64 x, std::shared_ptr<Qt::Core::String> s2);
-extern std::shared_ptr<Qt::Core::String> $add(uint32 x, std::shared_ptr<Qt::Core::String> s2);
-extern std::shared_ptr<Qt::Core::String> $add(uint64 x, std::shared_ptr<Qt::Core::String> s2);
-extern std::shared_ptr<Qt::Core::String> $add(float x, std::shared_ptr<Qt::Core::String> s2);
-extern std::shared_ptr<Qt::Core::String> $add(double x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::Object> x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(int32 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(int64 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(uint32 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(uint64 x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(float x, std::shared_ptr<Qt::Core::String> s2);
+extern std::shared_ptr<Qt::Core::String> $addstr(double x, std::shared_ptr<Qt::Core::String> s2);
 
-inline int8 $add(int8 x,int8 y) {return x + y;}
-inline int16 $add(int16 x,int16 y) {return x + y;}
-inline int32 $add(int32 x,int32 y) {return x + y;}
-inline int64 $add(int64 x,int64 y) {return x + y;}
+template<typename T1, typename T2>
+T1 $addnum(T1 x,T2 y) {return x + y;}
 
-inline uint8 $add(uint8 x,uint8 y) {return x + y;}
-inline uint16 $add(uint16 x,uint16 y) {return x + y;}
-inline uint32 $add(uint32 x,uint32 y) {return x + y;}
-inline uint64 $add(uint64 x,uint64 y) {return x + y;}
+template<typename T1, typename T2>
+T1 $addnum(Qt::QSharp::Property<T1> x,T2 y) {return x.$value + y;}
 
-inline float $add(float x,float y) {return x + y;}
-inline double $add(double x,double y) {return x + y;}
+template<typename T1, typename T2>
+T1 $addnum(T1 x,Qt::QSharp::Property<T2> y) {return x + y.$value;}
 
-//char mixed
-inline int16 $add(char16 x,int8 y) {return x + y;}
-inline int32 $add(char16 x,int32 y) {return x + y;}
-inline int64 $add(char16 x,int64 y) {return x + y;}
+template<typename T1, typename T2>
+T1 $addnum(Qt::QSharp::Property<T1> x,Qt::QSharp::Property<T2> y) {return x.$value + y.$value;}
 
-inline int16 $add(int8 x,char16 y) {return x + y;}
-inline int32 $add(int32 x,char16 y) {return x + y;}
-inline int64 $add(int64 x,char16 y) {return x + y;}
-
-inline uint16 $add(char16 x,uint8 y) {return x + y;}
-inline uint32 $add(char16 x,uint32 y) {return x + y;}
-inline uint64 $add(char16 x,uint64 y) {return x + y;}
-
-inline uint16 $add(uint8 x,char16 y) {return x + y;}
-inline uint32 $add(uint32 x,char16 y) {return x + y;}
-inline uint64 $add(uint64 x,char16 y) {return x + y;}
-
-//mixed numericals
-inline float $add(float x,int32 y) {return x + y;}
-inline float $add(int32 x,float y) {return x + y;}
-inline float $add(float x,int64 y) {return x + y;}
-inline float $add(int64 x,float y) {return x + y;}
-
-inline float $add(float x,uint32 y) {return x + y;}
-inline float $add(uint32 x,float y) {return x + y;}
-inline float $add(float x,uint64 y) {return x + y;}
-inline float $add(uint64 x,float y) {return x + y;}
-
-inline double $add(double x,int32 y) {return x + y;}
-inline double $add(int32 x,double y) {return x + y;}
-inline double $add(double x,int64 y) {return x + y;}
-inline double $add(int64 x,double y) {return x + y;}
-
-inline double $add(double x,uint32 y) {return x + y;}
-inline double $add(uint32 x,double y) {return x + y;}
-inline double $add(double x,uint64 y) {return x + y;}
-inline double $add(uint64 x,double y) {return x + y;}
-
-inline int64 $add(int64 x,int32 y) {return x + y;}
-inline int64 $add(int32 x,int64 y) {return x + y;}
-
-inline int64 $add(uint64 x,uint32 y) {return x + y;}
-inline int64 $add(uint32 x,uint64 y) {return x + y;}
-
-inline int32 $add(int32 x,int8 y) {return x + y;}
-inline int32 $add(int8 x,int32 y) {return x + y;}
-
-inline int64 $add(int64 x,int8 y) {return x + y;}
-inline int64 $add(int8 x,int64 y) {return x + y;}
-
-inline int32 $add(int32 x,uint8 y) {return x + y;}
-inline int32 $add(uint8 x,int32 y) {return x + y;}
-
-inline int64 $add(int64 x,uint8 y) {return x + y;}
-inline int64 $add(uint8 x,int64 y) {return x + y;}
