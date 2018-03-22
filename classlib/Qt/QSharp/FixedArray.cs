@@ -10,6 +10,7 @@ namespace Qt.QSharp {
         "public: bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "public: bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "public: FixedArray1D<T>* operator->() {return this;}\r\n" +
+        "public: operator FixedArray1D<std::shared_ptr<Qt::Core::Object>>() {return (FixedArray1D<std::shared_ptr<Qt::Core::Object>>)this;}\r\n" +
         "public: T* data() {return t.get()->t;}\r\n" +
         "public: FixedArray1D() {$init();}\r\n" +
         "public: FixedArray1D(nullptr_t np) {$init();}\r\n" +
