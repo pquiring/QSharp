@@ -545,6 +545,14 @@ namespace QSharpCompiler
             int cnt = clss.Count;
             for(int idx1=0;idx1<cnt;idx1++) {
                 Class cls1 = clss[idx1];
+                if (cls1.nsfullname == "Qt::QSharp::FixedChecks") {
+                    clss.RemoveAt(idx1);
+                    clss.Insert(0, cls1);
+                    break;
+                }
+            }
+            for(int idx1=0;idx1<cnt;idx1++) {
+                Class cls1 = clss[idx1];
                 if (cls1.nsfullname.StartsWith("Qt::QSharp::FixedArray") && cls1.nsfullname.Contains("Enumerator")) {
                     clss.RemoveAt(idx1);
                     clss.Insert(0, cls1);

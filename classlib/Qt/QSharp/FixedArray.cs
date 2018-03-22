@@ -202,4 +202,7 @@ namespace Qt.QSharp {
             idx = -1;
         }
     }
+
+    //just to insert HPP code after FixedArrays
+    public class FixedChecks {}
 }
