@@ -105,7 +105,7 @@ namespace Qt.Gui {
         public void glLinkProgram(int program) {CPP.Add("$q->glLinkProgram(program);");}
         public void glPixelStorei(int pname, int param) {CPP.Add("$q->glPixelStorei(pname, param);");}
         public void glPolygonOffset(float factor, float units) {CPP.Add("$q->glPolygonOffset(factor, units);");}
-        public void glReadPixels(int x, int y, int width, int height, int format, int type, int[] pixels) {CPP.Add("$q->glReadPixels(x, y, width, height, format, type, pixels->data());");}
+        public void glReadPixels(int x, int y, int width, int height, int format, int type, uint[] pixels) {CPP.Add("$q->glReadPixels(x, y, width, height, format, type, pixels->data());");}
         public void glReleaseShaderCompiler() {CPP.Add("$q->glReleaseShaderCompiler();");}
         public void glRenderbufferStorage(int target, int internalformat, int width, int height) {CPP.Add("$q->glRenderbufferStorage(target, internalformat, width, height);");}
         public void glSampleCoverage(float value, int invert) {CPP.Add("$q->glSampleCoverage(value, invert);");}
@@ -122,12 +122,12 @@ namespace Qt.Gui {
         public void glStencilMaskSeparate(int face, int mask) {CPP.Add("$q->glStencilMaskSeparate(face, mask);");}
         public void glStencilOp(int fail, int zfail, int zpass) {CPP.Add("$q->glStencilOp(fail, zfail, zpass);");}
         public void glStencilOpSeparate(int face, int fail, int zfail, int zpass) {CPP.Add("$q->glStencilOpSeparate(face, fail, zfail, zpass);");}
-        public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, int[] pixels) {CPP.Add("$q->glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels->data());");}
+        public void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, uint[] pixels) {CPP.Add("$q->glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels->data());");}
         public void glTexParameterf(int target, int pname, float param) {CPP.Add("$q->glTexParameterf(target, pname, param);");}
         public void glTexParameterfv(int target, int pname, float[] args) {CPP.Add("$q->glTexParameterfv(target, pname, args->data());");}
         public void glTexParameteri(int target, int pname, int param) {CPP.Add("$q->glTexParameteri(target, pname, param);");}
         public void glTexParameteriv(int target, int pname, int[] args) {CPP.Add("$q->glTexParameteriv(target, pname, args->data());");}
-        public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, int[] pixels) {CPP.Add("$q->glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels->data());");}
+        public void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, uint[] pixels) {CPP.Add("$q->glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels->data());");}
 
         public void glUniform1f(int location, float x) {CPP.Add("$q->glUniform1f(location, x);");}
         public void glUniform1fv(int location, int count, float[] v) {CPP.Add("$q->glUniform1fv(location, count, v->data());");}

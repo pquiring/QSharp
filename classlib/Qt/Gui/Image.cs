@@ -62,9 +62,9 @@ namespace Qt.Gui {
             int offset = y * _width + x;
             CPP.Add("$px[offset] = px;");
         }
-        public int GetPixel(int x, int y) {
+        public uint GetPixel(int x, int y) {
             int offset = y * _width + x;
-            return CPP.ReturnInt("$px[offset]");
+            return CPP.ReturnUInt("$px[offset]");
         }
         public void SetAlpha(int x, int y, byte alpha) {
             int offset = (y * _width + x) * 4 + 3;
@@ -74,10 +74,10 @@ namespace Qt.Gui {
             int offset = (y * _width + x) * 4 + 3;
             return CPP.ReturnByte("$px8[offset]");
         }
-        public int[] GetPixels() {
-            return (int[])CPP.ReturnObject("Qt::QSharp::FixedArray<int>::$new($this, $px, _width * _height)");
+        public uint[] GetPixels() {
+            return (uint[])CPP.ReturnObject("Qt::QSharp::FixedArray1D<uint32>::$new($this, $px, _width * _height)");
         }
-        public void SetPixels(int[] px) {
+        public void SetPixels(uint[] px) {
             int pxs = _width * _height;
             if (px == null) throw new NullPointerException();
             if (px.Length != pxs) return;

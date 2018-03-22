@@ -31,8 +31,8 @@ namespace QSharpCompiler
         public static int headidx = 0;
         public static string main;
         public static string home = ".";
+        public static string cxx = "14";
         public static bool single = false;  //generate monolithic cpp source file
-        public static string cxx = "14";  //C++ version to use
         public static bool msvc = false;
         public static bool debug = false;
         public static List<string> refs = new List<string>();
@@ -54,7 +54,6 @@ namespace QSharpCompiler
                 Console.WriteLine("  --home=folder");
                 Console.WriteLine("  --print[=tokens,tostring,all]");
                 Console.WriteLine("  --single | --multi");
-                Console.WriteLine("  --cxx=version");
                 Console.WriteLine("  --msvc");
                 Console.WriteLine("  --debug");
                 return;
@@ -94,6 +93,9 @@ namespace QSharpCompiler
                     }
                     main = value.Replace(".", "::");
                 }
+                if (arg == "--cxx") {
+                    cxx = value;
+                }
                 if (arg == "--ref") {
                     if (value.Length == 0) {
                         Console.WriteLine("Error:--ref requires a file");
@@ -128,13 +130,6 @@ namespace QSharpCompiler
                 }
                 if (arg == "--multi") {
                     single = false;
-                }
-                if (arg == "--cxx") {
-                    if (value.Length == 0) {
-                        Console.WriteLine("Error:--cxx requires a version number (14 or 17)");
-                        return;
-                    }
-                    cxx = value;
                 }
                 if (arg == "--msvc") {
                     msvc = true;
@@ -399,6 +394,10 @@ namespace QSharpCompiler
                 Console.WriteLine("Errors:" + errors);
                 Environment.Exit(1);
             }
+            if (Program.classlib) {
+                //move some base classes to the top
+                sortClasslib();
+            }
             while (sortClasses()) {};
             //TODO : sort inner classes
             writeNoClassTypes();
@@ -542,6 +541,24 @@ namespace QSharpCompiler
             }
         }
 
+        private void sortClasslib() {
+            int cnt = clss.Count;
+            for(int idx1=0;idx1<cnt;idx1++) {
+                Class cls1 = clss[idx1];
+                if (cls1.nsfullname.StartsWith("Qt::QSharp::FixedArray") && cls1.nsfullname.Contains("Enumerator")) {
+                    clss.RemoveAt(idx1);
+                    clss.Insert(0, cls1);
+                }
+            }
+            for(int idx1=0;idx1<cnt;idx1++) {
+                Class cls1 = clss[idx1];
+                if (cls1.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !cls1.nsfullname.Contains("Enumerator")) {
+                    clss.RemoveAt(idx1);
+                    clss.Insert(0, cls1);
+                }
+            }
+        }
+
         private bool sortClasses() {
             int cnt = clss.Count;
             for(int idx1=0;idx1<cnt;idx1++) {
@@ -554,7 +571,7 @@ namespace QSharpCompiler
                             //need to move idx2 before idx
                             Class tmp = clss[idx2];
                             clss.RemoveAt(idx2);
-                            clss.Insert(0, tmp);
+                            clss.Insert(idx1, tmp);
                             return true;
                         }
                     }
@@ -604,6 +621,11 @@ namespace QSharpCompiler
                 sb.Append(cls.GetClassDeclaration());
                 if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
                 if (cls.nonClassHPP != null) sb.Append(cls.nonClassHPP);
+                string hppfile = "src/" + cls.name + ".hpp";
+                if (File.Exists(hppfile)) {
+                    String hpp = File.ReadAllText(hppfile);
+                    sb.Append(hpp);
+                }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -647,8 +669,6 @@ namespace QSharpCompiler
                 if (cls.forward != null) {
                     sb.Append("class " + cls.forward + ";\r\n");
                 }
-                string hppfile = "src/" + cls.name + ".hpp";
-                if (File.Exists(hppfile)) sb.Append("#include \"../" + hppfile + "\"\r\n");
                 sb.Append(cls.GetReflectionData());
                 if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
                 if (!cls.Generic && !cls.Interface) {
@@ -657,7 +677,10 @@ namespace QSharpCompiler
                 if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
                 if (cls.nonClassCPP != null) sb.Append(cls.nonClassCPP);
                 string cppfile = "src/" + cls.name + ".cpp";
-                if (File.Exists(cppfile)) sb.Append("#include \"../" + cppfile + "\"\r\n");
+                if (File.Exists(cppfile)) {
+                    String cpp = File.ReadAllText(cppfile);
+                    sb.Append(cpp);
+                }
             }
             byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
             fs.Write(bytes, 0, bytes.Length);
@@ -736,14 +759,18 @@ namespace QSharpCompiler
 
         private String writeInvokeMain(String name) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
+            sb.Append("Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> args = Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
-            sb.Append("try {\r\n");
+            if (!Program.debug) {
+                sb.Append("try {\r\n");
+            }
             sb.Append(Program.main + "::" + name + "(args);\r\n");
-            sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-            sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-            sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-            sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
+            if (!Program.debug) {
+                sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($add(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
+            }
             return sb.ToString();
         }
 
@@ -780,6 +807,7 @@ namespace QSharpCompiler
             sb.Append("include_directories(/usr/include/qt5)\r\n");
             sb.Append("include_directories(/usr/include/ffmpeg)\r\n");
             sb.Append("include_directories(" + Program.home + "/include)\r\n");
+            sb.Append("include_directories(src)\r\n");
             if (Program.classlib) {
                 sb.Append("include_directories(" + Program.home + "/include/quazip)\r\n");
             }
@@ -1354,6 +1382,11 @@ namespace QSharpCompiler
                     case SyntaxKind.ArrayRankSpecifier:
                         //assume it's OmittedArraySizeExpression
                         type.arrays++;
+                        if (type.arrays > 3) {
+                            Console.WriteLine("Error:Array Dimensions not supported:" + type.arrays);
+                            WriteFileLine(node);
+                            errors++;
+                        }
                         break;
                     case SyntaxKind.PointerType:
                         type.ptr = true;
@@ -1427,7 +1460,11 @@ namespace QSharpCompiler
                 method.src.Append("}\r\n");
             }
             method.type.setTypes();
-            createNewMethod(cls, method.args, method.replaceArgs);
+            if (cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !cls.nsfullname.Contains("Enumerator")) {
+                createNewMethodFixedArray(cls, method.args, method.replaceArgs);
+            } else {
+                createNewMethod(cls, method.args, method.replaceArgs);
+            }
         }
 
         private void createNewMethod(Class cls, List<Argument> args, String replaceArgs) {
@@ -1479,6 +1516,58 @@ namespace QSharpCompiler
             method.Append("return $this;\r\n");
             method.Append("}\r\n");
             method.type.setTypes();
+            cls.methods.Add(method);
+        }
+
+        private void createNewMethodFixedArray(Class cls, List<Argument> args, String replaceArgs) {
+            Method method = new Method();
+            method.type.Public = true;
+            method.type.Static = true;
+            method.name = "$new";
+            method.type.set(cls.fullname);
+            method.type.cls = cls;
+            method.cls = cls;
+            method.Append("{\r\n");
+            method.Append(cls.GetTypeDeclaration() + " $this = " + cls.name);
+            if (cls.Generic) {
+                method.Append("<");
+                bool first = true;
+                foreach(var arg in cls.GenericArgs) {
+                    if (!first) method.Append(","); else first = false;
+                    method.Append(arg.GetTypeDeclaration());
+                }
+                method.Append(">");
+            }
+            method.Append("(" + cls.ctorArgs + ");\r\n");
+            method.Append("$this->$init();\r\n");
+            method.Append("$this->$ctor(");
+            if (replaceArgs == null) {
+                if (args != null) {
+                    bool first = true;
+                    foreach(var arg in args) {
+                        if (!first) method.Append(","); else first = false;
+                        method.Append(arg.name.name);
+                        method.args.Add(arg);
+                    }
+                }
+            } else {
+                method.replaceArgs = replaceArgs;
+                String[] repArgs = replaceArgs.Split(",");
+                bool first = true;
+                foreach(var arg in repArgs) {
+                    if (!first) method.Append(","); else first = false;
+                    int idx = arg.LastIndexOf("*");
+                    if (idx == -1) {
+                      idx = arg.LastIndexOf(" ");
+                    }
+                    method.Append(arg.Substring(idx+1));
+                }
+            }
+            method.Append(");\r\n");
+            method.Append("return $this;\r\n");
+            method.Append("}\r\n");
+            method.type.setTypes();
+            method.type.shared = false;
             cls.methods.Add(method);
         }
 
@@ -1579,11 +1668,21 @@ namespace QSharpCompiler
                     foreach(var rank in ranks) {
                         if (rank.Kind() == SyntaxKind.ArrayRankSpecifier) {
                             type.arrays++;
+                            if (type.arrays > 3) {
+                                Console.WriteLine("Error:Array Dimensions not supported:" + type.arrays);
+                                WriteFileLine(node);
+                                errors++;
+                            }
                         }
                     }
                     break;
                 case SyntaxKind.ArrayRankSpecifier:
                     type.arrays++;
+                    if (type.arrays > 3) {
+                        Console.WriteLine("Error:Array Dimensions not supported:" + type.arrays);
+                        WriteFileLine(node);
+                        errors++;
+                    }
                     break;
                 default:
                     Console.WriteLine("Unknown arg type:" + node.Kind());
@@ -1595,7 +1694,11 @@ namespace QSharpCompiler
             method.Append("{\r\n");
             if (top) {
                 if (!method.type.Static) {
-                    method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = std::dynamic_pointer_cast<" + cls.GetTypeDeclaration() + ">(this->$weak_this.lock());\r\n");
+                    if (method.cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !method.cls.nsfullname.Contains("Enumerator")) {
+                        method.Append(cls.GetTypeDeclaration() + " $this = *this;\r\n");
+                    } else {
+                        method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = std::dynamic_pointer_cast<" + cls.GetTypeDeclaration() + ">(this->$weak_this.lock());\r\n");
+                    }
                 }
                 if (method.basector != null) method.Append(method.basector);
             }
@@ -2126,7 +2229,7 @@ namespace QSharpCompiler
                     //IdentifierNode, BracketedArgumentList -> {Argument, ...}
                     SyntaxNode array = GetChildNode(node, 1);
                     SyntaxNode index = GetChildNode(node, 2);
-                    ob.Append("(*$check(");  //NPE check
+                    ob.Append("($check(");  //NPE check
                     expressionNode(array, ob);
                     ob.Append("))[");
                     expressionNode(index, ob);
@@ -2374,27 +2477,18 @@ namespace QSharpCompiler
         private void arrayInitNode(SyntaxNode node, OutputBuffer ob, String type, int dims) {
             IEnumerable<SyntaxNode> list = node.ChildNodes();
             bool first = true;
-            for(int a=0;a<dims;a++) {
-                if (a == 0)
-                    ob.Append("Qt::QSharp::FixedArray<");
-                else
-                    ob.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
+            if (dims < 1 || dims > 3) {
+                Console.WriteLine("Error:Array Dimensions not supported:" + dims);
+                WriteFileLine(node);
+                errors++;
             }
+            ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
             ob.Append(type);
-            for(int a=0;a<dims;a++) {
-                if (a == 0)
-                    ob.Append(">");
-                else
-                    ob.Append(">>");
-            }
-            ob.Append("::$new(std::initializer_list<");
-            for(int a=1;a<dims;a++) {
-                ob.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
-            }
+            ob.Append(">::$new");
+            ob.Append("(std::initializer_list<");
+//            ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
             ob.Append(type);
-            for(int a=1;a<dims;a++) {
-                ob.Append(">>");
-            }
+//            ob.Append(">");
             ob.Append(">{");
             foreach(var elem in list) {
                 if (!first) ob.Append(","); else first = false;
@@ -2541,10 +2635,12 @@ namespace QSharpCompiler
             //C# (type)value
             //C++ std::dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
-            if (type.shared) {
+            String typestr = type.GetTypeDeclaration();
+            if (type.shared && !(typestr.StartsWith("Qt::QSharp::FixedArray") && !typestr.Contains("Enumerator"))) {
                 ob.Append("std::dynamic_pointer_cast<");
-                String typestr = type.GetTypeDeclaration();
-                typestr = typestr.Substring(16, typestr.Length - 17);  //remove outter std::shared_ptr< ... >
+                if (typestr.StartsWith("std::shared_ptr")) {
+                    typestr = typestr.Substring(16, typestr.Length - 17);  //remove outter std::shared_ptr< ... >
+                }
                 ob.Append(typestr);
                 ob.Append(">");
                 ob.Append("(");
@@ -2603,17 +2699,11 @@ namespace QSharpCompiler
                 errors++;
                 return;
             }
-            for(int a=0;a<dims;a++) {
-                if (a > 0) ob.Append("std::shared_ptr<");
-                ob.Append("Qt::QSharp::FixedArray<");
-            }
+            ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
             Type type = new Type(typeNode);
             ob.Append(type.GetTypeDeclaration());
-            for(int a=0;a<dims;a++) {
-                if (a > 0) ob.Append(">");
-                ob.Append(">");
-            }
-            ob.Append("::$new(");
+            ob.Append(">::$new");
+            ob.Append("(");
             expressionNode(sizeNode, ob);
             ob.Append(")");
         }
@@ -3228,6 +3318,11 @@ namespace QSharpCompiler
                 foreach(var child in node.ChildNodes()) {
                     if (child.Kind() == SyntaxKind.ArrayRankSpecifier) {
                         arrays++;
+                        if (arrays > 3) {
+                            Console.WriteLine("Error:Array Dimensions not supported:" + arrays);
+                            Generate.WriteFileLine(node);
+                            Generate.errors++;
+                        }
                     }
                 }
                 node = Generate.GetChildNode(node);
@@ -3267,7 +3362,7 @@ namespace QSharpCompiler
                 //need to replace generic args
                 SyntaxNode typeArgList = Generate.GetChildNode(node);
                 int idx1 = type.IndexOf('<');
-                int idx2 = type.IndexOf(">");
+                int idx2 = type.LastIndexOf(">");
                 type = type.Substring(0, idx1+1) + type.Substring(idx2);
                 String args = "";
                 bool first = true;
@@ -3317,6 +3412,9 @@ namespace QSharpCompiler
                         }
                     }
                     break;
+            }
+            if (type != null && type.StartsWith("Qt::QSharp::FixedArray") && !type.Contains("Enumerator")) {
+                shared = false;
             }
         }
         public bool IsNumeric() {
@@ -3378,10 +3476,8 @@ namespace QSharpCompiler
         }
         public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
-            if (inc_arrays) {
-                for(int a=0;a<arrays;a++) {
-                    sb.Append("std::shared_ptr<Qt::QSharp::FixedArray<");
-                }
+            if (inc_arrays && arrays > 0) {
+                sb.Append("Qt::QSharp::FixedArray" + arrays + "D<");
             }
             if (shared) {
                 if (weakRef)
@@ -3394,10 +3490,8 @@ namespace QSharpCompiler
             if (shared) {
                 sb.Append(">");
             }
-            if (inc_arrays) {
-                for(int a=0;a<arrays;a++) {
-                    sb.Append(">>");
-                }
+            if (inc_arrays && arrays > 0) {
+                sb.Append(">");
             }
             return sb.ToString();
         }

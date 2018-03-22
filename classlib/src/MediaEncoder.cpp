@@ -388,7 +388,7 @@ static bool addAudio(std::shared_ptr<Qt::Media::FFContext> ctx, short *sams, int
   return ok;
 }
 
-bool Qt::Media::MediaEncoder::AddAudio(std::shared_ptr<Qt::QSharp::FixedArray<short>> sams, int offset, int length)
+bool Qt::Media::MediaEncoder::AddAudio(Qt::QSharp::FixedArray1D<short> sams, int offset, int length)
 {
   if (ctx == nullptr) return false;
 
@@ -396,7 +396,7 @@ bool Qt::Media::MediaEncoder::AddAudio(std::shared_ptr<Qt::QSharp::FixedArray<sh
 
   //TODO : check buffer size
 
-  bool ok = addAudio(ctx, sams->data(), offset, length);
+  bool ok = addAudio(ctx, sams.data(), offset, length);
 
   return ok;
 }
@@ -436,13 +436,13 @@ static bool addVideo(std::shared_ptr<Qt::Media::FFContext> ctx, int *px)
   return ret == 0;
 }
 
-bool Qt::Media::MediaEncoder::AddVideo(std::shared_ptr<Qt::QSharp::FixedArray<int>> px)
+bool Qt::Media::MediaEncoder::AddVideo(Qt::QSharp::FixedArray1D<int> px)
 {
   if (ctx == nullptr) return false;
 
   if (ctx->video_codec_ctx == nullptr) return false;
 
-  bool ok = addVideo(ctx, px->data());
+  bool ok = addVideo(ctx, px.data());
 
   return ok;
 }

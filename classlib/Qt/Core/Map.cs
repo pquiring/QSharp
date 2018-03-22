@@ -23,7 +23,7 @@ namespace Qt.Core {
             V[] values = null;
             CPP.Add("QList<V> list = $q->values();");
             CPP.Add("int cnt = list.size();");
-            CPP.Add("values = Qt::QSharp::FixedArray<V>::$new(cnt);");
+            CPP.Add("values = Qt::QSharp::FixedArray1D<V>::$new(cnt);");
             CPP.Add("for(int i=0;i<cnt;i++) {values->at(i) = list.at(i);}");
             return values;
         }
@@ -31,7 +31,7 @@ namespace Qt.Core {
             K[] keys = null;
             CPP.Add("QList<V> list = $q->keys();");
             CPP.Add("int cnt = list.size();");
-            CPP.Add("keys = Qt::QSharp::FixedArray<K>::$new(cnt);");
+            CPP.Add("keys = Qt::QSharp::FixedArray1D<K>::$new(cnt);");
             CPP.Add("for(int i=0;i<cnt;i++) {keys->at(i) = list.at(i);}");
             return keys;
         }

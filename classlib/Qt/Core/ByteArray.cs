@@ -11,7 +11,7 @@ namespace Qt.Core {
         }
         public ByteArray(byte[] array) {
             CPP.Add("$check(array);");
-            CPP.Add("int length = array->$get_Length();");
+            CPP.Add("int length = array->Length;");
             CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data(), length);");
         }
         public ByteArray(byte[] array, int offset, int length) {
@@ -37,7 +37,7 @@ namespace Qt.Core {
             CPP.Add("$q->remove(pos, length);");
         }
         public byte[] ToArray() {
-            return (byte[])CPP.ReturnObject("Qt::QSharp::FixedArray<uint8>::$new($q->data(), $q->size(), true)");
+            return (byte[])CPP.ReturnObject("Qt::QSharp::FixedArray1D<uint8>::$new((uint8*)$q->data(), $q->size(), true)");
         }
         public void Clear() {
             CPP.Add("$q->clear();");

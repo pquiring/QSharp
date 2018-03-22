@@ -25,7 +25,7 @@ public class OpenGLScene : OpenGLFunctions {
         reset();
         texturePath = "";
         blankTexture = new OpenGLTexture(0);
-        blankTexture.Set(new int[] {-1},1,1);    //white pixel
+        blankTexture.Set(new uint[] {0xffffffff},1,1);    //white pixel
     }
 
     public bool inited = false;
@@ -146,7 +146,7 @@ public class OpenGLScene : OpenGLFunctions {
         return true;
     }
     //directly load a texture
-    public bool SetTexture(String fn, int[] px, int w, int h, int idx) {
+    public bool SetTexture(String fn, uint[] px, int w, int h, int idx) {
         OpenGLTexture tex = tl.Get(fn);
         if (tex == null) {
             tex = new OpenGLTexture(idx);

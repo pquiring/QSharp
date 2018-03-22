@@ -21,7 +21,7 @@ public class OpenGLTexture : OpenGLFunctions {
         this.idx = idx;
     }
 
-    public void Set(int[] pixels, int x, int y) {
+    public void Set(uint[] pixels, int x, int y) {
         bitmap = new Image(x,y);
         bitmap.SetPixels(pixels);
     }

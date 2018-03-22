@@ -49,7 +49,7 @@ bool Qt::Media::MediaVideoDecoder::Start(int codec_id, int new_width, int new_he
 
   int px_count = new_width * new_height;
   ctx->video_length = px_count;
-  ctx->video = Qt::QSharp::FixedArray<int>::$new(ctx->video_length);
+  ctx->video = Qt::QSharp::FixedArray1D<int>::$new(ctx->video_length);
 
   return true;
 }
@@ -88,7 +88,7 @@ void Qt::Media::MediaVideoDecoder::Stop()
   ctx = nullptr;
 }
 
-std::shared_ptr<Qt::QSharp::FixedArray<int>> Qt::Media::MediaVideoDecoder::Decode(std::shared_ptr<Qt::QSharp::FixedArray<uint8>> data)
+Qt::QSharp::FixedArray1D<int> Qt::Media::MediaVideoDecoder::Decode(Qt::QSharp::FixedArray1D<uint8> data)
 {
   if (ctx == nullptr) return nullptr;
 
@@ -98,9 +98,9 @@ std::shared_ptr<Qt::QSharp::FixedArray<int>> Qt::Media::MediaVideoDecoder::Decod
       (*_av_free)(ctx->pkt->data);
       ctx->pkt->data = nullptr;
     }
-    int data_length = data->Length;
+    int data_length = data.Length;
     ctx->pkt->data = (uint8_t*)(*_av_malloc)(data_length);
-    uint8 *data_ptr = data->data();
+    uint8 *data_ptr = data.data();
     std::memcpy(ctx->pkt->data, data_ptr, data_length);
     ctx->pkt->size = data_length;
     ctx->pkt_size_left = ctx->pkt->size;

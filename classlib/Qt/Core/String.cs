@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPNonClassHPP(
-        "std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list);" +
-        "QStringList $StringArrayToQStringList(std::shared_ptr<Qt::QSharp::FixedArray<std::shared_ptr<Qt::Core::String>>> array);"
+        "Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> $QStringListToStringArray(QStringList list);" +
+        "QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> array);"
     )]
     [CPPClass(
         "private: std::unique_ptr<QString> $q;" +
@@ -39,7 +39,7 @@ namespace Qt.Core {
         }
         public String(char[] str) {
             CPP.Add("$check(str);");
-            CPP.Add("int length = str->$get_Length();");
+            CPP.Add("int length = str->Length;");
             CPP.Add("$q = std::make_unique<QString>();");
             CPP.Add("$q->append((const QChar*)str->data(),length);");
         }
@@ -50,7 +50,7 @@ namespace Qt.Core {
         }
         public String(byte[] utf8) {
             CPP.Add("$check(utf8);");
-            CPP.Add("int length = utf8->$get_Length();");
+            CPP.Add("int length = utf8->Length;");
             CPP.Add("$q = std::make_unique<QString>();");
             CPP.Add("$q->append(QByteArray((const char*)utf8->data(),length));");
         }
@@ -226,18 +226,18 @@ namespace Qt.Core {
         }
 
         public char[] ToCharArray() {
-            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<char16>> array;");
-            CPP.Add("int length = $get_Length();");
-            CPP.Add("array = Qt::QSharp::FixedArray<char16>::$new(length);");
+            CPP.Add("Qt::QSharp::FixedArray1D<char16> array;");
+            CPP.Add("int length = Length;");
+            CPP.Add("array = Qt::QSharp::FixedArray1D<char16>::$new(length);");
             CPP.Add("char16 *dest = array->data();");
             CPP.Add("const char16 *src = ustring();");
             CPP.Add("std::memcpy(dest, src, length * 2);");
             return CPP.ReturnCharArray("array");
         }
         public byte[] ToByteArray() {
-            CPP.Add("std::shared_ptr<Qt::QSharp::FixedArray<uint8>> array;");
-            CPP.Add("int length = $get_Length();");
-            CPP.Add("array = Qt::QSharp::FixedArray<uint8>::$new(length);");
+            CPP.Add("Qt::QSharp::FixedArray1D<uint8> array;");
+            CPP.Add("int length = Length;");
+            CPP.Add("array = Qt::QSharp::FixedArray1D<uint8>::$new(length);");
             CPP.Add("uint8 *dest = array->data();");
             CPP.Add("QByteArray cstr = cstring();");
             CPP.Add("const uint8 *src = (const uint8*)cstr.constData();");
