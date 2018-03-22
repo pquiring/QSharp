@@ -937,8 +937,19 @@ namespace QSharpCompiler
             }
         }
 
+        private static StringBuilder convert = new StringBuilder();
+
         //convert reserved C++ names
         public static String ConvertName(String name) {
+            if (name.Contains("::")) {
+                string[] parts = name.Split("::");
+                convert.Clear();
+                for(int a=0;a<parts.Length;a++) {
+                    if (a > 0) convert.Append("::");
+                    convert.Append(ConvertName(parts[a]));
+                }
+                return convert.ToString();
+            }
             switch (name) {
                 case "near": return "$near";
                 case "far": return "$far";
@@ -2229,9 +2240,9 @@ namespace QSharpCompiler
                     //IdentifierNode, BracketedArgumentList -> {Argument, ...}
                     SyntaxNode array = GetChildNode(node, 1);
                     SyntaxNode index = GetChildNode(node, 2);
-                    ob.Append("($check(");  //NPE check
+                    ob.Append("$check(");  //NPE check
                     expressionNode(array, ob);
-                    ob.Append("))[");
+                    ob.Append(")[");
                     expressionNode(index, ob);
                     ob.Append("]");
                     break;
