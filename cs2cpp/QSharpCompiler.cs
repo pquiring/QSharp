@@ -2464,7 +2464,7 @@ namespace QSharpCompiler
                 case SyntaxKind.TypeOfExpression:
                     SyntaxNode typeOf = GetChildNode(node);
                     Type typeSymbol = new Type(typeOf);
-                    ob.Append("Qt::Core::Type::$new(&$class_" + typeSymbol.GetTypeType() + ")");
+                    ob.Append("Qt::Core::Type::$new(&$class_" + typeSymbol.Get_Symbol() + ")");
                     break;
                 case SyntaxKind.IsExpression:
                     SyntaxNode isObj = GetChildNode(node, 1);
@@ -2474,16 +2474,16 @@ namespace QSharpCompiler
                     expressionNode(isObj, ob);
                     ob.Append(")->GetType()");
                     ob.Append("->IsDerivedFrom(");
-                    ob.Append("Qt::Core::Type::$new(&$class_" + isTypeType.GetTypeType() + "))");
+                    ob.Append("Qt::Core::Type::$new(&$class_" + isTypeType.Get_Symbol() + "))");
                     break;
                 case SyntaxKind.AsExpression:
                     SyntaxNode asObj = GetChildNode(node, 1);
                     SyntaxNode asType = GetChildNode(node, 2);
                     Type asTypeType = new Type(asType);
-                    ob.Append("(Qt::Core::Type::$new(&$class_" + asTypeType.GetTypeType() + ")");
+                    ob.Append("(Qt::Core::Type::$new(&$class_" + asTypeType.Get_Symbol() + ")");
                     ob.Append("->IsDerivedFrom($check(");
                     expressionNode(asObj, ob);
-                    ob.Append(")->GetType()) ? std::dynamic_pointer_cast<" + asTypeType.GetTypeType() + ">(");
+                    ob.Append(")->GetType()) ? std::dynamic_pointer_cast<" + asTypeType.Get_Symbol() + ">(");
                     expressionNode(asObj, ob);
                     ob.Append(") : nullptr)");
                     break;
@@ -3492,11 +3492,12 @@ namespace QSharpCompiler
             }
         }
         public String GetSymbol() {
-            int idx = type.IndexOf("<");
+            String sym = ConvertType();
+            int idx = sym.IndexOf("<");
             if (idx != -1) {
-                return type.Substring(0, idx);
+                return sym.Substring(0, idx);
             }
-            return type;
+            return sym;
         }
         public String Get_Symbol() {
             return GetSymbol().Replace("::", "_");
@@ -3510,9 +3511,7 @@ namespace QSharpCompiler
             return type;
         }
         public string GetTypeType() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(ConvertType());
-            return sb.ToString();
+            return ConvertType();
         }
         public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
