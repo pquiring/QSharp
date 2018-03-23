@@ -3304,6 +3304,7 @@ namespace QSharpCompiler
                 if (omitBodies) continue;
                 if (method.isDelegate) continue;
                 if (method.omitBody) continue;
+                if (method.type.Abstract) continue;
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
