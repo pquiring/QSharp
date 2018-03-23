@@ -68,7 +68,7 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!S7Packet.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!S7Packet.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     }
 
                     //connect2
@@ -82,7 +82,7 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!S7Packet.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!S7Packet.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     }
 
                 } catch (Exception e) {
@@ -127,7 +127,7 @@ public class Controller {
                         int read = socket.Read(reply, replySize, 1500 - replySize);
                         if (read == -1) throw new Exception("bad read");
                         replySize += read;
-                    } while (!ABPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                    } while (!ABPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     ENIP ip = new ENIP();
                     ip.read(reply, 0);
                     ab_context.session = ip.session;
@@ -209,7 +209,7 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!ModPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!ModPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     } catch (Exception e) {
                         lastException = e;
                         return false;
@@ -232,7 +232,7 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!ABPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!ABPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     } catch (Exception e) {
                         lastException = e;
                         return false;
@@ -279,12 +279,12 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!S7Packet.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!S7Packet.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     } catch (Exception e) {
                         lastException = e;
                         return null;
                     }
-                    s7 = S7Packet.decodePacket(Arrays.CopyOf(reply, replySize));
+                    s7 = S7Packet.decodePacket(Arrays<byte>.CopyOf(reply, replySize));
                     return s7.data;
                 }
                 case ControllerType.MB: {
@@ -303,12 +303,12 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!ModPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!ModPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     } catch (Exception e) {
                         lastException = e;
                         return null;
                     }
-                    ModData data = ModPacket.decodePacket(Arrays.CopyOf(reply, replySize));
+                    ModData data = ModPacket.decodePacket(Arrays<byte>.CopyOf(reply, replySize));
                     return data.data;
                 }
                 case ControllerType.AB: {
@@ -326,7 +326,7 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!ABPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!ABPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                         return ABPacket.decodePacket(reply);
                     } catch (Exception e) {
                         lastException = e;
@@ -350,12 +350,12 @@ public class Controller {
                             int read = socket.Read(reply, replySize, 1500 - replySize);
                             if (read == -1) throw new Exception("bad read");
                             replySize += read;
-                        } while (!JFPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                        } while (!JFPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     } catch (Exception e) {
                         lastException = e;
                         return null;
                     }
-                    tag = JFPacket.decodePacket(Arrays.CopyOf(reply, replySize));
+                    tag = JFPacket.decodePacket(Arrays<byte>.CopyOf(reply, replySize));
                     return tag.data;
                 }
             }
@@ -389,12 +389,12 @@ public class Controller {
                         int read = socket.Read(reply, replySize, 1500 - replySize);
                         if (read == -1) throw new Exception("bad read");
                         replySize += read;
-                    } while (!S7Packet.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                    } while (!S7Packet.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                 } catch (Exception e) {
                     lastException = e;
                     return null;
                 }
-                s7 = S7Packet.decodeMultiPacket(Arrays.CopyOf(reply, replySize), addr.Length);
+                s7 = S7Packet.decodeMultiPacket(Arrays<byte>.CopyOf(reply, replySize), addr.Length);
                 byte[][] ret = new byte[addr.Length][];
                 for(int a=0;a<addr.Length;a++) {
                     ret[a] = s7[a].data;
@@ -418,12 +418,12 @@ public class Controller {
                         int read = socket.Read(reply, replySize, 1500 - replySize);
                         if (read == -1) throw new Exception("bad read");
                         replySize += read;
-                    } while (!ModPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                    } while (!ModPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                 } catch (Exception e) {
                     lastException = e;
                     return null;
                 }
-                ModData data = ModPacket.decodePacket(Arrays.CopyOf(reply, replySize));
+                ModData data = ModPacket.decodePacket(Arrays<byte>.CopyOf(reply, replySize));
                 return data.data;
             }
             case AB: {
@@ -441,7 +441,7 @@ public class Controller {
                         int read = socket.Read(reply, replySize, 1500 - replySize);
                         if (read == -1) throw new Exception("bad read");
                         replySize += read;
-                    } while (!ABPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                    } while (!ABPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                     return ABPacket.decodePacket(reply);
                 } catch (Exception e) {
                     lastException = e;
@@ -468,12 +468,12 @@ public class Controller {
                         int read = socket.Read(reply, replySize, 1500 - replySize);
                         if (read == -1) throw new Exception("bad read");
                         replySize += read;
-                    } while (!JFPacket.isPacketComplete(Arrays.CopyOf(reply, replySize)));
+                    } while (!JFPacket.isPacketComplete(Arrays<byte>.CopyOf(reply, replySize)));
                 } catch (Exception e) {
                     lastException = e;
                     return null;
                 }
-                tags = JFPacket.decodeMultiPacket(Arrays.CopyOf(reply, replySize), addr.Length);
+                tags = JFPacket.decodeMultiPacket(Arrays<byte>.CopyOf(reply, replySize), addr.Length);
                 byte[][] ret = new byte[addr.Length][];
                 for(int a=0;a<addr.Length;a++) {
                     ret[a] = tags[a].data;

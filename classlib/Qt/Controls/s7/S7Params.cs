@@ -120,7 +120,7 @@ public class S7Params {
         funcData[14] = getTransportType(data_type);    //transport type
         if (len > 1) len <<= 3;    //length in bits
         BE.setuint16(funcData, 15, len);
-        Arrays.Copy(data, 0, funcData, 17, data.Length);
+        Arrays<byte>.Copy(data, 0, funcData, 17, data.Length);
     }
 
     /** Returns size of params. */
@@ -131,7 +131,7 @@ public class S7Params {
     /** Write params to packet. */
     public void write(byte[] data, int offset) {
         data[offset++] = func;
-        Arrays.Copy(funcData, 0, data, offset, funcData.Length);
+        Arrays<byte>.Copy(funcData, 0, data, offset, funcData.Length);
     }
 
     private bool isBits(byte transport_type) {
@@ -164,7 +164,7 @@ public class S7Params {
                 offset += 2;
                 if (a == 0) {
                     outData.data = new byte[len];
-                    Arrays.Copy(data,offset,outData.data,0,len);
+                    Arrays<byte>.Copy(data,offset,outData.data,0,len);
                 }
                 offset += len;
                 if (len % 2 == 1) {
@@ -194,7 +194,7 @@ public class S7Params {
                 }
                 offset += 2;
                 outData.data = new byte[len];
-                Arrays.Copy(data,offset,outData.data,0,len);
+                Arrays<byte>.Copy(data,offset,outData.data,0,len);
                 offset += len;
                 if (len % 2 == 1) {
                     offset++;    //fill byte

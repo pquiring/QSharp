@@ -40,7 +40,7 @@ public class CIP_Reply_Read {
                 break;
         }
         tagdata = new byte[size];
-        Arrays.Copy(data, offset, tagdata, 0, size);
+        Arrays<byte>.Copy(data, offset, tagdata, 0, size);
     }
 }
 

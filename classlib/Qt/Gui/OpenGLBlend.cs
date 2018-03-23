@@ -188,7 +188,7 @@ public class OpenGL_BLEND : OpenGLConstants {
         return readuint32();
     }
     private void readByteArray(byte[] _in) {
-        Arrays.Copy(data, datapos, _in, 0, _in.Length);
+        Arrays<byte>.Copy(data, datapos, _in, 0, _in.Length);
         datapos+=_in.Length;
     }
     private void readPtrArray(long[] _in) {

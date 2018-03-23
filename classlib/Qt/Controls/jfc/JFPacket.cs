@@ -20,13 +20,13 @@ public class JFPacket {
         LE.setuint32(data, 4, 2 + strlen);    //data Length
         LE.setuint16(data, 8, 1);    //count
         LE.setuint8(data, 10, strlen);    //strlen
-        Arrays.Copy(tag.tag.ToByteArray(), 0, data, 11, strlen);
+        Arrays<byte>.Copy(tag.tag.ToByteArray(), 0, data, 11, strlen);
         int pos = 11 + strlen;
         LE.setuint16(data, pos, tag.type);    //tagtype
         pos += 2;
         LE.setuint16(data, pos, tagdata.Length);    //tag size
         pos += 2;
-        Arrays.Copy(tagdata, 0, data, pos, tagdata.Length);
+        Arrays<byte>.Copy(tagdata, 0, data, pos, tagdata.Length);
         return data;
     }
 
@@ -38,7 +38,7 @@ public class JFPacket {
         LE.setuint32(data, 4, 2 + strlen);    //data Length
         LE.setuint16(data, 8, 1);    //count
         LE.setuint8(data, 10, strlen);    //strlen
-        Arrays.Copy(tag.tag.ToByteArray(), 0, data, 11, strlen);
+        Arrays<byte>.Copy(tag.tag.ToByteArray(), 0, data, 11, strlen);
         return data;
     }
 
@@ -58,7 +58,7 @@ public class JFPacket {
             int strlen = tags[a].tag.Length;
             LE.setuint8(data, pos, strlen);    //strlen
             pos++;
-            Arrays.Copy(tags[a].tag.ToByteArray(), 0, data, pos, strlen);
+            Arrays<byte>.Copy(tags[a].tag.ToByteArray(), 0, data, pos, strlen);
             pos += strlen;
         }
         return data;
@@ -81,13 +81,13 @@ public class JFPacket {
             int strlen = tags[a].tag.Length;
             LE.setuint8(data, pos, strlen);    //strlen
             pos++;
-            Arrays.Copy(tags[a].tag.ToByteArray(), 0, data, pos, strlen);
+            Arrays<byte>.Copy(tags[a].tag.ToByteArray(), 0, data, pos, strlen);
             pos += strlen;
             LE.setuint16(data, pos, tags[a].type);    //tag type
             pos += 2;
             LE.setuint16(data, pos, tagdata[a].Length);    //tag size
             pos += 2;
-            Arrays.Copy(tagdata[a], 0, data, pos, tagdata[a].Length);
+            Arrays<byte>.Copy(tagdata[a], 0, data, pos, tagdata[a].Length);
             pos += tagdata[a].Length;
         }
         return data;
@@ -111,7 +111,7 @@ public class JFPacket {
         int size = LE.getuint16(data, 12);
         int datalen = len - 6;
         JFTag tag = new JFTag(null);
-        tag.data = Arrays.CopyOf(data, 12, 12 + datalen);
+        tag.data = Arrays<byte>.CopyOf(data, 12, 12 + datalen);
         return tag;
     }
 
@@ -130,7 +130,7 @@ public class JFPacket {
             int datalen = LE.getuint16(data, pos);
             pos += 2;
             JFTag tag = new JFTag(null);
-            tag.data = Arrays.CopyOf(data, pos, pos + datalen);
+            tag.data = Arrays<byte>.CopyOf(data, pos, pos + datalen);
             pos += datalen;
         }
         return tags;

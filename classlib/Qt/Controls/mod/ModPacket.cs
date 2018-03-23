@@ -85,7 +85,7 @@ public class ModPacket {
                 byte blen = data[8];
                 outData.type = func;
                 outData.data = new byte[blen];
-                Arrays.Copy(data, 9, outData.data, 0, blen);
+                Arrays<byte>.Copy(data, 9, outData.data, 0, blen);
                 break;
         }
         return outData;

@@ -63,11 +63,11 @@ public class CIP_Request {
         data[offset++] = tag_size;
         data[offset++] = tag_type;
         data[offset++] = tag_len;
-        Arrays.Copy(tag_chars, 0, data, offset, tag_chars.Length); offset += tag_chars.Length;
+        Arrays<byte>.Copy(tag_chars, 0, data, offset, tag_chars.Length); offset += tag_chars.Length;
         if (tag_chars.Length % 2 != 0) {
             data[offset++] = 0;    //padding
         }
-        Arrays.Copy(tagdata, 0, data, offset, tagdata.Length); offset += tagdata.Length;
+        Arrays<byte>.Copy(tagdata, 0, data, offset, tagdata.Length); offset += tagdata.Length;
         data[offset++] = route_size;
         data[offset++] = route_res;
         data[offset++] = route_seg;
@@ -91,7 +91,7 @@ public class CIP_Request {
         tagdata[1] = 0;
         tagdata[2] = 1;
         tagdata[3] = 0;
-        Arrays.Copy(data, 0, tagdata, 4, data.Length);
+        Arrays<byte>.Copy(data, 0, tagdata, 4, data.Length);
         setLengths();
     }
 
