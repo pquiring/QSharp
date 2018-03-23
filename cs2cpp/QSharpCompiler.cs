@@ -1201,7 +1201,7 @@ namespace QSharpCompiler
                                     method.type.Virtual = true;
                                     if (cls.Abstract) method.type.Abstract = true;
                                     field.set_Property = true;
-                                    v.Append(v.name + ".Set([=] (" + field.GetTypeType() + " t) {$set_" + v.name + "(t);});\r\n");
+                                    v.Append(v.name + ".Set([=] (" + field.GetCPPType() + " t) {$set_" + v.name + "(t);});\r\n");
                                     if (method.src.Length == 0 && !cls.Abstract) {
                                         method.Append("{" + v.name + ".$value = value;}");
                                     }
@@ -1462,7 +1462,7 @@ namespace QSharpCompiler
                             break;
                         case SyntaxKind.BaseConstructorInitializer:
                             SyntaxNode argList = GetChildNode(child);
-                            method.Append(cls.bases[0].GetTypeType());
+                            method.Append(cls.bases[0].GetCPPType());
                             method.Append("::$ctor(");
                             outArgList(argList, method);
                             method.Append(");\r\n");
@@ -2162,7 +2162,7 @@ namespace QSharpCompiler
                         return;
                     }
                     type = new Type(node, useName);
-                    ob.Append(type.GetTypeType());
+                    ob.Append(type.GetCPPType());
                     if (isProperty(node)) {
                         ob.Append(".$value");
                     }
@@ -2238,7 +2238,7 @@ namespace QSharpCompiler
                     }
                     break;
                 case SyntaxKind.BaseExpression:
-                    ob.Append(cls.bases[0].GetTypeType());
+                    ob.Append(cls.bases[0].GetCPPType());
                     break;
                 case SyntaxKind.ObjectCreationExpression:
                     invokeNode(node, ob, true);
@@ -2805,7 +2805,7 @@ namespace QSharpCompiler
                 } else {
                     Type type = new Type(right);
                     method.Append("std::bind(&");
-                    method.Append(type.GetTypeType());
+                    method.Append(type.GetCPPType());
                     method.Append(", $this");
                     //add std::placeholders::_1, ... for # of arguments to delegate
                     int numArgs = GetNumArgs(right);
@@ -3037,7 +3037,7 @@ namespace QSharpCompiler
                 bool first = true;
                 foreach(var arg in GenericArgs) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append(arg.GetTypeType());
+                    sb.Append(arg.GetCPPType());
                 }
                 sb.Append(">");
             }
@@ -3186,7 +3186,7 @@ namespace QSharpCompiler
                 foreach(var basecls in bases) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(basecls.GetTypeType());
+                    sb.Append(basecls.GetCPPType());
                 }
                 foreach(var cppcls in cppbases) {
                     if (!first) sb.Append(","); else first = false;
@@ -3196,7 +3196,7 @@ namespace QSharpCompiler
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;
                     sb.Append("public ");
-                    sb.Append(iface.GetTypeType());
+                    sb.Append(iface.GetCPPType());
                 }
             }
             sb.Append("{\r\n");
@@ -3304,7 +3304,17 @@ namespace QSharpCompiler
                 if (omitBodies) continue;
                 if (method.isDelegate) continue;
                 if (method.omitBody) continue;
-                if (method.type.Abstract) continue;
+                if (method.type.Abstract) {
+                    //C++ allows abstract methods to be defined and can be called
+                    //need to add return 0/nullptr unless type == void
+                    if (method.type.GetCSType() == "void") {
+                        //do nothing
+                    } else if (method.type.primative) {
+                        method.Append("{return 0;}");
+                    } else {
+                        method.Append("{return nullptr;}");
+                    }
+                }
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
@@ -3554,7 +3564,10 @@ namespace QSharpCompiler
             }
             return type;
         }
-        public string GetTypeType() {
+        public string GetCSType() {
+            return type;
+        }
+        public string GetCPPType() {
             return ConvertType();
         }
         public string GetTypeDeclaration(bool inc_arrays = true) {
@@ -3568,7 +3581,7 @@ namespace QSharpCompiler
                 else
                     sb.Append("std::shared_ptr<");
             }
-            sb.Append(GetTypeType());
+            sb.Append(GetCPPType());
             if (ptr) sb.Append("*");
             if (shared) {
                 sb.Append(">");
