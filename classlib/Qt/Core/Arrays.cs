@@ -11,13 +11,9 @@ namespace Qt.Core {
             if (length < 0) return null;
             if (pos == 0 && length == array.Length) return array;
             T[] copy = new T[length];
-            CPP.Add("if (sizeof(T) <= 8) {");
-            CPP.Add("  std::memcpy(copy->data(), array->data() + pos, length * sizeof(T));");
-            CPP.Add("} else {");
             for(int a=0;a<length;a++) {
                 copy[a] = array[pos++];
             }
-            CPP.Add("}");
             return copy;
         }
 
@@ -27,9 +23,6 @@ namespace Qt.Core {
             }
             if (dest.Length - destPos < length) throw new ArrayBoundsException("dest bounds");
             if (src.Length - srcPos < length) throw new ArrayBoundsException("src bounds");
-            CPP.Add("if (sizeof(T) <= 8) {");
-            CPP.Add("std::memmove(dest->data() + destPos, src->data() + srcPos, length * sizeof(T));");
-            CPP.Add("} else {");
             if (src == dest && destPos > srcPos) {
                 //copy backwards
                 srcPos += length;
@@ -43,7 +36,6 @@ namespace Qt.Core {
                     dest[destPos++] = src[srcPos++];
                 }
             }
-            CPP.Add("}");
         }
 
         public static void Fill(T[] array, T value) {
