@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: std::shared_ptr<QOpenGLShader> $q;"
+        "std::shared_ptr<QOpenGLShader> $q;"
     )]
     public class OpenGLShader {
         public OpenGLShader(int type) {

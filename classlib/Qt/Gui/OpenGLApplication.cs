@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: std::shared_ptr<QGuiApplication> $q;"
+        "std::shared_ptr<QGuiApplication> $q;"
     )]
     /** OpenGLApplication is for apps that do NOT use Widgets. */
     public class OpenGLApplication {

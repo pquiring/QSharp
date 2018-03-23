@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<$QThread> $q;"
+        "std::shared_ptr<$QThread> $q;"
     )]
     public class Thread {
         public Thread() {

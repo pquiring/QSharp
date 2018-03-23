@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Media {
     /** Media "raw" video decoder. */
-    [CPPClass("public: std::shared_ptr<FFContext> ctx;")]
+    [CPPClass("std::shared_ptr<FFContext> ctx;")]
     [CPPOmitBodies]
     public class MediaVideoDecoder : MediaCoder {
         public bool Start(int codec_id, int new_width, int new_height) {return false;}

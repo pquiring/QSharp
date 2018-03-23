@@ -1,13 +1,13 @@
 namespace Qt { namespace Gui {
 
-class $QOpenGLWindow : public QOpenGLWindow {
-  private: OpenGLWindow *window;
-  public: $QOpenGLWindow(OpenGLWindow *window) {
+struct $QOpenGLWindow : public QOpenGLWindow {
+  OpenGLWindow *window;
+  $QOpenGLWindow(OpenGLWindow *window) {
     this->window = window;
   }
-  public: void initializeGL() {window->InitializeGL();}
-  public: void paintGL() {window->PaintGL();}
-  public: void resizeGL(int x, int y) {window->ResizeGL(x, y);}
+  void initializeGL() {window->InitializeGL();}
+  void paintGL() {window->PaintGL();}
+  void resizeGL(int x, int y) {window->ResizeGL(x, y);}
 };
 
 } }  //namespace Qt::Gui

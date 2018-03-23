@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     public delegate void TimerEvent();
-    [CPPClass("private: std::shared_ptr<QTimer> $q;")]
+    [CPPClass("std::shared_ptr<QTimer> $q;")]
     public class Timer {
         public Timer() {
             CPP.Add("$q = std::make_shared<QTimer>();");

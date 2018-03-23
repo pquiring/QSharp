@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Gui {
     public delegate void TriggeredEvent(bool selected);
     [CPPClass(
-        "public: QAction *$q;"
+        "QAction *$q;"
     )]
     public class MenuItem {
         private MenuItem() {}

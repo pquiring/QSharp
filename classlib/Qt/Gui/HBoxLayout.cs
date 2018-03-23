@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QHBoxLayout *$q;" +
-        "public: void $base(QHBoxLayout *$d) {$q = $d; BoxLayout::$base($q);}"
+        "QHBoxLayout *$q;" +
+        "void $base(QHBoxLayout *$d) {$q = $d; BoxLayout::$base($q);}"
     )]
     public class HBoxLayout : BoxLayout {
         public HBoxLayout() : base(QSharpDerived.derived) {

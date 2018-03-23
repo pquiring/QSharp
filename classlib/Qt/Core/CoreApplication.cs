@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QCoreApplication> $q;"
+        "std::shared_ptr<QCoreApplication> $q;"
     )]
     /** CoreApplication is for non-GUI (console) apps */
     public class CoreApplication {

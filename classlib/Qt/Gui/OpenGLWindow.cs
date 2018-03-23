@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: $QOpenGLWindow *$q;"
+        "$QOpenGLWindow *$q;"
     )]
     public class OpenGLWindow : NativeWindow {
         public OpenGLWindow() : base(QSharpDerived.derived) {

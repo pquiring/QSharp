@@ -8,8 +8,8 @@ namespace Qt.Media {
         AudioModeOutput = 1
     }
     [CPPClass(
-        "private: QAudioDeviceInfo $q;" +
-        "public: QAudioDeviceInfo $value() {return $q;}"
+        "QAudioDeviceInfo $q;" +
+        "QAudioDeviceInfo $value() {return $q;}"
     )]
     public class AudioDevice {
         [CPPReplaceArgs("QAudioDeviceInfo device")]

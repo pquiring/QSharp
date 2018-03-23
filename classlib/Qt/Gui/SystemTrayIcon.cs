@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QSystemTrayIcon *$q;"
+        "QSystemTrayIcon *$q;"
     )]
     public class SystemTrayIcon {
         public SystemTrayIcon(Image icon) {

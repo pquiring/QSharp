@@ -3,8 +3,8 @@ using Qt.QSharp;
 namespace Qt.Network {
     public delegate void PendingTcpEvent(TcpServer server);
     [CPPClass(
-        "private: std::shared_ptr<QTcpServer> $q;" +
-        "public: void $base(std::shared_ptr<QTcpServer> $b) {$q = $b;}"
+        "std::shared_ptr<QTcpServer> $q;" +
+        "void $base(std::shared_ptr<QTcpServer> $b) {$q = $b;}"
     )]
     public class TcpServer {
         public TcpServer() {

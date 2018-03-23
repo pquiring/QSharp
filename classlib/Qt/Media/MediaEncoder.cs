@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Media {
     /** Media encoder. */
-    [CPPClass("public: std::shared_ptr<FFContext> ctx;")]
+    [CPPClass("std::shared_ptr<FFContext> ctx;")]
     public class MediaEncoder : MediaCoder {
         //these must be set BEFORE you call start()
         public bool FPS_1000_1001;

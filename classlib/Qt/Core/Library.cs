@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Core {
     public delegate void LibraryMain(Object obj);
     [CPPClass(
-        "private: std::shared_ptr<QLibrary> $q;"
+        "std::shared_ptr<QLibrary> $q;"
     )]
     public class Library {
         public Library(String filename) {

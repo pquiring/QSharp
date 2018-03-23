@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: $field *$refType;"
+        "$field *$refType;"
     )]
     public class Field {
         [CPPReplaceArgs("$field *$ref")]
@@ -14,7 +14,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "public: $method *$refType;"
+        "$method *$refType;"
     )]
     public class Method {
         [CPPReplaceArgs("$method *$ref")]
@@ -26,7 +26,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "public: $class *$refType;"
+        "$class *$refType;"
     )]
     public class Type {
         [CPPReplaceArgs("$class *$ref")]
@@ -90,7 +90,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "public: std::weak_ptr<Qt::Core::Object> $weak_this;"
+        "std::weak_ptr<Qt::Core::Object> $weak_this;"
     )]
     public class Object {
         public override string ToString() {return CPP.ReturnString("Qt::Core::String::$new($getType()->name)");}

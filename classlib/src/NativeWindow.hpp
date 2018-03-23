@@ -1,12 +1,12 @@
 namespace Qt { namespace Gui {
 
-class $EventFilter : public QObject {
-  private: NativeWindow *window;
-  public: $EventFilter(NativeWindow* window) {
+struct $EventFilter : public QObject {
+  NativeWindow *window;
+  $EventFilter(NativeWindow* window) {
     this->window = window;
   }
 
-  public: bool eventFilter(QObject* obj, QEvent* event)
+  bool eventFilter(QObject* obj, QEvent* event)
   {
     Q_UNUSED(obj);
     bool discard = false;

@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QMenu *$q;"
+        "QMenu *$q;"
     )]
     public class Menu : Widget {
         public Menu(String title) {

@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QProcess> $q;"
+        "std::shared_ptr<QProcess> $q;"
     )]
     public class Process : IOStream {
         public Process() {

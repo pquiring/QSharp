@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QTreeWidgetItem *$q;" +
-        "public: QTreeWidgetItem* $value() {return $q;}"
+        "QTreeWidgetItem *$q;" +
+        "QTreeWidgetItem* $value() {return $q;}"
     )]
     public class TreeItem {
         public TreeItem(String text) {
@@ -45,8 +45,8 @@ namespace Qt.Gui {
         }
     }
     [CPPClass(
-        "private: QTreeWidget *$q;" +
-        "public: void $base(QTreeWidget *$d) {$q = $d; Widget::$base($q);}"
+        "QTreeWidget *$q;" +
+        "void $base(QTreeWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class Tree : Widget {
         protected Tree(QSharpDerived derived) : base(QSharpDerived.derived) {}

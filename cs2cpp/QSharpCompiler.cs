@@ -675,7 +675,7 @@ namespace QSharpCompiler
             foreach(var cls in file.clss) {
                 if (cls.Namespace == "Qt::QSharp" && cls.name.StartsWith("CPP")) continue;
                 if (cls.forward != null) {
-                    sb.Append("class " + cls.forward + ";\r\n");
+                    sb.Append("struct " + cls.forward + ";\r\n");
                 }
                 sb.Append(cls.GetReflectionData());
                 if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
@@ -3068,7 +3068,7 @@ namespace QSharpCompiler
                 }
                 sb.Append(">\r\n");
             }
-            sb.Append("class " + name);
+            sb.Append("struct " + name);
             sb.Append(";\r\n");
             return sb.ToString();
         }
@@ -3177,7 +3177,7 @@ namespace QSharpCompiler
                 sb.Append(">");
             }
             if (name != fullname) sb.Append(GetFlags(true));  //inner class
-            sb.Append(" class " + name);
+            sb.Append(" struct " + name);
             if (bases.Count > 0 || cppbases.Count > 0 || ifaces.Count > 0) {
                 sb.Append(":");
                 first = true;

@@ -4,8 +4,8 @@ using Qt.Core;
 namespace Qt.Gui {
     public delegate void ToggledEvent(bool selected);
     [CPPClass(
-        "private: QPushButton *$q;" +
-        "public: void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
+        "QPushButton *$q;" +
+        "void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class ToggleButton : AbstractButton {
         public ToggleButton() : base(QSharpDerived.derived) {

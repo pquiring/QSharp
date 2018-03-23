@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QLabel *$q;" +
-        "public: void $base(QLabel *$d) {$q = $d; Frame::$base($q);}"
+        "QLabel *$q;" +
+        "void $base(QLabel *$d) {$q = $d; Frame::$base($q);}"
     )]
     public class Label : Frame {
         public Label() : base(QSharpDerived.derived) {

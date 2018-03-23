@@ -4,8 +4,8 @@ using Qt.Core;
 namespace Qt.Network {
     public enum WebMethod {Get, Post, Put, Delete, Head, Unknown}
     [CPPClass(
-        "private: std::unique_ptr<QNetworkRequest> $q;" +
-        "public: QNetworkRequest *$value() {return $q.get();}"
+        "std::unique_ptr<QNetworkRequest> $q;" +
+        "QNetworkRequest *$value() {return $q.get();}"
     )]
     public class WebRequest {
         private ByteArray data;

@@ -1,8 +1,8 @@
 namespace Qt { namespace Network {
 
-class $QWebReply : public QNetworkReply {
-  public: qint64 readData(char *data, qint64 maxlen) {return 0;}
-  public: void abort() {}
+struct $QWebReply : public QNetworkReply {
+  qint64 readData(char *data, qint64 maxlen) {return 0;}
+  void abort() {}
 };
 
 } } //namespace Qt::Network

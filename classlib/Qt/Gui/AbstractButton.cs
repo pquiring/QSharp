@@ -4,8 +4,8 @@ using Qt.Core;
 namespace Qt.Gui {
     public delegate void ClickedEvent();
     [CPPClass(
-        "private: QAbstractButton *$q;" +
-        "public: void $base(QAbstractButton *$d) {$q = $d; Widget::$base($q);}"
+        "QAbstractButton *$q;" +
+        "void $base(QAbstractButton *$d) {$q = $d; Widget::$base($q);}"
     )]
     public abstract class AbstractButton : Widget {
         protected AbstractButton(QSharpDerived derived) : base(QSharpDerived.derived) {}

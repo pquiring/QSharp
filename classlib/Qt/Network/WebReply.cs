@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "public: std::shared_ptr<QNetworkReply> $q;"
+        "std::shared_ptr<QNetworkReply> $q;"
     )]
     public abstract class WebReply : IOStream {
         protected WebReply() {

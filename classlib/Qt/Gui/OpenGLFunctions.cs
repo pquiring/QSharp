@@ -3,7 +3,7 @@ using Qt.QSharp;
 //TODO : $check() all arrays
 
 namespace Qt.Gui {
-    [CPPClass("private: std::unique_ptr<QOpenGLFunctions> $q;")]
+    [CPPClass("std::unique_ptr<QOpenGLFunctions> $q;")]
     public class OpenGLFunctions : OpenGLConstants {
         /** Initialize the GL functions. */
         public void InitializeOpenGLFunctions() {

@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QPushButton *$q;" +
-        "public: void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
+        "QPushButton *$q;" +
+        "void $base(QPushButton *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class Button : AbstractButton {
         public Button() : base(QSharpDerived.derived) {

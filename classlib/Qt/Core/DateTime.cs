@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QDateTime> $q;"
+        "std::unique_ptr<QDateTime> $q;"
     )]
     public class DateTime {
         public DateTime() {

@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QTextEdit *$q;"
+        "QTextEdit *$q;"
     )]
     public class TextArea : AbstractScrollArea {
         public TextArea() {

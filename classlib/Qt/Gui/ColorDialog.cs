@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: std::shared_ptr<QColorDialog> $q;"
+        "std::shared_ptr<QColorDialog> $q;"
     )]
     public class ColorDialog : Dialog {
         public ColorDialog() : base(QSharpDerived.derived) {

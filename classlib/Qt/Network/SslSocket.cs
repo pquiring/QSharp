@@ -3,7 +3,7 @@ using Qt.QSharp;
 
 namespace Qt.Network {
     [CPPClass(
-        "public: std::shared_ptr<QSslSocket> $q;"
+        "std::shared_ptr<QSslSocket> $q;"
     )]
     public class SslSocket : TcpSocket {
         public SslSocket() {

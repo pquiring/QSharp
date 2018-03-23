@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QScreen *$q = nullptr;"
+        "QScreen *$q = nullptr;"
     )]
     public class Screen {
         [CPPReplaceArgs("QScreen *$s")]

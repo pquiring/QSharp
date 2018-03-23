@@ -2,9 +2,9 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QMutex> $q;" +
-        "private: std::shared_ptr<QWaitCondition> $w;" +
-        "public: std::shared_ptr<QMutex> $value() {return $q;}"
+        "std::shared_ptr<QMutex> $q;" +
+        "std::shared_ptr<QWaitCondition> $w;" +
+        "std::shared_ptr<QMutex> $value() {return $q;}"
     )]
     /**
         ThreadSignal provides thread locking with wait conditions.

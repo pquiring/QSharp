@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QVector<T>> $q;"
+        "std::unique_ptr<QVector<T>> $q;"
     )]
     /** Stores an array of objects in a resizable continuous memory. */
     public class Array<T> : IEnumerable<T> {

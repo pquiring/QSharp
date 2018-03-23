@@ -3,8 +3,8 @@ using Qt.QSharp;
 namespace Qt.Gui {
     public delegate void SliderMoved(int value);
     [CPPClass(
-        "private: QAbstractSlider *$q;" +
-        "public: void $base(QAbstractSlider *$d) {$q = $d; Widget::$base($q);}"
+        "QAbstractSlider *$q;" +
+        "void $base(QAbstractSlider *$d) {$q = $d; Widget::$base($q);}"
     )]
     public abstract class AbstractSlider : Widget {
         protected AbstractSlider(QSharpDerived derived) : base(QSharpDerived.derived) {}

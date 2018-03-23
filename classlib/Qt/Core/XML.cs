@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "public: QDomDocument *$doc;" +
-        "public: QDomElement *$q;"
+        "QDomDocument *$doc;" +
+        "QDomElement *$q;"
     )]
     public class XMLTag {
         [CPPReplaceArgs("QDomDocument *doc, QString name")]
@@ -90,7 +90,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "private: QDomAttr *$q;"
+        "QDomAttr *$q;"
     )]
     public class XMLAttr {
         public XMLAttr(XMLTag tag, String name) {
@@ -111,7 +111,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "public: std::unique_ptr<QDomDocument> $q;"
+        "std::unique_ptr<QDomDocument> $q;"
     )]
     public class XML {
         public XML() {

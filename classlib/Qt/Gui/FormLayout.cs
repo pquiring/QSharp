@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QFormLayout *$q;" +
-        "public: void $base(QFormLayout *$d) {$q = $d; Layout::$base($q);}"
+        "QFormLayout *$q;" +
+        "void $base(QFormLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class FormLayout : Layout {
         protected FormLayout(QSharpDerived derived) {}

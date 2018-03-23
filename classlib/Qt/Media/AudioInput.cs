@@ -4,8 +4,8 @@ using Qt.QSharp;
 namespace Qt.Media {
     public delegate void InputInterval(AudioInput ai);
     [CPPClass(
-        "private: std::unique_ptr<QAudioInput> $q;" +
-        "private: QIODevice *$io;"
+        "std::unique_ptr<QAudioInput> $q;" +
+        "QIODevice *$io;"
     )]
     public class AudioInput {
         private InputInterval iv;

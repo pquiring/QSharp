@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QMutex> $q;" +
-        "public: std::shared_ptr<QMutex> $value() {return $q;}"
+        "std::shared_ptr<QMutex> $q;" +
+        "std::shared_ptr<QMutex> $value() {return $q;}"
     )]
     /**
         ThreadLock provides basic thread locking.

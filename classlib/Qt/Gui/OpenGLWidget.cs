@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: $QOpenGLWidget *$q;"
+        "$QOpenGLWidget *$q;"
     )]
     public class OpenGLWidget : Widget {
         public OpenGLWidget() : base(QSharpDerived.derived) {

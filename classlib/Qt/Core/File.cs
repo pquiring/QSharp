@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::shared_ptr<QFile> $q;"
+        "std::shared_ptr<QFile> $q;"
     )]
     public class File : IOStream {
         public File(String filename) {

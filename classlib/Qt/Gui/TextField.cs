@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QLineEdit *$q;"
+        "QLineEdit *$q;"
     )]
     public class TextField : Widget {
         public TextField() {

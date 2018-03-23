@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QDate> $q;" +
-        "public: QDate* $date() {return $q.get();}"
+        "std::unique_ptr<QDate> $q;" +
+        "QDate* $date() {return $q.get();}"
     )]
     public class Date {
         public Date() {

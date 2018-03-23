@@ -2,11 +2,11 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QWindow *$q = nullptr;" +
-        "private: std::shared_ptr<$EventFilter> $events;" +
-        "public: void $base(QWindow *$b) {$q = $b; init();}" +
-        "private: std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
-        "public: bool eventFilter(QObject *obj, QEvent *event);"
+        "QWindow *$q = nullptr;" +
+        "std::shared_ptr<$EventFilter> $events;" +
+        "void $base(QWindow *$b) {$q = $b; init();}" +
+        "std::shared_ptr<Qt::Gui::Screen> screen_ptr;" +
+        "bool eventFilter(QObject *obj, QEvent *event);"
     )]
     /** Window represents the native Window object. */
     public class NativeWindow : OpenGLFunctions {

@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QList<T>> $q;"
+        "std::unique_ptr<QList<T>> $q;"
     )]
     /** Stores an array of objects in a linked-list style. */
     public class ArrayList<T> : IEnumerable<T> {

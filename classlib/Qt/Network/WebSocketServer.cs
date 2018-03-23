@@ -4,8 +4,8 @@ using Qt.QSharp;
 namespace Qt.Network {
     public delegate void PendingWSEvent(WebSocketServer server);
     [CPPClass(
-        "private: std::shared_ptr<QWebSocketServer> $q;" +
-        "public: void $base(std::shared_ptr<QWebSocketServer> $b) {$q = $b;}"
+        "std::shared_ptr<QWebSocketServer> $q;" +
+        "void $base(std::shared_ptr<QWebSocketServer> $b) {$q = $b;}"
     )]
     public class WebSocketServer {
         public WebSocketServer(String name, bool secure) {

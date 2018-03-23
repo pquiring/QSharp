@@ -122,20 +122,20 @@
 namespace Qt { namespace Core {
   extern int g_argc;
   extern const char **g_argv;
-  class Object;
-  class String;
-  class $QThread;
+  struct Object;
+  struct String;
+  struct $QThread;
 }}
 
 namespace Qt { namespace Gui {
-  class $EventFilter;
-  class $QOpenGLWidget;
-  class $QOpenGLWindow;
+  struct $EventFilter;
+  struct $QOpenGLWidget;
+  struct $QOpenGLWindow;
 }}
 
 namespace Qt { namespace Network {
-  class $QSslServer;
-  class $QWebReply;
+  struct $QSslServer;
+  struct $QWebReply;
 }}
 
 namespace Qt { namespace Media {

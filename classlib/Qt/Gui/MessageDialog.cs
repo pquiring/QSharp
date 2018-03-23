@@ -29,7 +29,7 @@ namespace Qt.Gui {
         RestoreDefaults = 0x8000000
     }
     [CPPClass(
-        "public: std::shared_ptr<QMessageBox> $q;"
+        "std::shared_ptr<QMessageBox> $q;"
     )]
     public class MessageDialog : Dialog {
         public MessageDialog(IconType icontype, String title, String msg) : base(QSharpDerived.derived) {

@@ -12,8 +12,8 @@ namespace Qt.Gui {
         AlignVertical_Mask = AlignTop | AlignBottom | AlignVCenter | AlignBaseline
     }
     [CPPClass(
-        "public: QLayout *$q;" +
-        "public: void $base(QLayout *$d) {$q = $d;}"
+        "QLayout *$q;" +
+        "void $base(QLayout *$d) {$q = $d;}"
     )]
     public abstract class Layout {
         public void AddWidget(Widget widget) {

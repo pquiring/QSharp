@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QSplitter *$q;" +
-        "public: void $base(QSplitter *$d) {$q = $d; Frame::$base($q);}"
+        "QSplitter *$q;" +
+        "void $base(QSplitter *$d) {$q = $d; Frame::$base($q);}"
     )]
     public class Splitter : Frame {
         public Splitter() : base(QSharpDerived.derived) {

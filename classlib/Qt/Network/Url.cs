@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "private: std::unique_ptr<QUrl> $q;" +
-        "public: QUrl *$value() {return $q.get();}"
+        "std::unique_ptr<QUrl> $q;" +
+        "QUrl *$value() {return $q.get();}"
     )]
     public class Url {
         public Url(String url) {

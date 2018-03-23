@@ -4,8 +4,8 @@ namespace Qt.Core {
     [CPPEnum("QuaZip::Mode")]
     public enum ZipMode { mdNotOpen, mdUnzip, mdCreate, mdAppend, mdAdd }
     [CPPClass(
-        "private: std::shared_ptr<QuaZipFile> $q;" +
-        "public: void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IOStream::$base((std::shared_ptr<QIODevice>)zf);}"
+        "std::shared_ptr<QuaZipFile> $q;" +
+        "void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IOStream::$base((std::shared_ptr<QIODevice>)zf);}"
     )]
     public class ZipEntry : IOStream {
         private String _filename;
@@ -15,7 +15,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "private: std::shared_ptr<QuaZip> $q;"
+        "std::shared_ptr<QuaZip> $q;"
     )]
     public class ZipFile {
         protected String filename;
@@ -86,7 +86,7 @@ namespace Qt.Core {
         public void Reset() {}
     }
     [CPPClass(
-        "private: std::shared_ptr<QuaZIODevice> $q;"
+        "std::shared_ptr<QuaZIODevice> $q;"
     )]
     public class Compress : IOStream {
         public Compress(ByteArrayStream input) {
@@ -95,7 +95,7 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "private: std::shared_ptr<QuaZIODevice> $q;"
+        "std::shared_ptr<QuaZIODevice> $q;"
     )]
     public class Decompress : IOStream {
         public Decompress(ByteArrayStream input) {

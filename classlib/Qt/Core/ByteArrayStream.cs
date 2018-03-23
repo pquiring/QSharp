@@ -1,7 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
-    [CPPClass("private: std::shared_ptr<QBuffer> $q;")]
+    [CPPClass("std::shared_ptr<QBuffer> $q;")]
     public class ByteArrayStream : IOStream {
         public ByteArrayStream() {
             CPP.Add("$q = std::make_shared<QBuffer>();");

@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QGroupBox *$q;" +
-        "public: void $base(QGroupBox *$d) {$q = $d; Widget::$base($q);}"
+        "QGroupBox *$q;" +
+        "void $base(QGroupBox *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class GroupBox : Widget {
         protected GroupBox(QSharpDerived derived) : base(QSharpDerived.derived) {}

@@ -1,7 +1,7 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPClass("private: std::unique_ptr<QOpenGLShaderProgram> $q;")]
+    [CPPClass("std::unique_ptr<QOpenGLShaderProgram> $q;")]
     public class OpenGLShaderProgram {
         public OpenGLShaderProgram() {
             CPP.Add("$q = std::make_unique<QOpenGLShaderProgram>();");

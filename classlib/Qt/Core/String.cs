@@ -6,11 +6,11 @@ namespace Qt.Core {
         "QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> array);"
     )]
     [CPPClass(
-        "private: std::unique_ptr<QString> $q;" +
-        "public: QString* $value() {return $q.get();}" +
-        "public: QByteArray cstring() {return $q->toUtf8();}" +
-        "public: QString qstring() {return *$q;}" +
-        "public: const char16* ustring() {return (const char16*)$q->utf16();}"
+        "std::unique_ptr<QString> $q;" +
+        "QString* $value() {return $q.get();}" +
+        "QByteArray cstring() {return $q->toUtf8();}" +
+        "QString qstring() {return *$q;}" +
+        "const char16* ustring() {return (const char16*)$q->utf16();}"
     )]
     public class String : Object {
         public String() {

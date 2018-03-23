@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QStackedLayout *$q;" +
-        "public: void $base(QStackedLayout *$d) {$q = $d; Layout::$base($q);}"
+        "QStackedLayout *$q;" +
+        "void $base(QStackedLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class StackedLayout : Layout {
         protected StackedLayout(QSharpDerived derived) {}

@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "private: std::unique_ptr<QNetworkAccessManager> $q;"
+        "std::unique_ptr<QNetworkAccessManager> $q;"
     )]
     public class WebClient {
         public WebClient() {

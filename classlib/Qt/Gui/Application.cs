@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: std::shared_ptr<QApplication> $q;"
+        "std::shared_ptr<QApplication> $q;"
     )]
     /** Application is for GUI apps that use Widgets*/
     public class Application {

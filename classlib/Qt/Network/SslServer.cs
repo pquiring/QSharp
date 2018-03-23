@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Network {
     public delegate void PendingSslEvent(SslServer server);
     [CPPClass(
-        "private: std::shared_ptr<$QSslServer> $q;"
+        "std::shared_ptr<$QSslServer> $q;"
     )]
     public class SslServer : TcpServer {
         public SslServer() {

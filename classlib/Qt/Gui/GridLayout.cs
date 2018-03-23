@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QGridLayout *$q;" +
-        "public: void $base(QGridLayout *$d) {$q = $d; Layout::$base($q);}"
+        "QGridLayout *$q;" +
+        "void $base(QGridLayout *$d) {$q = $d; Layout::$base($q);}"
     )]
     public class GridLayout : Layout {
         protected GridLayout(QSharpDerived derived) {}

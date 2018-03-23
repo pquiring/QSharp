@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: std::shared_ptr<QVector4D> $q;" +
-        "public: QVector4D* $value() {return $q.get();}"
+        "std::shared_ptr<QVector4D> $q;" +
+        "QVector4D* $value() {return $q.get();}"
     )]
     public class Vector4D {
         public Vector4D() {

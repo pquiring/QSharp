@@ -9,8 +9,8 @@ namespace Qt.Gui {
     public delegate void FinishedEvent(int result);
     public delegate void RejectedEvent();
     [CPPClass(
-        "private: std::shared_ptr<QDialog> $q;" +
-        "public: void $base(std::shared_ptr<QDialog> $d) {$q = $d; Widget::$base($q.get());}"
+        "std::shared_ptr<QDialog> $q;" +
+        "void $base(std::shared_ptr<QDialog> $d) {$q = $d; Widget::$base($q.get());}"
     )]
     public class Dialog : Widget {
         private NativeWindow nativeWindow;

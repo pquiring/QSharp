@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QScrollBar *$q;" +
-        "public: void $base(QScrollBar *$d) {$q = $d; AbstractSlider::$base($q);}"
+        "QScrollBar *$q;" +
+        "void $base(QScrollBar *$d) {$q = $d; AbstractSlider::$base($q);}"
     )]
     public class ScrollBar : AbstractSlider {
         public ScrollBar() : base(QSharpDerived.derived) {

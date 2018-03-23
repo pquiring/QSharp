@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QDir> $q;"
+        "std::unique_ptr<QDir> $q;"
     )]
     public class Dir {
         public Dir(String folder) {

@@ -3,9 +3,9 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: std::shared_ptr<QMatrix4x4> $q;" +
-        "private: std::shared_ptr<QMatrix4x4> $t;" +
-        "public: QMatrix4x4* $value() {return $q.get();}"
+        "std::shared_ptr<QMatrix4x4> $q;" +
+        "std::shared_ptr<QMatrix4x4> $t;" +
+        "QMatrix4x4* $value() {return $q.get();}"
     )]
     //NOTE : Data is stored internally as column-major format (OpenGL standard).
     public class Matrix4x4 {

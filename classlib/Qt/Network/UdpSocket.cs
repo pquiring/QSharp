@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Network {
     [CPPClass(
-        "private: std::shared_ptr<QUdpSocket> $q;"
+        "std::shared_ptr<QUdpSocket> $q;"
     )]
     public class UdpSocket : AbstractSocket {
         public UdpSocket() {

@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "public: QToolBar *$q;"
+        "QToolBar *$q;"
     )]
     public class ToolBar : Widget {
         public ToolBar() {

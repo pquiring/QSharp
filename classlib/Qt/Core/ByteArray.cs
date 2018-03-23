@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QByteArray> $q;" +
-        "public: QByteArray* $value() {return $q.get();}"
+        "std::unique_ptr<QByteArray> $q;" +
+        "QByteArray* $value() {return $q.get();}"
     )]
     public class ByteArray {
         public ByteArray() {

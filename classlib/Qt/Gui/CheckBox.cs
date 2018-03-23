@@ -4,8 +4,8 @@ using Qt.Core;
 namespace Qt.Gui {
     public delegate void StateChanged(int state);
     [CPPClass(
-        "private: QCheckBox *$q;" +
-        "public: void $base(QCheckBox *$d) {$q = $d; AbstractButton::$base($q);}"
+        "QCheckBox *$q;" +
+        "void $base(QCheckBox *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class CheckBox : AbstractButton {
         public CheckBox() : base(QSharpDerived.derived) {

@@ -12,8 +12,8 @@ namespace Qt.Gui {
     public enum IconType {NoIcon, Information, Warning, Critical, Question}
 
     [CPPClass(
-        "public: QWidget *$q;" +
-        "public: void $base(QWidget *$d) {$q = $d;}"
+        "QWidget *$q;" +
+        "void $base(QWidget *$d) {$q = $d;}"
     )]
     public class Widget : OpenGLFunctions {
         public Widget() {

@@ -3,8 +3,8 @@ using Qt.QSharp;
 namespace Qt.Gui {
     public delegate void ValueChanged(int value);
     [CPPClass(
-        "private: QSpinBox *$q;" +
-        "public: void $base(QSpinBox *$d) {$q = $d; Widget::$base($q);}"
+        "QSpinBox *$q;" +
+        "void $base(QSpinBox *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class SpinBox : Widget {
         public SpinBox() : base(QSharpDerived.derived) {

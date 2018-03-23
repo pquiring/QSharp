@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QRadioButton *$q;" +
-        "public: void $base(QRadioButton *$d) {$q = $d; AbstractButton::$base($q);}"
+        "QRadioButton *$q;" +
+        "void $base(QRadioButton *$d) {$q = $d; AbstractButton::$base($q);}"
     )]
     public class RadioButton : AbstractButton {
         public RadioButton() : base(QSharpDerived.derived) {

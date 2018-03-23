@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QTime> $q;" +
-        "public: QTime* $time() {return $q.get();}"
+        "std::unique_ptr<QTime> $q;" +
+        "QTime* $time() {return $q.get();}"
     )]
     public class Time {
         public Time() {

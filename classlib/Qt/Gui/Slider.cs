@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QSlider *$q;" +
-        "public: void $base(QSlider *$d) {$q = $d; AbstractSlider::$base($q);}"
+        "QSlider *$q;" +
+        "void $base(QSlider *$d) {$q = $d; AbstractSlider::$base($q);}"
     )]
     public class Slider : AbstractSlider {
         public Slider() : base(QSharpDerived.derived) {

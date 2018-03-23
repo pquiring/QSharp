@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "private: std::unique_ptr<QMap<K, V>> $q;"
+        "std::unique_ptr<QMap<K, V>> $q;"
     )]
     public class Map<K, V> {
         public Map() {

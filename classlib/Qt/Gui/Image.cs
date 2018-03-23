@@ -3,11 +3,11 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: std::unique_ptr<QImage> $q;" +
-        "public: uint32* $px;" +
-        "public: uint8* $px8;" +
-        "public: QPainter $painter;" +
-        "public: QIcon $icon() {return QIcon(QPixmap::fromImage(*$q.get()));}"
+        "std::unique_ptr<QImage> $q;" +
+        "uint32* $px;" +
+        "uint8* $px8;" +
+        "QPainter $painter;" +
+        "QIcon $icon() {return QIcon(QPixmap::fromImage(*$q.get()));}"
     )]
     public class Image {
         public static String PNG = "PNG";

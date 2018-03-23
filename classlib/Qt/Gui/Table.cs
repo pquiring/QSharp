@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QTableWidget *$q;" +
-        "public: void $base(QTableWidget *$d) {$q = $d; Widget::$base($q);}"
+        "QTableWidget *$q;" +
+        "void $base(QTableWidget *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class Table : Widget {
         protected Table(QSharpDerived derived) : base(QSharpDerived.derived) {}

@@ -4,7 +4,7 @@ namespace Qt.Gui {
     [CPPEnum("Qt::ToolBarArea")]
     public enum ToolBarArea {NoToolBarArea = 0, LeftToolBarArea = 0x1, RightToolBarArea = 0x2, TopToolBarArea = 0x4, BottomToolBarArea = 0x8, AllToolBarAreas = 0xf}
     [CPPClass(
-        "private: std::shared_ptr<QMainWindow> $q;"
+        "std::shared_ptr<QMainWindow> $q;"
     )]
     public class Window : Widget {
         private NativeWindow nativeWindow;

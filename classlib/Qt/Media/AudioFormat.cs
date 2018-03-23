@@ -3,8 +3,8 @@ using Qt.QSharp;
 
 namespace Qt.Media {
     [CPPClass(
-        "private: std::unique_ptr<QAudioFormat> $q;" +
-        "public: QAudioFormat $value() {return *$q.get();}"
+        "std::unique_ptr<QAudioFormat> $q;" +
+        "QAudioFormat $value() {return *$q.get();}"
     )]
     public class AudioFormat {
         public AudioFormat() {

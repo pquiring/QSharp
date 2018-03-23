@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "private: QProgressBar *$q;" +
-        "public: void $base(QProgressBar *$d) {$q = $d; Widget::$base($q);}"
+        "QProgressBar *$q;" +
+        "void $base(QProgressBar *$d) {$q = $d; Widget::$base($q);}"
     )]
     public class ProgressBar : Widget {
         protected ProgressBar(QSharpDerived derived) : base(QSharpDerived.derived) {}

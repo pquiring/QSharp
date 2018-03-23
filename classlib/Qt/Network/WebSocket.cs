@@ -5,8 +5,8 @@ namespace Qt.Network {
     public delegate void TextMessageReceived(String msg);
     public delegate void BinaryMessageReceived(ByteArray msg);
     [CPPClass(
-        "public: std::shared_ptr<QWebSocket> $q;" +
-        "public: void $base(std::shared_ptr<QWebSocket> ws) {$q = ws;}"
+        "std::shared_ptr<QWebSocket> $q;" +
+        "void $base(std::shared_ptr<QWebSocket> ws) {$q = ws;}"
     )]
     public class WebSocket {
         [CPPReplaceArgs("QWebSocket *$s")]
