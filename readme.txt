@@ -5,9 +5,9 @@ Q# is a new experiment to convert C# to C++ using the Qt library as the classlib
 
 C# + C++ + Qt = Q#
 
-The project has no relation to Microsofts new Q# (Quantum) programming language.
+This project has no relation to Microsofts new Q# (Quantum) programming language.
 
-folder layout:
+Folder Layout:
   /cs2cpp - C# .NET Core program to convert C# to C++ using Roslyn code analyzer
   /classlib - Qt wrapper classes
   /tests/helloworld - simple Console.WriteLine() example
@@ -76,6 +76,7 @@ To compile with MSVC++
 
 VS Code Bug
   If you use VS Code and have either VS Build Tools or VS IDE installed
+  and have the .Net Core standalone installed
   you MUST also install the .Net Core that comes with those installers.
   Otherwise the OmniSharp extension in VS Code tries to use the wrong MSBuild environment.
   See bug reports
@@ -84,7 +85,7 @@ VS Code Bug
       https://github.com/OmniSharp/omnisharp-roslyn/issues/1094
   VS BuildTools : install .Net Core 1.1 - you must install all components.
   VS IDE : install .Net Core 2.0 which is a little outdated.
-  Temporary work around to avoid installing older .Net SDKs:
+  Temporary work around to avoid installing older .Net Core SDKs:
     Rename "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild" to MSBuild.disabled
       or
     Rename "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild" to MSBuild.disabled
