@@ -5,7 +5,7 @@ namespace Qt.Network {
     [CPPClass(
         "std::shared_ptr<QNetworkReply> $q;"
     )]
-    public abstract class WebReply : IOStream {
+    public class WebReply : IOStream {
         protected WebReply() {
             CPP.Add("$q = std::make_shared<$QWebReply>();");
             CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");

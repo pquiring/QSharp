@@ -291,6 +291,7 @@ namespace QSharpCompiler
                 ln += ",DeclSymbol.Name=" + decl.Name;
                 ln += ",DeclSymbol.Kind=" + decl.Kind;
                 ln += ",DeclSymbol.IsStatic=" + decl.IsStatic;
+                ln += ",DeclSymbol.IsAbstract=" + decl.IsAbstract;
                 ITypeSymbol containing = decl.ContainingType;
                 if (containing != null) {
                     ln += ",DeclSymbol.ContainingType.TypeKind=" + containing.TypeKind;
@@ -1479,6 +1480,7 @@ namespace QSharpCompiler
                 method.src.Append("}\r\n");
             }
             method.type.setTypes();
+            if (method.cls.Abstract) return;
             if (cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !cls.nsfullname.Contains("Enumerator")) {
                 createNewMethodFixedArray(cls, method.args, method.replaceArgs);
             } else {
