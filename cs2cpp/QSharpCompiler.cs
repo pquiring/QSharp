@@ -1802,7 +1802,7 @@ namespace QSharpCompiler
                     method.Append(" ");
                     method.Append(foreachName);  //var name : item
                     method.Append(";\r\n");
-                    method.Append("std::shared_ptr<IEnumerator<");
+                    method.Append("std::shared_ptr<Qt::Core::IEnumerator<");
                     method.Append(foreachType.GetTypeDeclaration());  //var type
                     method.Append(">> " + enumID + " = ");
                     expressionNode(foreachItems, method);  //items

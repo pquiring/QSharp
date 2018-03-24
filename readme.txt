@@ -15,10 +15,10 @@ Folder Layout:
 
 Build Tools:
   .Net Core 2.0 + Roslyn
-  C++14 toolset (gcc or MSVC)
-  Qt5.4+ libraries
+  C++14 toolset (gcc or msvc)
+  Qt/5.4+ libraries
   CMake/3.6+
-  Platform make tool (make for GCC, nmake for MSVC)
+  Platform make tool (make for gcc, nmake for msvc)
   ffmpeg/3.0+
 
 ffmpeg:
@@ -66,11 +66,11 @@ Then build the classlib or any test:
 cmake options (depends on platform):
   to specify build type (Release recommended for faster compiling):
     -D CMAKE_BUILD_TYPE=Release | Debug
-  to build with MSVC++
+  to build with msvc
     -G "NMake Makefiles"
   there are scripts in /bin for each platform (gcc and msvc)
 
-To compile with MSVC++
+To compile with msvc:
   Install either VS BuildTools or VS IDE with VC++ toolchain.
   cs2cpp required options : --msvc
 
