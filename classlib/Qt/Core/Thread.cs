@@ -7,7 +7,7 @@ namespace Qt.Core {
     public class Thread {
         public Thread() {
             CPP.Add("$q = std::make_shared<$QThread>();");
-            CPP.Add("$q->bind(std::bind(&Thread::Run, this));");
+            CPP.Add("$q->bind([=] () {Run();}, $this);");
         }
         public static void Sleep(int ms) {
             CPP.Add("QThread::msleep(ms);");
