@@ -749,6 +749,7 @@ namespace QSharpCompiler
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
+            sb.Append("$" + Program.target + "_ctor();");
             if (!Program.service) {
                 sb.Append(writeInvokeMain("Main"));
             } else {
