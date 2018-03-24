@@ -30,11 +30,8 @@ Technical Overview:
      $init()  //init all field values
      $ctor(args...)  //the ctor defined in the C# source
    - thereforce the C++ objects don't have any 'real' ctors defined
- - arrays are converted to QVector's
-   C#   int x[] = new int[5];
-   C++  std::shared_ptr<QVector<int>> x = std::make_shared<QVector<int>>(5);
 
 Some features are NOT supported yet:
- - reflection
+ - reflection (partially)
  - plus many more...
 These will be implemented eventually.

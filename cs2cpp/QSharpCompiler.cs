@@ -47,17 +47,28 @@ namespace QSharpCompiler
                 Console.WriteLine("Usage : cs2cpp cs_folder project_name [options]");
                 Console.WriteLine("options:");
                 Console.WriteLine("  --library");
+                Console.WriteLine("      create a library");
                 Console.WriteLine("  --shared");
+                Console.WriteLine("      create a shared library (dll so)");
                 Console.WriteLine("  --main=class");
+                Console.WriteLine("      define class that contains static void Main(String[] args)");
                 Console.WriteLine("  --service=name");
+                Console.WriteLine("      create a Win32 Service");
                 Console.WriteLine("  --ref=dll");
+                Console.WriteLine("      add a reference to a library");
                 Console.WriteLine("  --home=folder");
+                Console.WriteLine("      define where Q# home folder is (to find include and lib folders)");
                 Console.WriteLine("  --print[=tokens,tostring,all]");
+                Console.WriteLine("      print out C# Roslyn SyntaxNode trees");
                 Console.WriteLine("  --single | --multi");
-                Console.WriteLine("  --msvc");
-                Console.WriteLine("  --debug");
+                Console.WriteLine("      generate a single monolithic C++ file or multiple files (default = single)");
+                Console.WriteLine("  --gcc | --msvc");
+                Console.WriteLine("      use gcc or msvc C++ compiler (default = gcc)");
+                Console.WriteLine("  --release | --debug");
+                Console.WriteLine("      generate release or debug type");
                 return;
             }
+
             for(int a=2;a<args.Length;a++) {
                 int idx = args[a].IndexOf("=");
                 String arg = "";
@@ -134,8 +145,14 @@ namespace QSharpCompiler
                 if (arg == "--msvc") {
                     msvc = true;
                 }
+                if (arg == "--gcc") {
+                    msvc = false;
+                }
                 if (arg == "--debug") {
                     debug = true;
+                }
+                if (arg == "--release") {
+                    debug = false;
                 }
             }
             if (shared && !library) {
