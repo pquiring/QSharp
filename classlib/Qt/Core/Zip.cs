@@ -2,7 +2,7 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPEnum("QuaZip::Mode")]
-    public enum ZipMode { mdNotOpen, mdUnzip, mdCreate, mdAppend, mdAdd }
+    public enum ZipMode { NotOpen, Unzip, Create, Append, Add }
     [CPPClass(
         "std::shared_ptr<QuaZipFile> $q;" +
         "void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IOStream::$base((std::shared_ptr<QIODevice>)zf);}"
@@ -19,7 +19,7 @@ namespace Qt.Core {
     )]
     public class ZipFile {
         protected String filename;
-        public ZipFile(String filename, OpenMode mode) {
+        public ZipFile(String filename) {
             CPP.Add("$q = std::make_shared<QuaZip>($check(filename)->qstring());");
         }
         public bool Open(ZipMode mode) {
