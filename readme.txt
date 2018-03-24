@@ -30,6 +30,7 @@ Notes:
  - uses std::shared_ptr<> to implement memory management
  - NullPointerExceptions are checked
  - classlib is a work in progress
+ - array down casting (base to derived) is not working yet (try to use template classes to avoid typecasting - see Qt.Core.Arrays)
 
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock or Qt.Core.ThreadSignal objects
