@@ -193,6 +193,7 @@ namespace Qt { namespace QSharp {
       if (copy) {
         t = new T[size];
         std::memcpy(t, buf, size * sizeof(T));
+        length = size;
         alloced = true;
       } else {
         t = buf;
@@ -211,6 +212,7 @@ namespace Qt { namespace QSharp {
       if (copy) {
         t = new T[size];
         std::memcpy(t, buf, size * sizeof(T));
+        length = size;
         alloced = true;
       } else {
         t = buf;
