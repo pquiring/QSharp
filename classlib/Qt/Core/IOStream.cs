@@ -40,7 +40,7 @@ namespace Qt.Core {
             }
             return true;
         }
-        public int Available() {
+        public int GetAvailable() {
             return CPP.ReturnInt("$q->bytesAvailable()");
         }
     }

@@ -12,6 +12,9 @@ namespace testzip
             while (e.MoveNext()) {
                 ZipEntry ze = e.Current;
                 Console.WriteLine("File=" + ze.Filename);
+                ze.Open(OpenMode.ReadOnly);
+                Console.WriteLine("Size=" + ze.GetAvailable());
+                ze.Close();
             }
             Console.WriteLine("Listing complete!");
         }
