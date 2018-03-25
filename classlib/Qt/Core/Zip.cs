@@ -8,10 +8,12 @@ namespace Qt.Core {
         "void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IOStream::$base((std::shared_ptr<QIODevice>)zf);}"
     )]
     public class ZipEntry : IOStream {
-        private String _filename;
-        public String filename {get {return _filename;}}
+        public String Filename {get;}
+        public String GetFilename() {
+            return Filename;
+        }
         public ZipEntry(String filename) {
-            _filename = filename;
+            this.Filename = filename;
         }
     }
     [CPPClass(
@@ -54,7 +56,7 @@ namespace Qt.Core {
             ZipEntry zipEntry;
             while(zipEnum.MoveNext()) {
                 zipEntry = zipEnum.Current;
-                if (zipEntry.filename == filename) {
+                if (zipEntry.Filename == filename) {
                     return zipEntry;
                 }
             }
