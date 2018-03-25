@@ -73,7 +73,7 @@ namespace Qt.Core {
             zipEntry = zf.GetEntry();
         }
         private ZipEntry zipEntry;
-        public ZipEntry Current {get {return zipEntry;}}
+        public ZipEntry /*IEnumerator<ZipEntry>.*/Current {get {return zipEntry;}}
         public bool MoveNext() {
             bool next = zip.NextEntry();
             if (next) {

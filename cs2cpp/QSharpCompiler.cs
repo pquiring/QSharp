@@ -1003,7 +1003,7 @@ namespace QSharpCompiler
             }
             cls.nsfullname += cls.fullname;
             cls.Interface = Interface;
-            if (!Interface) {
+//            if (!Interface) {
                 Method init = new Method();
                 init.cls = cls;
                 init.type.set("void");
@@ -1013,7 +1013,7 @@ namespace QSharpCompiler
                 init.name = "$init";
                 init.type.setTypes();
                 cls.methods.Add(init);
-            }
+//            }
             getFlags(cls, file.model.GetDeclaredSymbol(node));
             foreach(var child in node.ChildNodes()) {
                 switch (child.Kind()) {
@@ -1180,6 +1180,7 @@ namespace QSharpCompiler
 
         private void propertyNode(SyntaxNode node) {
             // type, AccessorList -> {GetAccessorDeclaration, SetAccessorDeclaration}
+            // type, ExplicitInterfaceSpecifier -> {...}
             field = new Field();
             field.cls = cls;
             field.Property = true;
@@ -1202,11 +1203,10 @@ namespace QSharpCompiler
                                     method.type.setTypes();
                                     method.type.Virtual = true;
                                     if (cls.Abstract) method.type.Abstract = true;
-                                    field.get_Property = true;
-                                    v.Append(v.name + ".Get([=] () {return $get_" + v.name + "();});\r\n");
                                     if (method.src.Length == 0 && !cls.Abstract) {
                                         method.Append("{return " + v.name + ".$value;}");
                                     }
+                                    field.get_Property = true;
                                     break;
                                 case SyntaxKind.SetAccessorDeclaration:
                                     methodNode(_etter, false, false, "$set_" + v.name);
@@ -1218,18 +1218,50 @@ namespace QSharpCompiler
                                     method.type.setTypes();
                                     method.type.Virtual = true;
                                     if (cls.Abstract) method.type.Abstract = true;
-                                    field.set_Property = true;
-                                    v.Append(v.name + ".Set([=] (" + field.GetCPPType() + " t) {$set_" + v.name + "(t);});\r\n");
                                     if (method.src.Length == 0 && !cls.Abstract) {
                                         method.Append("{" + v.name + ".$value = value;}");
                                     }
+                                    field.set_Property = true;
                                     break;
                             }
                         }
                         break;
+                    case SyntaxKind.ExplicitInterfaceSpecifier:
+                        //TODO
+                        break;
                 }
             }
             cls.fields.Add(field);
+            //add default getter/setter
+            if (!field.get_Property) {
+                method = new Method();
+                method.cls = cls;
+                method.name = "$get_" + v.name;
+                method.type.CopyType(field);
+                method.type.CopyFlags(field);
+                method.type.setTypes();
+                method.type.Virtual = true;
+                if (cls.Abstract) method.type.Abstract = true;
+                method.Append("{return " + v.name + ".$value;}");
+                cls.methods.Add(method);
+            }
+            if (!field.set_Property) {
+                method = new Method();
+                method.cls = cls;
+                method.name = "$set_" + v.name;
+                Argument arg = new Argument();
+                arg.type = field;
+                arg.name.name = "value";
+                method.args.Add(arg);
+                method.type.set("void");
+                method.type.setTypes();
+                method.type.Virtual = true;
+                if (cls.Abstract) method.type.Abstract = true;
+                method.Append("{" + v.name + ".$value = value;}");
+                cls.methods.Add(method);
+            }
+            v.Append(v.name + ".Get([=] () {return $get_" + v.name + "();});\r\n");
+            v.Append(v.name + ".Set([=] (" + field.GetTypeDeclaration() + " t) {$set_" + v.name + "(t);});\r\n");
         }
 
         //method or field attributes (returns true if ommited)
@@ -3251,7 +3283,7 @@ namespace QSharpCompiler
                         }
                         sb.Append("}\r\n");
                     } else {
-                        sb.Append(method.src);
+                        if (!method.type.Abstract) sb.Append(method.src);
                     }
                 }
                 sb.Append(";\r\n");
@@ -3345,8 +3377,13 @@ namespace QSharpCompiler
                 if (method.Length() == 0) method.Append("{}\r\n");
                 if (method.name == "$init") {
                     sb.Append("{\r\n");
-                    if (method.cls.bases.Count > 0) {
-                        sb.Append(method.cls.bases[0].GetSymbol() + "::$init();\r\n");
+                    foreach(var basecls in method.cls.bases) {
+                        sb.Append(basecls.GetCPPType());
+                        sb.Append("::$init();\r\n");
+                    }
+                    foreach(var iface in method.cls.ifaces) {
+                        sb.Append(iface.GetCPPType());
+                        sb.Append("::$init();\r\n");
                     }
                     foreach(var field in method.cls.fields) {
                         foreach(var v in field.variables) {

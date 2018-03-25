@@ -148,6 +148,10 @@ namespace Qt { namespace QSharp {
     T $value;
     std::function<T(void)> _get;
     std::function<void(T)> _set;
+    void Init(std::function<T()> get, std::function<void(T)> set) {
+      _get = get;
+      _set = set;
+    }
     Property<T>& operator=(T t) {_set(t); return *this;}
     operator T() {return _get();}
     bool operator==(T t) {return _get() == t;}
@@ -158,8 +162,7 @@ namespace Qt { namespace QSharp {
     }
     void Set(std::function<void(T)> set) {
       _set = set;
-    }
-  };
+    }  };
 }}
 
 extern void $npe();  //NullPointerException
