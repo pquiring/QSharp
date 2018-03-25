@@ -37,8 +37,9 @@ C# features that differ:
 
 C# features not supported (yet):
  - reflection (partially supported)
- - operators
+ - operators (ConversionOperatorDeclaration, OperatorDeclaration)
  - events
+ - multiple Property inheritance (ExplicitInterfaceSpecifier)
  - linq
  - etc.
 

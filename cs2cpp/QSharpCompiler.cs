@@ -697,7 +697,7 @@ namespace QSharpCompiler
                 }
                 sb.Append(cls.GetReflectionData());
                 if (cls.Namespace != "") sb.Append(OpenNamespace(cls.Namespace));
-                if (!cls.Generic && !cls.Interface) {
+                if (!cls.Generic) {
                     sb.Append(cls.GetMethodsDefinitions());
                 }
                 if (cls.Namespace != "") sb.Append(CloseNamespace(cls.Namespace));
@@ -1003,17 +1003,15 @@ namespace QSharpCompiler
             }
             cls.nsfullname += cls.fullname;
             cls.Interface = Interface;
-//            if (!Interface) {
-                Method init = new Method();
-                init.cls = cls;
-                init.type.set("void");
-                init.type.cls = cls;
-                init.type.primative = true;
-                init.type.Public = true;
-                init.name = "$init";
-                init.type.setTypes();
-                cls.methods.Add(init);
-//            }
+            Method init = new Method();
+            init.cls = cls;
+            init.type.set("void");
+            init.type.cls = cls;
+            init.type.primative = true;
+            init.type.Public = true;
+            init.name = "$init";
+            init.type.setTypes();
+            cls.methods.Add(init);
             getFlags(cls, file.model.GetDeclaredSymbol(node));
             foreach(var child in node.ChildNodes()) {
                 switch (child.Kind()) {
