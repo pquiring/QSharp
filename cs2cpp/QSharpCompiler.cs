@@ -2326,6 +2326,13 @@ namespace QSharpCompiler
                     }
                     expressionNode(addleft, ob);
                     ob.Append(",");
+                    switch (GetTypeName(addright)) {
+                        case "char": ob.Append("(char16)"); break;
+                        case "short": ob.Append("(int32)"); break;
+                        case "ushort": ob.Append("(uint32)"); break;
+                        case "byte": ob.Append("(uint32)"); break;
+                        case "ubyte": ob.Append("(int32)"); break;
+                    }
                     expressionNode(addright, ob);
                     ob.Append(")");
                     break;
@@ -2379,6 +2386,13 @@ namespace QSharpCompiler
                     }
                     expressionNode(addassignleft, ob);
                     ob.Append(",");
+                    switch (GetTypeName(addassignright)) {
+                        case "char": ob.Append("(char16)"); break;
+                        case "short": ob.Append("(int32)"); break;
+                        case "ushort": ob.Append("(uint32)"); break;
+                        case "byte": ob.Append("(uint32)"); break;
+                        case "ubyte": ob.Append("(int32)"); break;
+                    }
                     expressionNode(addassignright, ob);
                     ob.Append(")");
                     break;
@@ -2684,6 +2698,24 @@ namespace QSharpCompiler
             ITypeSymbol type = file.model.GetTypeInfo(node).Type;
             if (type == null) return false;
             return type.ToString() == "long";
+        }
+
+        private bool isChar(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            return type.ToString() == "char";
+        }
+
+        private bool isShort(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            return type.ToString() == "short";
+        }
+
+        private bool isUShort(SyntaxNode node) {
+            ITypeSymbol type = file.model.GetTypeInfo(node).Type;
+            if (type == null) return false;
+            return type.ToString() == "ushort";
         }
 
         private void binaryNode(SyntaxNode node, OutputBuffer ob, string op) {

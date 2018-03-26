@@ -338,6 +338,7 @@ inline double $modd(double x, double y) {return std::fmod(x, y);}
 extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::String> s2);
 
 extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, std::shared_ptr<Qt::Core::Object> y);
+extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, char16 y);
 extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, int32 y);
 extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, int64 y);
 extern std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, uint32 y);
