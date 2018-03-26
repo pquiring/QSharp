@@ -9,7 +9,6 @@ public class OpenGLUVMap : OpenGLFunctions {
     private bool loaded = false;
     private int uvb = -1;    //GL buffer
     private int mapIndex;
-    private bool inited;
 
     public OpenGLUVMap(int idx) {
         uvl = new Array<float>();
@@ -65,10 +64,6 @@ public class OpenGLUVMap : OpenGLFunctions {
     }
 
     public void CopyBuffers() {
-        if (!inited) {
-            InitializeOpenGLFunctions();
-            inited = true;
-        }
         if (uvb == -1) {
             int[] ids = new int[1];
             glGenBuffers(1, ids);

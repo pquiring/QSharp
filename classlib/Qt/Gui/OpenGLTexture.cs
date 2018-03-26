@@ -13,7 +13,6 @@ public class OpenGLTexture : OpenGLFunctions {
     private static bool mipmaps = false;
 
     public OpenGLTexture(int idx) {
-        InitializeOpenGLFunctions();
         refcnt = 0;
         glid = -1;
         bitmap = new Image(0,0);

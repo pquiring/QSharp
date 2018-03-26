@@ -20,7 +20,6 @@ public class OpenGLScene : OpenGLFunctions {
     private OpenGLTexture blankTexture;
 
     public OpenGLScene() {
-        InitializeOpenGLFunctions();
         freeglidlist = new ArrayList<int>();
         reset();
         texturePath = "";
