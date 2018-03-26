@@ -26,6 +26,7 @@
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QOpenGLWindow>
+#include <QtGui/QOpenGLContext>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMouseEvent>

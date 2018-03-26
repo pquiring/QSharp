@@ -1,3 +1,4 @@
+using Qt.Core;
 using Qt.QSharp;
 
 //TODO : $check() all arrays
@@ -8,6 +9,10 @@ namespace Qt.Gui {
         /** Initialize the GL functions. */
         public void InitializeOpenGLFunctions() {
             CPP.Add("$q = std::make_unique<QOpenGLFunctions>();");
+            CPP.Add("if (QOpenGLContext::currentContext() == nullptr) {");
+            CPP.Add("Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"OpenGLFunctions:Error:No Context Created!\"));");
+            CPP.Add("return;");
+            CPP.Add("}");
             CPP.Add("$q->initializeOpenGLFunctions();");
         }
 
@@ -24,9 +29,9 @@ namespace Qt.Gui {
         public void glBlendFunc(int sfactor, int dfactor) {CPP.Add("$q->glBlendFunc(sfactor, dfactor);");}
         public void glBlendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {CPP.Add("$q->glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);");}
         public void glBufferData(int target, int size, byte[] data, int usage) {CPP.Add("$q->glBufferData(target, size, $check(data, 0, size)->data(), usage);");}
-        public void glBufferData(int target, int size, int[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size)->data(), usage);");}
-        public void glBufferData(int target, int size, float[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size)->data(), usage);");}
-        public void glBufferSubData(int target, int offset, int size, byte[] data) {CPP.Add("$q->glBufferSubData(target, offset, size, $check(data, 0, size)->data());");}
+        public void glBufferData(int target, int size, int[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size/4)->data(), usage);");}
+        public void glBufferData(int target, int size, float[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size/4)->data(), usage);");}
+        public void glBufferSubData(int target, int offset, int size, byte[] data) {CPP.Add("$q->glBufferSubData(target, offset, size, $check(data, 0, size/4)->data());");}
         public int glCheckFramebufferStatus(int target) {return CPP.ReturnInt("$q->glCheckFramebufferStatus(target)");}
         public void glClear(int mask) {CPP.Add("$q->glClear(mask);");}
         public void glClearColor(float red, float green, float blue, float alpha) {CPP.Add("$q->glClearColor(red, green, blue, alpha);");}
