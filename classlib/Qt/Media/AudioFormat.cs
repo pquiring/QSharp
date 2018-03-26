@@ -9,6 +9,8 @@ namespace Qt.Media {
     public class AudioFormat {
         public AudioFormat() {
             CPP.Add("$q = std::make_unique<QAudioFormat>();");
+            CPP.Add("$q->setCodec(\"audio/pcm\");");
+            CPP.Add("$q->setSampleType(QAudioFormat::SignedInt);");
         }
         public int GetBits() {
             return CPP.ReturnInt("$q->sampleSize()");
