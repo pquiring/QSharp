@@ -53,13 +53,13 @@ namespace Qt.Media {
             CPP.Add("$io = nullptr;");
         }
         public int Read(byte[] data, int offset = 0, int length = -1) {
-            if (length == -1) length = data.Length;
+            if (length == -1) length = data.Length - offset;
             CPP.Add("if ($io == nullptr) return -1;");
             CPP.Add("$check(data, offset, length);");
             return CPP.ReturnInt("$io->read((char*)data->data() + offset, length)");
         }
         public int Read(short[] data, int offset = 0, int length = -1) {
-            if (length == -1) length = data.Length;
+            if (length == -1) length = data.Length - offset;
             CPP.Add("if ($io == nullptr) return -1;");
             CPP.Add("$check(data, offset, length);");
             return CPP.ReturnInt("$io->read((char*)data->data() + offset, length * 2) / 2");
