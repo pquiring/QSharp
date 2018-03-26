@@ -14,6 +14,13 @@ std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, 
   return s;
 }
 
+std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, char16 y) {
+  std::shared_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+  s->Append(s1);
+  s->Append(y);
+  return s;
+}
+
 std::shared_ptr<Qt::Core::String> $addstr(std::shared_ptr<Qt::Core::String> s1, int32 y) {
   std::shared_ptr<Qt::Core::String> s = Qt::Core::String::$new();
   s->Append(s1);
