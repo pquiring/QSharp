@@ -2331,7 +2331,7 @@ namespace QSharpCompiler
                         case "short": ob.Append("(int32)"); break;
                         case "ushort": ob.Append("(uint32)"); break;
                         case "byte": ob.Append("(uint32)"); break;
-                        case "ubyte": ob.Append("(int32)"); break;
+                        case "sbyte": ob.Append("(int32)"); break;
                     }
                     expressionNode(addright, ob);
                     ob.Append(")");
@@ -2391,7 +2391,7 @@ namespace QSharpCompiler
                         case "short": ob.Append("(int32)"); break;
                         case "ushort": ob.Append("(uint32)"); break;
                         case "byte": ob.Append("(uint32)"); break;
-                        case "ubyte": ob.Append("(int32)"); break;
+                        case "sbyte": ob.Append("(int32)"); break;
                     }
                     expressionNode(addassignright, ob);
                     ob.Append(")");
