@@ -25,6 +25,7 @@ namespace Qt.Gui {
         }
         public Image(int width, int height) {
             CPP.Add("$q = std::make_unique<QImage>(width, height, QImage::Format_ARGB32);");
+            CPP.Add("$q->fill(0);");
             GetPtr();
         }
         private void GetPtr() {
@@ -83,6 +84,7 @@ namespace Qt.Gui {
             if (px.Length != pxs) return;
             CPP.Add("std::memcpy($px, px->data(), pxs * 4);");
         }
+        /** Sets color used by all Draw operations. */
         public void SetColor(int clr) {
             CPP.Add("$painter.setPen(QColor(clr));");
         }
