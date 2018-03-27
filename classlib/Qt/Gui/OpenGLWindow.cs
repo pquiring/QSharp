@@ -8,6 +8,7 @@ namespace Qt.Gui {
         public OpenGLWindow() : base(QSharpDerived.derived) {
             CPP.Add("$q = new $QOpenGLWindow(this);");
             CPP.Add("NativeWindow::$base($q);");
+            CPP.Add("QObject::connect($q, &QOpenGLWindow::frameSwapped, [=] () {$q->update();});");
         }
         /** This function is called during window creation. */
         public virtual void InitializeGL() { }
@@ -15,9 +16,5 @@ namespace Qt.Gui {
         public virtual void PaintGL() { }
         /** This function is called when the window is resized. */
         public virtual void ResizeGL(int w, int h) { }
-
-        public void Update() {
-            CPP.Add("$q->update();");
-        }
     }
 }

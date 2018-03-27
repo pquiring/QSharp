@@ -65,8 +65,6 @@ public class TriangleWindow : OpenGLWindow
         m_program.Release();
 
         ++m_frame;
-
-        Update();
     }
 
     public static void Main(string[] args)

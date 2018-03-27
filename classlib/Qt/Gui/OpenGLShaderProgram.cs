@@ -33,11 +33,11 @@ namespace Qt.Gui {
         public void SetUniformValue(int location, Matrix4x4 value) {
             CPP.Add("$q->setUniformValue(location, (QMatrix4x4)*($check(value)->$value()));");
         }
-        public void Link() {
-            CPP.Add("$q->link();");
+        public bool Link() {
+            return CPP.ReturnBool("$q->link()");
         }
-        public void Bind() {
-            CPP.Add("$q->bind();");
+        public bool Bind() {
+            return CPP.ReturnBool("$q->bind()");
         }
         public void Release() {
             CPP.Add("$q->release();");

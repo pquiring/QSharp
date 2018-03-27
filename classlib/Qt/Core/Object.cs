@@ -98,7 +98,7 @@ namespace Qt.Core {
         public bool ReferenceEquals(object obj) {return this == obj;}
         public override int GetHashCode() {return CPP.ReturnInt("$hash(this)");}
         public new Type GetType() {return (Type)CPP.ReturnObject("Qt::Core::Type::$new($getType())");}
-        public void DebugBreak() {
+        public static void DebugBreak() {
             CPP.Add("#ifdef _MSC_VER\r\n__debugbreak();\r\n#endif\r\n");
             CPP.Add("#ifdef __GNUC__\r\n__asm(\"int $3\");\r\n#endif\r\n");
         }
