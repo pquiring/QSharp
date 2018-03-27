@@ -895,6 +895,13 @@ namespace QSharpCompiler
             if (Program.msvc) {
                 sb.Append("target_compile_options(" + Program.target + " PRIVATE /bigobj)\r\n");
                 sb.Append("target_compile_options(" + Program.target + " PRIVATE /wd4102)\r\n");  //$case labels not used
+                if (!Program.debug) {
+                    sb.Append("target_compile_options(" + Program.target + " PRIVATE /O2)\r\n");
+                }
+            } else {
+                if (!Program.debug) {
+                    sb.Append("target_compile_options(" + Program.target + " PRIVATE -O3)\r\n");
+                }
             }
             if (Program.library && !Program.shared) {
                 sb.Append("add_custom_command(TARGET " + Program.target + " POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy cpp/" + Program.target + ".hpp " + Program.home + "/include)\r\n");
