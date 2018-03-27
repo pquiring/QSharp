@@ -222,10 +222,10 @@ namespace QSharpCompiler
             Source node = new Source();
             node.clss = new List<Class>();
             node.src = "//head";
-            node.cppFile = "cpp\\$head.cpp";
+            node.cppFile = "cpp/$head.cpp";
             node.tree = CSharpSyntaxTree.ParseText(node.src);
             compiler = compiler.AddSyntaxTrees(node.tree);
-            files.Add(node);
+//            files.Add(node);
         }
 
         void addFolder(string folder)
@@ -425,7 +425,7 @@ namespace QSharpCompiler
             if (Program.single) openOutput("cpp/" + Program.target + ".cpp");
             if (Program.single) writeIncludes();
             foreach(Source file in Program.files) {
-                if (!Program.single && file.csTimestamp <= file.cppTimestamp) continue;
+                //if (!Program.single && file.csTimestamp <= file.cppTimestamp) continue;
                 Generate.file = file;
                 if (!Program.single) openOutput(file.cppFile);
                 if (!Program.single) writeIncludes();
