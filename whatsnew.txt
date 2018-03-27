@@ -1,6 +1,9 @@
 What's new
 ==========
 
+Mar 27, 2018 : 0.16
+ - many bug fixes
+
 Mar 23, 2018 : 0.15
  - fix FixedArray[]s to support type casting
  - use template class for Properties
