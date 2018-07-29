@@ -8,7 +8,7 @@ namespace Qt.Network {
     public class TcpSocket : AbstractSocket {
         public TcpSocket() {
             CPP.Add("$q = std::make_shared<QTcpSocket>();");
-            CPP.Add("AbstractSocket::$base($q);");
+            CPP.Add("AbstractSocket::$base((std::shared_ptr<QAbstractSocket>)$q);");
         }
         [CPPReplaceArgs("QTcpSocket *$s")]
         private TcpSocket(NativeArg1 arg) {

@@ -8,7 +8,7 @@ namespace Qt.Network {
     public class SslSocket : TcpSocket {
         public SslSocket() {
             CPP.Add("$q = std::make_shared<QSslSocket>();");
-            CPP.Add("TcpSocket::$base($q);");
+            CPP.Add("TcpSocket::$base((std::shared_ptr<QTcpSocket>)$q);");
         }
         [CPPReplaceArgs("QSslSocket *$s")]
         private SslSocket(NativeArg1 arg) {

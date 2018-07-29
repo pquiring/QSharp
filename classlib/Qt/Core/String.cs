@@ -2,15 +2,19 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPNonClassHPP(
-        "Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> $QStringListToStringArray(QStringList list);" +
-        "QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> array);"
+        "Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> $QStringListToStringArray(QStringList list);" +
+        "QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> array);"
     )]
     [CPPClass(
         "std::unique_ptr<QString> $q;" +
         "QString* $value() {return $q.get();}" +
         "QByteArray cstring() {return $q->toUtf8();}" +
         "QString qstring() {return *$q;}" +
-        "const char16* ustring() {return (const char16*)$q->utf16();}"
+        "const char16* ustring() {return (const char16*)$q->utf16();}" +
+        "bool operator<(Qt::Core::String *other) const {return QString::compare(*$q, *other->$q) < 0;}" +
+        "bool operator<(Qt::Core::String other) const {return QString::compare(*$q, *other.$q) < 0;}" +
+        "bool operator>(Qt::Core::String *other) const {return QString::compare(*$q, *other->$q) > 0;}" +
+        "bool operator>(Qt::Core::String other) const {return QString::compare(*$q, *other.$q) > 0;}"
     )]
     public class String : Object {
         public String() {

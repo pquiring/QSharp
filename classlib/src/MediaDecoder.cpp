@@ -2,8 +2,8 @@
 
 namespace Qt { namespace Media {
 
-std::shared_ptr<MediaDecoder> MediaDecoder::$new() {
-  return std::make_shared<MediaDecoder>();
+std::gc_ptr<MediaDecoder> MediaDecoder::$new() {
+  return std::make_gc<MediaDecoder>();
 }
 
 //returns stream idx >= 0
@@ -22,7 +22,7 @@ static int open_codec_context(std::shared_ptr<Qt::Media::FFContext> ctx, AVForma
     }
     ctx->codec_ctx = (*_avcodec_alloc_context3)(codec);
     (*_avcodec_parameters_to_context)(ctx->codec_ctx, stream->codecpar);
-    ctx->codec_ctx->flags |= CODEC_FLAG_LOW_DELAY;
+//    ctx->codec_ctx->flags |= CODEC_FLAG_LOW_DELAY;
     if ((ret = (*_avcodec_open2)(ctx->codec_ctx, codec, nullptr)) < 0) {
       return ret;
     }
@@ -117,9 +117,9 @@ static bool open_codecs(std::shared_ptr<Qt::Media::FFContext> ctx, int new_width
  * NOTE : Audio output is always 16bit
  */
 
-bool MediaDecoder::Start(std::shared_ptr<MediaIO> io, int new_width, int new_height, int new_chs, int new_freq, bool seekable)
+bool MediaDecoder::Start(std::gc_ptr<MediaIO> io, int new_width, int new_height, int new_chs, int new_freq, bool seekable)
 {
-  ctx = std::make_shared<FFContext>(io, std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
+  ctx = std::make_shared<FFContext>(io, this);
 
   ctx->ff_buffer = (*_av_malloc)(ffiobufsiz);
   ctx->io_ctx = (*_avio_alloc_context)(ctx->ff_buffer, ffiobufsiz, 0, (void*)ctx.get(), (void*)&read_packet, (void*)&write_packet, seekable ? (void*)&seek_packet : nullptr);
@@ -146,9 +146,9 @@ bool MediaDecoder::Start(std::shared_ptr<MediaIO> io, int new_width, int new_hei
  * NOTE:input_format may be nullptr
  */
 
-bool MediaDecoder::Start(std::shared_ptr<Qt::Core::String> file, std::shared_ptr<Qt::Core::String> input_format, int new_width, int new_height, int new_chs, int new_freq)
+bool MediaDecoder::Start(std::gc_ptr<Qt::Core::String> file, std::gc_ptr<Qt::Core::String> input_format, int new_width, int new_height, int new_chs, int new_freq)
 {
-  ctx = std::make_shared<FFContext>(std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
+  ctx = std::make_shared<FFContext>(this);
   int res;
   ctx->fmt_ctx = (*_avformat_alloc_context)();
   const char *cinput_format = input_format->cstring();

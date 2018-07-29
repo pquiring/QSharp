@@ -47,7 +47,7 @@ namespace Qt.Core {
         }
         public ZipEntry GetEntry() {
             CPP.Add("std::shared_ptr<QuaZipFile> zf = std::make_shared<QuaZipFile>($q.get());");
-            CPP.Add("std::shared_ptr<ZipEntry> ze = ZipEntry::$new(filename);");
+            CPP.Add("std::gc_ptr<ZipEntry> ze = ZipEntry::$new(filename);");
             CPP.Add("ze->$base(zf);");
             return (ZipEntry)CPP.ReturnObject("ze");
         }
@@ -64,7 +64,7 @@ namespace Qt.Core {
         }
         //TODO : AddEntry()
         public IEnumerator<ZipEntry> GetEnumerator() {
-            return new ZipEnumerator(this);
+            return (IEnumerator<ZipEntry>)new ZipEnumerator(this);  //BUG : unneeded typecast
         }
     }
     public class ZipEnumerator : IEnumerator<ZipEntry> {

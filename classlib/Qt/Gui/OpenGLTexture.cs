@@ -28,7 +28,7 @@ public class OpenGLTexture : OpenGLFunctions {
     public bool Load(String filename) {
         Console.WriteLine("Loading Texture:" + filename);
         try {
-            return Load(new File(filename));
+            return Load((IOStream)new File(filename));  //BUG : need typecast here
         } catch (Exception e) {
             Console.WriteLine("Error:" + e.ToString());
             return false;

@@ -49,18 +49,18 @@ namespace Qt.Core {
             return CPP.ReturnString("Qt::Core::String::$new($refType->name)");
         }
         public Type GetBaseType() {
-            CPP.Add("if ($refType->base == nullptr) return std::shared_ptr<Qt::Core::Type>();");
+            CPP.Add("if ($refType->base == nullptr) return std::gc_ptr<Qt::Core::Type>();");
             return (Type)CPP.ReturnObject("Qt::Core::Type::$new($refType->base)");
         }
         public Field[] GetFields() {
             CPP.Add("int cnt = $refType->fields->size();");
-            CPP.Add("Qt::QSharp::FixedArray1D<std::shared_ptr<Field>> fields = Qt::QSharp::FixedArray1D<std::shared_ptr<Field>>::$new(cnt);");
+            CPP.Add("Qt::QSharp::FixedArray1D<std::gc_ptr<Field>> fields = Qt::QSharp::FixedArray1D<std::gc_ptr<Field>>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {fields->at(idx) = Qt::Core::Field::$new($refType->fields->at(idx));}");
             return (Field[])CPP.ReturnObject("fields");
         }
         public Method[] GetMethods() {
             CPP.Add("int cnt = $refType->methods->size();");
-            CPP.Add("Qt::QSharp::FixedArray1D<std::shared_ptr<Method>> methods = Qt::QSharp::FixedArray1D<std::shared_ptr<Method>>::$new(cnt);");
+            CPP.Add("Qt::QSharp::FixedArray1D<std::gc_ptr<Method>> methods = Qt::QSharp::FixedArray1D<std::gc_ptr<Method>>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {methods->at(idx) = Qt::Core::Method::$new($refType->methods->at(idx));}");
             return (Method[])CPP.ReturnObject("methods");
         }
@@ -81,16 +81,17 @@ namespace Qt.Core {
         * This is a temporary work around.
         * or: Type type = new Type(typeof(MyClass));
         */
-        public static Type Convert(System.Object sysType) {
-            return (Type)CPP.ReturnObject("sysType");
-        }
+//        public static Type Convert(System.Object sysType) {
+//            return (Type)CPP.ReturnObject("sysType");
+//        }
         /** Returns new instance of Type if class accepts zero arguments (arguments not supported yet) */
         public Object NewInstance() {
             return (Object)CPP.ReturnObject("$refType->newInstance()");
         }
     }
     [CPPClass(
-        "std::weak_ptr<Qt::Core::Object> $weak_this;"
+        "int mark;" +
+        "Qt::Core::Object *next;"
     )]
     public class Object {
         public override string ToString() {return CPP.ReturnString("Qt::Core::String::$new($getType()->name)");}
@@ -101,6 +102,9 @@ namespace Qt.Core {
         public static void DebugBreak() {
             CPP.Add("#ifdef _MSC_VER\r\n__debugbreak();\r\n#endif\r\n");
             CPP.Add("#ifdef __GNUC__\r\n__asm(\"int $3\");\r\n#endif\r\n");
+        }
+        public Object() {
+          CPP.Add("std::gc_add_object(this);");
         }
         ~Object() {}
     }

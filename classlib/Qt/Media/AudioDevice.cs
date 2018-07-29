@@ -23,7 +23,7 @@ namespace Qt.Media {
             AudioDevice[] list = null;
             CPP.Add("QList<QAudioDeviceInfo> devlist = QAudioDeviceInfo::availableDevices((QAudio::Mode)mode);");
             CPP.Add("int cnt = devlist.size();");
-            CPP.Add("list = Qt::QSharp::FixedArray1D<std::shared_ptr<AudioDevice>>::$new(cnt);");
+            CPP.Add("list = Qt::QSharp::FixedArray1D<std::gc_ptr<AudioDevice>>::$new(cnt);");
             CPP.Add("for(int a=0;a<cnt;a++) {list.at(a) = Qt::Media::AudioDevice::$new(devlist.at(a));}");
             return list;
         }

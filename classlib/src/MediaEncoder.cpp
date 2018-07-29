@@ -87,7 +87,7 @@ static bool add_stream(std::shared_ptr<Qt::Media::FFContext> ctx, int codec_id) 
   }
 
   if ((ctx->out_fmt->flags & AVFMT_GLOBALHEADER) != 0) {
-    codec_ctx->flags |= CODEC_FLAG_GLOBAL_HEADER;
+//    codec_ctx->flags |= CODEC_FLAG_GLOBAL_HEADER;
   }
 
   return true;
@@ -146,7 +146,7 @@ static bool open_audio(std::shared_ptr<Qt::Media::FFContext> ctx) {
   ctx->audio_frame->sample_rate = ctx->freq;
   ctx->audio_frame->channel_layout = ctx->audio_codec_ctx->channel_layout;
   ctx->audio_frame_size = ctx->audio_codec_ctx->frame_size * ctx->chs;  //max samples that encoder will accept
-  ctx->audio_frame_size_variable = (ctx->audio_codec->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE) != 0;
+//  ctx->audio_frame_size_variable = (ctx->audio_codec->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE) != 0;  //TODO!!!
   ctx->audio_frame->nb_samples = ctx->audio_codec_ctx->frame_size;
   ret = (*_av_frame_get_buffer)(ctx->audio_frame, 0);
   if (ret < 0) {
@@ -252,9 +252,9 @@ static bool encoder_start(std::shared_ptr<Qt::Media::FFContext> ctx, const char 
   return true;
 }
 
-bool Qt::Media::MediaEncoder::Start(std::shared_ptr<MediaIO> io, int width, int height, int fps, int chs, int freq, std::shared_ptr<Qt::Core::String> codec, bool doVideo, bool doAudio)
+bool Qt::Media::MediaEncoder::Start(std::gc_ptr<MediaIO> io, int width, int height, int fps, int chs, int freq, std::gc_ptr<Qt::Core::String> codec, bool doVideo, bool doAudio)
 {
-  ctx = std::make_shared<FFContext>(io, std::dynamic_pointer_cast<MediaCoder>($weak_this.lock()));
+  ctx = std::make_shared<FFContext>(io, this);
 
   if (doVideo && (width <= 0 || height <= 0)) {
     return false;

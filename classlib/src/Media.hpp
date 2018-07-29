@@ -159,14 +159,14 @@ static int min(int a, int b) {
 }
 
 struct FFContext {
-  std::shared_ptr<MediaIO> io;
-  std::shared_ptr<MediaCoder> coder;
+  std::gc_ptr<MediaIO> io;
+  std::gc_ptr<MediaCoder> coder;
 
-  FFContext(std::shared_ptr<MediaIO> io, std::shared_ptr<MediaCoder> coder) {
+  FFContext(std::gc_ptr<MediaIO> io, std::gc_ptr<MediaCoder> coder) {
     this->io = io;
     this->coder = coder;
   }
-  FFContext(std::shared_ptr<MediaCoder> coder) {
+  FFContext(std::gc_ptr<MediaCoder> coder) {
     this->coder = coder;
   }
 

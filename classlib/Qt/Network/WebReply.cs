@@ -7,13 +7,13 @@ namespace Qt.Network {
     )]
     public class WebReply : IOStream {
         protected WebReply() {
-            CPP.Add("$q = std::make_shared<$QWebReply>();");
-            CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");
+            CPP.Add("$q = std::make_shared<$QWebReply>()");
+            CPP.Add("IOStream::$base($q);");
         }
         [CPPReplaceArgs("QNetworkReply *reply")]
         private WebReply(NativeArg1 arg) {
             CPP.Add("$q.reset(reply);");
-            CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");
+            CPP.Add("IOStream::$base($q);");
         }
         private ByteArray data;
         private Map<String, String> args = new Map<String, String>();

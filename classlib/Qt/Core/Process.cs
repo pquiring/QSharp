@@ -7,7 +7,7 @@ namespace Qt.Core {
     public class Process : IOStream {
         public Process() {
             CPP.Add("$q = std::make_shared<QProcess>();");
-            CPP.Add("IOStream::$base((std::shared_ptr<QIODevice>)$q);");
+            CPP.Add("IOStream::$base($q);");
         }
         public String GetWorkingDirectory() {
             return CPP.ReturnString("Qt::Core::String::$new($q->workingDirectory())");

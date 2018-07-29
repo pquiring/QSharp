@@ -10,8 +10,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray1D<T>* operator->() {return this;}\r\n" +
-        "operator std::shared_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
-        "std::shared_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
+        "operator std::gc_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
+        "std::gc_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
         "T* data() {return t.get()->t;}\r\n" +
         "FixedArray1D() {$init();}\r\n" +
         "FixedArray1D(nullptr_t np) {$init();}\r\n" +
@@ -37,11 +37,11 @@ namespace Qt.QSharp {
         private FixedArray1D(NativeArg2 arg, int size, bool copy) {
             CPP.Add("t = std::make_shared<FixedData<T>>(buf, size, copy);");
         }
-        [CPPReplaceArgs("std::shared_ptr<Qt::Core::Object> objRef, T *buf, int size")]
+        [CPPReplaceArgs("std::gc_ptr<Qt::Core::Object> objRef, T *buf, int size")]
         private FixedArray1D(Object obj, NativeArg3 arg, int size) {
             CPP.Add("t = std::make_shared<FixedData<T>>(objRef, buf, size);");
         }
-        [CPPReplaceArgs("std::shared_ptr<Qt::Core::Object> objRef, T *buf, int size, bool copy")]
+        [CPPReplaceArgs("std::gc_ptr<Qt::Core::Object> objRef, T *buf, int size, bool copy")]
         private FixedArray1D(Object obj, NativeArg4 arg, int size, bool copy) {
             CPP.Add("t = std::make_shared<FixedData<T>>(objRef, buf, size, copy);");
         }
@@ -57,7 +57,7 @@ namespace Qt.QSharp {
             CPP.Add("at(idx) = t;");
         }
         public IEnumerator<T> GetEnumerator() {
-            return new FixedArray1DEnumerator<T>(this);
+            return (IEnumerator<T>)new FixedArray1DEnumerator<T>(this);  //BUG : unneeded typecast
         }
     }
 
@@ -93,8 +93,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray2D<T>* operator->() {return this;}\r\n" +
-        "operator std::shared_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
-        "std::shared_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
+        "operator std::gc_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
+        "std::gc_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
         "FixedArray2D() {$init();}\r\n" +
         "FixedArray2D(nullptr_t np) {$init();}\r\n" +
         "FixedArray2D(const FixedArray2D &o) {$init(); t = o.t;}\r\n" +
@@ -123,7 +123,7 @@ namespace Qt.QSharp {
             CPP.Add("at(idx) = t;");
         }
         public IEnumerator<FixedArray1D<T>> GetEnumerator() {
-            return new FixedArray2DEnumerator<T>(this);
+            return (IEnumerator<FixedArray1D<T>>)new FixedArray2DEnumerator<T>(this);  //BUG : unneeded typecast
         }
     }
 
@@ -159,8 +159,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray3D<T>* operator->() {return this;}\r\n" +
-        "operator std::shared_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
-        "std::shared_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
+        "operator std::gc_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
+        "std::gc_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
         "FixedArray3D() {$init();}\r\n" +
         "FixedArray3D(nullptr_t np) {$init();}\r\n" +
         "FixedArray3D(const FixedArray3D &o) {$init();t = o.t;}\r\n" +
@@ -189,7 +189,7 @@ namespace Qt.QSharp {
             CPP.Add("at(idx) = t;");
         }
         public IEnumerator<FixedArray2D<T>> GetEnumerator() {
-            return new FixedArray3DEnumerator<T>(this);
+            return (IEnumerator<FixedArray2D<T>>)new FixedArray3DEnumerator<T>(this);  //BUG : unneeded typecast
         }
     }
 

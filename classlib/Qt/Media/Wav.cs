@@ -17,7 +17,7 @@ namespace Qt.Media {
             try {
                 File wav = new File(fn);
                 if (!wav.Open(OpenMode.ReadOnly)) return false;
-                return Load(wav);
+                return Load((IOStream)wav);  //BUG : unneeded cast
             } catch (Exception e) {
                 Console.WriteLine("Error:" + e.ToString());
                 return false;
@@ -84,7 +84,7 @@ namespace Qt.Media {
             try {
                 File fos = new File(fn);
                 fos.Open(OpenMode.WriteOnly);
-                bool ret = Save(fos);
+                bool ret = Save((IOStream)fos);  //BUG : unneeded cast
                 fos.Close();
                 return ret;
             } catch (Exception e) {

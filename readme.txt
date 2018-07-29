@@ -22,12 +22,12 @@ Build Tools:
   ffmpeg/3.0+
 
 ffmpeg:
-  Download ffmpeg, extract to include folder and run 'bash configure --disable-yasm'
+  Download ffmpeg, extract to include folder and run 'bash configure --disable-x86asm'
   You'll need C++ compiler in path (use gcc for cygwin/mingw).
   The pre-built shared binaries can be downloaded from ffmpeg.org
 
 Notes:
- - uses std::shared_ptr<> to implement memory management
+ - uses std::gc_ptr<> to implement memory management (garbage collection)
  - NullPointerExceptions are checked
  - classlib is a work in progress
  - array down casting (base to derived) is not working yet (try to use template classes to avoid typecasting - see Qt.Core.Arrays)
@@ -66,7 +66,7 @@ Then build the classlib or any test:
   make | nmake
 
 cmake options (depends on platform):
-  to specify build type (Release recommended for faster compiling):
+  to specify build type:
     -D CMAKE_BUILD_TYPE=Release | Debug
   to build with msvc
     -G "NMake Makefiles"

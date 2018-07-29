@@ -21,7 +21,7 @@ namespace QSharpCompiler
         public static bool printTree = false;
         public static bool printToString = false;
         public static bool printTokens = false;
-        public static string version = "0.16";
+        public static string version = "0.17";
         public static bool library;
         public static bool shared;
         public static bool service;
@@ -31,7 +31,7 @@ namespace QSharpCompiler
         public static int headidx = 0;
         public static string main;
         public static string home = ".";
-        public static string cxx = "14";
+        public static string cxx = "11";
         public static bool single = false;  //generate monolithic cpp source file
         public static bool msvc = false;
         public static bool debug = false;
@@ -433,6 +433,11 @@ namespace QSharpCompiler
                 writeMethods();
                 if (!Program.single) closeOutput();
             }
+            if (Program.library) {
+                if (File.Exists("library.cpp")) {
+                  writeLibrary();
+                }
+            }
             if (!Program.single) openOutput("cpp/ctor.cpp");
             if (!Program.single) writeIncludes();
             writeStaticFieldsInit();
@@ -712,12 +717,20 @@ namespace QSharpCompiler
             fs.Write(bytes, 0, bytes.Length);
         }
 
+        private void writeLibrary() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(System.IO.File.ReadAllText("library.cpp"));
+            byte[] bytes = new UTF8Encoding().GetBytes(sb.ToString());
+            fs.Write(bytes, 0, bytes.Length);
+        }
+
         private void writeMain() {
             StringBuilder sb = new StringBuilder();
 
             foreach(var lib in Program.libs) {
                 sb.Append("extern void $" + lib + "_ctor();\r\n");
             }
+            sb.Append("extern void std::gc_init();\r\n");
 
             if (!Program.single) sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
             if (Program.service) {
@@ -763,10 +776,11 @@ namespace QSharpCompiler
             sb.Append("int main(int argc, const char **argv) {\r\n");
             sb.Append("Qt::Core::g_argc = argc;\r\n");
             sb.Append("Qt::Core::g_argv = argv;\r\n");
+            sb.Append("std::gc_init();\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
-            sb.Append("$" + Program.target + "_ctor();");
+            sb.Append("$" + Program.target + "_ctor();\r\n");
             if (!Program.service) {
                 sb.Append(writeInvokeMain("Main"));
             } else {
@@ -786,16 +800,16 @@ namespace QSharpCompiler
 
         private String writeInvokeMain(String name) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>> args = Qt::QSharp::FixedArray1D<std::shared_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
+            sb.Append("Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> args = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
             if (!Program.debug) {
                 sb.Append("try {\r\n");
             }
             sb.Append(Program.main + "::" + name + "(args);\r\n");
             if (!Program.debug) {
-                sb.Append("} catch (std::shared_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (std::shared_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (std::shared_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("} catch (std::gc_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (std::gc_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (std::gc_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
                 sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
             }
             return sb.ToString();
@@ -812,7 +826,7 @@ namespace QSharpCompiler
             sb.Append("}}\r\n");
             sb.Append("extern \"C\" {\r\n");
             sb.Append("__declspec(dllexport)");
-            sb.Append("void LibraryMain(std::shared_ptr<Qt::Core::Object> obj) {\r\n");
+            sb.Append("void LibraryMain(std::gc_ptr<Qt::Core::Object> obj) {\r\n");
             sb.Append(Program.main + "::LibraryMain(obj);}\r\n");
             sb.Append("}\r\n");
 
@@ -1083,7 +1097,7 @@ namespace QSharpCompiler
                         break;
                 }
             }
-            if (!cls.Interface && cls.nsfullname != "Qt::Core::Object") {
+            if (cls.nsfullname != "Qt::Core::Object") {
                 if (cls.bases.Count == 0) {
                     cls.bases.Add(new Type(null, "Qt::Core::Object"));
                 }
@@ -1288,9 +1302,6 @@ namespace QSharpCompiler
                                 if (symbol == null) break;
                                 String name = symbol.ToString().Replace(".","::");
                                 switch (name) {
-                                    case "Qt::Core::weak":
-                                        type.weakRef = true;
-                                        break;
                                     case "Qt::QSharp::CPPOmitField":
                                     case "Qt::QSharp::CPPOmitMethod":
                                     case "Qt::QSharp::CPPOmitConstructor":
@@ -1556,7 +1567,7 @@ namespace QSharpCompiler
             method.type.cls = cls;
             method.cls = cls;
             method.Append("{\r\n");
-            method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + ">$this = std::make_shared<" + cls.name);
+            method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + ">$this = new " + cls.name);
             if (cls.Generic) {
                 method.Append("<");
                 bool first = true;
@@ -1566,8 +1577,7 @@ namespace QSharpCompiler
                 }
                 method.Append(">");
             }
-            method.Append(">(" + cls.ctorArgs + ");\r\n");
-            method.Append("$this->$weak_this = $this;\r\n");
+            method.Append("(" + cls.ctorArgs + ");\r\n");
             method.Append("$this->$init();\r\n");
             method.Append("$this->$ctor(");
             if (replaceArgs == null) {
@@ -1777,7 +1787,7 @@ namespace QSharpCompiler
                     if (method.cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !method.cls.nsfullname.Contains("Enumerator")) {
                         method.Append(cls.GetTypeDeclaration() + " $this = *this;\r\n");
                     } else {
-                        method.Append("std::shared_ptr<" + cls.GetTypeDeclaration() + "> $this = std::dynamic_pointer_cast<" + cls.GetTypeDeclaration() + ">(this->$weak_this.lock());\r\n");
+                        method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + "> $this = this;\r\n");
                     }
                 }
                 if (method.basector != null) method.Append(method.basector);
@@ -1860,7 +1870,7 @@ namespace QSharpCompiler
                     method.Append(" ");
                     method.Append(foreachName);  //var name : item
                     method.Append(";\r\n");
-                    method.Append("std::shared_ptr<Qt::Core::IEnumerator<");
+                    method.Append("std::gc_ptr<Qt::Core::IEnumerator<");
                     method.Append(foreachType.GetTypeDeclaration());  //var type
                     method.Append(">> " + enumID + " = ");
                     expressionNode(foreachItems, method);  //items
@@ -1920,7 +1930,7 @@ namespace QSharpCompiler
                                 if (cc == 2) {
                                     //catch (Exception ?)
                                     SyntaxNode catchDecl = GetChildNode(child, 1);
-                                    method.Append(" catch(std::shared_ptr<");
+                                    method.Append(" catch(std::gc_ptr<");
                                     expressionNode(GetChildNode(catchDecl), method);  //exception type
                                     method.Append("> ");
                                     method.Append(file.model.GetDeclaredSymbol(catchDecl).Name);  //exception variable name
@@ -1935,7 +1945,7 @@ namespace QSharpCompiler
                                 }
                                 break;
                             case SyntaxKind.FinallyClause:
-                                method.Append("} catch(std::shared_ptr<Qt::QSharp::FinallyException> $finally" + cls.finallyCnt++ + ") ");
+                                method.Append("} catch(std::gc_ptr<Qt::QSharp::FinallyException> $finally" + cls.finallyCnt++ + ") ");
                                 statementNode(GetChildNode(child));
                                 break;
                         }
@@ -2558,7 +2568,7 @@ namespace QSharpCompiler
                     ob.Append("(Qt::Core::Type::$new(&$class_" + asTypeType.Get_Symbol() + ")");
                     ob.Append("->IsDerivedFrom($check(");
                     expressionNode(asObj, ob);
-                    ob.Append(")->GetType()) ? std::dynamic_pointer_cast<" + asTypeType.Get_Symbol() + ">(");
+                    ob.Append(")->GetType()) ? std::gc_dynamic_pointer_cast<" + asTypeType.Get_Symbol() + ">(");
                     expressionNode(asObj, ob);
                     ob.Append(") : nullptr)");
                     break;
@@ -2807,13 +2817,13 @@ namespace QSharpCompiler
             SyntaxNode value = GetChildNode(node, 2);
             //cast value to type
             //C# (type)value
-            //C++ std::dynamic_pointer_cast<type>(value)
+            //C++ std::gc_dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
             String typestr = type.GetTypeDeclaration();
             if (type.shared && !(typestr.StartsWith("Qt::QSharp::FixedArray") && !typestr.Contains("Enumerator"))) {
-                ob.Append("std::dynamic_pointer_cast<");
-                if (typestr.StartsWith("std::shared_ptr")) {
-                    typestr = typestr.Substring(16, typestr.Length - 17);  //remove outter std::shared_ptr< ... >
+                ob.Append("std::gc_dynamic_pointer_cast<");
+                if (typestr.StartsWith("std::gc_ptr")) {
+                    typestr = typestr.Substring(12, typestr.Length - 13);  //remove outter std::gc_ptr< ... >
                 }
                 ob.Append(typestr);
                 ob.Append(">");
@@ -3276,20 +3286,30 @@ namespace QSharpCompiler
                 first = true;
                 foreach(var basecls in bases) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append("public ");
+                    sb.Append("public virtual ");
                     sb.Append(basecls.GetCPPType());
                 }
                 foreach(var cppcls in cppbases) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append("public ");
+                    sb.Append("public virtual ");
                     sb.Append(cppcls);
                 }
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append("public ");
+                    sb.Append("public virtual ");
                     sb.Append(iface.GetCPPType());
                 }
             }
+/*
+            if (Interface) {
+                if (!(bases.Count > 0 || cppbases.Count > 0 || ifaces.Count > 0)) {
+                    sb.Append(":");
+                } else {
+                    sb.Append(",");
+                }
+                sb.Append(" public virtual Qt::Core::Object ");
+            }
+*/
             sb.Append("{\r\n");
             foreach(var inner in inners) {
                 sb.Append(inner.GetClassDeclaration());
@@ -3457,7 +3477,6 @@ namespace QSharpCompiler
         public ITypeSymbol typeSymbol;
         public bool primative;
         public bool numeric;
-        public bool weakRef;
         public bool array;
         public int arrays;  //# of dimensions
         public bool shared;
@@ -3487,7 +3506,6 @@ namespace QSharpCompiler
             typeSymbol = src.typeSymbol;
             primative = src.primative;
             numeric = src.numeric;
-            weakRef = src.weakRef;
             array = src.array;
             arrays = src.arrays;
             shared = src.shared;
@@ -3672,10 +3690,7 @@ namespace QSharpCompiler
                 sb.Append("Qt::QSharp::FixedArray" + arrays + "D<");
             }
             if (shared) {
-                if (weakRef)
-                    sb.Append("std::weak_ptr<");
-                else
-                    sb.Append("std::shared_ptr<");
+                sb.Append("std::gc_ptr<");
             }
             sb.Append(GetCPPType());
             if (ptr) sb.Append("*");

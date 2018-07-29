@@ -5,11 +5,11 @@ namespace Qt.Core {
     public class ByteArrayStream : IOStream {
         public ByteArrayStream() {
             CPP.Add("$q = std::make_shared<QBuffer>();");
-            CPP.Add("$base((std::shared_ptr<QIODevice>)$q);");
+            CPP.Add("$base($q);");
         }
         public ByteArrayStream(ByteArray data) {
             CPP.Add("$q = std::make_shared<QBuffer>();");
-            CPP.Add("$base((std::shared_ptr<QIODevice>)$q);");
+            CPP.Add("$base($q);");
             SetData(data);
         }
         public void SetData(ByteArray data) {

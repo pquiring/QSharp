@@ -5,13 +5,13 @@ namespace Qt.Network {
     public delegate void TextMessageReceived(String msg);
     public delegate void BinaryMessageReceived(ByteArray msg);
     [CPPClass(
-        "std::shared_ptr<QWebSocket> $q;" +
-        "void $base(std::shared_ptr<QWebSocket> ws) {$q = ws;}"
+        "QWebSocket *$q;" +
+        "void $base(QWebSocket *ws) {$q = ws;}"
     )]
     public class WebSocket {
         [CPPReplaceArgs("QWebSocket *$s")]
         private WebSocket(NativeArg1 arg) {
-            CPP.Add("$q.reset($s);");
+            CPP.Add("$q = $s;");
         }
         private TextMessageReceived textReceived;
         private BinaryMessageReceived binaryReceived;
@@ -37,11 +37,11 @@ namespace Qt.Network {
         }
         public void OnTextMessage(TextMessageReceived handler) {
             textReceived = handler;
-            CPP.Add("QObject::connect($q.get(), &QWebSocket::textMessageReceived, [=] (QString msg) {this->SlotTextMessageReceived(Qt::Core::String::$new(msg));});");
+            CPP.Add("QObject::connect($q, &QWebSocket::textMessageReceived, [=] (QString msg) {this->SlotTextMessageReceived(Qt::Core::String::$new(msg));});");
         }
         public void OnBinaryMessage(BinaryMessageReceived handler) {
             binaryReceived = handler;
-            CPP.Add("QObject::connect($q.get(), &QWebSocket::binaryMessageReceived, [=] (QByteArray msg) {this->SlotBinaryMessageReceived(Qt::Core::ByteArray::$new(msg));});");
+            CPP.Add("QObject::connect($q, &QWebSocket::binaryMessageReceived, [=] (QByteArray msg) {this->SlotBinaryMessageReceived(Qt::Core::ByteArray::$new(msg));});");
         }
     }
 }

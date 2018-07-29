@@ -20,7 +20,7 @@ namespace Qt.Core {
             return (Callable)CPP.ReturnObject("(void (*)())($q->resolve($check(symname)->cstring()))");
         }
         public LibraryMain GetLibraryMain() {
-            return (LibraryMain)CPP.ReturnObject("(void (*)(std::shared_ptr<Qt::Core::Object>))($q->resolve(\"LibraryMain\"))");
+            return (LibraryMain)CPP.ReturnObject("(void (*)(std::gc_ptr<Qt::Core::Object>))($q->resolve(\"LibraryMain\"))");
         }
     }
 }
