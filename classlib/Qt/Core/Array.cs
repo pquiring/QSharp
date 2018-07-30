@@ -4,7 +4,7 @@ namespace Qt.Core {
     [CPPClass(
         "std::qt_ptr<QVector<T>> $q;"
     )]
-    /** Stores an array of objects in a resizable continuous memory. */
+    /** Stores an array of objects in a resizable continuous memory (QVector). */
     public class Array<T> : IEnumerable<T> {
         public delegate int ArraySortCompare(T t1, T t2);
         public Array() {

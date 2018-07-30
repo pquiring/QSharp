@@ -4,10 +4,10 @@ namespace Qt.Core {
     [CPPClass(
         "std::qt_ptr<QList<T>> $q;"
     )]
-    /** Stores an array of objects in a linked-list style. */
-    public class ArrayList<T> : IEnumerable<T> {
-        public delegate int ArrayListSortCompare(T t1, T t2);
-        public ArrayList() {
+    /** Stores an array of objects in a linked-list style. (QList) */
+    public class List<T> : IEnumerable<T> {
+        public delegate int ListSortCompare(T t1, T t2);
+        public List() {
             CPP.Add("$q = new QList<T>();");
         }
         public void Add(T t) {
@@ -40,7 +40,7 @@ namespace Qt.Core {
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
         public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
         public void Clear() {CPP.Add("$q->clear();");}
-        public void Sort(ArrayListSortCompare cmp) {
+        public void Sort(ListSortCompare cmp) {
             int length = Size();
             T o1, o2;
             for(int i1=0;i1<length;i1++) {
@@ -64,13 +64,13 @@ namespace Qt.Core {
             return array;
         }
         public IEnumerator<T> GetEnumerator() {
-            return (IEnumerator<T>)new ArrayListEnumerator<T>(this);  //BUG : unneeded typecast
+            return (IEnumerator<T>)new ListEnumerator<T>(this);  //BUG : unneeded typecast
         }
     }
 
-    public class ArrayListEnumerator<T> : IEnumerator<T> {
-        public ArrayListEnumerator(ArrayList<T> list) {this.list = list;}
-        private ArrayList<T> list;
+    public class ListEnumerator<T> : IEnumerator<T> {
+        public ListEnumerator(List<T> list) {this.list = list;}
+        private List<T> list;
         private int idx = -1;
         public bool MoveNext() {
             if (idx == list.Size()-1) return false;

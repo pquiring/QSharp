@@ -10,7 +10,7 @@ public class OpenGLObject : OpenGLFunctions {
 
     private int type = GL_TRIANGLES;    //GL_TRIANGLES or GL_QUADS
 
-    private ArrayList<OpenGLUVMap> maps = new ArrayList<OpenGLUVMap>();
+    private List<OpenGLUVMap> maps = new List<OpenGLUVMap>();
 
     private bool visible = true;
 //animation data
@@ -53,7 +53,7 @@ public class OpenGLObject : OpenGLFunctions {
     public void SetType(int type) {
         this.type = type;
     }
-    public ArrayList<OpenGLUVMap> GetUVMaps() {
+    public List<OpenGLUVMap> GetUVMaps() {
         return maps;
     }
     public Map<int, OpenGLTranslate> GetTranslateMap() {

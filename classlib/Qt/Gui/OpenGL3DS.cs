@@ -72,8 +72,8 @@ public class OpenGL_3DS : OpenGLConstants {
         int vertexidx = -1;
         int vertexcnt = -1;
         String name;
-        ArrayList<OpenGL3DS_Material> matlist;    //materials (objects refer to material name)
-        ArrayList<String> objlist;    //object names (keyframe data refers to object name)
+        List<OpenGL3DS_Material> matlist;    //materials (objects refer to material name)
+        List<String> objlist;    //object names (keyframe data refers to object name)
         String objname = "";
         int objidx = -1;
         OpenGL3DS_Material mat;
@@ -96,8 +96,8 @@ public class OpenGL_3DS : OpenGLConstants {
         fis.Open(OpenMode.ReadOnly);
         data = fis.ReadAll().ToArray();
 
-        matlist = new ArrayList<OpenGL3DS_Material>();
-        objlist = new ArrayList<String>();
+        matlist = new List<OpenGL3DS_Material>();
+        objlist = new List<String>();
 
         mod = new OpenGLModel();
 

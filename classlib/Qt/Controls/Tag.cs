@@ -55,9 +55,9 @@ public class Tag {
     private Tag parent;
     private int childIdx;
     private ThreadSignal tlock = new ThreadSignal();
-    private ArrayList<Tag> children = new ArrayList<Tag>();
+    private List<Tag> children = new List<Tag>();
     private byte[][] childData;
-    private ArrayList<Tag> queue = new ArrayList<Tag>();
+    private List<Tag> queue = new List<Tag>();
     private ThreadLock queueLock = new ThreadLock();
     private bool multiRead = true;
 

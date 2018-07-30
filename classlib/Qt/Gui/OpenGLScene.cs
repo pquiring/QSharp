@@ -9,18 +9,18 @@ public class OpenGLScene : OpenGLFunctions {
 
     private bool needinittex = true;
 
-    private ArrayList<OpenGLModel> ml;
+    private List<OpenGLModel> ml;
     private Map<String, OpenGLTexture> tl; //texture list
     private Map<String, OpenGLModel> mtl; //model templates list
 
     private OpenGLShaderProgram program;
 
-    private ArrayList<int> freeglidlist;
+    private List<int> freeglidlist;
 
     private OpenGLTexture blankTexture;
 
     public OpenGLScene() {
-        freeglidlist = new ArrayList<int>();
+        freeglidlist = new List<int>();
         reset();
         texturePath = "";
         blankTexture = new OpenGLTexture(0);
@@ -82,7 +82,7 @@ public class OpenGLScene : OpenGLFunctions {
     }
     public void reset() {
         if (tl != null) ReleaseTextures();
-        ml = new ArrayList<OpenGLModel>();
+        ml = new List<OpenGLModel>();
         tl = new Map<String, OpenGLTexture>();
         mtl = new Map<String, OpenGLModel>();
     }

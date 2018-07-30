@@ -3,8 +3,8 @@ using Qt.Core;
 namespace Qt.Gui {
 
 public class OpenGLModel : Object {
-    public ArrayList<OpenGLObject> ol;    //obj list
-    public ArrayList<String> textures;
+    public List<OpenGLObject> ol;    //obj list
+    public List<String> textures;
     public Matrix4x4 m;    //translation, rotation, scale matrix for all sub-objects
     public bool visible = true;
     public int refcnt;
@@ -12,12 +12,12 @@ public class OpenGLModel : Object {
     public OpenGLModel() {
         m = new Matrix4x4();
         m.SetIdentity();
-        ol = new ArrayList<OpenGLObject>();
-        textures = new ArrayList<String>();
+        ol = new List<OpenGLObject>();
+        textures = new List<String>();
     }
     private OpenGLModel(Matrix4x4 m) {    //for clone()
         this.m = m;
-        ol = new ArrayList<OpenGLObject>();
+        ol = new List<OpenGLObject>();
     }
     /**
     * Clones deep enough so that the cloned object will include seperate GLObjects, but share vertex, vertex point,

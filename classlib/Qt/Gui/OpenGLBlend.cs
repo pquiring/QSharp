@@ -93,10 +93,10 @@ public class OpenGL_BLEND : OpenGLConstants {
     private const int CD_NUMTYPES                 = 42;
 
     //DNA stuff
-    private ArrayList<String> names = new ArrayList<String>();    //Member names
-    private ArrayList<String> types = new ArrayList<String>();    //Struct names
-    private ArrayList<short> typelen = new ArrayList<short>();
-    private ArrayList<BlendStruct> structs = new ArrayList<BlendStruct>();
+    private List<String> names = new List<String>();    //Member names
+    private List<String> types = new List<String>();    //Struct names
+    private List<short> typelen = new List<short>();
+    private List<BlendStruct> structs = new List<BlendStruct>();
 
     private class BlendMember {
         public short typelenidx;    //index into typelen
@@ -109,7 +109,7 @@ public class OpenGL_BLEND : OpenGLConstants {
         public short typeidx;    //index into types
         public short nr;    //# of members
         public String name;
-        public ArrayList<BlendMember> members = new ArrayList<BlendMember>();
+        public List<BlendMember> members = new List<BlendMember>();
     }
     private BlendStruct getStruct(String name) {
         for(int a=0;a<structs.Size();a++) {
@@ -413,8 +413,8 @@ public class OpenGL_BLEND : OpenGLConstants {
     }
 
     private void readObject(BlendChunk chunk) {
-        ArrayList<BlendVertex> vertexList = new ArrayList<BlendVertex>();
-        ArrayList<int> loopList = new ArrayList<int>();
+        List<BlendVertex> vertexList = new List<BlendVertex>();
+        List<int> loopList = new List<int>();
         setData(chunk.raw);
         BlendObject bObj = new BlendObject(this);
         bObj.read();
