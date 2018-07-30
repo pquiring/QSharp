@@ -7,7 +7,7 @@ std::gc_ptr<MediaDecoder> MediaDecoder::$new() {
 }
 
 //returns stream idx >= 0
-static int open_codec_context(std::shared_ptr<Qt::Media::FFContext> ctx, AVFormatContext *fmt_ctx, int type)
+static int open_codec_context(std::qt_ptr<Qt::Media::FFContext> ctx, AVFormatContext *fmt_ctx, int type)
 {
   int ret;
   int stream_idx;
@@ -30,7 +30,7 @@ static int open_codec_context(std::shared_ptr<Qt::Media::FFContext> ctx, AVForma
   return stream_idx;
 }
 
-static bool open_codecs(std::shared_ptr<Qt::Media::FFContext> ctx, int new_width, int new_height, int new_chs, int new_freq) {
+static bool open_codecs(std::qt_ptr<Qt::Media::FFContext> ctx, int new_width, int new_height, int new_chs, int new_freq) {
   if ((ctx->video_stream_idx = open_codec_context(ctx, ctx->fmt_ctx, AVMEDIA_TYPE_VIDEO)) >= 0) {
     ctx->video_stream = (AVStream*)ctx->fmt_ctx->streams[ctx->video_stream_idx];
     ctx->video_codec_ctx = ctx->codec_ctx;
@@ -119,7 +119,7 @@ static bool open_codecs(std::shared_ptr<Qt::Media::FFContext> ctx, int new_width
 
 bool MediaDecoder::Start(std::gc_ptr<MediaIO> io, int new_width, int new_height, int new_chs, int new_freq, bool seekable)
 {
-  ctx = std::make_shared<FFContext>(io, this);
+  ctx = new FFContext(io, this);
 
   ctx->ff_buffer = (*_av_malloc)(ffiobufsiz);
   ctx->io_ctx = (*_avio_alloc_context)(ctx->ff_buffer, ffiobufsiz, 0, (void*)ctx.get(), (void*)&read_packet, (void*)&write_packet, seekable ? (void*)&seek_packet : nullptr);
@@ -148,7 +148,7 @@ bool MediaDecoder::Start(std::gc_ptr<MediaIO> io, int new_width, int new_height,
 
 bool MediaDecoder::Start(std::gc_ptr<Qt::Core::String> file, std::gc_ptr<Qt::Core::String> input_format, int new_width, int new_height, int new_chs, int new_freq)
 {
-  ctx = std::make_shared<FFContext>(this);
+  ctx = new FFContext(this);
   int res;
   ctx->fmt_ctx = (*_avformat_alloc_context)();
   const char *cinput_format = input_format->cstring();
@@ -325,7 +325,7 @@ MediaFrameType MediaDecoder::Read()
   return $MediaFrameType::Meta;
 }
 
-Qt::QSharp::FixedArray1D<int> MediaDecoder::GetVideo()
+std::gc_ptr<Qt::QSharp::FixedArray1D<int>> MediaDecoder::GetVideo()
 {
   if (ctx == nullptr) return nullptr;
   if (ctx->video == nullptr) return nullptr;
@@ -333,7 +333,7 @@ Qt::QSharp::FixedArray1D<int> MediaDecoder::GetVideo()
   return ctx->video;
 }
 
-Qt::QSharp::FixedArray1D<short> MediaDecoder::GetAudio()
+std::gc_ptr<Qt::QSharp::FixedArray1D<short>> MediaDecoder::GetAudio()
 {
   if (ctx == nullptr) return nullptr;
   return ctx->audio;

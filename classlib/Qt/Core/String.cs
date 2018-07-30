@@ -2,11 +2,11 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPNonClassHPP(
-        "Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> $QStringListToStringArray(QStringList list);" +
-        "QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> array);"
+        "std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list);" +
+        "QStringList $StringArrayToQStringList(std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array);"
     )]
     [CPPClass(
-        "std::unique_ptr<QString> $q;" +
+        "std::qt_ptr<QString> $q;" +
         "QString* $value() {return $q.get();}" +
         "QByteArray cstring() {return $q->toUtf8();}" +
         "QString qstring() {return *$q;}" +
@@ -18,51 +18,51 @@ namespace Qt.Core {
     )]
     public class String : Object {
         public String() {
-            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q = new QString();");
         }
         [CPPReplaceArgs("const char *cs")]
         private String(NativeArg1 arg) {
-            CPP.Add("$q = std::make_unique<QString>(cs);");
+            CPP.Add("$q = new QString(cs);");
         }
         [CPPReplaceArgs("std::string ss")]
         private String(NativeArg2 arg) {
-            CPP.Add("$q = std::make_unique<QString>(ss.c_str());");
+            CPP.Add("$q = new QString(ss.c_str());");
         }
         [CPPReplaceArgs("const QString qs")]
         private String(NativeArg3 arg) {
-            CPP.Add("$q = std::make_unique<QString>(qs);");
+            CPP.Add("$q = new QString(qs);");
         }
         [CPPReplaceArgs("const QByteArray array")]
         private String(NativeArg4 arg) {
-            CPP.Add("$q = std::make_unique<QString>(array);");
+            CPP.Add("$q = new QString(array);");
         }
         public String(char[] str, int offset, int length) {
             CPP.Add("$check(str, offset, length);");
-            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q = new QString();");
             CPP.Add("$q->append((const QChar*)str->data()+offset,length);");
         }
         public String(char[] str) {
             CPP.Add("$check(str);");
             CPP.Add("int length = str->Length;");
-            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q = new QString();");
             CPP.Add("$q->append((const QChar*)str->data(),length);");
         }
         public String(byte[] utf8, int offset, int length) {
             CPP.Add("$check(utf8, offset, length);");
-            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q = new QString();");
             CPP.Add("$q->append(QByteArray((const char*)utf8->data()+offset,length));");
         }
         public String(byte[] utf8) {
             CPP.Add("$check(utf8);");
             CPP.Add("int length = utf8->Length;");
-            CPP.Add("$q = std::make_unique<QString>();");
+            CPP.Add("$q = new QString();");
             CPP.Add("$q->append(QByteArray((const char*)utf8->data(),length));");
         }
         public String(string s) {
-            CPP.Add("$q = std::make_unique<QString>(*$check(s)->$value());");
+            CPP.Add("$q = new QString(*$check(s)->$value());");
         }
         public String(ByteArray array) {
-            CPP.Add("$q = std::make_unique<QString>(*$check(array)->$value());");
+            CPP.Add("$q = new QString(*$check(array)->$value());");
         }
         public static implicit operator String(string s) {
             //convert builtin string to Qt.Core.String
@@ -230,7 +230,7 @@ namespace Qt.Core {
         }
 
         public char[] ToCharArray() {
-            CPP.Add("Qt::QSharp::FixedArray1D<char16> array;");
+            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<char16>> array;");
             CPP.Add("int length = Length;");
             CPP.Add("array = Qt::QSharp::FixedArray1D<char16>::$new(length);");
             CPP.Add("char16 *dest = array->data();");
@@ -239,7 +239,7 @@ namespace Qt.Core {
             return CPP.ReturnCharArray("array");
         }
         public byte[] ToByteArray() {
-            CPP.Add("Qt::QSharp::FixedArray1D<uint8> array;");
+            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<uint8>> array;");
             CPP.Add("int length = Length;");
             CPP.Add("array = Qt::QSharp::FixedArray1D<uint8>::$new(length);");
             CPP.Add("uint8 *dest = array->data();");

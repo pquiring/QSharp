@@ -2,11 +2,11 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QDir> $q;"
+        "std::qt_ptr<QDir> $q;"
     )]
     public class Dir {
         public Dir(String folder) {
-            CPP.Add("$q = std::make_unique<QDir>(folder->qstring());");
+            CPP.Add("$q = new QDir(folder->qstring());");
         }
         public String AbsolutePath() {return CPP.ReturnString("Qt::Core::String::$new($q->absolutePath())");}
         public bool Exists() {return CPP.ReturnBool("$q->exists()");}

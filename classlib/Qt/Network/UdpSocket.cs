@@ -1,13 +1,10 @@
 using Qt.QSharp;
 
 namespace Qt.Network {
-    [CPPClass(
-        "std::shared_ptr<QUdpSocket> $q;"
-    )]
+    [CPPClass("QUdpSocket* $d() {return dynamic_cast<QUdpSocket*>($q.get());}")]
     public class UdpSocket : AbstractSocket {
         public UdpSocket() {
-            CPP.Add("$q = std::make_shared<QUdpSocket>();");
-            CPP.Add("$base($q);");
+            CPP.Add("$base(new QUdpSocket());");
         }
     }
 }

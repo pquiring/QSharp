@@ -5,11 +5,11 @@ namespace Qt.Gui {
     [CPPEnum("QFileDialog::FileMode")]
     public enum FileMode {AnyFile, ExistingFile, Directory, ExistingFiles}
     [CPPClass(
-        "std::shared_ptr<QFileDialog> $q;"
+        "QFileDialog *$q;"
     )]
     public class FileDialog : Dialog {
         public FileDialog() : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QFileDialog>();");
+            CPP.Add("$q = new QFileDialog();");
             CPP.Add("Dialog::$base($q);");
         }
         public String[] GetSelectedFiles() {

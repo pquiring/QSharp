@@ -2,17 +2,14 @@ using Qt.QSharp;
 
 namespace Qt.Network {
     public delegate void PendingSslEvent(SslServer server);
-    [CPPClass(
-        "std::shared_ptr<$QSslServer> $q;"
-    )]
+    [CPPClass("$QSslServer* $d() {return dynamic_cast<$QSslServer*>($q.get());}")]
     public class SslServer : TcpServer {
         public SslServer() {
-            CPP.Add("$q = std::make_shared<$QSslServer>();");
-            CPP.Add("TcpServer::$base((std::shared_ptr<QTcpServer>)$q);");
+            CPP.Add("TcpServer::$base(new $QSslServer());");
         }
         private PendingSslEvent pending;
         public new SslSocket Accept() {
-            return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)$q->nextPendingConnection())");
+            return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)$d()->nextPendingConnection())");
         }
         private void SlotNewConnection() {
             try {
@@ -24,7 +21,7 @@ namespace Qt.Network {
         /** Calls pending delegate when a new connection arrives. */
         public void OnPending(PendingSslEvent pending) {
             this.pending = pending;
-            CPP.Add("QObject::connect($q.get(), &QTcpServer::newConnection, [=] () {this->SlotNewConnection();});");
+            CPP.Add("QObject::connect($d(), &QTcpServer::newConnection, [=] () {this->SlotNewConnection();});");
         }
     }
 }

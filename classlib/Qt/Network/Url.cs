@@ -3,12 +3,12 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "std::unique_ptr<QUrl> $q;" +
+        "std::qt_ptr<QUrl> $q;" +
         "QUrl *$value() {return $q.get();}"
     )]
     public class Url {
         public Url(String url) {
-            CPP.Add("$q = std::make_unique<QUrl>($check(url)->qstring());");
+            CPP.Add("$q = new QUrl($check(url)->qstring());");
         }
         public String GetQuery() {
             return CPP.ReturnString("Qt::Core::String::$new($q->query())");

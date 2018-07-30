@@ -3,10 +3,7 @@ using Qt.QSharp;
 namespace Qt.Core {
     [CPPEnum("QuaZip::Mode")]
     public enum ZipMode { NotOpen, Unzip, Create, Append, Add }
-    [CPPClass(
-        "std::shared_ptr<QuaZipFile> $q;" +
-        "void $base(std::shared_ptr<QuaZipFile> zf) {$q = zf; IOStream::$base((std::shared_ptr<QIODevice>)zf);}"
-    )]
+    [CPPClass("QuaZipFile* $d() {return dynamic_cast<QuaZipFile*>($q.get());}")]
     public class ZipEntry : IOStream {
         public String Filename {get;}
         public String GetFilename() {
@@ -17,12 +14,12 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "std::shared_ptr<QuaZip> $q;"
+        "std::qt_ptr<QuaZip> $q;"
     )]
     public class ZipFile {
         protected String filename;
         public ZipFile(String filename) {
-            CPP.Add("$q = std::make_shared<QuaZip>($check(filename)->qstring());");
+            CPP.Add("$q = new QuaZip($check(filename)->qstring());");
         }
         public bool Open(ZipMode mode) {
             return CPP.ReturnBool("$q->open((QuaZip::Mode)mode)");
@@ -46,9 +43,8 @@ namespace Qt.Core {
             return first;
         }
         public ZipEntry GetEntry() {
-            CPP.Add("std::shared_ptr<QuaZipFile> zf = std::make_shared<QuaZipFile>($q.get());");
             CPP.Add("std::gc_ptr<ZipEntry> ze = ZipEntry::$new(filename);");
-            CPP.Add("ze->$base(zf);");
+            CPP.Add("ze->$base(new QuaZipFile($q.get()));");
             return (ZipEntry)CPP.ReturnObject("ze");
         }
         public ZipEntry GetEntry(String filename) {
@@ -87,22 +83,16 @@ namespace Qt.Core {
         }
         public void Reset() {}
     }
-    [CPPClass(
-        "std::shared_ptr<QuaZIODevice> $q;"
-    )]
+    [CPPClass("QuaZIODevice* $d() {return dynamic_cast<QuaZIODevice*>($q.get());}")]
     public class Compress : IOStream {
         public Compress(ByteArrayStream input) {
-            CPP.Add("$q = std::make_shared<QuaZIODevice>($check(input)->$value());");
-            CPP.Add("$base($q);");
+            CPP.Add("$base(new QuaZIODevice($check(input)->$value()));");
         }
     }
-    [CPPClass(
-        "std::shared_ptr<QuaZIODevice> $q;"
-    )]
+    [CPPClass("QuaZIODevice* $d() {return dynamic_cast<QuaZIODevice*>($q.get());}")]
     public class Decompress : IOStream {
         public Decompress(ByteArrayStream input) {
-            CPP.Add("$q = std::make_shared<QuaZIODevice>($check(input)->$value());");
-            CPP.Add("$base($q);");
+            CPP.Add("$base(new QuaZIODevice($check(input)->$value()));");
         }
     }
 }

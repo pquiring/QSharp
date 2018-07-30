@@ -2,18 +2,14 @@ using Qt.QSharp;
 using Qt.Core;
 
 namespace Qt.Network {
-    [CPPClass(
-        "std::shared_ptr<QNetworkReply> $q;"
-    )]
+    [CPPClass("QNetworkReply* $d() {return dynamic_cast<QNetworkReply*>($q.get());}")]
     public class WebReply : IOStream {
         protected WebReply() {
-            CPP.Add("$q = std::make_shared<$QWebReply>()");
-            CPP.Add("IOStream::$base($q);");
+            CPP.Add("$base(new $QWebReply());");
         }
         [CPPReplaceArgs("QNetworkReply *reply")]
         private WebReply(NativeArg1 arg) {
-            CPP.Add("$q.reset(reply);");
-            CPP.Add("IOStream::$base($q);");
+            CPP.Add("$base(reply);");
         }
         private ByteArray data;
         private Map<String, String> args = new Map<String, String>();
@@ -27,10 +23,10 @@ namespace Qt.Network {
             }
         }
         public String GetHeader(String header) {
-            return CPP.ReturnString("Qt::Core::String::$new($q->rawHeader(QByteArray($check(header)->cstring())))");
+            return CPP.ReturnString("Qt::Core::String::$new($d()->rawHeader(QByteArray($check(header)->cstring())))");
         }
         public String GetHeaders() {
-            CPP.Add("QList<QByteArray> list = $q->rawHeaderList();");
+            CPP.Add("QList<QByteArray> list = $d()->rawHeaderList();");
             CPP.Add("QByteArray array;");
             CPP.Add("int cnt = list.count();");
             CPP.Add("for(int i=0;i<cnt;i++) {array.append(list[i]); array.append(\"\\r\\n\");}");

@@ -1,22 +1,20 @@
 using Qt.QSharp;
 
 namespace Qt.Core {
-    [CPPClass("std::shared_ptr<QBuffer> $q;")]
+    [CPPClass("QBuffer* $d() {return dynamic_cast<QBuffer*>($q.get());}")]
     public class ByteArrayStream : IOStream {
         public ByteArrayStream() {
-            CPP.Add("$q = std::make_shared<QBuffer>();");
-            CPP.Add("$base($q);");
+            CPP.Add("$base(new QBuffer());");
         }
         public ByteArrayStream(ByteArray data) {
-            CPP.Add("$q = std::make_shared<QBuffer>();");
-            CPP.Add("$base($q);");
+            CPP.Add("$base(new QBuffer());");
             SetData(data);
         }
         public void SetData(ByteArray data) {
-            CPP.Add("$q->setBuffer($check(data)->$value());");
+            CPP.Add("$d()->setBuffer($check(data)->$value());");
         }
         public ByteArray GetData() {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new($q->buffer())");
+            return (ByteArray)CPP.ReturnObject("ByteArray::$new($d()->buffer())");
         }
     }
 }

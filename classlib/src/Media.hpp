@@ -212,10 +212,10 @@ struct FFContext {
 
   AVFrame *frame;
 
-  Qt::QSharp::FixedArray1D<int> video;
+  std::gc_ptr<Qt::QSharp::FixedArray1D<int>> video;
   int video_length;
 
-  Qt::QSharp::FixedArray1D<short> audio;
+  std::gc_ptr<Qt::QSharp::FixedArray1D<short>> audio;
   int audio_length;
 
   //additional raw video decoder fields
@@ -261,12 +261,12 @@ struct FFContext {
 #define ffiobufsiz (32 * 1024)
 
 static int read_packet(FFContext *ctx, void*buf, int size) {
-  Qt::QSharp::FixedArray1D<uint8> array = Qt::QSharp::FixedArray1D<uint8>::$new((uint8*)buf, size);
+  std::gc_ptr<Qt::QSharp::FixedArray1D<uint8>> array = Qt::QSharp::FixedArray1D<uint8>::$new((uint8*)buf, size);
   return ctx->io->Read(ctx->coder, array);
 }
 
 static int write_packet(FFContext *ctx, void*buf, int size) {
-  Qt::QSharp::FixedArray1D<uint8> array = Qt::QSharp::FixedArray1D<uint8>::$new((uint8*)buf, size);
+  std::gc_ptr<Qt::QSharp::FixedArray1D<uint8>> array = Qt::QSharp::FixedArray1D<uint8>::$new((uint8*)buf, size);
   return ctx->io->Write(ctx->coder, array);
 }
 

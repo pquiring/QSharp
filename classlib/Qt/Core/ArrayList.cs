@@ -2,13 +2,13 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QList<T>> $q;"
+        "std::qt_ptr<QList<T>> $q;"
     )]
     /** Stores an array of objects in a linked-list style. */
     public class ArrayList<T> : IEnumerable<T> {
         public delegate int ArrayListSortCompare(T t1, T t2);
         public ArrayList() {
-            CPP.Add("$q = std::make_unique<QList<T>>();");
+            CPP.Add("$q = new QList<T>();");
         }
         public void Add(T t) {
             CPP.Add("$q->append(t);");

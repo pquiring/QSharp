@@ -2,16 +2,16 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QDate> $q;" +
+        "std::qt_ptr<QDate> $q;" +
         "QDate* $date() {return $q.get();}"
     )]
     public class Date {
         public Date() {
-            CPP.Add("$q = std::make_unique<QDate>();");
+            CPP.Add("$q = new QDate();");
         }
         [CPPReplaceArgs("const QDate date")]
         private Date(NativeArg1 arg1) {
-            CPP.Add("$q = std::make_unique<QDate>(date);");
+            CPP.Add("$q = new QDate(date);");
         }
         public int GetDayOfMonth() {
             return CPP.ReturnInt("$q->day()");

@@ -2,15 +2,15 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "std::shared_ptr<QVector2D> $q;" +
+        "std::qt_ptr<QVector2D> $q;" +
         "QVector2D* $value() {return $q.get();}"
     )]
     public class Vector2D {
         public Vector2D() {
-            CPP.Add("$q = std::make_shared<QVector2D>();");
+            CPP.Add("$q = new QVector2D();");
         }
         public Vector2D(float x, float y) {
-            CPP.Add("$q = std::make_shared<QVector2D>(x,y);");
+            CPP.Add("$q = new QVector2D(x,y);");
         }
         public float GetX() {return CPP.ReturnFloat("$q->x()");}
         public float GetY() {return CPP.ReturnFloat("$q->y()");}

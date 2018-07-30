@@ -2,19 +2,19 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QDateTime> $q;"
+        "std::qt_ptr<QDateTime> $q;"
     )]
     public class DateTime {
         public DateTime() {
-            CPP.Add("$q = std::make_unique<QDateTime>();");
+            CPP.Add("$q = new QDateTime();");
         }
         [CPPReplaceArgs("const QDateTime dt")]
         private DateTime(NativeArg1 arg) {
-            CPP.Add("$q = std::make_unique<QDateTime>(dt);");
+            CPP.Add("$q = new QDateTime(dt);");
         }
         [CPPReplaceArgs("QDate date,QTime time")]
         private DateTime(NativeArg2 arg) {
-            CPP.Add("$q = std::make_unique<QDateTime>(date,time);");
+            CPP.Add("$q = new QDateTime(date,time);");
         }
         public Date GetDate() {
             return (Date)CPP.ReturnObject("Date::$new($q->date())");

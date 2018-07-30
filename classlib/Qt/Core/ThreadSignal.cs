@@ -2,9 +2,9 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::shared_ptr<QMutex> $q;" +
-        "std::shared_ptr<QWaitCondition> $w;" +
-        "std::shared_ptr<QMutex> $value() {return $q;}"
+        "std::qt_ptr<QMutex> $q;" +
+        "std::qt_ptr<QWaitCondition> $w;" +
+        "QMutex *$value() {return $q.get();}"
     )]
     /**
         ThreadSignal provides thread locking with wait conditions.
@@ -12,8 +12,8 @@ namespace Qt.Core {
      */
     public class ThreadSignal {
         public ThreadSignal() {
-            CPP.Add("$q = std::make_shared<QMutex>(QMutex::NonRecursive);");
-            CPP.Add("$w = std::make_shared<QWaitCondition>();");
+            CPP.Add("$q = new QMutex(QMutex::NonRecursive);");
+            CPP.Add("$w = new QWaitCondition();");
         }
         /**
         Locks this ThreadLock blocking until this thread has an exclusive lock.

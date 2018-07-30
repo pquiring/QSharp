@@ -800,7 +800,7 @@ namespace QSharpCompiler
 
         private String writeInvokeMain(String name) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> args = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
+            sb.Append("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
             if (!Program.debug) {
                 sb.Append("try {\r\n");
@@ -1551,11 +1551,7 @@ namespace QSharpCompiler
             }
             method.type.setTypes();
             if (method.cls.Abstract) return;
-            if (cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !cls.nsfullname.Contains("Enumerator")) {
-                createNewMethodFixedArray(cls, method.args, method.replaceArgs);
-            } else {
-                createNewMethod(cls, method.args, method.replaceArgs);
-            }
+            createNewMethod(cls, method.args, method.replaceArgs);
         }
 
         private void createNewMethod(Class cls, List<Argument> args, String replaceArgs) {
@@ -1567,7 +1563,7 @@ namespace QSharpCompiler
             method.type.cls = cls;
             method.cls = cls;
             method.Append("{\r\n");
-            method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + ">$this = new " + cls.name);
+            method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + ">obj = new " + cls.name);
             if (cls.Generic) {
                 method.Append("<");
                 bool first = true;
@@ -1578,8 +1574,8 @@ namespace QSharpCompiler
                 method.Append(">");
             }
             method.Append("(" + cls.ctorArgs + ");\r\n");
-            method.Append("$this->$init();\r\n");
-            method.Append("$this->$ctor(");
+            method.Append("obj->$init();\r\n");
+            method.Append("obj->$ctor(");
             if (replaceArgs == null) {
                 if (args != null) {
                     bool first = true;
@@ -1603,61 +1599,9 @@ namespace QSharpCompiler
                 }
             }
             method.Append(");\r\n");
-            method.Append("return $this;\r\n");
+            method.Append("return obj;\r\n");
             method.Append("}\r\n");
             method.type.setTypes();
-            cls.methods.Add(method);
-        }
-
-        private void createNewMethodFixedArray(Class cls, List<Argument> args, String replaceArgs) {
-            Method method = new Method();
-            method.type.Public = true;
-            method.type.Static = true;
-            method.name = "$new";
-            method.type.set(cls.fullname);
-            method.type.cls = cls;
-            method.cls = cls;
-            method.Append("{\r\n");
-            method.Append(cls.GetTypeDeclaration() + " $this = " + cls.name);
-            if (cls.Generic) {
-                method.Append("<");
-                bool first = true;
-                foreach(var arg in cls.GenericArgs) {
-                    if (!first) method.Append(","); else first = false;
-                    method.Append(arg.GetTypeDeclaration());
-                }
-                method.Append(">");
-            }
-            method.Append("(" + cls.ctorArgs + ");\r\n");
-            method.Append("$this->$init();\r\n");
-            method.Append("$this->$ctor(");
-            if (replaceArgs == null) {
-                if (args != null) {
-                    bool first = true;
-                    foreach(var arg in args) {
-                        if (!first) method.Append(","); else first = false;
-                        method.Append(arg.name.name);
-                        method.args.Add(arg);
-                    }
-                }
-            } else {
-                method.replaceArgs = replaceArgs;
-                String[] repArgs = replaceArgs.Split(",");
-                bool first = true;
-                foreach(var arg in repArgs) {
-                    if (!first) method.Append(","); else first = false;
-                    int idx = arg.LastIndexOf("*");
-                    if (idx == -1) {
-                      idx = arg.LastIndexOf(" ");
-                    }
-                    method.Append(arg.Substring(idx+1));
-                }
-            }
-            method.Append(");\r\n");
-            method.Append("return $this;\r\n");
-            method.Append("}\r\n");
-            method.type.setTypes();
-            method.type.shared = false;
             cls.methods.Add(method);
         }
 
@@ -1784,7 +1728,7 @@ namespace QSharpCompiler
             method.Append("{\r\n");
             if (top) {
                 if (!method.type.Static) {
-                    if (method.cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !method.cls.nsfullname.Contains("Enumerator")) {
+                    if (false && method.cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !method.cls.nsfullname.Contains("Enumerator")) {
                         method.Append(cls.GetTypeDeclaration() + " $this = *this;\r\n");
                     } else {
                         method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + "> $this = this;\r\n");
@@ -2543,8 +2487,12 @@ namespace QSharpCompiler
                     blockNode(pblock);
                     break;
                 case SyntaxKind.DefaultExpression:
-                    expressionNode(GetChildNode(node), ob);
-                    ob.Append("()");
+                    SyntaxNode defType = GetChildNode(node);
+                    Type defSymbol = new Type(defType);
+                    if (defSymbol.shared)
+                        ob.Append("nullptr");
+                    else
+                        ob.Append("0");
                     break;
                 case SyntaxKind.TypeOfExpression:
                     SyntaxNode typeOf = GetChildNode(node);
@@ -2820,7 +2768,7 @@ namespace QSharpCompiler
             //C++ std::gc_dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
             String typestr = type.GetTypeDeclaration();
-            if (type.shared && !(typestr.StartsWith("Qt::QSharp::FixedArray") && !typestr.Contains("Enumerator"))) {
+            if (type.shared) { // && !(typestr.StartsWith("Qt::QSharp::FixedArray") && !typestr.Contains("Enumerator"))) {
                 ob.Append("std::gc_dynamic_pointer_cast<");
                 if (typestr.StartsWith("std::gc_ptr")) {
                     typestr = typestr.Substring(12, typestr.Length - 13);  //remove outter std::gc_ptr< ... >
@@ -3300,16 +3248,6 @@ namespace QSharpCompiler
                     sb.Append(iface.GetCPPType());
                 }
             }
-/*
-            if (Interface) {
-                if (!(bases.Count > 0 || cppbases.Count > 0 || ifaces.Count > 0)) {
-                    sb.Append(":");
-                } else {
-                    sb.Append(",");
-                }
-                sb.Append(" public virtual Qt::Core::Object ");
-            }
-*/
             sb.Append("{\r\n");
             foreach(var inner in inners) {
                 sb.Append(inner.GetClassDeclaration());
@@ -3429,7 +3367,7 @@ namespace QSharpCompiler
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
-                sb.Append(method.type.GetTypeDeclaration(true));
+                sb.Append(method.type.GetTypeDeclaration());
                 sb.Append(" ");
                 sb.Append(method.cls.fullname);
                 sb.Append("::");
@@ -3622,7 +3560,7 @@ namespace QSharpCompiler
                     break;
             }
             if (type != null && type.StartsWith("Qt::QSharp::FixedArray") && !type.Contains("Enumerator")) {
-                shared = false;
+//                shared = false;
             }
         }
         public bool IsNumeric() {
@@ -3687,7 +3625,7 @@ namespace QSharpCompiler
         public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
             if (inc_arrays && arrays > 0) {
-                sb.Append("Qt::QSharp::FixedArray" + arrays + "D<");
+                sb.Append("std::gc_ptr<Qt::QSharp::FixedArray" + arrays + "D<");
             }
             if (shared) {
                 sb.Append("std::gc_ptr<");
@@ -3698,7 +3636,7 @@ namespace QSharpCompiler
                 sb.Append(">");
             }
             if (inc_arrays && arrays > 0) {
-                sb.Append(">");
+                sb.Append(">>");
             }
             return sb.ToString();
         }
@@ -3815,7 +3753,7 @@ namespace QSharpCompiler
             if (!isDelegate) sb.Append(type.GetFlags(false));
             sb.Append(" ");
             if (isDelegate) sb.Append("typedef std::function<");
-            sb.Append(type.GetTypeDeclaration(true));
+            sb.Append(type.GetTypeDeclaration());
             sb.Append(" ");
             if (!isDelegate) sb.Append(name);
             sb.Append(GetArgs(true));

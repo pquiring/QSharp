@@ -4,8 +4,8 @@ namespace Qt.Core {
     [CPPEnum("QIODevice::OpenMode")]
     public enum OpenMode {NotOpen, ReadOnly, WriteOnly, ReadWrite, Append, Truncate, Text, Unbuffered}
     [CPPClass(
-        "std::shared_ptr<QIODevice> $q;" +
-        "void $base(std::shared_ptr<QIODevice> io) {$q = io;}" +
+        "std::qt_ptr<QIODevice> $q;" +
+        "void $base(QIODevice *io) {$q = io;}" +
         "QIODevice* $value() {return $q.get();} "
     )]
     public class IOStream {

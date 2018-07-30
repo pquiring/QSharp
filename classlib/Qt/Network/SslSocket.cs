@@ -2,18 +2,15 @@ using Qt.Core;
 using Qt.QSharp;
 
 namespace Qt.Network {
-    [CPPClass(
-        "std::shared_ptr<QSslSocket> $q;"
-    )]
+    [CPPClass("QSslSocket* $d() {return dynamic_cast<QSslSocket*>($q.get());}")]
     public class SslSocket : TcpSocket {
         public SslSocket() {
-            CPP.Add("$q = std::make_shared<QSslSocket>();");
-            CPP.Add("TcpSocket::$base((std::shared_ptr<QTcpSocket>)$q);");
+            CPP.Add("$base(new QSslSocket());");
         }
         [CPPReplaceArgs("QSslSocket *$s")]
         private SslSocket(NativeArg1 arg) {
-            CPP.Add("$q.reset($s); TcpSocket::$base($q);");
+            CPP.Add("$base($s);");
         }
-        public new void Connect(String host, int port) {CPP.Add("$q->connectToHostEncrypted($check(host)->qstring(), port);");}
+        public new void Connect(String host, int port) {CPP.Add("$d()->connectToHostEncrypted($check(host)->qstring(), port);");}
     }
 }

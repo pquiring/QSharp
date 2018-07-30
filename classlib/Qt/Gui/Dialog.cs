@@ -9,15 +9,15 @@ namespace Qt.Gui {
     public delegate void FinishedEvent(int result);
     public delegate void RejectedEvent();
     [CPPClass(
-        "std::shared_ptr<QDialog> $q;" +
-        "void $base(std::shared_ptr<QDialog> $d) {$q = $d; Widget::$base($q.get());}"
+        "QDialog *$q;" +
+        "void $base(QDialog* $d) {$q = $d; Widget::$base($q);}"
     )]
     public class Dialog : Widget {
         private NativeWindow nativeWindow;
         protected Dialog(QSharpDerived derived) : base(QSharpDerived.derived) {}
         public Dialog() : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QDialog>();");
-            CPP.Add("Widget::$base($q.get());");
+            CPP.Add("$q = new QDialog();");
+            CPP.Add("Widget::$base($q);");
         }
         public bool IsModal() {
             return CPP.ReturnBool("$q->isModal()");
@@ -65,7 +65,7 @@ namespace Qt.Gui {
         }
         public void OnAccepted(AcceptedEvent accepted) {
             this.accepted = accepted;
-            CPP.Add("QObject::connect($q.get(), &QDialog::accepted, [=] () {this->SlotAccepted();});");
+            CPP.Add("QObject::connect($q, &QDialog::accepted, [=] () {this->SlotAccepted();});");
         }
 
         private FinishedEvent finished;
@@ -76,7 +76,7 @@ namespace Qt.Gui {
         }
         public void OnFinished(FinishedEvent finished) {
             this.finished = finished;
-            CPP.Add("QObject::connect($q.get(), &QDialog::finished, [=] (int result) {this->SlotFinished(result);});");
+            CPP.Add("QObject::connect($q, &QDialog::finished, [=] (int result) {this->SlotFinished(result);});");
         }
 
         private RejectedEvent rejected;
@@ -87,7 +87,7 @@ namespace Qt.Gui {
         }
         public void OnRejected(RejectedEvent rejected) {
             this.rejected = rejected;
-            CPP.Add("QObject::connect($q.get(), &QDialog::rejected, [=] () {this->SlotRejected();});");
+            CPP.Add("QObject::connect($q, &QDialog::rejected, [=] () {this->SlotRejected();});");
         }
     }
 }

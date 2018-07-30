@@ -8,7 +8,7 @@ std::gc_ptr<MediaVideoDecoder> MediaVideoDecoder::$new() {
 
 bool Qt::Media::MediaVideoDecoder::Start(int codec_id, int new_width, int new_height)
 {
-  ctx = std::make_shared<FFContext>(this);
+  ctx = new FFContext(this);
 
   ctx->video_codec = (*_avcodec_find_decoder)(codec_id);
   if (ctx->video_codec == nullptr) {
@@ -88,7 +88,7 @@ void Qt::Media::MediaVideoDecoder::Stop()
   ctx = nullptr;
 }
 
-Qt::QSharp::FixedArray1D<int> Qt::Media::MediaVideoDecoder::Decode(Qt::QSharp::FixedArray1D<uint8> data)
+std::gc_ptr<Qt::QSharp::FixedArray1D<int>> Qt::Media::MediaVideoDecoder::Decode(std::gc_ptr<Qt::QSharp::FixedArray1D<uint8>> data)
 {
   if (ctx == nullptr) return nullptr;
 
@@ -98,9 +98,9 @@ Qt::QSharp::FixedArray1D<int> Qt::Media::MediaVideoDecoder::Decode(Qt::QSharp::F
       (*_av_free)(ctx->pkt->data);
       ctx->pkt->data = nullptr;
     }
-    int data_length = data.Length;
+    int data_length = data->Length;
     ctx->pkt->data = (uint8_t*)(*_av_malloc)(data_length);
-    uint8 *data_ptr = data.data();
+    uint8 *data_ptr = data->data();
     std::memcpy(ctx->pkt->data, data_ptr, data_length);
     ctx->pkt->size = data_length;
     ctx->pkt_size_left = ctx->pkt->size;

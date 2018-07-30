@@ -1,19 +1,16 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPClass(
-        "std::shared_ptr<QColorDialog> $q;"
-    )]
+    [CPPClass("QColorDialog* $d() {return dynamic_cast<QColorDialog*>($q);}")]
     public class ColorDialog : Dialog {
         public ColorDialog() : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QColorDialog>();");
-            CPP.Add("Dialog::$base($q);");
+            CPP.Add("Dialog::$base(new QColorDialog());");
         }
         public int GetColor() {
-            return CPP.ReturnInt("$q->currentColor().rgb()");
+            return CPP.ReturnInt("$d()->currentColor().rgb()");
         }
         public void SetColor(int clr) {
-            CPP.Add("$q->setCurrentColor(QColor((QRgb)clr));");
+            CPP.Add("$d()->setCurrentColor(QColor((QRgb)clr));");
         }
     }
 }

@@ -4,18 +4,18 @@ using Qt.QSharp;
 namespace Qt.Media {
     public delegate void InputInterval(AudioInput ai);
     [CPPClass(
-        "std::unique_ptr<QAudioInput> $q;" +
+        "std::qt_ptr<QAudioInput> $q;" +
         "QIODevice *$io;"
     )]
     public class AudioInput {
         private InputInterval iv;
         public AudioInput(AudioFormat format) {
-            CPP.Add("$q = std::make_unique<QAudioInput>($check(format)->$value());");
+            CPP.Add("$q = new QAudioInput($check(format)->$value());");
             CPP.Add("$io = nullptr;");
             CPP.Add("QObject::connect($q.get(), &QAudioInput::notify, [=] () {this->SlotNotify();});");
         }
         public AudioInput(AudioDevice device, AudioFormat format) {
-            CPP.Add("$q = std::make_unique<QAudioInput>($check(device)->$value(), $check(format)->$value());");
+            CPP.Add("$q = new QAudioInput($check(device)->$value(), $check(format)->$value());");
             CPP.Add("$io = nullptr;");
             CPP.Add("QObject::connect($q.get(), &QAudioInput::notify, [=] () {this->SlotNotify();});");
         }

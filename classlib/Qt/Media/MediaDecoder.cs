@@ -11,7 +11,7 @@ namespace Qt.Media {
     }
 
     /** Media Decoder. */
-    [CPPClass("std::shared_ptr<FFContext> ctx;")]
+    [CPPClass("std::qt_ptr<FFContext> ctx;")]
     [CPPOmitBodies]
     public class MediaDecoder : MediaCoder {
         public bool Start(MediaIO io, int new_width, int new_height, int new_chs, int new_freq, bool seekable) {return false;}

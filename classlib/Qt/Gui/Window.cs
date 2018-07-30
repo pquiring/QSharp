@@ -4,13 +4,13 @@ namespace Qt.Gui {
     [CPPEnum("Qt::ToolBarArea")]
     public enum ToolBarArea {NoToolBarArea = 0, LeftToolBarArea = 0x1, RightToolBarArea = 0x2, TopToolBarArea = 0x4, BottomToolBarArea = 0x8, AllToolBarAreas = 0xf}
     [CPPClass(
-        "std::shared_ptr<QMainWindow> $q;"
+        "QMainWindow *$q;"
     )]
     public class Window : Widget {
         private NativeWindow nativeWindow;
         public Window() : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QMainWindow>();");
-            CPP.Add("Widget::$base($q.get());");
+            CPP.Add("$q = new QMainWindow();");
+            CPP.Add("Widget::$base($q);");
         }
         public void SetCentralWidget(Widget widget) {
             CPP.Add("$q->setCentralWidget($check(widget)->$q);");

@@ -3,7 +3,7 @@ using Qt.QSharp;
 namespace Qt.Gui {
     [CPPClass(
         "QWindow *$q = nullptr;" +
-        "std::shared_ptr<$EventFilter> $events;" +
+        "std::qt_ptr<$EventFilter> $events;" +
         "void $base(QWindow *$b) {$q = $b; init();}" +
         "std::gc_ptr<Qt::Gui::Screen> screen_ptr;" +
         "bool eventFilter(QObject *obj, QEvent *event);"
@@ -23,7 +23,7 @@ namespace Qt.Gui {
         public InputEvents GetInputEvents() {return events;}
         private void init() {
             CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen());");
-            CPP.Add("$events = std::make_shared<$EventFilter>(this);");
+            CPP.Add("$events = new $EventFilter(this);");
             CPP.Add("$q->installEventFilter($events.get());");
         }
         public void OnInputEvents(InputEvents events) {

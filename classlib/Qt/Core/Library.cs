@@ -3,11 +3,11 @@ using Qt.QSharp;
 namespace Qt.Core {
     public delegate void LibraryMain(Object obj);
     [CPPClass(
-        "std::shared_ptr<QLibrary> $q;"
+        "std::qt_ptr<QLibrary> $q;"
     )]
     public class Library {
         public Library(String filename) {
-            CPP.Add("$q = std::make_shared<QLibrary>($check(filename)->qstring());");
+            CPP.Add("$q = new QLibrary($check(filename)->qstring());");
         }
         public bool Load() {
             return CPP.ReturnBool("$q->load()");

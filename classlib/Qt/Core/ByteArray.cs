@@ -2,28 +2,28 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QByteArray> $q;" +
+        "std::qt_ptr<QByteArray> $q;" +
         "QByteArray* $value() {return $q.get();}"
     )]
     public class ByteArray {
         public ByteArray() {
-            CPP.Add("$q = std::make_unique<QByteArray>();");
+            CPP.Add("$q = new QByteArray();");
         }
         public ByteArray(byte[] array) {
             CPP.Add("$check(array);");
             CPP.Add("int length = array->Length;");
-            CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data(), length);");
+            CPP.Add("$q = new QByteArray((const char*)array->data(), length);");
         }
         public ByteArray(byte[] array, int offset, int length) {
             CPP.Add("$check(array, offset, length);");
-            CPP.Add("$q = std::make_unique<QByteArray>((const char*)array->data() + offset, length);");
+            CPP.Add("$q = new QByteArray((const char*)array->data() + offset, length);");
         }
         public ByteArray(String str) {
-            CPP.Add("$q = std::make_unique<QByteArray>($check(str)->cstring());");
+            CPP.Add("$q = new QByteArray($check(str)->cstring());");
         }
         [CPPReplaceArgs("QByteArray array")]
         private ByteArray(NativeArg1 arg) {
-            CPP.Add("$q = std::make_unique<QByteArray>(array);");
+            CPP.Add("$q = new QByteArray(array);");
         }
         public void Append(byte[] buf, int offset, int length) {
             CPP.Add("$check(buf, offset, length);");

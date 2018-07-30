@@ -3,12 +3,12 @@ using Qt.QSharp;
 namespace Qt.Network {
     public delegate void PendingTcpEvent(TcpServer server);
     [CPPClass(
-        "std::shared_ptr<QTcpServer> $q;" +
-        "void $base(std::shared_ptr<QTcpServer> $b) {$q = $b;}"
+        "std::qt_ptr<QTcpServer> $q;" +
+        "void $base(QTcpServer* $b) {$q = $b;}"
     )]
     public class TcpServer {
         public TcpServer() {
-            CPP.Add("$q = std::make_shared<QTcpServer>();");
+            CPP.Add("$q = new QTcpServer();");
         }
         private PendingTcpEvent pending;
         private void SlotNewConnection() {

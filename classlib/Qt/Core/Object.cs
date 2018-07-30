@@ -54,13 +54,13 @@ namespace Qt.Core {
         }
         public Field[] GetFields() {
             CPP.Add("int cnt = $refType->fields->size();");
-            CPP.Add("Qt::QSharp::FixedArray1D<std::gc_ptr<Field>> fields = Qt::QSharp::FixedArray1D<std::gc_ptr<Field>>::$new(cnt);");
+            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Field>>> fields = Qt::QSharp::FixedArray1D<std::gc_ptr<Field>>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {fields->at(idx) = Qt::Core::Field::$new($refType->fields->at(idx));}");
             return (Field[])CPP.ReturnObject("fields");
         }
         public Method[] GetMethods() {
             CPP.Add("int cnt = $refType->methods->size();");
-            CPP.Add("Qt::QSharp::FixedArray1D<std::gc_ptr<Method>> methods = Qt::QSharp::FixedArray1D<std::gc_ptr<Method>>::$new(cnt);");
+            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Method>>> methods = Qt::QSharp::FixedArray1D<std::gc_ptr<Method>>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {methods->at(idx) = Qt::Core::Method::$new($refType->methods->at(idx));}");
             return (Method[])CPP.ReturnObject("methods");
         }

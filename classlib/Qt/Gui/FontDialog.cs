@@ -2,11 +2,11 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "std::shared_ptr<QFontDialog> $q;"
+        "QFontDialog *$q;"
     )]
     public class FontDialog : Dialog {
         public FontDialog() : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QFontDialog>();");
+            CPP.Add("$q = new QFontDialog();");
             CPP.Add("Dialog::$base($q);");
         }
         public Font GetFont() {

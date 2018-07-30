@@ -2,10 +2,10 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     public delegate void TimerEvent();
-    [CPPClass("std::shared_ptr<QTimer> $q;")]
+    [CPPClass("std::qt_ptr<QTimer> $q;")]
     public class Timer {
         public Timer() {
-            CPP.Add("$q = std::make_shared<QTimer>();");
+            CPP.Add("$q = new QTimer();");
             CPP.Add("QObject::connect($q.get(), &QTimer::timeout, [=] () {this->SlotTimeout();});");
         }
         private TimerEvent handler;

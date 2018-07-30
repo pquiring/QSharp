@@ -14,7 +14,7 @@ static int _avframe_alloc(AVFrame *picture, enum AVPixelFormat pix_fmt, int widt
   return 0;
 }
 
-static bool add_stream(std::shared_ptr<Qt::Media::FFContext> ctx, int codec_id) {
+static bool add_stream(std::qt_ptr<Qt::Media::FFContext> ctx, int codec_id) {
   AVCodecContext *codec_ctx;
   AVStream *stream;
   AVCodec *codec;
@@ -93,7 +93,7 @@ static bool add_stream(std::shared_ptr<Qt::Media::FFContext> ctx, int codec_id) 
   return true;
 }
 
-static bool open_video(std::shared_ptr<Qt::Media::FFContext> ctx) {
+static bool open_video(std::qt_ptr<Qt::Media::FFContext> ctx) {
   int ret = (*_avcodec_open2)(ctx->video_codec_ctx, ctx->video_codec, nullptr);
   if (ret < 0) return false;
   ctx->video_frame = (*_av_frame_alloc)();
@@ -131,7 +131,7 @@ static bool open_video(std::shared_ptr<Qt::Media::FFContext> ctx) {
   return true;
 }
 
-static bool open_audio(std::shared_ptr<Qt::Media::FFContext> ctx) {
+static bool open_audio(std::qt_ptr<Qt::Media::FFContext> ctx) {
   int ret = (*_avcodec_open2)(ctx->audio_codec_ctx, ctx->audio_codec, nullptr);
   if (ret < 0) {
     printf("avcodec_open2() failed!\n");
@@ -203,7 +203,7 @@ static AVFormatContext *_avformat_alloc_output_context2(const char *codec) {
   return fmt_ctx;
 }
 
-static bool encoder_start(std::shared_ptr<Qt::Media::FFContext> ctx, const char *codec, bool doVideo, bool doAudio, void*read, void*write, void*seek) {
+static bool encoder_start(std::qt_ptr<Qt::Media::FFContext> ctx, const char *codec, bool doVideo, bool doAudio, void*read, void*write, void*seek) {
   ctx->fmt_ctx = _avformat_alloc_output_context2(codec);
   if (ctx->fmt_ctx == nullptr) {
     printf("Error:Unable to find codec:%s\n", codec);
@@ -254,7 +254,7 @@ static bool encoder_start(std::shared_ptr<Qt::Media::FFContext> ctx, const char 
 
 bool Qt::Media::MediaEncoder::Start(std::gc_ptr<MediaIO> io, int width, int height, int fps, int chs, int freq, std::gc_ptr<Qt::Core::String> codec, bool doVideo, bool doAudio)
 {
-  ctx = std::make_shared<FFContext>(io, this);
+  ctx = new FFContext(io, this);
 
   if (doVideo && (width <= 0 || height <= 0)) {
     return false;
@@ -278,7 +278,7 @@ bool Qt::Media::MediaEncoder::Start(std::gc_ptr<MediaIO> io, int width, int heig
   return ret;
 }
 
-static bool addAudioFrame(std::shared_ptr<Qt::Media::FFContext> ctx, short *sams, int offset, int length)
+static bool addAudioFrame(std::qt_ptr<Qt::Media::FFContext> ctx, short *sams, int offset, int length)
 {
   int nb_samples = length / ctx->chs;
   int buffer_size = (*_av_samples_get_buffer_size)(nullptr, ctx->chs, nb_samples, AV_SAMPLE_FMT_S16, 0);
@@ -348,7 +348,7 @@ static bool addAudioFrame(std::shared_ptr<Qt::Media::FFContext> ctx, short *sams
   return ret == 0;
 }
 
-static bool addAudio(std::shared_ptr<Qt::Media::FFContext> ctx, short *sams, int offset, int length) {
+static bool addAudio(std::qt_ptr<Qt::Media::FFContext> ctx, short *sams, int offset, int length) {
   bool ok = true;
 
   int frame_size = length;
@@ -388,7 +388,7 @@ static bool addAudio(std::shared_ptr<Qt::Media::FFContext> ctx, short *sams, int
   return ok;
 }
 
-bool Qt::Media::MediaEncoder::AddAudio(Qt::QSharp::FixedArray1D<short> sams, int offset, int length)
+bool Qt::Media::MediaEncoder::AddAudio(std::gc_ptr<Qt::QSharp::FixedArray1D<short>> sams, int offset, int length)
 {
   if (ctx == nullptr) return false;
 
@@ -396,12 +396,12 @@ bool Qt::Media::MediaEncoder::AddAudio(Qt::QSharp::FixedArray1D<short> sams, int
 
   //TODO : check buffer size
 
-  bool ok = addAudio(ctx, sams.data(), offset, length);
+  bool ok = addAudio(ctx, sams->data(), offset, length);
 
   return ok;
 }
 
-static bool addVideo(std::shared_ptr<Qt::Media::FFContext> ctx, int *px)
+static bool addVideo(std::qt_ptr<Qt::Media::FFContext> ctx, int *px)
 {
   int length = ctx->width * ctx->height * 4;
   if (ctx->video_codec_ctx->pix_fmt != AV_PIX_FMT_BGRA) {
@@ -436,13 +436,13 @@ static bool addVideo(std::shared_ptr<Qt::Media::FFContext> ctx, int *px)
   return ret == 0;
 }
 
-bool Qt::Media::MediaEncoder::AddVideo(Qt::QSharp::FixedArray1D<int> px)
+bool Qt::Media::MediaEncoder::AddVideo(std::gc_ptr<Qt::QSharp::FixedArray1D<int>> px)
 {
   if (ctx == nullptr) return false;
 
   if (ctx->video_codec_ctx == nullptr) return false;
 
-  bool ok = addVideo(ctx, px.data());
+  bool ok = addVideo(ctx, px->data());
 
   return ok;
 }
@@ -454,7 +454,7 @@ int Qt::Media::MediaEncoder::GetAudioFramesize()
   return ctx->audio_codec_ctx->frame_size;
 }
 
-static bool flush(std::shared_ptr<Qt::Media::FFContext> ctx) {
+static bool flush(std::qt_ptr<Qt::Media::FFContext> ctx) {
   if (ctx->audio_frame == nullptr) return false;
   AVPacket *pkt = AVPacket_New();
   (*_av_init_packet)(pkt);
@@ -477,7 +477,7 @@ static bool flush(std::shared_ptr<Qt::Media::FFContext> ctx) {
   return false;
 }
 
-static void encoder_stop(std::shared_ptr<Qt::Media::FFContext> ctx)
+static void encoder_stop(std::qt_ptr<Qt::Media::FFContext> ctx)
 {
   //flush audio encoder
   while (flush(ctx)) {}

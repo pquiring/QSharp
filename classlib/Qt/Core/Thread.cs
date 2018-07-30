@@ -2,14 +2,14 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::shared_ptr<$QThread> $q;" +
+        "std::qt_ptr<$QThread> $q;" +
         "Qt::Core::Thread *next = nullptr;" +
         "std::Heap<Qt::Core::Object> heap;" +
         "bool deleteme = false;"
     )]
     public class Thread {
         public Thread() {
-            CPP.Add("$q = std::make_shared<$QThread>();");
+            CPP.Add("$q = new $QThread();");
             CPP.Add("$q->bind([=] () {Run();}, $this);");
             CPP.Add("std::gc_add_thread(this);");
         }

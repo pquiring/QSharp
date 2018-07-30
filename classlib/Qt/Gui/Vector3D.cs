@@ -2,19 +2,19 @@ using Qt.QSharp;
 
 namespace Qt.Gui {
     [CPPClass(
-        "std::shared_ptr<QVector3D> $q;" +
+        "std::qt_ptr<QVector3D> $q;" +
         "QVector3D* $value() {return $q.get();}"
     )]
     public class Vector3D {
         public Vector3D() {
-            CPP.Add("$q = std::make_shared<QVector3D>();");
+            CPP.Add("$q = new QVector3D();");
         }
         public Vector3D(float x, float y, float z) {
-            CPP.Add("$q = std::make_shared<QVector3D>(x,y,z);");
+            CPP.Add("$q = new QVector3D(x,y,z);");
         }
         [CPPReplaceArgs("QVector3D arg1")]
         private Vector3D(NativeArg1 arg1) {
-            CPP.Add("$q = std::make_shared<QVector3D>(arg1);");
+            CPP.Add("$q = new QVector3D(arg1);");
         }
         public float GetX() {return CPP.ReturnFloat("$q->x()");}
         public float GetY() {return CPP.ReturnFloat("$q->y()");}

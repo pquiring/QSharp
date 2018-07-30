@@ -3,11 +3,11 @@ using Qt.Core;
 
 namespace Qt.Network {
     [CPPClass(
-        "std::unique_ptr<QNetworkAccessManager> $q;"
+        "std::qt_ptr<QNetworkAccessManager> $q;"
     )]
     public class WebClient {
         public WebClient() {
-            CPP.Add("$q = std::make_unique<QNetworkAccessManager>();");
+            CPP.Add("$q = new QNetworkAccessManager();");
         }
         public void Connect(String host, int port = 80, bool secure = false) {
             if (!secure) {

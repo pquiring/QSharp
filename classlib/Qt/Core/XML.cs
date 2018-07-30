@@ -111,11 +111,11 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "std::unique_ptr<QDomDocument> $q;"
+        "std::qt_ptr<QDomDocument> $q;"
     )]
     public class XML {
         public XML() {
-            CPP.Add("$q = std::make_unique<QDomDocument>();");
+            CPP.Add("$q = new QDomDocument();");
             CPP.Add("$q->appendChild($q->createElement(\"root\"));");
         }
         public bool Load(String input) {

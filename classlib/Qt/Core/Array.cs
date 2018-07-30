@@ -2,13 +2,13 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QVector<T>> $q;"
+        "std::qt_ptr<QVector<T>> $q;"
     )]
     /** Stores an array of objects in a resizable continuous memory. */
     public class Array<T> : IEnumerable<T> {
         public delegate int ArraySortCompare(T t1, T t2);
         public Array() {
-            CPP.Add("$q = std::make_unique<QVector<T>>();");
+            CPP.Add("$q = new QVector<T>();");
         }
         public void Add(T t) {
             CPP.Add("$q->append(t);");

@@ -29,11 +29,11 @@ namespace Qt.Gui {
         RestoreDefaults = 0x8000000
     }
     [CPPClass(
-        "std::shared_ptr<QMessageBox> $q;"
+        "QMessageBox *$q;"
     )]
     public class MessageDialog : Dialog {
         public MessageDialog(IconType icontype, String title, String msg) : base(QSharpDerived.derived) {
-            CPP.Add("$q = std::make_shared<QMessageBox>(icontype, $check(title)->qstring(), $check(msg)->qstring());");
+            CPP.Add("$q = new QMessageBox(icontype, $check(title)->qstring(), $check(msg)->qstring());");
             CPP.Add("Dialog::$base($q);");
         }
         public void AddButton(ButtonType buttonType, KeyType keyType = KeyType.None) {

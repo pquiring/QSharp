@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::shared_ptr<QMutex> $q;" +
-        "std::shared_ptr<QMutex> $value() {return $q;}"
+        "std::qt_ptr<QMutex> $q;" +
+        "QMutex *$value() {return $q.get();}"
     )]
     /**
         ThreadLock provides basic thread locking.
@@ -11,7 +11,7 @@ namespace Qt.Core {
      */
     public class ThreadLock {
         public ThreadLock() {
-            CPP.Add("$q = std::make_shared<QMutex>(QMutex::Recursive);");
+            CPP.Add("$q = new QMutex(QMutex::Recursive);");
         }
         /**
         Locks this ThreadLock blocking until this thread has an exclusive lock.

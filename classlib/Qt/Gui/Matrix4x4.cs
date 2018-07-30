@@ -3,8 +3,8 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "std::shared_ptr<QMatrix4x4> $q;" +
-        "std::shared_ptr<QMatrix4x4> $t;" +
+        "std::qt_ptr<QMatrix4x4> $q;" +
+        "std::qt_ptr<QMatrix4x4> $t;" +
         "QMatrix4x4* $value() {return $q.get();}"
     )]
     //NOTE : Data is stored internally as column-major format (OpenGL standard).
@@ -12,11 +12,11 @@ namespace Qt.Gui {
         private float[] m = null;
         private Vector3D vector = new Vector3D();
         public Matrix4x4() {
-            CPP.Add("$q = std::make_shared<QMatrix4x4>();");
+            CPP.Add("$q = new QMatrix4x4();");
             CPP.Add("m = Qt::QSharp::FixedArray1D<float>::$new($q->data(), 16);");
         }
         public Matrix4x4(Matrix4x4 other) {
-            CPP.Add("$q = std::make_shared<QMatrix4x4>();");
+            CPP.Add("$q = new QMatrix4x4();");
             CPP.Add("m = Qt::QSharp::FixedArray1D<float>::$new($q->data(), 16);");
             for(int a=0;a<16;a++) {
                 m[a] = other.m[a];

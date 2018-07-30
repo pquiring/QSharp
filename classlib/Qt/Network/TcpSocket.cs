@@ -1,18 +1,14 @@
 using Qt.QSharp;
 
 namespace Qt.Network {
-    [CPPClass(
-        "std::shared_ptr<QTcpSocket> $q;" +
-        "void $base(std::shared_ptr<QTcpSocket> as) {$q = as; AbstractSocket::$base((std::shared_ptr<QAbstractSocket>)as);}"
-    )]
+    [CPPClass("QTcpSocket* $d() {return dynamic_cast<QTcpSocket*>($q.get());}")]
     public class TcpSocket : AbstractSocket {
         public TcpSocket() {
-            CPP.Add("$q = std::make_shared<QTcpSocket>();");
-            CPP.Add("AbstractSocket::$base((std::shared_ptr<QAbstractSocket>)$q);");
+            CPP.Add("$base(new QTcpSocket());");
         }
         [CPPReplaceArgs("QTcpSocket *$s")]
         private TcpSocket(NativeArg1 arg) {
-            CPP.Add("$q.reset($s); AbstractSocket::$base($q);");
+            CPP.Add("$base($s);");
         }
     }
 }

@@ -274,9 +274,9 @@ namespace std {
     ~gc_ptr() { heap->refs[idx] = nullptr; heap->freeidx(idx); /*idx = -1; heap = nullptr;*/ }
 
     gc_ptr& operator=(gc_ptr other) { heap->refs[idx] = other.heap->refs[other.idx]; if (heap->refs[idx] != nullptr) heap->refs[idx]->mark = std::mark; return *this; }
-    gc_ptr& operator=(T *t) { heap->refs[idx] = t; if (t != nullptr) t->mark = std::mark; return *this; }
     template<typename O>
     gc_ptr& operator=(gc_ptr<O> other) { heap->refs[idx] = other.heap->refs[other.idx]; if (heap->refs[idx] != nullptr) heap->refs[idx]->mark = std::mark; return *this; }
+    gc_ptr& operator=(T *t) { heap->refs[idx] = t; if (t != nullptr) t->mark = std::mark; return *this; }
     bool operator==(gc_ptr &other) const { return heap->refs[idx] == other.heap->refs[other.idx]; }
     bool operator==(const gc_ptr &other) const { return heap->refs[idx] == other.heap->refs[other.idx]; }
     bool operator==(T *other) const { return heap->refs[idx] == other; }
@@ -296,8 +296,9 @@ namespace std {
     const T& operator*() { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return *t; }
     T* get() const { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t; }
     T& value() const { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return *t; }
-    operator T*() {return dynamic_cast<T*>(heap->refs[idx]); }
-    operator const T*() { return dynamic_cast<const T*>(heap->refs[idx]); }
+    operator T*() {T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t;}
+    operator const T*() { const T *t = dynamic_cast<const T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t;}
+    auto& operator[](int aidx) { T*t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t->operator[](aidx); }
   };
 
   //same as std::dynamic_pointer_cast but for gc_ptr
@@ -323,6 +324,10 @@ namespace std {
     qt_ptr& operator=(T *t) {this->t = t; return *this;}
     T* operator->() const {return t;}
     T& operator*() const {return *t;}
+    bool operator==(const qt_ptr<T> &other) const { return t == other.t; }
+    bool operator!=(const qt_ptr<T> &other) const { return t != other.t; }
+    bool operator==(nullptr_t np) const { return t == nullptr; }
+    bool operator!=(nullptr_t np) const { return t != nullptr; }
   };
 
 }
@@ -395,6 +400,7 @@ namespace Qt { namespace QSharp {
       if (alloced) {
         delete[] t;
         t = nullptr;
+        alloced = false;
       }
     }
   };
@@ -442,8 +448,8 @@ struct $class {
 };
 
 struct $QMutexHolder {
-  $QMutexHolder(std::shared_ptr<QMutex> lock) {this->lock = lock; lock->lock();}
-  std::shared_ptr<QMutex> lock;
+  $QMutexHolder(std::qt_ptr<QMutex> lock) {this->lock = lock; lock->lock();}
+  std::qt_ptr<QMutex> lock;
   bool signal = true;
   bool Condition() {return signal;}
   void Signal() {signal = false;}
@@ -451,7 +457,7 @@ struct $QMutexHolder {
 };
 
 template<typename T>
-inline std::gc_ptr<T> $check(std::gc_ptr<T> sptr) {
+inline std::gc_ptr<T>& $check(std::gc_ptr<T> &sptr) {
   if (sptr == nullptr) $npe();
   return sptr;
 }

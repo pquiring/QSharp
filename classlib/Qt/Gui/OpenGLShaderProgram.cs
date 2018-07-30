@@ -1,10 +1,10 @@
 using Qt.QSharp;
 
 namespace Qt.Gui {
-    [CPPClass("std::unique_ptr<QOpenGLShaderProgram> $q;")]
+    [CPPClass("std::qt_ptr<QOpenGLShaderProgram> $q;")]
     public class OpenGLShaderProgram {
         public OpenGLShaderProgram() {
-            CPP.Add("$q = std::make_unique<QOpenGLShaderProgram>();");
+            CPP.Add("$q = new QOpenGLShaderProgram();");
         }
 
         public bool AddShaderFromSourceCode(int type, string src) {

@@ -2,16 +2,16 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::unique_ptr<QTime> $q;" +
+        "std::qt_ptr<QTime> $q;" +
         "QTime* $time() {return $q.get();}"
     )]
     public class Time {
         public Time() {
-            CPP.Add("$q = std::make_unique<QTime>();");
+            CPP.Add("$q = new QTime();");
         }
         [CPPReplaceArgs("QTime time")]
         private Time(NativeArg1 arg) {
-            CPP.Add("$q = std::make_unique<QTime>(time);");
+            CPP.Add("$q = new QTime(time);");
         }
         public int GetHour() {
             return CPP.ReturnInt("$q->hour()");

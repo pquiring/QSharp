@@ -64,23 +64,23 @@ namespace Qt.Gui {
         }
         public String[] GetSelectedItems() {
             CPP.Add("QList<QTableWidgetItem*> list = $q->selectedItems();");
-            CPP.Add("Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> array;");
+            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array;");
             CPP.Add("int cnt = list.count();");
             CPP.Add("array = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {array.at(idx) = Qt::Core::String::$new(list[idx]->text());}");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = Qt::Core::String::$new(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[][] GetSelectedIndexes() {
             CPP.Add("QModelIndexList list = $q->selectionModel()->selectedIndexes();");
-            CPP.Add("Qt::QSharp::FixedArray2D<int32> array;");
+            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray2D<int32>> array;");
             CPP.Add("int cnt = list.count();");
             CPP.Add("array = Qt::QSharp::FixedArray2D<int32>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {");
-            CPP.Add("  Qt::QSharp::FixedArray1D<int32> row;");
+            CPP.Add("  std::gc_ptr<Qt::QSharp::FixedArray1D<int32>> row;");
             CPP.Add("  row = Qt::QSharp::FixedArray1D<int32>::$new(2);");
-            CPP.Add("  row.at(0) = list[idx].row();");
-            CPP.Add("  row.at(1) = list[idx].column();");
-            CPP.Add("  array.at(idx) = row;");
+            CPP.Add("  row->at(0) = list[idx].row();");
+            CPP.Add("  row->at(1) = list[idx].column();");
+            CPP.Add("  array->at(idx) = row;");
             CPP.Add("}");
             return (int[][])CPP.ReturnObject("array");
         }

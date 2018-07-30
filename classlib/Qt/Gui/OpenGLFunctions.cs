@@ -4,11 +4,11 @@ using Qt.QSharp;
 //TODO : $check() all arrays
 
 namespace Qt.Gui {
-    [CPPClass("static std::unique_ptr<QOpenGLFunctions> $q;")]
+    [CPPClass("static std::qt_ptr<QOpenGLFunctions> $q;")]
     public class OpenGLFunctions : OpenGLConstants {
         /** Initialize the GL functions. Only needs to be called once from main thread after a context is created. See OpenGLWindow.InitializeGL() */
         public static void InitializeOpenGLFunctions() {
-            CPP.Add("$q = std::make_unique<QOpenGLFunctions>();");
+            CPP.Add("$q = new QOpenGLFunctions();");
             CPP.Add("if (QOpenGLContext::currentContext() == nullptr) {");
             CPP.Add("Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"OpenGLFunctions:Error:No Context Created!\"));");
             CPP.Add("return;");

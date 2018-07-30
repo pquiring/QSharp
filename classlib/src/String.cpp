@@ -115,16 +115,16 @@ std::gc_ptr<Qt::Core::String> $addstr(double x, std::gc_ptr<Qt::Core::String> s2
 
 //QStringList <-> String[] conversions
 
-Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> $QStringListToStringArray(QStringList list) {
+std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list) {
   int cnt = list.count();
-  Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> array = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(cnt);
+  std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(cnt);
   for(int idx=0;idx<cnt;idx++) {array->at(idx) = Qt::Core::String::$new(list[idx]);}
   return array;
 }
 
-QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>> array) {
+QStringList $StringArrayToQStringList(std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array) {
   QStringList list;
-  int cnt = array.Length;
-  for(int idx=0;idx<cnt;idx++) {list.append(array.at(idx)->qstring());}
+  int cnt = array->Length;
+  for(int idx=0;idx<cnt;idx++) {list.append(array->at(idx)->qstring());}
   return list;
 }

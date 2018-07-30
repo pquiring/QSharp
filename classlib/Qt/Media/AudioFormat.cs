@@ -3,12 +3,12 @@ using Qt.QSharp;
 
 namespace Qt.Media {
     [CPPClass(
-        "std::unique_ptr<QAudioFormat> $q;" +
+        "std::qt_ptr<QAudioFormat> $q;" +
         "QAudioFormat $value() {return *$q.get();}"
     )]
     public class AudioFormat {
         public AudioFormat() {
-            CPP.Add("$q = std::make_unique<QAudioFormat>();");
+            CPP.Add("$q = new QAudioFormat();");
             CPP.Add("$q->setCodec(\"audio/pcm\");");
             CPP.Add("$q->setSampleType(QAudioFormat::SignedInt);");
         }

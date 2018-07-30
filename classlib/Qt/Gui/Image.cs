@@ -3,7 +3,7 @@ using Qt.Core;
 
 namespace Qt.Gui {
     [CPPClass(
-        "std::unique_ptr<QImage> $q;" +
+        "std::qt_ptr<QImage> $q;" +
         "uint32* $px;" +
         "uint8* $px8;" +
         "QPainter $painter;" +
@@ -16,15 +16,15 @@ namespace Qt.Gui {
         private int _width;
         private int _height;
         private Image(Image image, int x, int y, int width, int height) {
-            CPP.Add("$q = std::make_unique<QImage>($check(image)->$q->copy(x,y,width,height));");
+            CPP.Add("$q = new QImage($check(image)->$q->copy(x,y,width,height));");
             GetPtr();
         }
         private Image(Image image, int newWidth, int newHeight) {
-            CPP.Add("$q = std::make_unique<QImage>($check(image)->$q->scaled(newWidth,newHeight));");
+            CPP.Add("$q = new QImage($check(image)->$q->scaled(newWidth,newHeight));");
             GetPtr();
         }
         public Image(int width, int height) {
-            CPP.Add("$q = std::make_unique<QImage>(width, height, QImage::Format_ARGB32);");
+            CPP.Add("$q = new QImage(width, height, QImage::Format_ARGB32);");
             CPP.Add("$q->fill(0);");
             GetPtr();
         }

@@ -4,12 +4,12 @@ using Qt.QSharp;
 namespace Qt.Network {
     public delegate void PendingWSEvent(WebSocketServer server);
     [CPPClass(
-        "std::shared_ptr<QWebSocketServer> $q;" +
-        "void $base(std::shared_ptr<QWebSocketServer> $b) {$q = $b;}"
+        "std::qt_ptr<QWebSocketServer> $q;" +
+        "void $base(QWebSocketServer *$b) {$q = $b;}"
     )]
     public class WebSocketServer {
         public WebSocketServer(String name, bool secure) {
-            CPP.Add("$q = std::make_shared<QWebSocketServer>($check(name)->qstring(), (QWebSocketServer::SslMode)secure);");
+            CPP.Add("$q = new QWebSocketServer($check(name)->qstring(), (QWebSocketServer::SslMode)secure);");
         }
         private PendingWSEvent pending;
         private void SlotNewConnection() {
