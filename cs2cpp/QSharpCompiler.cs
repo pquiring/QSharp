@@ -1728,11 +1728,7 @@ namespace QSharpCompiler
             method.Append("{\r\n");
             if (top) {
                 if (!method.type.Static) {
-                    if (false && method.cls.nsfullname.StartsWith("Qt::QSharp::FixedArray") && !method.cls.nsfullname.Contains("Enumerator")) {
-                        method.Append(cls.GetTypeDeclaration() + " $this = *this;\r\n");
-                    } else {
-                        method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + "> $this = this;\r\n");
-                    }
+                    method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + "> $this = this;\r\n");
                 }
                 if (method.basector != null) method.Append(method.basector);
             }
@@ -2768,7 +2764,7 @@ namespace QSharpCompiler
             //C++ std::gc_dynamic_pointer_cast<type>(value)
             Type type = new Type(castType);
             String typestr = type.GetTypeDeclaration();
-            if (type.shared) { // && !(typestr.StartsWith("Qt::QSharp::FixedArray") && !typestr.Contains("Enumerator"))) {
+            if (type.shared) {
                 ob.Append("std::gc_dynamic_pointer_cast<");
                 if (typestr.StartsWith("std::gc_ptr")) {
                     typestr = typestr.Substring(12, typestr.Length - 13);  //remove outter std::gc_ptr< ... >
@@ -3558,9 +3554,6 @@ namespace QSharpCompiler
                         }
                     }
                     break;
-            }
-            if (type != null && type.StartsWith("Qt::QSharp::FixedArray") && !type.Contains("Enumerator")) {
-//                shared = false;
             }
         }
         public bool IsNumeric() {
