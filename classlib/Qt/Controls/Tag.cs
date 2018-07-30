@@ -54,7 +54,7 @@ public class Tag {
     private Map<String, Object> user = new Map<String, Object>();
     private Tag parent;
     private int childIdx;
-    private ThreadSignal tlock = new ThreadSignal();
+    private ThreadLock tlock = new ThreadLock();
     private List<Tag> children = new List<Tag>();
     private byte[][] childData;
     private List<Tag> queue = new List<Tag>();

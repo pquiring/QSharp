@@ -13,7 +13,7 @@ namespace Qt.Network {
             handler = _handler;
         }
         public bool Listen(int port = 80, int sslport = 443) {
-//            if (handler == null) return false;  //BUG : not compiling???
+            if (handler == null) return false;
             if (port != -1) {
                 tcp = new TcpServer();
                 tcp.OnPending((TcpServer server) => {OnTcpConnect(server);});
