@@ -57,7 +57,7 @@ namespace Qt.QSharp {
             CPP.Add("at(idx) = t;");
         }
         public IEnumerator<T> GetEnumerator() {
-            return (IEnumerator<T>)new FixedArray1DEnumerator<T>(this);  //BUG : unneeded typecast
+            return new FixedArray1DEnumerator<T>(this);
         }
     }
 
@@ -123,7 +123,7 @@ namespace Qt.QSharp {
             CPP.Add("at(idx) = t;");
         }
         public IEnumerator<FixedArray1D<T>> GetEnumerator() {
-            return (IEnumerator<FixedArray1D<T>>)new FixedArray2DEnumerator<T>(this);  //BUG : unneeded typecast
+            return new FixedArray2DEnumerator<T>(this);
         }
     }
 
@@ -189,7 +189,7 @@ namespace Qt.QSharp {
             CPP.Add("at(idx) = t;");
         }
         public IEnumerator<FixedArray2D<T>> GetEnumerator() {
-            return (IEnumerator<FixedArray2D<T>>)new FixedArray3DEnumerator<T>(this);  //BUG : unneeded typecast
+            return new FixedArray3DEnumerator<T>(this);
         }
     }
 

@@ -60,7 +60,7 @@ namespace Qt.Core {
         }
         //TODO : AddEntry()
         public IEnumerator<ZipEntry> GetEnumerator() {
-            return (IEnumerator<ZipEntry>)new ZipEnumerator(this);  //BUG : unneeded typecast
+            return new ZipEnumerator(this);
         }
     }
     public class ZipEnumerator : IEnumerator<ZipEntry> {

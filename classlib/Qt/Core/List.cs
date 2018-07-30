@@ -64,7 +64,7 @@ namespace Qt.Core {
             return array;
         }
         public IEnumerator<T> GetEnumerator() {
-            return (IEnumerator<T>)new ListEnumerator<T>(this);  //BUG : unneeded typecast
+            return new ListEnumerator<T>(this);
         }
     }
 
