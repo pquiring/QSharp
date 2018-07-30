@@ -56,7 +56,7 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->owns_lock()");
         }
         /**
-        Wait must be called when the ThreadSignal is locked, otherwise behavior is undefined.
+        Wait must be called when the ThreadLock is locked, otherwise behavior is undefined.
         This function will call Unlock() and wait for a WakeOne() or WakeAll() event to wake this thread or until the timeout occurs.
         After this thread is woken or the timeout occurs Lock() is invoked again before returning.
         */
@@ -68,14 +68,14 @@ namespace Qt.Core {
             }
         }
         /**
-        WakeOne must be called when the ThreadSignal is locked, otherwise behavior is undefined.
+        WakeOne must be called when the ThreadLock is locked, otherwise behavior is undefined.
         This will cause one thread that called Wait() to return once it can perform a Lock().
         */
         public void WakeOne() {
             CPP.Add("$w.notify_one();");
         }
         /**
-        WakeAll must be called when the ThreadSignal is locked, otherwise behavior is undefined.
+        WakeAll must be called when the ThreadLock is locked, otherwise behavior is undefined.
         This will cause all threads that called Wait() to return once it can perform a Lock().
         */
         public void WakeAll() {

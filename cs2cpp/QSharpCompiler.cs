@@ -1938,8 +1938,8 @@ namespace QSharpCompiler
                     //lock, block
                     SyntaxNode lockId = GetChildNode(node, 1);
                     string lockIdName = GetTypeName(lockId);
-                    if ((lockIdName != "Qt::Core::ThreadLock") && (lockIdName != "Qt::Core::ThreadSignal")) {
-                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock or ThreadSignal (Type=" + lockIdName + " id=" + GetSymbol(lockId) + ")");
+                    if (lockIdName != "Qt::Core::ThreadLock") {
+                        Console.WriteLine("Error:lock {} must use Qt.Core.ThreadLock (Type=" + lockIdName + " id=" + GetSymbol(lockId) + ")");
                         WriteFileLine(lockId);
                         errors++;
                         break;

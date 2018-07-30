@@ -33,7 +33,7 @@ Notes:
  - array down casting (base to derived) is not working yet (try to use template classes to avoid typecasting - see Qt.Core.Arrays)
 
 C# features that differ:
- - lock () {} only works with Qt.Core.ThreadLock or Qt.Core.ThreadSignal objects
+ - lock () {} only works with Qt.Core.ThreadLock
 
 C# features not supported (yet):
  - reflection (partially supported)
