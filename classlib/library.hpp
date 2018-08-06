@@ -140,10 +140,6 @@ namespace Qt { namespace Network {
   struct $QWebReply;
 }}
 
-namespace Qt { namespace Media {
-  struct FFContext;
-}}
-
 namespace Qt { namespace QSharp {
   template<typename T>
   struct Property {
@@ -170,135 +166,64 @@ namespace Qt { namespace QSharp {
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
 
-#define HEAP_FREE_SLOT ((Qt::Core::Object*)-1)
-#define HEAP_STACK_SIZE (64 * 1024)
-
 namespace std {
-  //garbage collector functions
-  void gc_init();
-  void gc_lock();
-  void gc_unlock();
-  void gc();
-  void gc_add_object(Qt::Core::Object *obj);
-  void gc_add_thread(Qt::Core::Thread *thread);
-  //Heap is a collection of objects per thread
+
   template<typename T>
-  struct Heap {
-    T *head = nullptr;
-    T *tail = nullptr;
-    int idx = 0;
-    int size = 0;
-    friend class System;
-    Heap() {}
-    ~Heap() {if (refs != nullptr) ::free(refs);}
-    T **refs = nullptr;  //references
+  struct gc_ptr;
 
-    int nextidx() {
-      if (idx == size) {
-        //need to increase refs size
-        std::gc_lock();
-        int oldsize = size;
-        size += HEAP_STACK_SIZE;
-        refs = (T**)std::realloc(refs, size * sizeof(T*));
-        std::memset(refs + oldsize, HEAP_STACK_SIZE * sizeof(T*), 0);
-        std::gc_unlock();
-      }
-      return idx++;
-    }
-
-    void freeidx(int _idx) {
-      refs[_idx] = HEAP_FREE_SLOT;
-      _idx = idx - 1;
-      while (_idx >= 0 && refs[_idx] == HEAP_FREE_SLOT) {
-        refs[_idx] = nullptr;
-        _idx--;
-      }
-      idx = _idx + 1;
-    }
-
-    void add(T *obj) {
-      if (head == nullptr) head = obj;
-      if (tail != nullptr) {
-        tail->next = obj;
-      }
-      tail = obj;
-    }
-    void remove(T *obj, T *prev) {
-      if (obj == tail) tail = prev;
-      if (prev == nullptr) {
-        head = obj->next;
-      } else {
-        prev->next = obj->next;
-      }
-    }
-    void print() {
-      printf("Heap:");
-      T *obj = head;
-      while (obj != nullptr) {
-        printf("%s,", typeid(obj).name());
-        obj = obj->next;
-      }
-      printf("\n");
-    }
-  };
-
-  extern thread_local Heap<Qt::Core::Object> *heap;  //thread
-  extern Heap<Qt::Core::Object> *main_heap;  //static/main
-  extern Heap<Qt::Core::Thread> *threads;
-  extern int mark;  //gc mark
-
-  //gc_ptr is a garbage collector smart pointer (similar to shared_ptr)
+  //gc_ptr is a simple smart pointer
   template<typename T>
   struct gc_ptr {
-    Heap<Qt::Core::Object> *heap = nullptr;
-    int idx = -1;
+    T *ptr = nullptr;
 
-    void alloc() {
-      if (std::heap == nullptr) {
-        std::heap = new std::Heap<Qt::Core::Object>();
-      }
-      heap = std::heap;
-      idx = heap->nextidx();
-#ifdef DEBUG
-      heap->refs[idx] = nullptr;
-#endif
+    gc_ptr() {
+    }
+    gc_ptr(T *t) {
+      ptr = t;
+    }
+    gc_ptr(const gc_ptr &other) {
+      ptr = other.ptr;
+    }
+    gc_ptr(gc_ptr &&other) {
+      ptr = other.ptr;
+      other.ptr = nullptr;
+    }
+    template<typename O>
+    gc_ptr(const gc_ptr<O> &other) {
+      ptr = other.ptr;
     }
 
-    gc_ptr() { alloc(); }
-    gc_ptr(T *t) { alloc(); heap->refs[idx] = t; }
-    gc_ptr(const gc_ptr &other) { alloc(); heap->refs[idx] = other.heap->refs[other.idx]; }
-    template<typename O>
-    gc_ptr(const gc_ptr<O> &other) { alloc(); heap->refs[idx] = other.heap->refs[other.idx]; }
-    //move ctor not needed - gc
+    ~gc_ptr() {
+    }
 
-    ~gc_ptr() { heap->refs[idx] = nullptr; heap->freeidx(idx); /*idx = -1; heap = nullptr;*/ }
-
-    gc_ptr& operator=(gc_ptr other) { heap->refs[idx] = other.heap->refs[other.idx]; if (heap->refs[idx] != nullptr) heap->refs[idx]->mark = std::mark; return *this; }
+    gc_ptr& operator=(const gc_ptr &other) { ptr = other.ptr; return *this; }
+    gc_ptr& operator=(gc_ptr &&other) { ptr = other.ptr; other.ptr = nullptr; return *this; }
     template<typename O>
-    gc_ptr& operator=(gc_ptr<O> other) { heap->refs[idx] = other.heap->refs[other.idx]; if (heap->refs[idx] != nullptr) heap->refs[idx]->mark = std::mark; return *this; }
-    gc_ptr& operator=(T *t) { heap->refs[idx] = t; if (t != nullptr) t->mark = std::mark; return *this; }
-    bool operator==(gc_ptr &other) const { return heap->refs[idx] == other.heap->refs[other.idx]; }
-    bool operator==(const gc_ptr &other) const { return heap->refs[idx] == other.heap->refs[other.idx]; }
-    bool operator==(T *other) const { return heap->refs[idx] == other; }
-    bool operator==(nullptr_t np) const { return heap->refs[idx] == nullptr; }
-    bool operator!=(gc_ptr &other) const { return heap->refs[idx] != other.heap->refs[other.idx]; }
-    bool operator!=(const gc_ptr &other) const { return heap->refs[idx] != other.heap->refs[other.idx]; }
-    bool operator!=(T *other) const { return heap->refs[idx] != other; }
-    bool operator!=(nullptr_t np) const { return heap->refs[idx] != nullptr; }
+    gc_ptr& operator=(gc_ptr<O> &other) { ptr = other.ptr; other.ptr = nullptr; return *this; }
+    gc_ptr& operator=(T *t) { ptr = t; return *this; }
+
+    bool operator==(gc_ptr &other) const { return ptr == other.ptr; }
+    bool operator==(const gc_ptr &other) const { return ptr == other.ptr; }
+    bool operator==(T *other) const { return ptr == other; }
+    bool operator==(nullptr_t np) const { return ptr == nullptr; }
+    bool operator!=(gc_ptr &other) const { return ptr != other.ptr; }
+    bool operator!=(const gc_ptr &other) const { return ptr != other.ptr; }
+    bool operator!=(T *other) const { return ptr != other; }
+    bool operator!=(nullptr_t np) const { return ptr != nullptr; }
 
     //TODO : FIXME : need to use references not pointers (see Qt/Core/String.cs) (these are used by QMap)
     bool operator<(const gc_ptr &other) const { return get()->operator<(other.get()); }
     bool operator>(const gc_ptr &other) const { return get()->operator>(other.get()); }
 
     template<typename O>
-    bool operator==(const gc_ptr<O> &other) const { return other.heap->refs[other.idx] == heap->refs[idx];}
-    T* operator->() { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t; }
-    const T& operator*() { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return *t; }
-    T* get() const { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t; }
-    T& value() const { T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return *t; }
-    operator T*() {T *t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t;}
-    operator const T*() { const T *t = dynamic_cast<const T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t;}
-    auto& operator[](int aidx) { T*t = dynamic_cast<T*>(heap->refs[idx]); if (t == nullptr) $npe(); return t->operator[](aidx); }
+    bool operator==(const gc_ptr<O> &other) const { return other.ptr == ptr;}
+    T* operator->() { T *t = dynamic_cast<T*>(ptr); if (t == nullptr) $npe(); return t; }
+    const T& operator*() { T *t = dynamic_cast<T*>(ptr); if (t == nullptr) $npe(); return *t; }
+    T* get() const { T *t = dynamic_cast<T*>(ptr); if (t == nullptr) $npe(); return t; }
+    T& value() const { T *t = dynamic_cast<T*>(ptr); if (t == nullptr) $npe(); return *t; }
+    operator T*() {T *t = dynamic_cast<T*>(ptr); if (t == nullptr) $npe(); return t;}
+    operator const T*() { const T *t = dynamic_cast<const T*>(ptr); if (t == nullptr) $npe(); return t;}
+    auto& operator[](int idx) { T*t = dynamic_cast<T*>(ptr); if (t == nullptr) $npe(); return t->operator[](idx); }
   };
 
   //same as std::dynamic_pointer_cast but for gc_ptr
@@ -329,7 +254,6 @@ namespace std {
     bool operator==(nullptr_t np) const { return t == nullptr; }
     bool operator!=(nullptr_t np) const { return t != nullptr; }
   };
-
 }
 
 namespace Qt { namespace QSharp {

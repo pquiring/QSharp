@@ -89,10 +89,6 @@ namespace Qt.Core {
             return (Object)CPP.ReturnObject("$refType->newInstance()");
         }
     }
-    [CPPClass(
-        "int mark;" +
-        "Qt::Core::Object *next;"
-    )]
     public class Object {
         public override string ToString() {return CPP.ReturnString("Qt::Core::String::$new($getType()->name)");}
         public override bool Equals(object obj) {return this == obj;}
@@ -103,9 +99,10 @@ namespace Qt.Core {
             CPP.Add("#ifdef _MSC_VER\r\n__debugbreak();\r\n#endif\r\n");
             CPP.Add("#ifdef __GNUC__\r\n__asm(\"int $3\");\r\n#endif\r\n");
         }
-        public Object() {
-          CPP.Add("std::gc_add_object(this);");
+        public static void Delete(System.Object obj) {
+            CPP.Add("delete obj.ptr;");
         }
+        public Object() {}
         ~Object() {}
     }
 }

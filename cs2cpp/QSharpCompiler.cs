@@ -730,7 +730,6 @@ namespace QSharpCompiler
             foreach(var lib in Program.libs) {
                 sb.Append("extern void $" + lib + "_ctor();\r\n");
             }
-            sb.Append("extern void std::gc_init();\r\n");
 
             if (!Program.single) sb.Append("#include \"" + Program.target + ".hpp\"\r\n");
             if (Program.service) {
@@ -776,7 +775,6 @@ namespace QSharpCompiler
             sb.Append("int main(int argc, const char **argv) {\r\n");
             sb.Append("Qt::Core::g_argc = argc;\r\n");
             sb.Append("Qt::Core::g_argv = argv;\r\n");
-            sb.Append("std::gc_init();\r\n");
             foreach(var lib in Program.libs) {
                 sb.Append("$" + lib + "_ctor();\r\n");
             }
@@ -899,8 +897,8 @@ namespace QSharpCompiler
                     sb.Append(" Qt5Core Qt5Gui Qt5Network Qt5Widgets Qt5Xml Qt5WebSockets Qt5Multimedia");
                 }
                 if (Program.msvc) {
-                    sb.Append(" msvcrt");
-                    if (Program.debug) sb.Append("d");
+//                    sb.Append(" msvcrt");
+//                    if (Program.debug) sb.Append("d");
                 } else {
                     sb.Append(" stdc++ z");
                 }
@@ -2240,9 +2238,10 @@ namespace QSharpCompiler
                         ob.Append("::");
                         expressionNode(right, ob, true);
                     } else {
-                        ob.Append("$check(");  //NPE check
+//                        ob.Append("$check(");  //NPE check
                         expressionNode(left, ob);
-                        ob.Append(")->");
+//                        ob.Append(")");
+                        ob.Append("->");
                         expressionNode(right, ob, true);
                     }
                     break;
@@ -2259,9 +2258,10 @@ namespace QSharpCompiler
                     //IdentifierNode, BracketedArgumentList -> {Argument, ...}
                     SyntaxNode array = GetChildNode(node, 1);
                     SyntaxNode index = GetChildNode(node, 2);
-                    ob.Append("$check(");  //NPE check
+//                    ob.Append("$check(");  //NPE check
                     expressionNode(array, ob);
-                    ob.Append(")[");
+//                    ob.Append(")");
+                    ob.Append("[");
                     expressionNode(index, ob);
                     ob.Append("]");
                     break;
@@ -2499,9 +2499,10 @@ namespace QSharpCompiler
                     SyntaxNode isObj = GetChildNode(node, 1);
                     SyntaxNode isType = GetChildNode(node, 2);
                     Type isTypeType = new Type(isType);
-                    ob.Append("$check(");
+//                    ob.Append("$check(");
                     expressionNode(isObj, ob);
-                    ob.Append(")->GetType()");
+//                    ob.Append(")");
+                    ob.Append("->GetType()");
                     ob.Append("->IsDerivedFrom(");
                     ob.Append("Qt::Core::Type::$new(&$class_" + isTypeType.Get_Symbol() + "))");
                     break;

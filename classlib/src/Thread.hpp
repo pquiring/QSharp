@@ -4,20 +4,23 @@ typedef std::function<void()> $thread_run;
 
 struct Thread;
 
-struct $ThreadReference : QObject {
-  std::gc_ptr<Thread> ref;
-};
-
 struct $QThread : public QThread {
-  $ThreadReference *ref;
+  std::gc_ptr<Qt::Core::Thread> $thread;  //created in calling thread
+  std::gc_ptr<Qt::Core::Thread> $self;  //created in this thread (to keep ref to running thread)
   $thread_run $run_ptr;
   void bind($thread_run run_ptr, std::gc_ptr<Qt::Core::Thread> thread) {
-    ref = new $ThreadReference();
-    ref->ref = thread;
-    QObject::connect(this, &QThread::finished, ref, &QObject::deleteLater);
     $run_ptr = run_ptr;
+    $thread = thread;
   }
-  void run() {$run_ptr();}
+  void run() {
+    $self = $thread;
+#ifdef QSHARP_GC
+    std::heap = $thread->heap;
+#endif
+    $run_ptr();
+    $self = nullptr;
+    $thread = nullptr;
+  }
   void exec() {QThread::exec();}  //QThread::exec() is protected
 };
 

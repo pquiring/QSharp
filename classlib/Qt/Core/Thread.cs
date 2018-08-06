@@ -2,16 +2,12 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::qt_ptr<$QThread> $q;" +
-        "Qt::Core::Thread *next = nullptr;" +
-        "std::Heap<Qt::Core::Object> heap;" +
-        "bool deleteme = false;"
+        "std::qt_ptr<$QThread> $q;"
     )]
     public class Thread {
         public Thread() {
             CPP.Add("$q = new $QThread();");
             CPP.Add("$q->bind([=] () {Run();}, $this);");
-            CPP.Add("std::gc_add_thread(this);");
         }
         public static void Sleep(int ms) {
             CPP.Add("QThread::msleep(ms);");

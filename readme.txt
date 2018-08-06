@@ -19,15 +19,10 @@ Build Tools:
   Qt/5.4+ libraries
   CMake/3.6+
   Platform make tool (make for gcc, nmake for msvc)
-  ffmpeg/3.0+
-
-ffmpeg:
-  Download ffmpeg, extract to include folder and run 'bash configure --disable-x86asm'
-  You'll need C++ compiler in path (use gcc for cygwin/mingw).
-  The pre-built shared binaries can be downloaded from ffmpeg.org
 
 Notes:
- - uses std::gc_ptr<> to implement memory management (garbage collection)
+ - Requires self-managed memory control just like in C++ (see Object.Delete())
+   - Garbage collectors and Reference Counting create performance issues
  - NullPointerExceptions are checked
  - classlib is a work in progress
  - array down casting (base to derived) is not working yet (try to use template classes to avoid typecasting - see Qt.Core.Arrays)
@@ -99,6 +94,10 @@ To compile under cygwin/mingw define these environment variables before calling 
 Under cygwin you should also define:
   set CMAKE_LEGACY_CYGWIN_WIN32=0
 to avoid cmake warnings.
+
+Under cygwin/mingw you may need to setup a link to mingw headers files:
+  bash
+  ln -s /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5 /usr/include/qt5
 
 To create a new application:
   dotnet new console
