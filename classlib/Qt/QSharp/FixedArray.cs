@@ -10,8 +10,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray1D<T>* operator->() {return this;}\r\n" +
-        "operator std::gc_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
-        "std::gc_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
+        "operator Qt::Core::String*() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
+        "Qt::Core::String* ToString() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
         "T* data() {return t.get()->t;}\r\n" +
         "FixedArray1D() {$init();}\r\n" +
         "FixedArray1D(nullptr_t np) {$init();}\r\n" +
@@ -36,14 +36,6 @@ namespace Qt.QSharp {
         [CPPReplaceArgs("T *buf, int size, bool copy")]
         private FixedArray1D(NativeArg2 arg, int size, bool copy) {
             CPP.Add("t = new FixedData<T>(buf, size, copy);");
-        }
-        [CPPReplaceArgs("std::gc_ptr<Qt::Core::Object> objRef, T *buf, int size")]
-        private FixedArray1D(Object obj, NativeArg3 arg, int size) {
-            CPP.Add("t = new FixedData<T>(objRef, buf, size);");
-        }
-        [CPPReplaceArgs("std::gc_ptr<Qt::Core::Object> objRef, T *buf, int size, bool copy")]
-        private FixedArray1D(Object obj, NativeArg4 arg, int size, bool copy) {
-            CPP.Add("t = new FixedData<T>(objRef, buf, size, copy);");
         }
         [CPPReplaceArgs("std::initializer_list<T> list")]
         private FixedArray1D(NativeArg5 arg) {
@@ -85,35 +77,35 @@ namespace Qt.QSharp {
     }
 
     [CPPClass(
-        "std::qt_ptr<FixedData<std::gc_ptr<FixedArray1D<T>>>> t;\r\n" +
-        "std::gc_ptr<FixedArray1D<T>>& operator[](int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
-        "std::gc_ptr<FixedArray1D<T>>& at(int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
-        "bool operator==(const std::gc_ptr<FixedArray2D<T>> &o) {return t == o.t;}\r\n" +
-        "bool operator!=(const std::gc_ptr<FixedArray2D<T>> &o) {return t != o.t;}\r\n" +
+        "std::qt_ptr<FixedData<FixedArray1D<T>*>> t;\r\n" +
+        "FixedArray1D<T>*& operator[](int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
+        "FixedArray1D<T>*& at(int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
+        "bool operator==(const FixedArray2D<T>* &o) {return t == o.t;}\r\n" +
+        "bool operator!=(const FixedArray2D<T>* &o) {return t != o.t;}\r\n" +
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray2D<T>* operator->() {return this;}\r\n" +
-        "operator std::gc_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
-        "std::gc_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
+        "operator Qt::Core::String*() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
+        "Qt::Core::String* ToString() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
         "FixedArray2D() {$init();}\r\n" +
         "FixedArray2D(nullptr_t np) {$init();}\r\n" +
-        "FixedArray2D(const std::gc_ptr<FixedArray2D<T>> &o) {$init(); t = o.t;}\r\n" +
+        "FixedArray2D(const FixedArray2D<T>* &o) {$init(); t = o.t;}\r\n" +
         "template<typename T2>\r\n" +
-        "FixedArray2D(const std::gc_ptr<FixedArray2D<T2>> &o) {\r\n" +
+        "FixedArray2D(const FixedArray2D<T2>* &o) {\r\n" +
         "  $init();\r\n" +
         "  if (o.t == nullptr) return;" +
-        "  t = new FixedData<std::gc_ptr<FixedArray1D<T>>>(o.t->length);\r\n" +
+        "  t = new FixedData<FixedArray1D<T>*>(o.t->length);\r\n" +
         "  for(int a=0;a<t->length;a++) {t->t[a] = o.t->t[a];}" +
         "}\r\n"
     )]
     public class FixedArray2D<T> : IEnumerable<FixedArray1D<T>> {
         public int Length {get {return CPP.ReturnInt("t->length");}}
         public FixedArray2D(int size) {
-            CPP.Add("if (size < 0) $abe(); t = new FixedData<std::gc_ptr<FixedArray1D<T>>>(size);\r\n");
+            CPP.Add("if (size < 0) $abe(); t = new FixedData<FixedArray1D<T>*>(size);\r\n");
         }
         [CPPReplaceArgs("std::initializer_list<FixedArray1D<T>> list")]
         private FixedArray2D(NativeArg5 arg) {
-            CPP.Add("t = new FixedData<std::gc_ptr<FixedArray1D<T>>>(list);");
+            CPP.Add("t = new FixedData<FixedArray1D<T>*>(list);");
         }
         public int Size() {return Length;}
         public FixedArray1D<T> Get(int idx) {
@@ -151,35 +143,35 @@ namespace Qt.QSharp {
     }
 
     [CPPClass(
-        "std::qt_ptr<FixedData<std::gc_ptr<FixedArray2D<T>>>> t;\r\n" +
-        "std::gc_ptr<FixedArray2D<T>>& operator[](int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
-        "std::gc_ptr<FixedArray2D<T>>& at(int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
-        "bool operator==(const std::gc_ptr<FixedArray3D<T>> &o) {return t == o.t;}\r\n" +
-        "bool operator!=(const std::gc_ptr<FixedArray3D<T>> &o) {return t != o.t;}\r\n" +
+        "std::qt_ptr<FixedData<FixedArray2D<T>*>> t;\r\n" +
+        "FixedArray2D<T>*& operator[](int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
+        "FixedArray2D<T>*& at(int pos) {if (pos < 0 || pos > Size()) $abe(); return (*t.get())[pos];}\r\n" +
+        "bool operator==(const FixedArray3D<T>* &o) {return t == o.t;}\r\n" +
+        "bool operator!=(const FixedArray3D<T>* &o) {return t != o.t;}\r\n" +
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray3D<T>* operator->() {return this;}\r\n" +
-        "operator std::gc_ptr<Qt::Core::String>() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
-        "std::gc_ptr<Qt::Core::String> ToString() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
+        "operator Qt::Core::String*() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
+        "Qt::Core::String* ToString() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
         "FixedArray3D() {$init();}\r\n" +
         "FixedArray3D(nullptr_t np) {$init();}\r\n" +
-        "FixedArray3D(const std::gc_ptr<FixedArray3D<T>> &o) {$init();t = o.t;}\r\n" +
+        "FixedArray3D(const FixedArray3D<T>* &o) {$init();t = o.t;}\r\n" +
         "template<typename T2>\r\n" +
-        "FixedArray3D(const std::gc_ptr<FixedArray3D<T2>> &o) {\r\n" +
+        "FixedArray3D(const FixedArray3D<T2>* &o) {\r\n" +
         "  $init();\r\n" +
         "  if (o.t == nullptr) return;" +
-        "  t = new FixedData<std::gc_ptr<FixedArray2D<T>>>(o.t->length);\r\n" +
+        "  t = new FixedData<FixedArray2D<T>*>(o.t->length);\r\n" +
         "  for(int a=0;a<t->length;a++) {t->t[a] = o.t->t[a];}" +
         "}\r\n"
     )]
     public class FixedArray3D<T> : IEnumerable<FixedArray2D<T>> {
         public int Length {get {return CPP.ReturnInt("t->length");}}
         public FixedArray3D(int size) {
-            CPP.Add("if (size < 0) $abe(); t = new FixedData<<std::gc_ptr<FixedArray2D<T>>(size);");
+            CPP.Add("if (size < 0) $abe(); t = new FixedData<<FixedArray2D<T>*(size);");
         }
         [CPPReplaceArgs("std::initializer_list<FixedArray2D<T>> list")]
         private FixedArray3D(NativeArg5 arg) {
-            CPP.Add("t = new FixedData<std::gc_ptr<FixedArray2D<T>>>(list);");
+            CPP.Add("t = new FixedData<FixedArray2D<T>*>(list);");
         }
         public int Size() {return Length;}
         public FixedArray2D<T> Get(int idx) {

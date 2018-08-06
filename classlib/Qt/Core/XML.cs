@@ -37,7 +37,7 @@ namespace Qt.Core {
             return childs;
         }
         public XMLTag AddChild(String name) {
-            CPP.Add("std::gc_ptr<XMLTag> child = XMLTag::$new($doc, $check(name)->qstring());");
+            CPP.Add("XMLTag* child = XMLTag::$new($doc, $check(name)->qstring());");
             CPP.Add("$q->appendChild(*$check(child)->$q);");
             return (XMLTag)CPP.ReturnObject("child");
         }
@@ -46,7 +46,7 @@ namespace Qt.Core {
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag InsertChild(int index, String name) {
-            CPP.Add("std::gc_ptr<XMLTag> child = XMLTag::$new($doc, $check(name)->qstring());");
+            CPP.Add("XMLTag* child = XMLTag::$new($doc, $check(name)->qstring());");
             CPP.Add("$q->insertBefore(*$check(child)->$q, $q->childNodes().at(index));");
             return (XMLTag)CPP.ReturnObject("child");
         }
@@ -73,7 +73,7 @@ namespace Qt.Core {
             CPP.Add("$q->setAttribute($check(name)->qstring(), $check(value)->qstring());");
         }
         public void RemoveAttr(int index) {
-            CPP.Add("std::gc_ptr<XMLAttr> attr = GetAttr(index);");
+            CPP.Add("XMLAttr* attr = GetAttr(index);");
             CPP.Add("$q->removeAttribute($check(attr)->GetName()->qstring());");
         }
         public void RemoveAttr(String name) {

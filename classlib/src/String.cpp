@@ -1,113 +1,113 @@
 //String $addstr()
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, std::gc_ptr<Qt::Core::Object> y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, Qt::Core::Object* y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
-  s->Append($check(y)->ToString());
+  s->Append(y->ToString());
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, char16 y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, char16 y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(y);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, int32 y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, int32 y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(Qt::Core::Int32::ToString(y));
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, int64 y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, int64 y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(Qt::Core::Int64::ToString(y));
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, uint32 y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, uint32 y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(Qt::Core::UInt32::ToString(y));
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, uint64 y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, uint64 y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(Qt::Core::UInt64::ToString(y));
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, float y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, float y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(Qt::Core::Float::ToString(y));
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::String> s1, double y) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(Qt::Core::String* s1, double y) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(s1);
   s->Append(Qt::Core::Double::ToString(y));
   return s;
 }
 
 
-std::gc_ptr<Qt::Core::String> $addstr(std::gc_ptr<Qt::Core::Object> x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
-  s->Append($check(x)->ToString());
+Qt::Core::String* $addstr(Qt::Core::Object* x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
+  s->Append(x->ToString());
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(int32 x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(int32 x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(Qt::Core::Int32::ToString(x));
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(int64 x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(int64 x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(Qt::Core::Int64::ToString(x));
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(uint32 x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(uint32 x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(Qt::Core::UInt32::ToString(x));
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(uint64 x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(uint64 x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(Qt::Core::UInt64::ToString(x));
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(float x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(float x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(Qt::Core::Float::ToString(x));
   s->Append(s2);
   return s;
 }
 
-std::gc_ptr<Qt::Core::String> $addstr(double x, std::gc_ptr<Qt::Core::String> s2) {
-  std::gc_ptr<Qt::Core::String> s = Qt::Core::String::$new();
+Qt::Core::String* $addstr(double x, Qt::Core::String* s2) {
+  Qt::Core::String* s = Qt::Core::String::$new();
   s->Append(Qt::Core::Double::ToString(x));
   s->Append(s2);
   return s;
@@ -115,14 +115,14 @@ std::gc_ptr<Qt::Core::String> $addstr(double x, std::gc_ptr<Qt::Core::String> s2
 
 //QStringList <-> String[] conversions
 
-std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list) {
+Qt::QSharp::FixedArray1D<Qt::Core::String*>* $QStringListToStringArray(QStringList list) {
   int cnt = list.count();
-  std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(cnt);
+  Qt::QSharp::FixedArray1D<Qt::Core::String*>* array = Qt::QSharp::FixedArray1D<Qt::Core::String*>::$new(cnt);
   for(int idx=0;idx<cnt;idx++) {array->at(idx) = Qt::Core::String::$new(list[idx]);}
   return array;
 }
 
-QStringList $StringArrayToQStringList(std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array) {
+QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<Qt::Core::String*>* array) {
   QStringList list;
   int cnt = array->Length;
   for(int idx=0;idx<cnt;idx++) {list.append(array->at(idx)->qstring());}

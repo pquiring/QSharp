@@ -49,18 +49,18 @@ namespace Qt.Core {
             return CPP.ReturnString("Qt::Core::String::$new($refType->name)");
         }
         public Type GetBaseType() {
-            CPP.Add("if ($refType->base == nullptr) return std::gc_ptr<Qt::Core::Type>();");
+            CPP.Add("if ($refType->base == nullptr) return nullptr;");
             return (Type)CPP.ReturnObject("Qt::Core::Type::$new($refType->base)");
         }
         public Field[] GetFields() {
             CPP.Add("int cnt = $refType->fields->size();");
-            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Field>>> fields = Qt::QSharp::FixedArray1D<std::gc_ptr<Field>>::$new(cnt);");
+            CPP.Add("Qt::QSharp::FixedArray1D<Field*>* fields = Qt::QSharp::FixedArray1D<Field*>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {fields->at(idx) = Qt::Core::Field::$new($refType->fields->at(idx));}");
             return (Field[])CPP.ReturnObject("fields");
         }
         public Method[] GetMethods() {
             CPP.Add("int cnt = $refType->methods->size();");
-            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Method>>> methods = Qt::QSharp::FixedArray1D<std::gc_ptr<Method>>::$new(cnt);");
+            CPP.Add("Qt::QSharp::FixedArray1D<Method*>* methods = Qt::QSharp::FixedArray1D<Method*>::$new(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {methods->at(idx) = Qt::Core::Method::$new($refType->methods->at(idx));}");
             return (Method[])CPP.ReturnObject("methods");
         }
@@ -100,7 +100,7 @@ namespace Qt.Core {
             CPP.Add("#ifdef __GNUC__\r\n__asm(\"int $3\");\r\n#endif\r\n");
         }
         public static void Delete(System.Object obj) {
-            CPP.Add("delete obj.ptr;");
+            CPP.Add("delete obj;");
         }
         public Object() {}
         ~Object() {}

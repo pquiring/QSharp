@@ -798,16 +798,14 @@ namespace QSharpCompiler
 
         private String writeInvokeMain(String name) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> args = Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>::$new(argc-1);\r\n");
+            sb.Append("Qt::QSharp::FixedArray1D<Qt::Core::String*> *args = Qt::QSharp::FixedArray1D<Qt::Core::String*>::$new(argc-1);\r\n");
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
             if (!Program.debug) {
                 sb.Append("try {\r\n");
             }
             sb.Append(Program.main + "::" + name + "(args);\r\n");
             if (!Program.debug) {
-                sb.Append("} catch (std::gc_ptr<Qt::Core::Exception> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (std::gc_ptr<Qt::Core::NullPointerException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (std::gc_ptr<Qt::Core::ArrayBoundsException> ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("} catch (Qt::Core::Exception *ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
                 sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
             }
             return sb.ToString();
@@ -824,7 +822,7 @@ namespace QSharpCompiler
             sb.Append("}}\r\n");
             sb.Append("extern \"C\" {\r\n");
             sb.Append("__declspec(dllexport)");
-            sb.Append("void LibraryMain(std::gc_ptr<Qt::Core::Object> obj) {\r\n");
+            sb.Append("void LibraryMain(Qt::Core::Object *obj) {\r\n");
             sb.Append(Program.main + "::LibraryMain(obj);}\r\n");
             sb.Append("}\r\n");
 
@@ -1561,7 +1559,7 @@ namespace QSharpCompiler
             method.type.cls = cls;
             method.cls = cls;
             method.Append("{\r\n");
-            method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + ">obj = new " + cls.name);
+            method.Append(cls.GetTypeDeclaration() + " *obj = new " + cls.name);
             if (cls.Generic) {
                 method.Append("<");
                 bool first = true;
@@ -1725,9 +1723,6 @@ namespace QSharpCompiler
         private void blockNode(SyntaxNode node, bool top = false, bool throwFinally = false) {
             method.Append("{\r\n");
             if (top) {
-                if (!method.type.Static) {
-                    method.Append("std::gc_ptr<" + cls.GetTypeDeclaration() + "> $this = this;\r\n");
-                }
                 if (method.basector != null) method.Append(method.basector);
             }
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
@@ -1808,9 +1803,9 @@ namespace QSharpCompiler
                     method.Append(" ");
                     method.Append(foreachName);  //var name : item
                     method.Append(";\r\n");
-                    method.Append("std::gc_ptr<Qt::Core::IEnumerator<");
+                    method.Append("Qt::Core::IEnumerator");
                     method.Append(foreachType.GetTypeDeclaration());  //var type
-                    method.Append(">> " + enumID + " = ");
+                    method.Append("> *" + enumID + " = ");
                     expressionNode(foreachItems, method);  //items
                     method.Append("->GetEnumerator();\r\n");
                     method.Append("while (");
@@ -1868,9 +1863,9 @@ namespace QSharpCompiler
                                 if (cc == 2) {
                                     //catch (Exception ?)
                                     SyntaxNode catchDecl = GetChildNode(child, 1);
-                                    method.Append(" catch(std::gc_ptr<");
+                                    method.Append(" catch(");
                                     expressionNode(GetChildNode(catchDecl), method);  //exception type
-                                    method.Append("> ");
+                                    method.Append(" *");
                                     method.Append(file.model.GetDeclaredSymbol(catchDecl).Name);  //exception variable name
                                     method.Append(")");
                                     SyntaxNode catchBlock = GetChildNode(child, 2);
@@ -1883,7 +1878,7 @@ namespace QSharpCompiler
                                 }
                                 break;
                             case SyntaxKind.FinallyClause:
-                                method.Append("} catch(std::gc_ptr<Qt::QSharp::FinallyException> $finally" + cls.finallyCnt++ + ") ");
+                                method.Append("} catch(Qt::QSharp::FinallyException *$finally" + cls.finallyCnt++ + ") ");
                                 statementNode(GetChildNode(child));
                                 break;
                         }
@@ -1944,9 +1939,9 @@ namespace QSharpCompiler
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
-                    method.Append("{$QMutexHolder " + holder + "($check(");
+                    method.Append("{$QMutexHolder " + holder + "(");
                     expressionNode(lockId, method);
-                    method.Append(")->$value());"); // + holder + ".Condition();" + holder + ".Signal())");
+                    method.Append("->$value());"); // + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock);
                     method.Append("}\r\n");
                     break;
@@ -2178,11 +2173,9 @@ namespace QSharpCompiler
                     //local variable
                     type = new Type();
                     List<Variable> vars = variableDeclaration(node, type);
-                    method.Append(type.GetTypeDeclaration());
-                    method.Append(" ");
-                    bool firstLocal = true;
                     foreach(var variable in vars) {
-                        if (!firstLocal) method.Append(","); else firstLocal = false;
+                        method.Append(type.GetTypeDeclaration());
+                        method.Append(" ");
                         method.Append(variable.name);
                         SyntaxNode equals = variable.equals;
                         if (equals != null) {
@@ -2194,6 +2187,7 @@ namespace QSharpCompiler
                                 expressionNode(equalsChild, method);
                             }
                         }
+                        if (vars.Count > 1) method.Append(";");
                     }
                     break;
                 case SyntaxKind.SimpleAssignmentExpression:
@@ -2238,9 +2232,7 @@ namespace QSharpCompiler
                         ob.Append("::");
                         expressionNode(right, ob, true);
                     } else {
-//                        ob.Append("$check(");  //NPE check
                         expressionNode(left, ob);
-//                        ob.Append(")");
                         ob.Append("->");
                         expressionNode(right, ob, true);
                     }
@@ -2258,12 +2250,10 @@ namespace QSharpCompiler
                     //IdentifierNode, BracketedArgumentList -> {Argument, ...}
                     SyntaxNode array = GetChildNode(node, 1);
                     SyntaxNode index = GetChildNode(node, 2);
-//                    ob.Append("$check(");  //NPE check
                     expressionNode(array, ob);
-//                    ob.Append(")");
-                    ob.Append("[");
+                    ob.Append("->at(");
                     expressionNode(index, ob);
-                    ob.Append("]");
+                    ob.Append(")");
                     break;
                 case SyntaxKind.BracketedArgumentList:
                     foreach(var child in nodes) {
@@ -2438,7 +2428,7 @@ namespace QSharpCompiler
                     expressionNode(GetChildNode(node), ob);
                     break;
                 case SyntaxKind.ThisExpression:
-                    ob.Append("$this");
+                    ob.Append("this");
                     break;
                 case SyntaxKind.PointerIndirectionExpression:
                     ob.Append("*");
@@ -2499,9 +2489,7 @@ namespace QSharpCompiler
                     SyntaxNode isObj = GetChildNode(node, 1);
                     SyntaxNode isType = GetChildNode(node, 2);
                     Type isTypeType = new Type(isType);
-//                    ob.Append("$check(");
                     expressionNode(isObj, ob);
-//                    ob.Append(")");
                     ob.Append("->GetType()");
                     ob.Append("->IsDerivedFrom(");
                     ob.Append("Qt::Core::Type::$new(&$class_" + isTypeType.Get_Symbol() + "))");
@@ -2511,9 +2499,9 @@ namespace QSharpCompiler
                     SyntaxNode asType = GetChildNode(node, 2);
                     Type asTypeType = new Type(asType);
                     ob.Append("(Qt::Core::Type::$new(&$class_" + asTypeType.Get_Symbol() + ")");
-                    ob.Append("->IsDerivedFrom($check(");
+                    ob.Append("->IsDerivedFrom(");
                     expressionNode(asObj, ob);
-                    ob.Append(")->GetType()) ? std::gc_dynamic_pointer_cast<" + asTypeType.Get_Symbol() + ">(");
+                    ob.Append("->GetType()) ? dynamic_cast<" + asTypeType.Get_Symbol() + ">(");
                     expressionNode(asObj, ob);
                     ob.Append(") : nullptr)");
                     break;
@@ -2702,9 +2690,8 @@ namespace QSharpCompiler
             }
             if (useEquals) {
                 if (op == "!=") ob.Append("!");
-                ob.Append("$check(");
                 expressionNode(left, ob);
-                ob.Append(")->Equals(");
+                ob.Append("->Equals(");
                 expressionNode(right, ob);
                 ob.Append(")");
             } else {
@@ -2762,14 +2749,11 @@ namespace QSharpCompiler
             SyntaxNode value = GetChildNode(node, 2);
             //cast value to type
             //C# (type)value
-            //C++ std::gc_dynamic_pointer_cast<type>(value)
+            //C++ dynamic_cast<type>(value)
             Type type = new Type(castType);
             String typestr = type.GetTypeDeclaration();
             if (type.shared) {
-                ob.Append("std::gc_dynamic_pointer_cast<");
-                if (typestr.StartsWith("std::gc_ptr")) {
-                    typestr = typestr.Substring(12, typestr.Length - 13);  //remove outter std::gc_ptr< ... >
-                }
+                ob.Append("dynamic_cast<");
                 ob.Append(typestr);
                 ob.Append(">");
                 ob.Append("(");
@@ -2852,7 +2836,7 @@ namespace QSharpCompiler
                     Type type = new Type(right);
                     method.Append("std::bind(&");
                     method.Append(type.GetCPPType());
-                    method.Append(", $this");
+                    method.Append(", this");
                     //add std::placeholders::_1, ... for # of arguments to delegate
                     int numArgs = GetNumArgs(right);
                     for(int a=0;a<numArgs;a++) {
@@ -2875,13 +2859,7 @@ namespace QSharpCompiler
                 ob.Append(file.model.GetConstantValue(str).Value.ToString());
                 return;
             }
-            if (isDelegate(id)) {
-                ob.Append("$check(");
-            }
             expressionNode(id, ob);
-            if (isDelegate(id)) {
-                ob.Append(")");
-            }
             if (New) {
                 ob.Append("::$new");
             }
@@ -3619,18 +3597,12 @@ namespace QSharpCompiler
         public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
             if (inc_arrays && arrays > 0) {
-                sb.Append("std::gc_ptr<Qt::QSharp::FixedArray" + arrays + "D<");
-            }
-            if (shared) {
-                sb.Append("std::gc_ptr<");
+                sb.Append("Qt::QSharp::FixedArray" + arrays + "D<");
             }
             sb.Append(GetCPPType());
-            if (ptr) sb.Append("*");
-            if (shared) {
-                sb.Append(">");
-            }
+            if (ptr || shared) sb.Append("*");
             if (inc_arrays && arrays > 0) {
-                sb.Append(">>");
+                sb.Append(">*");
             }
             return sb.ToString();
         }
@@ -3667,38 +3639,30 @@ namespace QSharpCompiler
 
         public string GetFieldDeclaration() {
             StringBuilder sb = new StringBuilder();
-            sb.Append(GetFlags(false));
-            String name = null;
-            if (Property) {
-                sb.Append(" Qt::QSharp::Property<");
-            }
-            if (array) {
-                sb.Append(" ");
-                sb.Append(GetTypeDeclaration());
-                sb.Append(" ");
+            foreach(var v in variables) {
+                sb.Append(GetFlags(false));
                 if (Property) {
-                    sb.Append(">");
+                    sb.Append(" Qt::QSharp::Property<");
                 }
-                bool first = true;
-                foreach(var v in variables) {
-                    if (!first) sb.Append(","); else first = false;
+                if (array) {
+                    sb.Append(" ");
+                    sb.Append(GetTypeDeclaration());
+                    sb.Append(" ");
+                    if (Property) {
+                        sb.Append(">");
+                    }
+                    sb.Append(v.name);
+                } else {
+                    sb.Append(" ");
+                    sb.Append(GetTypeDeclaration());
+                    sb.Append(" ");
+                    if (Property) {
+                        sb.Append(">");
+                    }
                     sb.Append(v.name);
                 }
-            } else {
-                sb.Append(" ");
-                sb.Append(GetTypeDeclaration());
-                sb.Append(" ");
-                if (Property) {
-                    sb.Append(">");
-                }
-                bool first = true;
-                foreach(var v in variables) {
-                    if (!first) sb.Append(","); else first = false;
-                    sb.Append(v.name);
-                    name = v.name;
-                }
+                sb.Append(";\r\n");
             }
-            sb.Append(";\r\n");
             return sb.ToString();
         }
     }

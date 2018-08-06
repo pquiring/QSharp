@@ -5,7 +5,7 @@ namespace Qt.Gui {
         "QWindow *$q = nullptr;" +
         "std::qt_ptr<$EventFilter> $events;" +
         "void $base(QWindow *$b) {$q = $b; init();}" +
-        "std::gc_ptr<Qt::Gui::Screen> screen_ptr;" +
+        "Qt::Gui::Screen* screen_ptr;" +
         "bool eventFilter(QObject *obj, QEvent *event);"
     )]
     /** Window represents the native Window object. */

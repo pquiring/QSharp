@@ -10,7 +10,7 @@ struct $EventFilter : public QObject {
   {
     Q_UNUSED(obj);
     bool discard = false;
-    std::gc_ptr<InputEvents> events = window->GetInputEvents();
+    InputEvents* events = window->GetInputEvents();
     if (events == nullptr) return false;
     if (event->type() == QEvent::KeyPress) {
       QKeyEvent* keyEvent = (QKeyEvent*)(event);

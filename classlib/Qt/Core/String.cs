@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPNonClassHPP(
-        "std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> $QStringListToStringArray(QStringList list);" +
-        "QStringList $StringArrayToQStringList(std::gc_ptr<Qt::QSharp::FixedArray1D<std::gc_ptr<Qt::Core::String>>> array);"
+        "Qt::QSharp::FixedArray1D<Qt::Core::String*>* $QStringListToStringArray(QStringList list);" +
+        "QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<Qt::Core::String*>* array);"
     )]
     [CPPClass(
         "std::qt_ptr<QString> $q;" +
@@ -230,7 +230,7 @@ namespace Qt.Core {
         }
 
         public char[] ToCharArray() {
-            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<char16>> array;");
+            CPP.Add("Qt::QSharp::FixedArray1D<char16>* array;");
             CPP.Add("int length = Length;");
             CPP.Add("array = Qt::QSharp::FixedArray1D<char16>::$new(length);");
             CPP.Add("char16 *dest = array->data();");
@@ -239,7 +239,7 @@ namespace Qt.Core {
             return CPP.ReturnCharArray("array");
         }
         public byte[] ToByteArray() {
-            CPP.Add("std::gc_ptr<Qt::QSharp::FixedArray1D<uint8>> array;");
+            CPP.Add("Qt::QSharp::FixedArray1D<uint8>* array;");
             CPP.Add("int length = Length;");
             CPP.Add("array = Qt::QSharp::FixedArray1D<uint8>::$new(length);");
             CPP.Add("uint8 *dest = array->data();");

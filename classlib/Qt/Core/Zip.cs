@@ -43,7 +43,7 @@ namespace Qt.Core {
             return first;
         }
         public ZipEntry GetEntry() {
-            CPP.Add("std::gc_ptr<ZipEntry> ze = ZipEntry::$new(filename);");
+            CPP.Add("ZipEntry* ze = ZipEntry::$new(filename);");
             CPP.Add("ze->$base(new QuaZipFile($q.get()));");
             return (ZipEntry)CPP.ReturnObject("ze");
         }
