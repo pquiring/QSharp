@@ -2,48 +2,48 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPClass(
-        "std::qt_ptr<QVector<T>> $q;"
+        "std::qt_ptr<std::Vector<T>> $q;"
     )]
     /** Stores an array of objects in a resizable continuous memory (QVector). */
     public class Array<T> : IEnumerable<T> {
         public delegate int ArraySortCompare(T t1, T t2);
         public Array() {
-            CPP.Add("$q = new QVector<T>();");
+            CPP.Add("$q = new std::Vector<T>();");
         }
         public void Add(T t) {
-            CPP.Add("$q->append(t);");
+            CPP.Add("$q->add(t);");
         }
         public void Add(T[] t) {
             for(int idx=0;idx<t.Length;idx++) {
-                CPP.Add("$q->append(t->at(idx));");
+                CPP.Add("$q->add(t->at(idx));");
             }
         }
         public void Insert(int idx, T t) {
-            CPP.Add("$q->insert(idx, t);");
+            CPP.Add("$q->add(idx, t);");
         }
         public void Insert(int idx, T[] t) {
             for(int tidx=0;tidx<t.Length;tidx++) {
-                CPP.Add("$q->insert(idx, t->at(tidx));");
+                CPP.Add("$q->add(idx, t->at(tidx));");
             }
         }
         public T Get(int idx) {
-            return (T)CPP.ReturnObject("$q->at(idx)");
+            return (T)CPP.ReturnObject("$q->get(idx)");
         }
         public void Set(int idx, T t) {
-            CPP.ReturnObject("$q->replace(idx, t);");
+            CPP.ReturnObject("$q->set(idx, t);");
         }
         /** Returns unsafe backing buffer. */
         public T[] GetBuffer() {
-            return (T[])CPP.ReturnObject("Qt::QSharp::FixedArray1D<T>::$new($q->data(), $q->size())");
+            return (T[])CPP.ReturnObject("Qt::QSharp::FixedArray1D<T>::$new($q->get(), $q->size())");
         }
         public int Size() {return CPP.ReturnInt("$q->size()");}
         public bool IsEmpty() {return Size() == 0;}
         public int Count {get {return Size();}}
-        public bool Contains(T t) {return CPP.ReturnBool("$q->contains(t)");}
+        public bool Contains(T t) {return CPP.ReturnBool("$q->indexOf(t) != -1");}
         public int IndexOf(T t) {return CPP.ReturnInt("$q->indexOf(t)");}
         public int LastIndexOf(T t) {return CPP.ReturnInt("$q->lastIndexOf(t)");}
         public void RemoveAt(int idx) {CPP.Add("$q->removeAt(idx);");}
-        public void Remove(T t) {CPP.Add("$q->removeOne(t);");}
+        public void Remove(T t) {CPP.Add("$q->removeAt(t);");}
         public void Clear() {CPP.Add("$q->clear();");}
         public void Sort(ArraySortCompare cmp) {
             int length = Size();

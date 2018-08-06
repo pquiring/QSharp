@@ -165,6 +165,7 @@ namespace Qt { namespace QSharp {
 
 extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
+extern void $abe(int idx, int size);  //ArrayBoundsException
 
 namespace std {
 
@@ -447,3 +448,145 @@ T1 $addnum(T1 x,Qt::QSharp::Property<T2> y) {return x + y.$value;}
 template<typename T1, typename T2>
 T1 $addnum(Qt::QSharp::Property<T1> x,Qt::QSharp::Property<T2> y) {return x.$value + y.$value;}
 
+namespace std {
+
+template <class T>
+class Vector {
+  private:
+    std::vector<T> data;
+  public:
+    Vector();
+    Vector(int size);
+    Vector(const Vector & other);  //copy ctor
+    Vector(std::initializer_list<T> list);
+    ~Vector();
+    T get(int idx);
+    void set(int idx, T value);
+    void add(T value);
+    void add(int idx, T value);
+    void add(std::initializer_list<T> list);
+    T removeAt(int idx);
+    void remove(T value);
+    void clear();
+    int size();
+    boolean isEmpty();
+    boolean contains(T value);
+    int indexOf(T value);
+    int lastIndexOf(T value);
+    T& operator[] (int idx);
+    T* get();  //returns backing array
+};
+
+template <class T>
+Vector<T>::Vector() {
+}
+
+template <class T>
+Vector<T>::Vector(int size) : data(size) {
+}
+
+template <class T>
+Vector<T>::Vector(const Vector &copy) : data(copy) {
+}
+
+template <class T>
+Vector<T>::Vector(std::initializer_list<T> list) : data(list) {
+}
+
+template <class T>
+Vector<T>::~Vector() {
+}
+
+template <class T>
+T Vector<T>::get(int idx) {
+  if (idx < 0 || idx >= data.size()) $abe(idx, (int)data.size());
+  return data[idx];
+}
+
+template <class T>
+void Vector<T>::set(int idx, T value) {
+  if (idx < 0 || idx >= data.size()) return;
+  data[idx] = value;
+}
+
+template <class T>
+void Vector<T>::add(T value) {
+  data.push_back(value);
+}
+
+template <class T>
+void Vector<T>::add(int idx, T value) {
+  data.insert(data.begin() + idx, value);
+}
+
+template <class T>
+T Vector<T>::removeAt(int idx) {
+  T ret = data[idx];
+  data.remove(data.begin() + idx);
+  return ret;
+}
+
+template <class T>
+void Vector<T>::remove(T value) {
+  int idx = indexOf(value);
+  if (idx == -1) return;
+  removeAt(idx);
+}
+
+template <class T>
+void Vector<T>::clear() {
+  data.clear();
+}
+
+template <class T>
+int Vector<T>::size() {
+  return (int)data.size();
+}
+
+template <class T>
+boolean Vector<T>::isEmpty() {
+  return data.size() == 0;
+}
+
+template <class T>
+boolean Vector<T>::contains(T value) {
+  T *t = data.data();
+  int size = data.size();
+  for(int idx=0;idx<size;idx++) {
+    if (t[idx] == value) return true;
+  }
+  return false;
+}
+
+template <class T>
+int Vector<T>::indexOf(T value) {
+  T *t = data.data();
+  int size = data.size();
+  for(int idx=0;idx<size;idx++) {
+    if (t[idx] == value) return idx;
+  }
+  return -1;
+}
+
+template <class T>
+int Vector<T>::lastIndexOf(T value) {
+  T *t = data.data();
+  int size = data.size();
+  for(int idx=size-1;idx>=0;idx--) {
+    if (t[idx] == value) return idx;
+  }
+  return -1;
+}
+
+template <class T>
+T& Vector<T>::operator[] (int idx) {
+  if (idx < 0 || idx >= data.size()) $abe(idx, (int)data.size());
+  return data[idx];
+}
+
+template <class T>
+T* Vector<T>::get() {
+  return data.data();
+}
+
+}
