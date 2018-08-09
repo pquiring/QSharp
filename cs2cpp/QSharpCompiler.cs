@@ -1317,6 +1317,10 @@ namespace QSharpCompiler
                                         method.type.Private = false;
                                         break;
                                     }
+                                    case "Qt::Core::AutoMemoryPool": {
+                                        method.automemorypool = true;
+                                        break;
+                                    }
                                 }
                                 break;
                         }
@@ -1663,6 +1667,13 @@ namespace QSharpCompiler
             if (ctor) {
                 method.Append("$init();\r\n");
             }
+            if (top && method.automemorypool) {
+                method.Append("std::MemoryPool $pool;\r\n");
+                if (method.type.shared) {
+                    method.Append(method.type.GetTypeDeclaration());
+                    method.Append(" $ret;\r\n");
+                }
+            }
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             foreach(var child in nodes) {
                 statementNode(child);
@@ -1687,10 +1698,18 @@ namespace QSharpCompiler
                     method.Append(";\r\n");
                     break;
                 case SyntaxKind.ReturnStatement:
-                    method.Append("return ");
                     SyntaxNode returnValue = GetChildNode(node);
+                    bool useValue = method.type.shared && method.automemorypool && returnValue != null;
+                    if (useValue) {
+                        method.Append("$ret = ");
+                    } else {
+                        method.Append("return ");
+                    }
                     if (returnValue != null) expressionNode(returnValue , method);
                     method.Append(";\r\n");
+                    if (useValue) {
+                        method.Append("$ret->Detach();return $ret;\r\n");
+                    }
                     break;
                 case SyntaxKind.WhileStatement:
                     //while (expression) statement
@@ -3629,6 +3648,7 @@ namespace QSharpCompiler
         public String version;
         public String replaceArgs;
         public bool omitBody;
+        public bool automemorypool;
         public int[] switchIDs = new int[32];  //up to 32 nested switch statements
         public int currentSwitch = -1;
         public int nextSwitchID = 0;

@@ -15,17 +15,22 @@ Folder Layout:
 
 Build Tools:
   .Net Core 2.0 + Roslyn
-  C++14 toolset (gcc or msvc)
+  C++17 toolset (gcc or msvc)
   Qt/5.4+ libraries
-  CMake/3.6+
+  CMake/3.8+
   Platform make tool (make for gcc, nmake for msvc)
 
 Notes:
  - Requires self-managed memory control just like in C++ (see Object.Delete())
    - Garbage collectors and Reference Counting create performance issues
+   - attribute [AutoMemoryPool] can be used on methods to automatically free all objects created during method
+     - return value will not be freed
+     - Object.Detach() can be used to "detach" an object from the auto release memory pool
+     - this is usefull in methods that create many untrackable objects such as string + operators
  - NullPointerExceptions are checked
  - classlib is a work in progress
- - array down casting (base to derived) is not working yet (try to use template classes to avoid typecasting - see Qt.Core.Arrays)
+ - currently cygwin/mingw support is not working until cygwin cmake is upgraded to at least 3.8
+   - don't recommend mingw anyways, it's generated code is very slow compared to MSVC
 
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock

@@ -89,6 +89,7 @@ namespace Qt.Core {
             return (Object)CPP.ReturnObject("$refType->newInstance()");
         }
     }
+    [CPPClass("Object *prev = nullptr, *next = nullptr;")]
     public class Object {
         public override string ToString() {return CPP.ReturnString("new Qt::Core::String($getType()->name)");}
         public override bool Equals(object obj) {return this == obj;}
@@ -102,7 +103,19 @@ namespace Qt.Core {
         public static void Delete(System.Object obj) {
             CPP.Add("delete obj;");
         }
-        public Object() {}
-        ~Object() {}
+        public void Detach() {
+            CPP.Add("std::detach_object(this);");
+        }
+        public Object() {
+            CPP.Add("std::attach_object(this);");
+        }
+        ~Object() {
+            CPP.Add("std::detach_object(this);");
+        }
+    }
+    /* Creates a new auto release memory pool for method. See Object.Detach() to remove object from memory pool. */
+    [System.AttributeUsage(System.AttributeTargets.Method)]
+    public class AutoMemoryPool : System.Attribute {
+        public AutoMemoryPool() {}
     }
 }

@@ -160,7 +160,8 @@ namespace Qt { namespace QSharp {
     }
     void Set(std::function<void(T)> set) {
       _set = set;
-    }  };
+    }
+  };
 }}
 
 extern void $npe();  //NullPointerException
@@ -352,6 +353,20 @@ template<typename T1, typename T2>
 T1 $addnum(Qt::QSharp::Property<T1> x,Qt::QSharp::Property<T2> y) {return x.$value + y.$value;}
 
 namespace std {
+
+struct MemoryPool {
+  MemoryPool();
+  ~MemoryPool();
+  MemoryPool *org = nullptr;
+  Qt::Core::Object *head = nullptr;
+  Qt::Core::Object *tail = nullptr;
+};
+
+extern thread_local MemoryPool *pool;
+
+void attach_object(Qt::Core::Object *);
+
+void detach_object(Qt::Core::Object *);
 
 template <class T>
 class Vector {
