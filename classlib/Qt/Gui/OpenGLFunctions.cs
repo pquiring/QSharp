@@ -10,7 +10,7 @@ namespace Qt.Gui {
         public static void InitializeOpenGLFunctions() {
             CPP.Add("$q = new QOpenGLFunctions();");
             CPP.Add("if (QOpenGLContext::currentContext() == nullptr) {");
-            CPP.Add("Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"OpenGLFunctions:Error:No Context Created!\"));");
+            CPP.Add("Qt::Core::Console::WriteLine(new Qt::Core::String(\"OpenGLFunctions:Error:No Context Created!\"));");
             CPP.Add("return;");
             CPP.Add("}");
             CPP.Add("$q->initializeOpenGLFunctions();");
@@ -89,7 +89,7 @@ namespace Qt.Gui {
         public static void glGetShaderPrecisionFormat(int shadertype, int precisiontype, int[] range, int[] precision) {CPP.Add("$q->glGetShaderPrecisionFormat(shadertype, precisiontype, range->data(), precision->data());");}
         public static void glGetShaderSource(int shader, int bufsize, int[] length, byte []source) {CPP.Add("$q->glGetShaderSource(shader, bufsize, length->data(), (char*)source->data());");}
         public static void glGetShaderiv(int shader, int pname, int[] args) {CPP.Add("$q->glGetShaderiv(shader, pname, args->data());");}
-        public static string glGetString(int name) {return CPP.ReturnString("Qt::Core::String::$new((const char*)$q->glGetString((GLenum)name))");}
+        public static string glGetString(int name) {return CPP.ReturnString("new Qt::Core::String((const char*)$q->glGetString((GLenum)name))");}
         public static void glGetTexParameterfv(int target, int pname, float[] args) {CPP.Add("$q->glGetTexParameterfv(target, pname, args->data());");}
         public static void glGetTexParameteriv(int target, int pname, int[] args) {CPP.Add("$q->glGetTexParameteriv(target, pname, args->data());");}
         public static int glGetUniformLocation(int program, string name) {return CPP.ReturnInt("$q->glGetUniformLocation(program, $check(name)->cstring().constData())");}

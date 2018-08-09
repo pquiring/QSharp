@@ -14,13 +14,13 @@ namespace Qt.Core {
         public long Size() {return CPP.ReturnLong("$d()->size()");}
         public bool SetSize(long newSize) {return CPP.ReturnBool("$d()->resize(newSize)");}
         public DateTime GetLastModified() {
-            return (DateTime)CPP.ReturnObject("Qt::Core::DateTime::$new(QFileInfo(*($d())).lastModified())");
+            return (DateTime)CPP.ReturnObject("new Qt::Core::DateTime(QFileInfo(*($d())).lastModified())");
         }
         public DateTime GetLastRead() {
-            return (DateTime)CPP.ReturnObject("Qt::Core::DateTime::$new(QFileInfo(*($d())).lastRead())");
+            return (DateTime)CPP.ReturnObject("new Qt::Core::DateTime(QFileInfo(*($d())).lastRead())");
         }
         public String AbsolutePath() {
-            return CPP.ReturnString("Qt::Core::String::$new(QFileInfo(*($d())).absoluteFilePath())");
+            return CPP.ReturnString("new Qt::Core::String(QFileInfo(*($d())).absoluteFilePath())");
         }
     }
 }

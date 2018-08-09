@@ -17,7 +17,7 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public String GetTitle() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->title())");
+            return CPP.ReturnString("new Qt::Core::String($q->title())");
         }
         public void SetTitle(String title) {
             CPP.Add("$q->setTitle($check(title)->qstring());");

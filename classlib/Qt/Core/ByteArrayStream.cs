@@ -14,7 +14,7 @@ namespace Qt.Core {
             CPP.Add("$d()->setBuffer($check(data)->$value());");
         }
         public ByteArray GetData() {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new($d()->buffer())");
+            return (ByteArray)CPP.ReturnObject("new ByteArray($d()->buffer())");
         }
     }
 }

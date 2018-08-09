@@ -9,7 +9,7 @@ namespace Qt.Network {
         }
         private PendingSslEvent pending;
         public new SslSocket Accept() {
-            return (SslSocket)CPP.ReturnObject("SslSocket::$new((QSslSocket*)$d()->nextPendingConnection())");
+            return (SslSocket)CPP.ReturnObject("new SslSocket((QSslSocket*)$d()->nextPendingConnection())");
         }
         private void SlotNewConnection() {
             try {

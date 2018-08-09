@@ -12,11 +12,11 @@ namespace Qt.Core {
         }
         public ByteArray Encode(ByteArray input, ByteArray key) {
             CPP.Add("QByteArray ckey = QCryptographicHash::hash(*$check(key)->$value(), QCryptographicHash::Sha1);");
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Crypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::ECB, *$check(input)->$value(), ckey))");
+            return (ByteArray)CPP.ReturnObject("new ByteArray(QAESEncryption::Crypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::ECB, *$check(input)->$value(), ckey))");
         }
         public ByteArray Decode(ByteArray input, ByteArray key) {
             CPP.Add("QByteArray ckey = QCryptographicHash::hash(*$check(key)->$value(), QCryptographicHash::Sha1);");
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new(QAESEncryption::Decrypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::ECB, *$check(input)->$value(), ckey))");
+            return (ByteArray)CPP.ReturnObject("new ByteArray(QAESEncryption::Decrypt(QAESEncryption::AES::AES_128, QAESEncryption::MODE::ECB, *$check(input)->$value(), ckey))");
         }
     }
 }

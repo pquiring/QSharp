@@ -8,7 +8,7 @@ namespace Qt.Core {
         public Dir(String folder) {
             CPP.Add("$q = new QDir(folder->qstring());");
         }
-        public String AbsolutePath() {return CPP.ReturnString("Qt::Core::String::$new($q->absolutePath())");}
+        public String AbsolutePath() {return CPP.ReturnString("new Qt::Core::String($q->absolutePath())");}
         public bool Exists() {return CPP.ReturnBool("$q->exists()");}
         public bool Remove() {return CPP.ReturnBool("$q->rmdir(AbsolutePath()->qstring())");}
         public bool Rename(String newName) {return CPP.ReturnBool("$q->rename(AbsolutePath()->qstring(), $check(newName)->qstring())");}

@@ -20,13 +20,13 @@ namespace Qt.Core {
             CPP.Add("$q->setTagName($check(name)->qstring());");
         }
         public String GetName() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->tagName())");
+            return CPP.ReturnString("new Qt::Core::String($q->tagName())");
         }
         public XMLTag GetParent() {
-            return (XMLTag)CPP.ReturnObject("XMLTag::$new($doc, $q->parentNode().toElement())");
+            return (XMLTag)CPP.ReturnObject("new XMLTag($doc, $q->parentNode().toElement())");
         }
         public XMLTag GetChild(int idx) {
-            return (XMLTag)CPP.ReturnObject("XMLTag::$new($doc, $q->childNodes().at(idx).toElement())");
+            return (XMLTag)CPP.ReturnObject("new XMLTag($doc, $q->childNodes().at(idx).toElement())");
         }
         public XMLTag[] GetChilds() {
             int cnt = GetChildCount();
@@ -37,7 +37,7 @@ namespace Qt.Core {
             return childs;
         }
         public XMLTag AddChild(String name) {
-            CPP.Add("XMLTag* child = XMLTag::$new($doc, $check(name)->qstring());");
+            CPP.Add("XMLTag* child = new XMLTag($doc, $check(name)->qstring());");
             CPP.Add("$q->appendChild(*$check(child)->$q);");
             return (XMLTag)CPP.ReturnObject("child");
         }
@@ -46,7 +46,7 @@ namespace Qt.Core {
             return (XMLTag)CPP.ReturnObject("child");
         }
         public XMLTag InsertChild(int index, String name) {
-            CPP.Add("XMLTag* child = XMLTag::$new($doc, $check(name)->qstring());");
+            CPP.Add("XMLTag* child = new XMLTag($doc, $check(name)->qstring());");
             CPP.Add("$q->insertBefore(*$check(child)->$q, $q->childNodes().at(index));");
             return (XMLTag)CPP.ReturnObject("child");
         }
@@ -83,7 +83,7 @@ namespace Qt.Core {
             return CPP.ReturnInt("$q->attributes().count()");
         }
         public String GetContent() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->nodeValue())");
+            return CPP.ReturnString("new Qt::Core::String($q->nodeValue())");
         }
         public void SetContent(String text) {
             CPP.Add("$q->setNodeValue($check(text)->qstring());");
@@ -101,10 +101,10 @@ namespace Qt.Core {
             CPP.Add("$q = new QDomAttr($check(tag)->$q->attributeNode(name));");
         }
         public String GetName() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->name())");
+            return CPP.ReturnString("new Qt::Core::String($q->name())");
         }
         public String GetValue() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->value())");
+            return CPP.ReturnString("new Qt::Core::String($q->value())");
         }
         public void SetValue(String text) {
             CPP.Add("$q->setValue($check(text)->qstring());");
@@ -122,10 +122,10 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->setContent($check(input)->qstring())");
         }
         public String Save() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toString())");
+            return CPP.ReturnString("new Qt::Core::String($q->toString())");
         }
         public XMLTag GetRoot() {
-            return (XMLTag)CPP.ReturnObject("XMLTag::$new($q.get(), $q->documentElement())");
+            return (XMLTag)CPP.ReturnObject("new XMLTag($q.get(), $q->documentElement())");
         }
     }
 }

@@ -17,13 +17,13 @@ namespace Qt.Gui {
             CPP.Add("$q->setReadOnly(state);");
         }
         public String GetText() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toPlainText())");
+            return CPP.ReturnString("new Qt::Core::String($q->toPlainText())");
         }
         public void SetText(String text) {
             CPP.Add("$q->setPlainText($check(text)->qstring());");
         }
         public String GetHtml() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toHtml())");
+            return CPP.ReturnString("new Qt::Core::String($q->toHtml())");
         }
         public void SetHtml(String html) {
             CPP.Add("$q->setHtml($check(html)->qstring());");

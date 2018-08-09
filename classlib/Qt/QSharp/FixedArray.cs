@@ -10,8 +10,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray1D<T>* operator->() {return this;}\r\n" +
-        "operator Qt::Core::String*() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
-        "Qt::Core::String* ToString() {return Qt::Core::String::$new(\"FixedArray1D\");}\r\n" +
+        "operator Qt::Core::String*() {return new Qt::Core::String(\"FixedArray1D\");}\r\n" +
+        "Qt::Core::String* ToString() {return new Qt::Core::String(\"FixedArray1D\");}\r\n" +
         "T* data() {return t.get()->t;}\r\n" +
         "FixedArray1D() {$init();}\r\n" +
         "FixedArray1D(nullptr_t np) {$init();}\r\n" +
@@ -85,8 +85,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray2D<T>* operator->() {return this;}\r\n" +
-        "operator Qt::Core::String*() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
-        "Qt::Core::String* ToString() {return Qt::Core::String::$new(\"FixedArray2D\");}\r\n" +
+        "operator Qt::Core::String*() {return new Qt::Core::String(\"FixedArray2D\");}\r\n" +
+        "Qt::Core::String* ToString() {return new Qt::Core::String(\"FixedArray2D\");}\r\n" +
         "FixedArray2D() {$init();}\r\n" +
         "FixedArray2D(nullptr_t np) {$init();}\r\n" +
         "FixedArray2D(const FixedArray2D<T>* &o) {$init(); t = o.t;}\r\n" +
@@ -151,8 +151,8 @@ namespace Qt.QSharp {
         "bool operator==(nullptr_t np) {return t == nullptr;}\r\n" +
         "bool operator!=(nullptr_t np) {return t != nullptr;}\r\n" +
         "FixedArray3D<T>* operator->() {return this;}\r\n" +
-        "operator Qt::Core::String*() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
-        "Qt::Core::String* ToString() {return Qt::Core::String::$new(\"FixedArray3D\");}\r\n" +
+        "operator Qt::Core::String*() {return new Qt::Core::String(\"FixedArray3D\");}\r\n" +
+        "Qt::Core::String* ToString() {return new Qt::Core::String(\"FixedArray3D\");}\r\n" +
         "FixedArray3D() {$init();}\r\n" +
         "FixedArray3D(nullptr_t np) {$init();}\r\n" +
         "FixedArray3D(const FixedArray3D<T>* &o) {$init();t = o.t;}\r\n" +

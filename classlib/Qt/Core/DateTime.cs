@@ -17,40 +17,40 @@ namespace Qt.Core {
             CPP.Add("$q = new QDateTime(date,time);");
         }
         public Date GetDate() {
-            return (Date)CPP.ReturnObject("Date::$new($q->date())");
+            return (Date)CPP.ReturnObject("new Date($q->date())");
         }
         public void SetDate(Date date) {
             CPP.Add("$q->setDate(*$check(date)->$date());");
         }
         public Time GetTime() {
-            return (Time)CPP.ReturnObject("Time::$new($q->time())");
+            return (Time)CPP.ReturnObject("new Time($q->time())");
         }
         public void SetTime(Time time) {
             CPP.Add("$q->setTime(*$check(time)->$time());");
         }
 
         public DateTime AddYears(int years) {
-            return (DateTime)CPP.ReturnObject("DateTime::$new($q->addYears(years))");
+            return (DateTime)CPP.ReturnObject("new DateTime($q->addYears(years))");
         }
         public DateTime AddMonths(int months) {
-            return (DateTime)CPP.ReturnObject("DateTime::$new($q->addMonths(months))");
+            return (DateTime)CPP.ReturnObject("new DateTime($q->addMonths(months))");
         }
         public DateTime AddDays(long days) {
-            return (DateTime)CPP.ReturnObject("DateTime::$new($q->addDays(days))");
+            return (DateTime)CPP.ReturnObject("new DateTime($q->addDays(days))");
         }
         public DateTime AddSeconds(long seconds) {
-            return (DateTime)CPP.ReturnObject("DateTime::$new($q->addSecs(seconds))");
+            return (DateTime)CPP.ReturnObject("new DateTime($q->addSecs(seconds))");
         }
         public DateTime AddMilliSeconds(long ms) {
-            return (DateTime)CPP.ReturnObject("DateTime::$new($q->addMSecs(ms))");
+            return (DateTime)CPP.ReturnObject("new DateTime($q->addMSecs(ms))");
         }
 
         public String ToString(String format) {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toString($check(format)->qstring()))");
+            return CPP.ReturnString("new Qt::Core::String($q->toString($check(format)->qstring()))");
         }
 
         public static DateTime GetCurrentDateTime() {
-            return (DateTime)CPP.ReturnObject("DateTime::$new(QDateTime::currentDateTime())");
+            return (DateTime)CPP.ReturnObject("new DateTime(QDateTime::currentDateTime())");
         }
         public static long GetMilliSecondsSinceEpoch() {
             return CPP.ReturnLong("QDateTime::currentMSecsSinceEpoch()");

@@ -29,11 +29,11 @@ namespace Qt.Core {
             CPP.Add("$q->setHMS(hour, minute, second, milli);");
         }
         public String ToString(String format) {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toString($check(format)->qstring()))");
+            return CPP.ReturnString("new Qt::Core::String($q->toString($check(format)->qstring()))");
         }
 
         public static Time GetCurrentTime() {
-            return (Time)CPP.ReturnObject("Time::$new(QTime::currentTime())");
+            return (Time)CPP.ReturnObject("new Time(QTime::currentTime())");
         }
 
     }

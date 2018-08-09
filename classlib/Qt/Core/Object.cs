@@ -10,7 +10,7 @@ namespace Qt.Core {
             CPP.Add("$refType = $ref;");
         }
         public String GetName() {
-            return CPP.ReturnString("Qt::Core::String::$new($refType->name)");
+            return CPP.ReturnString("new Qt::Core::String($refType->name)");
         }
     }
     [CPPClass(
@@ -22,7 +22,7 @@ namespace Qt.Core {
             CPP.Add("$refType = $ref;");
         }
         public String GetName() {
-            return CPP.ReturnString("Qt::Core::String::$new($refType->name)");
+            return CPP.ReturnString("new Qt::Core::String($refType->name)");
         }
     }
     [CPPClass(
@@ -46,22 +46,22 @@ namespace Qt.Core {
             return new Type(type);
         }
         public String GetName() {
-            return CPP.ReturnString("Qt::Core::String::$new($refType->name)");
+            return CPP.ReturnString("new Qt::Core::String($refType->name)");
         }
         public Type GetBaseType() {
             CPP.Add("if ($refType->base == nullptr) return nullptr;");
-            return (Type)CPP.ReturnObject("Qt::Core::Type::$new($refType->base)");
+            return (Type)CPP.ReturnObject("new Qt::Core::Type($refType->base)");
         }
         public Field[] GetFields() {
             CPP.Add("int cnt = $refType->fields->size();");
-            CPP.Add("Qt::QSharp::FixedArray1D<Field*>* fields = Qt::QSharp::FixedArray1D<Field*>::$new(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {fields->at(idx) = Qt::Core::Field::$new($refType->fields->at(idx));}");
+            CPP.Add("Qt::QSharp::FixedArray1D<Field*>* fields = new Qt::QSharp::FixedArray1D<Field*>(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {fields->at(idx) = new Qt::Core::Field($refType->fields->at(idx));}");
             return (Field[])CPP.ReturnObject("fields");
         }
         public Method[] GetMethods() {
             CPP.Add("int cnt = $refType->methods->size();");
-            CPP.Add("Qt::QSharp::FixedArray1D<Method*>* methods = Qt::QSharp::FixedArray1D<Method*>::$new(cnt);");
-            CPP.Add("for(int idx=0;idx<cnt;idx++) {methods->at(idx) = Qt::Core::Method::$new($refType->methods->at(idx));}");
+            CPP.Add("Qt::QSharp::FixedArray1D<Method*>* methods = new Qt::QSharp::FixedArray1D<Method*>(cnt);");
+            CPP.Add("for(int idx=0;idx<cnt;idx++) {methods->at(idx) = new Qt::Core::Method($refType->methods->at(idx));}");
             return (Method[])CPP.ReturnObject("methods");
         }
         /** Matches exactly. */
@@ -90,11 +90,11 @@ namespace Qt.Core {
         }
     }
     public class Object {
-        public override string ToString() {return CPP.ReturnString("Qt::Core::String::$new($getType()->name)");}
+        public override string ToString() {return CPP.ReturnString("new Qt::Core::String($getType()->name)");}
         public override bool Equals(object obj) {return this == obj;}
         public bool ReferenceEquals(object obj) {return this == obj;}
         public override int GetHashCode() {return CPP.ReturnInt("$hash(this)");}
-        public new Type GetType() {return (Type)CPP.ReturnObject("Qt::Core::Type::$new($getType())");}
+        public new Type GetType() {return (Type)CPP.ReturnObject("new Qt::Core::Type($getType())");}
         public static void DebugBreak() {
             CPP.Add("#ifdef _MSC_VER\r\n__debugbreak();\r\n#endif\r\n");
             CPP.Add("#ifdef __GNUC__\r\n__asm(\"int $3\");\r\n#endif\r\n");

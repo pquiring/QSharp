@@ -37,7 +37,7 @@ namespace Qt.Core {
             CPP.Add("$q->remove(pos, length);");
         }
         public byte[] ToArray() {
-            return (byte[])CPP.ReturnObject("Qt::QSharp::FixedArray1D<uint8>::$new((uint8*)$q->data(), $q->size(), true)");
+            return (byte[])CPP.ReturnObject("new Qt::QSharp::FixedArray1D<uint8>((uint8*)$q->data(), $q->size(), true)");
         }
         public void Clear() {
             CPP.Add("$q->clear();");
@@ -46,10 +46,10 @@ namespace Qt.Core {
             CPP.Add("$q->resize(size);");
         }
         public ByteArray ToBase64() {
-            return (ByteArray)CPP.ReturnObject("Qt::Core::ByteArray::$new($q->toBase64())");
+            return (ByteArray)CPP.ReturnObject("new Qt::Core::ByteArray($q->toBase64())");
         }
         public static ByteArray FromBase64(ByteArray base64) {
-            return (ByteArray)CPP.ReturnObject("Qt::Core::ByteArray::$new(QByteArray::fromBase64(*$check(base64)->$q))");
+            return (ByteArray)CPP.ReturnObject("new Qt::Core::ByteArray(QByteArray::fromBase64(*$check(base64)->$q))");
         }
         public new String ToString() {
             return new String(this);

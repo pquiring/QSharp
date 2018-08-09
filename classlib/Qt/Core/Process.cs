@@ -7,13 +7,13 @@ namespace Qt.Core {
             CPP.Add("$base(new QProcess());");
         }
         public String GetWorkingDirectory() {
-            return CPP.ReturnString("Qt::Core::String::$new($d()->workingDirectory())");
+            return CPP.ReturnString("new Qt::Core::String($d()->workingDirectory())");
         }
         public void SetWorkingDirectory(String directory) {
             CPP.Add("$d()->setWorkingDirectory($check(directory)->qstring());");
         }
         public String GetProgram() {
-            return CPP.ReturnString("Qt::Core::String::$new($d()->program())");
+            return CPP.ReturnString("new Qt::Core::String($d()->program())");
         }
         public void SetProgram(String directory) {
             CPP.Add("$d()->setProgram($check(directory)->qstring());");

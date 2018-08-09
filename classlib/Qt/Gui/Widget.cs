@@ -37,7 +37,7 @@ namespace Qt.Gui {
             return CPP.ReturnBool("$q->isEnabled();");
         }
         public String GetWindowTitle() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->windowTitle())");
+            return CPP.ReturnString("new Qt::Core::String($q->windowTitle())");
         }
         public void SetWindowTitle(String title) {
             CPP.Add("$q->setWindowTitle($check(title)->qstring());");

@@ -10,7 +10,7 @@ namespace Qt.Gui {
             CPP.Add("Dialog::$base($q);");
         }
         public Font GetFont() {
-            return (Font)CPP.ReturnObject("Font::$new($q->selectedFont())");
+            return (Font)CPP.ReturnObject("new Font($q->selectedFont())");
         }
         public void SetFont(Font font) {
             CPP.Add("$q->setCurrentFont(*$check(font)->$q);");

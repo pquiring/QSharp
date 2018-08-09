@@ -11,7 +11,7 @@ namespace Qt.Network {
             CPP.Add("$q = new QUrl($check(url)->qstring());");
         }
         public String GetQuery() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->query())");
+            return CPP.ReturnString("new Qt::Core::String($q->query())");
         }
         public void SetQuery(String query) {
             if (query == null)
@@ -20,13 +20,13 @@ namespace Qt.Network {
                 CPP.Add("$q->setQuery(query->qstring())");
         }
         public String GetHost() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->host())");
+            return CPP.ReturnString("new Qt::Core::String($q->host())");
         }
         public void SetHost(String host) {
             CPP.Add("$q->setHost($check(host)->qstring())");
         }
         public String GetProtocol() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->scheme())");
+            return CPP.ReturnString("new Qt::Core::String($q->scheme())");
         }
         public void SetProtcol(String protocol) {
             CPP.Add("$q->setScheme($check(protocol)->qstring())");

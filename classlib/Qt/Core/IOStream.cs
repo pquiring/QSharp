@@ -28,7 +28,7 @@ namespace Qt.Core {
             return CPP.ReturnLong("$q->pos()");
         }
         public ByteArray ReadAll() {
-            return (ByteArray)CPP.ReturnObject("ByteArray::$new($q->readAll())");
+            return (ByteArray)CPP.ReturnObject("new ByteArray($q->readAll())");
         }
         public bool ReadAll(byte[] buf, int pos = 0, int length = -1) {
             if (length == -1) length = buf.Length - pos;

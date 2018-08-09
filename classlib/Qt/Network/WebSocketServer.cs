@@ -25,7 +25,7 @@ namespace Qt.Network {
         }
         /** Accepts WebSocket.  Must be used in same thread. */
         public WebSocket Accept() {
-            return (WebSocket)CPP.ReturnObject("WebSocket::$new($q->nextPendingConnection())");
+            return (WebSocket)CPP.ReturnObject("new WebSocket($q->nextPendingConnection())");
         }
         /** Returns status of pending connection. */
         public bool IsPending() {

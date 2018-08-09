@@ -31,7 +31,7 @@ namespace QSharpCompiler
         public static int headidx = 0;
         public static string main;
         public static string home = ".";
-        public static string cxx = "11";
+        public static string cxx = "17";
         public static bool single = false;  //generate monolithic cpp source file
         public static bool msvc = false;
         public static bool debug = false;
@@ -798,15 +798,15 @@ namespace QSharpCompiler
 
         private String writeInvokeMain(String name) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Qt::QSharp::FixedArray1D<Qt::Core::String*> *args = Qt::QSharp::FixedArray1D<Qt::Core::String*>::$new(argc-1);\r\n");
-            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = Qt::Core::String::$new(argv[a]);}\r\n");
+            sb.Append("Qt::QSharp::FixedArray1D<Qt::Core::String*> *args = new Qt::QSharp::FixedArray1D<Qt::Core::String*>(argc-1);\r\n");
+            sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = new Qt::Core::String(argv[a]);}\r\n");
             if (!Program.debug) {
                 sb.Append("try {\r\n");
             }
             sb.Append(Program.main + "::" + name + "(args);\r\n");
             if (!Program.debug) {
-                sb.Append("} catch (Qt::Core::Exception *ex) {Qt::Core::Console::WriteLine($addstr(Qt::Core::String::$new(\"Exception caught:\"), ex->ToString()));}\r\n");
-                sb.Append("catch (...) {Qt::Core::Console::WriteLine(Qt::Core::String::$new(\"Unknown exception thrown\"));}\r\n");
+                sb.Append("} catch (Qt::Core::Exception *ex) {Qt::Core::Console::WriteLine($addstr(new Qt::Core::String(\"Exception caught:\"), ex->ToString()));}\r\n");
+                sb.Append("catch (...) {Qt::Core::Console::WriteLine(new Qt::Core::String(\"Unknown exception thrown\"));}\r\n");
             }
             return sb.ToString();
         }
@@ -833,16 +833,12 @@ namespace QSharpCompiler
         private void writeCMakeLists() {
             StringBuilder sb = new StringBuilder();
 
-            if (Program.cxx == "17")
-                sb.Append("cmake_minimum_required(VERSION 3.10)\r\n");
-            else
-                sb.Append("cmake_minimum_required(VERSION 3.6)\r\n");
+            sb.Append("cmake_minimum_required(VERSION 3.8)\r\n");
             sb.Append("set(CMAKE_CXX_STANDARD " + Program.cxx + ")\r\n");
             if (Program.classlib) {
                 sb.Append("add_definitions(-DCLASSLIB)\r\n");
             }
             sb.Append("include_directories(/usr/include/qt5)\r\n");
-            sb.Append("include_directories(/usr/include/ffmpeg)\r\n");
             sb.Append("include_directories(" + Program.home + "/include)\r\n");
             sb.Append("include_directories(src)\r\n");
             if (Program.classlib) {
@@ -1094,7 +1090,7 @@ namespace QSharpCompiler
                 }
             }
             if (cls.nsfullname != "Qt::Core::Object") {
-                if (cls.bases.Count == 0) {
+                if (cls.bases.Count == 0 && !cls.Interface) {
                     cls.bases.Add(new Type(null, "Qt::Core::Object"));
                 }
                 cls.addUsage("Qt::Core::Object");
@@ -1504,16 +1500,12 @@ namespace QSharpCompiler
             method = new Method();
             cls.methods.Add(method);
             method.cls = cls;
-            method.name = "$ctor";  //C++ = cls.name;
-            method.type.set("void");
+            method.name = cls.name;
+            method.type.set("");
             method.type.cls = cls;
             method.type.primative = true;
             method.ctor = true;
             cls.hasctor = true;
-            if (cls.bases.Count > 0) {
-                method.type.Public = true;
-                method.basector = cls.bases[0].GetSymbol() + "::$ctor();\r\n";
-            }
             if (node != null) {
                 getFlags(method.type, file.model.GetDeclaredSymbol(node));
                 IEnumerable<SyntaxNode> nodes = node.ChildNodes();
@@ -1529,76 +1521,22 @@ namespace QSharpCompiler
                         case SyntaxKind.BaseConstructorInitializer:
                             SyntaxNode argList = GetChildNode(child);
                             method.Append(cls.bases[0].GetCPPType());
-                            method.Append("::$ctor(");
+                            method.Append("(");
                             outArgList(argList, method);
-                            method.Append(");\r\n");
+                            method.Append(")\r\n");
                             method.basector = method.src.ToString();
                             method.src.Length = 0;
                             break;
                         case SyntaxKind.Block:
-                            blockNode(child, true);
+                            blockNode(child, true, false, true);
                             break;
                     }
                 }
             } else {
-                method.src.Append("{");
-                if (method.basector != null) method.src.Append(method.basector);
-                method.src.Append("}\r\n");
+                method.src.Append("{$init();}");
             }
             method.type.setTypes();
             if (method.cls.Abstract) return;
-            createNewMethod(cls, method.args, method.replaceArgs);
-        }
-
-        private void createNewMethod(Class cls, List<Argument> args, String replaceArgs) {
-            Method method = new Method();
-            method.type.Public = true;
-            method.type.Static = true;
-            method.name = "$new";
-            method.type.set(cls.fullname);
-            method.type.cls = cls;
-            method.cls = cls;
-            method.Append("{\r\n");
-            method.Append(cls.GetTypeDeclaration() + " *obj = new " + cls.name);
-            if (cls.Generic) {
-                method.Append("<");
-                bool first = true;
-                foreach(var arg in cls.GenericArgs) {
-                    if (!first) method.Append(","); else first = false;
-                    method.Append(arg.GetTypeDeclaration());
-                }
-                method.Append(">");
-            }
-            method.Append("(" + cls.ctorArgs + ");\r\n");
-            method.Append("obj->$init();\r\n");
-            method.Append("obj->$ctor(");
-            if (replaceArgs == null) {
-                if (args != null) {
-                    bool first = true;
-                    foreach(var arg in args) {
-                        if (!first) method.Append(","); else first = false;
-                        method.Append(arg.name.name);
-                        method.args.Add(arg);
-                    }
-                }
-            } else {
-                method.replaceArgs = replaceArgs;
-                String[] repArgs = replaceArgs.Split(",");
-                bool first = true;
-                foreach(var arg in repArgs) {
-                    if (!first) method.Append(","); else first = false;
-                    int idx = arg.LastIndexOf("*");
-                    if (idx == -1) {
-                      idx = arg.LastIndexOf(" ");
-                    }
-                    method.Append(arg.Substring(idx+1));
-                }
-            }
-            method.Append(");\r\n");
-            method.Append("return obj;\r\n");
-            method.Append("}\r\n");
-            method.type.setTypes();
-            cls.methods.Add(method);
         }
 
         private void methodNode(SyntaxNode node, bool dtor, bool isDelegate, String name) {
@@ -1720,17 +1658,17 @@ namespace QSharpCompiler
             }
         }
 
-        private void blockNode(SyntaxNode node, bool top = false, bool throwFinally = false) {
+        private void blockNode(SyntaxNode node, bool top = false, bool throwFinally = false, bool ctor = false) {
             method.Append("{\r\n");
-            if (top) {
-                if (method.basector != null) method.Append(method.basector);
+            if (ctor) {
+                method.Append("$init();\r\n");
             }
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             foreach(var child in nodes) {
                 statementNode(child);
             }
             if (throwFinally) {
-                method.Append("throw Qt::QSharp::FinallyException::$new();");
+                method.Append("throw new Qt::QSharp::FinallyException();");
             }
             method.Append("}\r\n");
         }
@@ -2212,7 +2150,7 @@ namespace QSharpCompiler
                     ob.Append("false");
                     break;
                 case SyntaxKind.StringLiteralExpression:
-                    ob.Append("Qt::Core::String::$new(");
+                    ob.Append("new Qt::Core::String(");
                     ob.Append(constantNode(node));
                     ob.Append(")");
                     break;
@@ -2483,7 +2421,7 @@ namespace QSharpCompiler
                 case SyntaxKind.TypeOfExpression:
                     SyntaxNode typeOf = GetChildNode(node);
                     Type typeSymbol = new Type(typeOf);
-                    ob.Append("Qt::Core::Type::$new(&$class_" + typeSymbol.Get_Symbol() + ")");
+                    ob.Append("Qt::Core::Type(&$class_" + typeSymbol.Get_Symbol() + ")");
                     break;
                 case SyntaxKind.IsExpression:
                     SyntaxNode isObj = GetChildNode(node, 1);
@@ -2492,13 +2430,13 @@ namespace QSharpCompiler
                     expressionNode(isObj, ob);
                     ob.Append("->GetType()");
                     ob.Append("->IsDerivedFrom(");
-                    ob.Append("Qt::Core::Type::$new(&$class_" + isTypeType.Get_Symbol() + "))");
+                    ob.Append("Qt::Core::Type(&$class_" + isTypeType.Get_Symbol() + "))");
                     break;
                 case SyntaxKind.AsExpression:
                     SyntaxNode asObj = GetChildNode(node, 1);
                     SyntaxNode asType = GetChildNode(node, 2);
                     Type asTypeType = new Type(asType);
-                    ob.Append("(Qt::Core::Type::$new(&$class_" + asTypeType.Get_Symbol() + ")");
+                    ob.Append("(Qt::Core::Type(&$class_" + asTypeType.Get_Symbol() + ")");
                     ob.Append("->IsDerivedFrom(");
                     expressionNode(asObj, ob);
                     ob.Append("->GetType()) ? dynamic_cast<" + asTypeType.Get_Symbol() + ">(");
@@ -2531,9 +2469,9 @@ namespace QSharpCompiler
                 WriteFileLine(node);
                 errors++;
             }
-            ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
+            ob.Append("new Qt::QSharp::FixedArray" + dims + "D<");
             ob.Append(type);
-            ob.Append(">::$new");
+            ob.Append(">");
             ob.Append("(std::initializer_list<");
             dims--;
             if (dims > 0) {
@@ -2812,10 +2750,10 @@ namespace QSharpCompiler
                 errors++;
                 return;
             }
-            ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
+            ob.Append("new Qt::QSharp::FixedArray" + dims + "D<");
             Type type = new Type(typeNode);
             ob.Append(type.GetTypeDeclaration());
-            ob.Append(">::$new");
+            ob.Append(">");
             ob.Append("(");
             expressionNode(sizeNode, ob);
             ob.Append(")");
@@ -2859,13 +2797,16 @@ namespace QSharpCompiler
                 ob.Append(file.model.GetConstantValue(str).Value.ToString());
                 return;
             }
-            expressionNode(id, ob);
             if (New) {
-                ob.Append("::$new");
+                ob.Append("(new ");
             }
+            expressionNode(id, ob);
             ob.Append("(");
             outArgList(args, ob);
             ob.Append(")");
+            if (New) {
+                ob.Append(")");
+            }
         }
 
         /* Determine if id is from the System.QSharp.CPP class. */
@@ -3169,7 +3110,7 @@ namespace QSharpCompiler
             if (!Generic) {
                 foreach(Method m in methods) {
                     if (m.replaceArgs != null) continue;
-                    if (m.name == "$new") {
+                    if (m.name == m.cls.name) {
                         if (m.args.Count == 0) {
                             _new = m;
                             break;
@@ -3180,7 +3121,7 @@ namespace QSharpCompiler
             if (_new == null) {
                 sb.Append(",[] () {return nullptr;}");
             } else {
-                sb.Append(",[] () {return " + this.Namespace + "::" + this.fullname + "::$new();}");
+                sb.Append(",[] () {return new " + this.Namespace + "::" + this.fullname + "();}");
             }
             sb.Append(");\r\n");
             foreach(var inner in inners) {
@@ -3209,17 +3150,17 @@ namespace QSharpCompiler
                 first = true;
                 foreach(var basecls in bases) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append("public virtual ");
+                    sb.Append("public ");
                     sb.Append(basecls.GetCPPType());
                 }
                 foreach(var cppcls in cppbases) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append("public virtual ");
+                    sb.Append("public ");
                     sb.Append(cppcls);
                 }
                 foreach(var iface in ifaces) {
                     if (!first) sb.Append(","); else first = false;
-                    sb.Append("public virtual ");
+                    sb.Append("public ");
                     sb.Append(iface.GetCPPType());
                 }
             }
@@ -3348,6 +3289,12 @@ namespace QSharpCompiler
                 sb.Append("::");
                 sb.Append(method.name);
                 sb.Append(method.GetArgs(false));
+                if (method.ctor) {
+                    if (method.basector != null) {
+                        sb.Append(":");
+                        sb.Append(method.basector);
+                    }
+                }
                 if (method.Length() == 0) method.Append("{}\r\n");
                 if (method.name == "$init") {
                     sb.Append("{\r\n");

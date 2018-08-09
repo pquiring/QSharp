@@ -11,13 +11,13 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public MenuItem AddAction(String text) {
-            return (MenuItem)CPP.ReturnObject("MenuItem::$new($q->addAction($check(text)->qstring()))");
+            return (MenuItem)CPP.ReturnObject("new MenuItem($q->addAction($check(text)->qstring()))");
         }
         public MenuItem AddAction(Image icon, String text) {
-            return (MenuItem)CPP.ReturnObject("MenuItem::$new($q->addAction($check(icon)->$icon(), $check(text)->qstring()))");
+            return (MenuItem)CPP.ReturnObject("new MenuItem($q->addAction($check(icon)->$icon(), $check(text)->qstring()))");
         }
         public MenuItem AddSeparator() {
-            return (MenuItem)CPP.ReturnObject("MenuItem::$new($q->addSeparator())");
+            return (MenuItem)CPP.ReturnObject("new MenuItem($q->addSeparator())");
         }
     }
 }

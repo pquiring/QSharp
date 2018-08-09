@@ -204,7 +204,7 @@ namespace Qt.Core {
                 int length
          */
         public String Substring(int start, int length = -1) {
-            return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, length))");
+            return CPP.ReturnString("new Qt::Core::String($q->mid(start, length))");
         }
         /**
             Substring()
@@ -216,23 +216,23 @@ namespace Qt.Core {
         public String SubstringIdx(int start, int end) {
             if (start > end) return null;
             int length = end - start;
-            return CPP.ReturnString("Qt::Core::String::$new($q->mid(start, length))");
+            return CPP.ReturnString("new Qt::Core::String($q->mid(start, length))");
         }
         public char CharAt(int idx) {
             return CPP.ReturnChar("$q->at(idx).unicode()");
         }
 
         public String ToUpperCase() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toUpper())");
+            return CPP.ReturnString("new Qt::Core::String($q->toUpper())");
         }
         public String ToLowerCase() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toLower())");
+            return CPP.ReturnString("new Qt::Core::String($q->toLower())");
         }
 
         public char[] ToCharArray() {
             CPP.Add("Qt::QSharp::FixedArray1D<char16>* array;");
             CPP.Add("int length = Length;");
-            CPP.Add("array = Qt::QSharp::FixedArray1D<char16>::$new(length);");
+            CPP.Add("array = new Qt::QSharp::FixedArray1D<char16>(length);");
             CPP.Add("char16 *dest = array->data();");
             CPP.Add("const char16 *src = ustring();");
             CPP.Add("std::memcpy(dest, src, length * 2);");
@@ -241,7 +241,7 @@ namespace Qt.Core {
         public byte[] ToByteArray() {
             CPP.Add("Qt::QSharp::FixedArray1D<uint8>* array;");
             CPP.Add("int length = Length;");
-            CPP.Add("array = Qt::QSharp::FixedArray1D<uint8>::$new(length);");
+            CPP.Add("array = new Qt::QSharp::FixedArray1D<uint8>(length);");
             CPP.Add("uint8 *dest = array->data();");
             CPP.Add("QByteArray cstr = cstring();");
             CPP.Add("const uint8 *src = (const uint8*)cstr.constData();");

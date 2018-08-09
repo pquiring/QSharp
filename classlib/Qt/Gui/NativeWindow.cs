@@ -22,7 +22,7 @@ namespace Qt.Gui {
         private InputEvents events;
         public InputEvents GetInputEvents() {return events;}
         private void init() {
-            CPP.Add("screen_ptr = Qt::Gui::Screen::$new($q->screen());");
+            CPP.Add("screen_ptr = new Qt::Gui::Screen($q->screen());");
             CPP.Add("$events = new $EventFilter(this);");
             CPP.Add("$q->installEventFilter($events.get());");
         }

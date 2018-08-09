@@ -49,7 +49,7 @@ namespace Qt.Gui {
         }
         public NativeWindow GetNativeWindow() {
             if (nativeWindow == null) {
-                nativeWindow = (NativeWindow)CPP.ReturnObject("NativeWindow::$new($q->windowHandle())");
+                nativeWindow = (NativeWindow)CPP.ReturnObject("new NativeWindow($q->windowHandle())");
             }
             return nativeWindow;
         }

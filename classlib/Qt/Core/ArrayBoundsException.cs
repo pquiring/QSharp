@@ -2,8 +2,8 @@ using Qt.QSharp;
 
 namespace Qt.Core {
     [CPPNonClassCPP(
-      "void $abe() {throw Qt::Core::ArrayBoundsException::$new();}" +
-      "void $abe(int idx, int size) {throw Qt::Core::ArrayBoundsException::$new(idx, size);}"
+      "void $abe() {throw new Qt::Core::ArrayBoundsException();}" +
+      "void $abe(int idx, int size) {throw new Qt::Core::ArrayBoundsException(idx, size);}"
     )]
     public class ArrayBoundsException : Exception {
         public ArrayBoundsException() {}

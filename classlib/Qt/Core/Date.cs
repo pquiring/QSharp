@@ -38,11 +38,11 @@ namespace Qt.Core {
             CPP.Add("$q->setDate(year, month, day);");
         }
         public String ToString(String format) {
-            return CPP.ReturnString("Qt::Core::String::$new($q->toString($check(format)->qstring()))");
+            return CPP.ReturnString("new Qt::Core::String($q->toString($check(format)->qstring()))");
         }
 
         public static Date GetCurrentDate() {
-            return (Date)CPP.ReturnObject("Date::$new(QDate::currentDate())");
+            return (Date)CPP.ReturnObject("new Date(QDate::currentDate())");
         }
     }
 }

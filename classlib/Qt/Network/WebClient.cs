@@ -18,40 +18,40 @@ namespace Qt.Network {
         }
         public WebReply Process(WebRequest request) {
             switch (request.GetMethod()) {
-                case WebMethod.Get: return (WebReply)CPP.ReturnObject("WebReply::$new($q->get(*$check(request)->$value()))");
-                case WebMethod.Post: return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
-                case WebMethod.Put: return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
-                case WebMethod.Head: return (WebReply)CPP.ReturnObject("WebReply::$new($q->head(*$check(request)->$value()))");
-                case WebMethod.Delete: return (WebReply)CPP.ReturnObject("WebReply::$new($q->deleteResource(*$check(request)->$value()))");
+                case WebMethod.Get: return (WebReply)CPP.ReturnObject("new WebReply($q->get(*$check(request)->$value()))");
+                case WebMethod.Post: return (WebReply)CPP.ReturnObject("new WebReply($q->post(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
+                case WebMethod.Put: return (WebReply)CPP.ReturnObject("new WebReply($q->put(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
+                case WebMethod.Head: return (WebReply)CPP.ReturnObject("new WebReply($q->head(*$check(request)->$value()))");
+                case WebMethod.Delete: return (WebReply)CPP.ReturnObject("new WebReply($q->deleteResource(*$check(request)->$value()))");
             }
             return null;
         }
         public WebReply Get(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->get(*$check(request)->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->get(*$check(request)->$value()))");
         }
         public WebReply Post(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->post(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
         }
         public WebReply Post(WebRequest request, IOStream io) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*$check(request)->$value(), io->$q.get()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->post(*$check(request)->$value(), io->$q.get()))");
         }
         public WebReply Post(WebRequest request, ByteArray array) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->post(*$check(request)->$value(), *array->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->post(*$check(request)->$value(), *array->$value()))");
         }
         public WebReply Put(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->put(*$check(request)->$value(), *$check(request)->GetData()->$value()))");
         }
         public WebReply Put(WebRequest request, IOStream io) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*$check(request)->$value(), io->$q.get()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->put(*$check(request)->$value(), io->$q.get()))");
         }
         public WebReply Put(WebRequest request, ByteArray array) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->put(*$check(request)->$value(), *array->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->put(*$check(request)->$value(), *array->$value()))");
         }
         public WebReply Delete(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->deleteResource(*$check(request)->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->deleteResource(*$check(request)->$value()))");
         }
         public WebReply Head(WebRequest request) {
-            return (WebReply)CPP.ReturnObject("WebReply::$new($q->head(*$check(request)->$value()))");
+            return (WebReply)CPP.ReturnObject("new WebReply($q->head(*$check(request)->$value()))");
         }
     }
 }

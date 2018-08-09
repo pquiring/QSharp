@@ -43,7 +43,7 @@ namespace Qt.Network {
             }
         }
         public String GetHeader(String header) {
-            return CPP.ReturnString("Qt::Core::String::$new($q->rawHeader(QByteArray($check(header)->cstring())))");
+            return CPP.ReturnString("new Qt::Core::String($q->rawHeader(QByteArray($check(header)->cstring())))");
         }
         public void SetHeader(String header, String value) {
             CPP.Add("$q->setRawHeader(QByteArray($check(header)->cstring()), QByteArray($check(value)->cstring()));");

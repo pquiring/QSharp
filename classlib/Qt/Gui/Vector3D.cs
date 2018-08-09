@@ -55,7 +55,7 @@ namespace Qt.Gui {
             return CPP.ReturnFloat("QVector3D::dotProduct(*($check(a)->$q), *($check(b)->$q))");
         }
         public static Vector3D CrossProduct(Vector3D a, Vector3D b) {
-            return (Vector3D)CPP.ReturnObject("Vector3D::$new(QVector3D::crossProduct(*($check(a)->$q), *($check(b)->$q)))");
+            return (Vector3D)CPP.ReturnObject("new Vector3D(QVector3D::crossProduct(*($check(a)->$q), *($check(b)->$q)))");
         }
     }
 }

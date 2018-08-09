@@ -27,7 +27,7 @@ namespace Qt.Core {
         public bool NextEntry() {
             bool next = CPP.ReturnBool("$q->goToNextFile()");
             if (next) {
-                CPP.Add("filename = Qt::Core::String::$new($q->getCurrentFileName());");
+                CPP.Add("filename = new Qt::Core::String($q->getCurrentFileName());");
             } else {
                 filename = null;
             }
@@ -36,14 +36,14 @@ namespace Qt.Core {
         public bool FirstEntry() {
             bool first = CPP.ReturnBool("$q->goToFirstFile()");
             if (first) {
-                CPP.Add("filename = Qt::Core::String::$new($q->getCurrentFileName());");
+                CPP.Add("filename = new Qt::Core::String($q->getCurrentFileName());");
             } else {
                 filename = null;
             }
             return first;
         }
         public ZipEntry GetEntry() {
-            CPP.Add("ZipEntry* ze = ZipEntry::$new(filename);");
+            CPP.Add("ZipEntry* ze = new ZipEntry(filename);");
             CPP.Add("ze->$base(new QuaZipFile($q.get()));");
             return (ZipEntry)CPP.ReturnObject("ze");
         }

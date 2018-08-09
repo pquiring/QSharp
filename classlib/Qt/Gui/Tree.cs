@@ -31,14 +31,14 @@ namespace Qt.Gui {
         }
         public TreeItem GetChild(int index) {
             CPP.Add("QTreeWidgetItem *item = $q->child(index);");
-            return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : TreeItem::$new(item)");
+            return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : new TreeItem(item)");
         }
         public TreeItem GetParent() {
             CPP.Add("QTreeWidgetItem *item = $q->parent();");
-            return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : TreeItem::$new(item)");
+            return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : new TreeItem(item)");
         }
         public String GetName() {
-            return CPP.ReturnString("Qt::Core::String::$new($q->text(0))");
+            return CPP.ReturnString("new Qt::Core::String($q->text(0))");
         }
         public void SetName(String text) {
             CPP.Add("$q->setText(0, $check(text)->qstring());");
@@ -55,11 +55,11 @@ namespace Qt.Gui {
             CPP.Add("Widget::$base($q);");
         }
         public TreeItem GetRoot() {
-            return (TreeItem)CPP.ReturnObject("TreeItem::$new($q->invisibleRootItem())");
+            return (TreeItem)CPP.ReturnObject("new TreeItem($q->invisibleRootItem())");
         }
         public TreeItem GetSelectedItem() {
             CPP.Add("QTreeWidgetItem *item = $q->currentItem();");
-            return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : TreeItem::$new(item)");
+            return (TreeItem)CPP.ReturnObject("item == nullptr ? nullptr : new TreeItem(item)");
         }
         public void ExpandItem(TreeItem item) {
             CPP.Add("$q->expandItem(item->$value());");

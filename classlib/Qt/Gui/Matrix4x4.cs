@@ -13,11 +13,11 @@ namespace Qt.Gui {
         private Vector3D vector = new Vector3D();
         public Matrix4x4() {
             CPP.Add("$q = new QMatrix4x4();");
-            CPP.Add("m = Qt::QSharp::FixedArray1D<float>::$new($q->data(), 16);");
+            CPP.Add("m = new Qt::QSharp::FixedArray1D<float>($q->data(), 16);");
         }
         public Matrix4x4(Matrix4x4 other) {
             CPP.Add("$q = new QMatrix4x4();");
-            CPP.Add("m = Qt::QSharp::FixedArray1D<float>::$new($q->data(), 16);");
+            CPP.Add("m = new Qt::QSharp::FixedArray1D<float>($q->data(), 16);");
             for(int a=0;a<16;a++) {
                 m[a] = other.m[a];
             }

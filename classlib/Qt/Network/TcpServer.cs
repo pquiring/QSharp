@@ -24,7 +24,7 @@ namespace Qt.Network {
         }
         /** Accepts TcpSocket.  Must be used in same thread. */
         public TcpSocket Accept() {
-            return (TcpSocket)CPP.ReturnObject("TcpSocket::$new($q->nextPendingConnection())");
+            return (TcpSocket)CPP.ReturnObject("new TcpSocket($q->nextPendingConnection())");
         }
         /** Returns status of pending connection. */
         public bool IsPending() {
