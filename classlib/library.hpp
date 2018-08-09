@@ -359,6 +359,8 @@ T1 $addnum(Qt::QSharp::Property<T1> x,Qt::QSharp::Property<T2> y) {return x.$val
 
 namespace std {
 
+#ifndef QSHARP_GC
+
 struct MemoryPool {
   MemoryPool();
   ~MemoryPool();
@@ -372,6 +374,8 @@ extern thread_local MemoryPool *pool;
 void attach_object(Qt::Core::Object *);
 
 void detach_object(Qt::Core::Object *);
+
+#endif
 
 template <class T>
 class Vector {

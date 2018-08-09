@@ -90,10 +90,11 @@ namespace Qt.Core {
         }
     }
     [CPPClass(
-        "Object *prev = nullptr, *next = nullptr;\r\n" +
         "#ifdef QSHARP_GC\r\n" +
         "void* operator new(size_t size) {return GC_MALLOC(size);}\r\n" +
         "void operator delete(void*ptr) {GC_FREE(ptr);}\r\n" +
+        "#else\r\n" +
+        "Object *prev = nullptr, *next = nullptr;\r\n" +
         "#endif"
     )]
     public class Object {
@@ -110,13 +111,13 @@ namespace Qt.Core {
             CPP.Add("delete obj;");
         }
         public void Detach() {
-            CPP.Add("std::detach_object(this);");
+            CPP.Add("#ifndef QSHARP_GC\r\nstd::detach_object(this);\r\n#endif");
         }
         public Object() {
-            CPP.Add("std::attach_object(this);");
+            CPP.Add("#ifndef QSHARP_GC\r\nstd::attach_object(this);\r\n#endif");
         }
         ~Object() {
-            CPP.Add("std::detach_object(this);");
+            CPP.Add("#ifndef QSHARP_GC\r\nstd::detach_object(this);\r\n#endif");
         }
     }
     /* Creates a new auto release memory pool for method. See Object.Detach() to remove object from memory pool. */

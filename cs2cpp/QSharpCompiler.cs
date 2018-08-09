@@ -1331,6 +1331,10 @@ namespace QSharpCompiler
                                     }
                                     case "Qt::Core::AutoMemoryPool": {
                                         method.automemorypool = true;
+                                        if (Program.gc) {
+                                            Console.WriteLine("Error:[AutoMemoryPool] can not be used with --gc option");
+                                            Environment.Exit(1);
+                                        }
                                         break;
                                     }
                                 }

@@ -22,15 +22,16 @@ Build Tools:
 
 Notes:
  - Supports either self-managed memory management like in C++ (see Object.Delete()) or the 'Boehm-Demers-Weiser' Garbage Collector
-   - Garbage collectors and Reference Counting often create performance issues
+   - Garbage Collectors and Reference Counting often create performance issues
    - attribute [AutoMemoryPool] can be used on methods to automatically free all objects created during method when method returns
      - return value will not be freed
      - Object.Detach() can be used to "detach" an object from the auto release memory pool
      - this is usefull in methods that create many untrackable objects such as string + operators
  - NullPointerExceptions are checked
  - classlib is a work in progress
+ - there are still some memory leaks, especially in the widget elements since ownership is often ambiguous
  - currently cygwin/mingw support is not working until cygwin cmake is upgraded to at least 3.8
-   - don't recommend mingw anyways, it's generated code is very slow compared to MSVC
+   - don't recommend mingw anyways, it's generated code is very slow compared to msvc
 
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock
@@ -120,6 +121,6 @@ WebSite : github.com/pquiring/qsharp
 
 Author : Peter Quiring (pquiring@gmail.com)
 
-Version 0.16
+Version 0.17
 
-Released Mar 27, 2018
+Released Aug 10, 2018

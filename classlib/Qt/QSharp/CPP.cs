@@ -25,6 +25,18 @@ namespace Qt.QSharp {
         public CPPVersion(string version) {}
     }
 
+    /* Places #ifdef str directive around method. */
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CPPDefined : System.Attribute {
+        public CPPDefined(string name) {}
+    }
+
+    /* Places #ifndef str directive around method. */
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CPPNotDefined : System.Attribute {
+        public CPPNotDefined(string name) {}
+    }
+
     /* Adds base classes to a class (allows multiple inheritance) */
     [AttributeUsage(AttributeTargets.Class)]
     public class CPPExtends : System.Attribute {

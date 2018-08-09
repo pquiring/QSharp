@@ -1,6 +1,13 @@
 What's new
 ==========
 
+Aug 10, 2018 : 0.17
+ - now supports either self-managed or garbage collected memory management
+   - see [AutoMemoryPool] to assist self-managed methods
+ - new mutex that is both recursive and allows wait() and notfiy() functions
+ - removed ffmpeg, will use Qt Media instead
+ - many bugs fixed
+
 Mar 27, 2018 : 0.16
  - many bug fixes
 
