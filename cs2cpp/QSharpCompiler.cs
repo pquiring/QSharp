@@ -35,6 +35,7 @@ namespace QSharpCompiler
         public static bool single = false;  //generate monolithic cpp source file
         public static bool msvc = false;
         public static bool debug = false;
+        public static bool gc = false;
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -66,6 +67,8 @@ namespace QSharpCompiler
                 Console.WriteLine("      use gcc or msvc C++ compiler (default = gcc)");
                 Console.WriteLine("  --release | --debug");
                 Console.WriteLine("      generate release or debug type");
+                Console.WriteLine("  --gc");
+                Console.WriteLine("      enable experimental support for 'Boehm-Demers-Weiser' Garbage Collector");
                 return;
             }
 
@@ -106,6 +109,9 @@ namespace QSharpCompiler
                 }
                 if (arg == "--cxx") {
                     cxx = value;
+                }
+                if (arg == "--gc") {
+                    gc = true;
                 }
                 if (arg == "--ref") {
                     if (value.Length == 0) {
@@ -838,6 +844,9 @@ namespace QSharpCompiler
             if (Program.classlib) {
                 sb.Append("add_definitions(-DCLASSLIB)\r\n");
             }
+            if (Program.gc) {
+                sb.Append("add_definitions(-DQSHARP_GC)\r\n");
+            }
             sb.Append("include_directories(/usr/include/qt5)\r\n");
             sb.Append("include_directories(" + Program.home + "/include)\r\n");
             sb.Append("include_directories(src)\r\n");
@@ -895,6 +904,9 @@ namespace QSharpCompiler
 //                    if (Program.debug) sb.Append("d");
                 } else {
                     sb.Append(" stdc++ z");
+                }
+                if (Program.gc) {
+                    sb.Append(" gcmt-lib");  //atomic_ops ???
                 }
                 sb.Append(")\r\n");
             }

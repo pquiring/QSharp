@@ -23,7 +23,7 @@ Build Tools:
 Notes:
  - Requires self-managed memory control just like in C++ (see Object.Delete())
    - Garbage collectors and Reference Counting create performance issues
-   - attribute [AutoMemoryPool] can be used on methods to automatically free all objects created during method
+   - attribute [AutoMemoryPool] can be used on methods to automatically free all objects created during method when method returns
      - return value will not be freed
      - Object.Detach() can be used to "detach" an object from the auto release memory pool
      - this is usefull in methods that create many untrackable objects such as string + operators

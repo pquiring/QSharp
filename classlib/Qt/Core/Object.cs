@@ -89,7 +89,13 @@ namespace Qt.Core {
             return (Object)CPP.ReturnObject("$refType->newInstance()");
         }
     }
-    [CPPClass("Object *prev = nullptr, *next = nullptr;")]
+    [CPPClass(
+        "Object *prev = nullptr, *next = nullptr;\r\n" +
+        "#ifdef QSHARP_GC\r\n" +
+        "void* operator new(size_t size) {return GC_MALLOC(size);}\r\n" +
+        "void operator delete(void*ptr) {GC_FREE(ptr);}\r\n" +
+        "#endif"
+    )]
     public class Object {
         public override string ToString() {return CPP.ReturnString("new Qt::Core::String($getType()->name)");}
         public override bool Equals(object obj) {return this == obj;}

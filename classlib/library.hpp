@@ -117,6 +117,11 @@
 //include AES
 #include <AES.hpp>
 
+//include gc
+#ifdef QSHARP_GC
+#include <gc.h>
+#endif
+
 #undef int64
 #define int64 signed long long
 
