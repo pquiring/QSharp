@@ -21,8 +21,8 @@ Build Tools:
   Platform make tool (make for gcc, nmake for msvc)
 
 Notes:
- - Requires self-managed memory control just like in C++ (see Object.Delete())
-   - Garbage collectors and Reference Counting create performance issues
+ - Supports either self-managed memory management like in C++ (see Object.Delete()) or the 'Boehm-Demers-Weiser' Garbage Collector
+   - Garbage collectors and Reference Counting often create performance issues
    - attribute [AutoMemoryPool] can be used on methods to automatically free all objects created during method when method returns
      - return value will not be freed
      - Object.Detach() can be used to "detach" an object from the auto release memory pool
