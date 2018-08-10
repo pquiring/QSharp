@@ -29,8 +29,8 @@ namespace Qt.Gui {
         public static void glBlendFunc(int sfactor, int dfactor) {CPP.Add("$q->glBlendFunc(sfactor, dfactor);");}
         public static void glBlendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {CPP.Add("$q->glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);");}
         public static void glBufferData(int target, int size, byte[] data, int usage) {CPP.Add("$q->glBufferData(target, size, $check(data, 0, size)->data(), usage);");}
-        public static void glBufferData(int target, int size, int[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size/4)->data(), usage);");}
-        public static void glBufferData(int target, int size, float[] data, int usage) {CPP.Add("$q->glBufferData(target, size*4, $check(data, 0, size/4)->data(), usage);");}
+        public static void glBufferData(int target, int size, int[] data, int usage) {CPP.Add("$q->glBufferData(target, size, $check(data, 0, size/4)->data(), usage);");}
+        public static void glBufferData(int target, int size, float[] data, int usage) {CPP.Add("$q->glBufferData(target, size, $check(data, 0, size/4)->data(), usage);");}
         public static void glBufferSubData(int target, int offset, int size, byte[] data) {CPP.Add("$q->glBufferSubData(target, offset, size, $check(data, 0, size/4)->data());");}
         public static int glCheckFramebufferStatus(int target) {return CPP.ReturnInt("$q->glCheckFramebufferStatus(target)");}
         public static void glClear(int mask) {CPP.Add("$q->glClear(mask);");}
