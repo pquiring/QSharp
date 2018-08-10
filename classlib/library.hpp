@@ -248,8 +248,8 @@ struct $class {
 };
 
 struct $QMutexHolder {
-  $QMutexHolder(std::qt_ptr<std::unique_lock<std::mutex>> lock) {this->lock = lock; lock->lock();}
-  std::qt_ptr<std::unique_lock<std::mutex>> lock;
+  $QMutexHolder(std::unique_lock<std::mutex> *lock) {this->lock = lock; lock->lock();}
+  std::unique_lock<std::mutex> *lock;
   bool signal = true;
   bool Condition() {return signal;}
   void Signal() {signal = false;}
