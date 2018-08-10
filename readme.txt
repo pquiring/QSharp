@@ -36,6 +36,7 @@ Notes:
 
 Garbage Collector:
  - please go to https://pquiring.github.io/QSharp/ to download source and pre-built library files.
+ - cs2cpp required option : --gc
 
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock
