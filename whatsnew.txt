@@ -4,6 +4,7 @@ What's new
 Aug 10, 2018 : 0.17
  - removed shared_ptr as it was extremely slow
  - tried to implement my own garbage collector called gc_ptr but still had performance issues
+ - removed all smart pointers and use raw pointers which fixed many issues
  - now supports either self-managed or garbage collected memory management
    - see Object.Delete() and [AutoMemoryPool] attribute to assist in self-managed methods
      or
