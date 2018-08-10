@@ -175,6 +175,7 @@ extern void $npe();  //NullPointerException
 extern void $abe();  //ArrayBoundsException
 extern void $abe(int idx, int size);  //ArrayBoundsException
 
+#ifndef QSHARP_NO_NPE_CHECKS
 template<typename T>
 T* $check(T* in) {
   if (in == nullptr) $npe();
@@ -186,6 +187,9 @@ T* $check(T* in, int idx, int length) {
   if (in == nullptr) $npe();
   return in;
 }
+#else
+#define $check(x,...) x
+#endif
 
 namespace std {
   //qt_ptr is a relaxed version of std::unique_ptr

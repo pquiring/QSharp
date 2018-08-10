@@ -36,6 +36,7 @@ namespace QSharpCompiler
         public static bool msvc = false;
         public static bool debug = false;
         public static bool gc = false;
+        public static bool no_npe_checks = false;
         public static List<string> refs = new List<string>();
         public static List<string> libs = new List<string>();
 
@@ -69,6 +70,8 @@ namespace QSharpCompiler
                 Console.WriteLine("      generate release or debug type");
                 Console.WriteLine("  --gc");
                 Console.WriteLine("      enable experimental support for 'Boehm-Demers-Weiser' Garbage Collector");
+                Console.WriteLine("  --no-npe-checks");
+                Console.WriteLine("      disable NPE checks");
                 return;
             }
 
@@ -112,6 +115,9 @@ namespace QSharpCompiler
                 }
                 if (arg == "--gc") {
                     gc = true;
+                }
+                if (arg == "--no-npe-checks") {
+                    no_npe_checks = true;
                 }
                 if (arg == "--ref") {
                     if (value.Length == 0) {
@@ -846,6 +852,9 @@ namespace QSharpCompiler
             }
             if (Program.gc) {
                 sb.Append("add_definitions(-DQSHARP_GC)\r\n");
+            }
+            if (Program.no_npe_checks) {
+                sb.Append("add_definitions(-DQSHARP_NO_NPE_CHECKS)\r\n");
             }
             sb.Append("include_directories(/usr/include/qt5)\r\n");
             sb.Append("include_directories(" + Program.home + "/include)\r\n");
