@@ -34,6 +34,9 @@ Notes:
  - currently cygwin/mingw support is not working until cygwin cmake is upgraded to at least 3.8
    - don't recommend mingw anyways, it's generated code is very slow compared to msvc
 
+Garbage Collector:
+ - please go to https://pquiring.github.io/QSharp/ to download source and pre-built library files.
+
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock
 
