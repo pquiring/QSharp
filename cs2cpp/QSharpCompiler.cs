@@ -1921,9 +1921,9 @@ namespace QSharpCompiler
                     }
                     SyntaxNode lockBlock = GetChildNode(node, 2);
                     string holder = "$lock" + cls.lockCnt++;
-                    method.Append("{$QMutexHolder " + holder + "(");
+                    method.Append("{$LockHolder " + holder + "(");
                     expressionNode(lockId, method);
-                    method.Append("->$value());"); // + holder + ".Condition();" + holder + ".Signal())");
+                    method.Append(");"); // + holder + ".Condition();" + holder + ".Signal())");
                     blockNode(lockBlock);
                     method.Append("}\r\n");
                     break;

@@ -251,15 +251,6 @@ struct $class {
   std::function<Qt::Core::Object*()> newInstance;
 };
 
-struct $QMutexHolder {
-  $QMutexHolder(std::unique_lock<std::mutex> *lock) {this->lock = lock; lock->lock();}
-  std::unique_lock<std::mutex> *lock;
-  bool signal = true;
-  bool Condition() {return signal;}
-  void Signal() {signal = false;}
-  ~$QMutexHolder() {lock->unlock();}
-};
-
 inline int $hash(Qt::Core::Object *obj) {
   union {Qt::Core::Object* ptr; int hash;} u;
   u.ptr = obj;
