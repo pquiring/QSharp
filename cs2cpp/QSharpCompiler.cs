@@ -1036,8 +1036,8 @@ namespace QSharpCompiler
             init.cls = cls;
             init.type.set("void");
             init.type.cls = cls;
-            init.type.primative = true;
-            init.type.Public = true;
+            init.type.isPrimative = true;
+            init.type.isPublic = true;
             init.name = "$init";
             init.type.setTypes();
             cls.methods.Add(init);
@@ -1152,17 +1152,17 @@ namespace QSharpCompiler
 
         private void getFlags(Flags flags, ISymbol symbol) {
             if (symbol == null) return;
-            flags.Static = symbol.IsStatic;
-            flags.Abstract = symbol.IsAbstract;
-            flags.Virtual = symbol.IsVirtual;
-            flags.Extern = symbol.IsExtern;
-            flags.Override = symbol.IsOverride;
-            flags.Definition = symbol.IsDefinition;
-            flags.Sealed = symbol.IsSealed;
+            flags.isStatic = symbol.IsStatic;
+            flags.isAbstract = symbol.IsAbstract;
+            flags.isVirtual = symbol.IsVirtual;
+            flags.isExtern = symbol.IsExtern;
+            flags.isOverride = symbol.IsOverride;
+            flags.isDefinition = symbol.IsDefinition;
+            flags.isSealed = symbol.IsSealed;
             Accessibility access = symbol.DeclaredAccessibility;
-            if (access == Accessibility.Private) flags.Private = true;
-            if (access == Accessibility.Protected) flags.Protected = true;
-            if (access == Accessibility.Public) flags.Public = true;
+            if (access == Accessibility.Private) flags.isPrivate = true;
+            if (access == Accessibility.Protected) flags.isProtected = true;
+            if (access == Accessibility.Public) flags.isPublic = true;
         }
 
         private void fieldNode(SyntaxNode node) {
@@ -1186,7 +1186,7 @@ namespace QSharpCompiler
         }
 
         private void fieldEquals(Variable v) {
-            if (field.Static) {
+            if (field.isStatic) {
                 if (cls.Namespace.Length > 0) {
                     v.Append(cls.Namespace);
                     v.Append("::");
@@ -1210,12 +1210,12 @@ namespace QSharpCompiler
             // type, ExplicitInterfaceSpecifier -> {...}
             field = new Field();
             field.cls = cls;
-            field.Property = true;
+            field.isProperty = true;
             Variable v = new Variable();
             field.variables.Add(v);  //property decl can only have 1 variable
             ISymbol symbol = file.model.GetDeclaredSymbol(node);
             v.name = symbol.Name;
-            field.Public = true;
+            field.isPublic = true;
             variableDeclaration(node, field);
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             foreach(var child in nodes) {
@@ -1228,9 +1228,9 @@ namespace QSharpCompiler
                                     method.type.CopyType(field);
                                     method.type.CopyFlags(field);
                                     method.type.setTypes();
-                                    method.type.Virtual = true;
-                                    if (cls.Abstract) method.type.Abstract = true;
-                                    if (method.src.Length == 0 && !cls.Abstract) {
+                                    method.type.isVirtual = true;
+                                    if (cls.isAbstract) method.type.isAbstract = true;
+                                    if (method.src.Length == 0 && !cls.isAbstract) {
                                         method.Append("{return " + v.name + ".$value;}");
                                     }
                                     field.get_Property = true;
@@ -1243,9 +1243,9 @@ namespace QSharpCompiler
                                     method.args.Add(arg);
                                     method.type.set("void");
                                     method.type.setTypes();
-                                    method.type.Virtual = true;
-                                    if (cls.Abstract) method.type.Abstract = true;
-                                    if (method.src.Length == 0 && !cls.Abstract) {
+                                    method.type.isVirtual = true;
+                                    if (cls.isAbstract) method.type.isAbstract = true;
+                                    if (method.src.Length == 0 && !cls.isAbstract) {
                                         method.Append("{" + v.name + ".$value = value;}");
                                     }
                                     field.set_Property = true;
@@ -1267,8 +1267,8 @@ namespace QSharpCompiler
                 method.type.CopyType(field);
                 method.type.CopyFlags(field);
                 method.type.setTypes();
-                method.type.Virtual = true;
-                if (cls.Abstract) method.type.Abstract = true;
+                method.type.isVirtual = true;
+                if (cls.isAbstract) method.type.isAbstract = true;
                 method.Append("{return " + v.name + ".$value;}");
                 cls.methods.Add(method);
             }
@@ -1282,8 +1282,8 @@ namespace QSharpCompiler
                 method.args.Add(arg);
                 method.type.set("void");
                 method.type.setTypes();
-                method.type.Virtual = true;
-                if (cls.Abstract) method.type.Abstract = true;
+                method.type.isVirtual = true;
+                if (cls.isAbstract) method.type.isAbstract = true;
                 method.Append("{" + v.name + ".$value = value;}");
                 cls.methods.Add(method);
             }
@@ -1325,8 +1325,8 @@ namespace QSharpCompiler
                                         SyntaxNode str = GetChildNode(arg);  //StringLiteralExpression
                                         String value = file.model.GetConstantValue(str).Value.ToString();
                                         method.replaceArgs = value;
-                                        method.type.Public = true;
-                                        method.type.Private = false;
+                                        method.type.isPublic = true;
+                                        method.type.isPrivate = false;
                                         break;
                                     }
                                     case "Qt::Core::AutoMemoryPool": {
@@ -1478,7 +1478,7 @@ namespace QSharpCompiler
             foreach(var child in nodes) {
                 switch (child.Kind()) {
                     case SyntaxKind.ArrayType:
-                        type.array = true;
+                        type.isArray = true;
                         variableDeclaration(child, type);
                         break;
                     case SyntaxKind.ArrayRankSpecifier:
@@ -1491,7 +1491,7 @@ namespace QSharpCompiler
                         }
                         break;
                     case SyntaxKind.PointerType:
-                        type.ptr = true;
+                        type.isPtr = true;
                         variableDeclaration(child, type);
                         break;
                     case SyntaxKind.PredefinedType:
@@ -1523,7 +1523,7 @@ namespace QSharpCompiler
             method.name = cls.name;
             method.type.set("");
             method.type.cls = cls;
-            method.type.primative = true;
+            method.type.isPrimative = true;
             method.ctor = true;
             cls.hasctor = true;
             if (node != null) {
@@ -1556,7 +1556,7 @@ namespace QSharpCompiler
                 method.src.Append("{$init();}");
             }
             method.type.setTypes();
-            if (method.cls.Abstract) return;
+            if (method.cls.isAbstract) return;
         }
 
         private void methodNode(SyntaxNode node, bool dtor, bool isDelegate, String name) {
@@ -1579,9 +1579,9 @@ namespace QSharpCompiler
             }
             getFlags(method.type, file.model.GetDeclaredSymbol(node));
             if (dtor) {
-                method.type.Protected = false;
-                method.type.Virtual = true;
-                method.type.Public = true;
+                method.type.isProtected = false;
+                method.type.isVirtual = true;
+                method.type.isPublic = true;
             }
             IEnumerable<SyntaxNode> nodes = node.ChildNodes();
             //nodes : [return type], parameter list, block
@@ -1604,7 +1604,7 @@ namespace QSharpCompiler
                         if (attributeListNode(child, method.type)) return;
                         break;
                     case SyntaxKind.ArrayType:
-                        method.type.array = true;
+                        method.type.isArray = true;
                         foreach(var arrayType in child.ChildNodes()) {
                             parameterNode(arrayType, method.type);
                         }
@@ -1650,7 +1650,7 @@ namespace QSharpCompiler
                     type.setTypes();
                     break;
                 case SyntaxKind.ArrayType:
-                    type.array = true;
+                    type.isArray = true;
                     parameterNode(GetChildNode(node), type);
                     IEnumerable<SyntaxNode> ranks = node.DescendantNodes();
                     foreach(var rank in ranks) {
@@ -1685,7 +1685,7 @@ namespace QSharpCompiler
             }
             if (top && method.automemorypool) {
                 method.Append("std::MemoryPool $pool;\r\n");
-                if (method.type.shared) {
+                if (method.type.isObject) {
                     method.Append(method.type.GetTypeDeclaration());
                     method.Append(" $ret;\r\n");
                 }
@@ -1715,7 +1715,7 @@ namespace QSharpCompiler
                     break;
                 case SyntaxKind.ReturnStatement:
                     SyntaxNode returnValue = GetChildNode(node);
-                    bool useValue = method.type.shared && method.automemorypool && returnValue != null;
+                    bool useValue = method.type.isObject && method.automemorypool && returnValue != null;
                     if (useValue) {
                         method.Append("$ret = ");
                     } else {
@@ -2448,7 +2448,7 @@ namespace QSharpCompiler
                 case SyntaxKind.DefaultExpression:
                     SyntaxNode defType = GetChildNode(node);
                     Type defSymbol = new Type(defType);
-                    if (defSymbol.shared)
+                    if (defSymbol.isObject)
                         ob.Append("nullptr");
                     else
                         ob.Append("0");
@@ -2730,7 +2730,7 @@ namespace QSharpCompiler
             //C++ dynamic_cast<type>(value)
             Type type = new Type(castType);
             String typestr = type.GetTypeDeclaration();
-            if (type.shared) {
+            if (type.isObject) {
                 ob.Append("dynamic_cast<");
                 ob.Append(typestr);
                 ob.Append(">");
@@ -2952,45 +2952,45 @@ namespace QSharpCompiler
 
     class Flags
     {
-        public bool Public;
-        public bool Private;
-        public bool Protected;
-        public bool Static;
-        public bool Abstract;
-        public bool Virtual;
-        public bool Extern;
-        public bool Override;
-        public bool Definition;
-        public bool Sealed;
+        public bool isPublic;
+        public bool isPrivate;
+        public bool isProtected;
+        public bool isStatic;
+        public bool isAbstract;
+        public bool isVirtual;
+        public bool isExtern;
+        public bool isOverride;
+        public bool isDefinition;
+        public bool isSealed;
         public string GetFlags(bool cls) {
             StringBuilder sb = new StringBuilder();
             //if (Public) sb.Append("public:");
             //if (Private) sb.Append("private:");
             //if (Protected) sb.Append("protected:");
             sb.Append("public:");
-            if (Static) sb.Append(" static");
-            if (Abstract) {
+            if (isStatic) sb.Append(" static");
+            if (isAbstract) {
                 if (!cls) {
-                    if (!Virtual) {
+                    if (!isVirtual) {
                         sb.Append(" virtual");
                     }
                 }
             }
-            if (Virtual) sb.Append(" virtual");
-            if (Extern) sb.Append(" extern");
+            if (isVirtual) sb.Append(" virtual");
+            if (isExtern) sb.Append(" extern");
             return sb.ToString();
         }
         public void CopyFlags(Flags src) {
-            Public = src.Public;
-            Private = src.Private;
-            Protected = src.Protected;
-            Static = src.Static;
-            Abstract = src.Abstract;
-            Virtual = src.Virtual;
-            Extern = src.Extern;
-            Override = src.Override;
-            Definition = src.Definition;
-            Sealed = src.Sealed;
+            isPublic = src.isPublic;
+            isPrivate = src.isPrivate;
+            isProtected = src.isProtected;
+            isStatic = src.isStatic;
+            isAbstract = src.isAbstract;
+            isVirtual = src.isVirtual;
+            isExtern = src.isExtern;
+            isOverride = src.isOverride;
+            isDefinition = src.isDefinition;
+            isSealed = src.isSealed;
         }
     }
 
@@ -3164,7 +3164,7 @@ namespace QSharpCompiler
                     }
                 }
             }
-            if (_new == null || Abstract) {
+            if (_new == null || isAbstract) {
                 sb.Append(",[] () {return nullptr;}");
             } else {
                 sb.Append(",[] () {return new " + this.Namespace + "::" + this.fullname + "();}");
@@ -3237,14 +3237,14 @@ namespace QSharpCompiler
                         }
                         foreach(var field in fields) {
                             foreach(var v in field.variables) {
-                                if (v.Length() > 0 && !field.Static) {
+                                if (v.Length() > 0 && !field.isStatic) {
                                     sb.Append(v.src);
                                 }
                             }
                         }
                         sb.Append("}\r\n");
                     } else {
-                        if (!method.type.Abstract) sb.Append(method.src);
+                        if (!method.type.isAbstract) sb.Append(method.src);
                     }
                 }
                 sb.Append(";\r\n");
@@ -3258,10 +3258,10 @@ namespace QSharpCompiler
         public void GetInnerStaticFields(StringBuilder sb) {
             foreach(var inner in inners) {
                 foreach(var field in inner.fields) {
-                    if (!field.Static) continue;
+                    if (!field.isStatic) continue;
                     foreach(var v in field.variables) {
                         sb.Append(field.GetTypeDeclaration() + " " + inner.fullname + "::" + v.name);
-                        if (field.IsNumeric()) {
+                        if (field.isNumeric) {
                             sb.Append("= 0;\r\n");
                         }  else {
                             sb.Append(";\r\n");
@@ -3274,7 +3274,7 @@ namespace QSharpCompiler
         public void GetInnerStaticFieldsInit(StringBuilder sb) {
             foreach(var inner in inners) {
                 foreach(var field in inner.fields) {
-                    if (!field.Static) continue;
+                    if (!field.isStatic) continue;
                     foreach(var v in field.variables) {
                         sb.Append(v.src);
                     }
@@ -3285,10 +3285,10 @@ namespace QSharpCompiler
         public string GetStaticFields() {
             StringBuilder sb = new StringBuilder();
             foreach(var field in fields) {
-                if (!field.Static) continue;
+                if (!field.isStatic) continue;
                 foreach(var v in field.variables) {
                     sb.Append(field.GetTypeDeclaration() + " " + name + "::" + v.name);
-                    if (field.IsNumeric()) {
+                    if (field.isNumeric) {
                         sb.Append("= 0;\r\n");
                     }  else {
                         sb.Append(";\r\n");
@@ -3301,7 +3301,7 @@ namespace QSharpCompiler
         public string GetStaticFieldsInit() {
             StringBuilder sb = new StringBuilder();
             foreach(var field in fields) {
-                if (!field.Static) continue;
+                if (!field.isStatic) continue;
                 foreach(var v in field.variables) {
                     sb.Append(v.src);
                 }
@@ -3315,12 +3315,12 @@ namespace QSharpCompiler
                 if (omitBodies) continue;
                 if (method.isDelegate) continue;
                 if (method.omitBody) continue;
-                if (method.type.Abstract) {
+                if (method.type.isAbstract) {
                     //C++ allows abstract methods to be defined and can be called
                     //need to add return 0/nullptr unless type == void
                     if (method.type.GetCSType() == "void") {
                         //do nothing
-                    } else if (method.type.primative) {
+                    } else if (method.type.isPrimative) {
                         method.Append("{return 0;}");
                     } else {
                         method.Append("{return nullptr;}");
@@ -3354,7 +3354,7 @@ namespace QSharpCompiler
                     }
                     foreach(var field in method.cls.fields) {
                         foreach(var v in field.variables) {
-                            if (v.Length() > 0 && !field.Static) {
+                            if (v.Length() > 0 && !field.isStatic) {
                                 sb.Append(v.src);
                             }
                         }
@@ -3381,12 +3381,12 @@ namespace QSharpCompiler
         public SyntaxNode node;
         public ISymbol symbol, declSymbol;
         public ITypeSymbol typeSymbol;
-        public bool primative;
-        public bool numeric;
-        public bool array;
+        public bool isPrimative;
+        public bool isNumeric;
+        public bool isArray;
         public int arrays;  //# of dimensions
-        public bool shared;
-        public bool ptr;  //unsafe pointer
+        public bool isObject;
+        public bool isPtr;  //unsafe pointer
         public Class cls;
 
         public virtual bool isField() {return false;}
@@ -3410,12 +3410,12 @@ namespace QSharpCompiler
             symbol = src.symbol;
             declSymbol = src.declSymbol;
             typeSymbol = src.typeSymbol;
-            primative = src.primative;
-            numeric = src.numeric;
-            array = src.array;
+            isPrimative = src.isPrimative;
+            isNumeric = src.isNumeric;
+            isArray = src.isArray;
             arrays = src.arrays;
-            shared = src.shared;
-            ptr = src.ptr;
+            isObject = src.isObject;
+            isPtr = src.isPtr;
             cls = src.cls;
         }
         public void set(String sym) {
@@ -3428,7 +3428,7 @@ namespace QSharpCompiler
         public void set(SyntaxNode node, bool useName = false) {
             this.node = node;
             while (node.Kind() == SyntaxKind.ArrayType) {
-                array = true;
+                isArray = true;
                 foreach(var child in node.ChildNodes()) {
                     if (child.Kind() == SyntaxKind.ArrayRankSpecifier) {
                         arrays++;
@@ -3492,9 +3492,9 @@ namespace QSharpCompiler
             switch (type) {
                 case "":
                 case "void":
-                    primative = true;
-                    numeric = false;
-                    shared = false;
+                    isPrimative = true;
+                    isNumeric = false;
+                    isObject = false;
                     break;
                 case "bool":
                 case "byte":
@@ -3508,31 +3508,25 @@ namespace QSharpCompiler
                 case "char":
                 case "float":
                 case "double":
-                    primative = true;
-                    numeric = true;
-                    shared = false;
+                    isPrimative = true;
+                    isNumeric = true;
+                    isObject = false;
                     break;
                 default:
-                    primative = false;
-                    shared = true;
+                    isPrimative = false;
+                    isObject = true;
                     switch (typekind) {
-                        case TypeKind.Delegate: shared = false; break;
-                        case TypeKind.Enum: shared = false; break;
-                        case TypeKind.TypeParameter: shared = false; break;
+                        case TypeKind.Delegate: isObject = false; break;
+                        case TypeKind.Enum: isObject = false; break;
+                        case TypeKind.TypeParameter: isObject = false; break;
                     }
                     if (node != null) {
                         switch (node.Kind()) {
-                            case SyntaxKind.TypeParameter: shared = false; break;
+                            case SyntaxKind.TypeParameter: isObject = false; break;
                         }
                     }
                     break;
             }
-        }
-        public bool IsNumeric() {
-            return numeric;
-        }
-        public bool isPrimative() {
-            return primative;
         }
         public bool isDelegate() {
             return typekind == TypeKind.Delegate;
@@ -3595,7 +3589,7 @@ namespace QSharpCompiler
                 }
             }
             sb.Append(GetCPPType());
-            if (ptr || shared) sb.Append("*");
+            if (isPtr || isObject) sb.Append("*");
             if (inc_arrays && arrays > 0) {
                 for(int a=0;a<arrays;a++) {
                     if (a > 0) sb.Append("*");
@@ -3632,7 +3626,7 @@ namespace QSharpCompiler
     {
         public override bool isField() {return true;}
         public List<Variable> variables = new List<Variable>();
-        public bool Property;
+        public bool isProperty;
         public bool get_Property;
         public bool set_Property;
 
@@ -3640,14 +3634,14 @@ namespace QSharpCompiler
             StringBuilder sb = new StringBuilder();
             foreach(var v in variables) {
                 sb.Append(GetFlags(false));
-                if (Property) {
+                if (isProperty) {
                     sb.Append(" Qt::QSharp::Property<");
                 }
-                if (array) {
+                if (isArray) {
                     sb.Append(" ");
                     sb.Append(GetTypeDeclaration());
                     sb.Append(" ");
-                    if (Property) {
+                    if (isProperty) {
                         sb.Append(">");
                     }
                     sb.Append(v.name);
@@ -3655,13 +3649,13 @@ namespace QSharpCompiler
                     sb.Append(" ");
                     sb.Append(GetTypeDeclaration());
                     sb.Append(" ");
-                    if (Property) {
+                    if (isProperty) {
                         sb.Append(">");
                     }
                     sb.Append(v.name);
                 }
-                if (!Static && !Property) {
-                    if (shared) {
+                if (!isStatic && !isProperty) {
+                    if (isObject) {
                         sb.Append(" = nullptr");
                     } else {
                         sb.Append(" = 0");
@@ -3726,7 +3720,7 @@ namespace QSharpCompiler
                 sb.Append(">");  //$delegate");
                 sb.Append(name);
             }
-            if (type.Abstract) sb.Append("=0" + ";\r\n");
+            if (type.isAbstract) sb.Append("=0" + ";\r\n");
             return sb.ToString();
         }
     }
