@@ -32,7 +32,7 @@ namespace Qt.QSharp {
     public class FixedArray<T> : IEnumerable<T> {
         public int Length {get {return CPP.ReturnInt("length");}}
         public FixedArray(int size) {
-            CPP.Add("$init(); if (size < 0) $abe(); t = new T[size]; alloced = true;");
+            CPP.Add("$init(); if (size < 0) $abe(); t = new T[size]; length = size; alloced = true;");
         }
         [CPPReplaceArgs("T *buf, int size")]
         private FixedArray(NativeArg1 arg, int size) {
