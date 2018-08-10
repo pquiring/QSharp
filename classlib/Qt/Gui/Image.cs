@@ -36,10 +36,17 @@ namespace Qt.Gui {
         }
         public int GetWidth() {return CPP.ReturnInt("$q->width()");}
         public int GetHeight() {return CPP.ReturnInt("$q->height()");}
+        private void Convert() {
+            CPP.Add("if ($q->format() == QImage::Format_ARGB32) return;");
+            CPP.Add("QImage newImage = $q->convertToFormat(QImage::Format_ARGB32);");
+            CPP.Add("delete $q.get();");
+            CPP.Add("$q = new QImage(newImage);");
+        }
         public bool Load(String file, String fmt = null) {
             bool ok = false;
             CPP.Add("ok = $q->load($check(file)->qstring(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
             if (ok) {
+                Convert();
                 GetPtr();
             }
             return ok;
@@ -48,6 +55,7 @@ namespace Qt.Gui {
             bool ok = false;
             CPP.Add("ok = $q->load($check(io)->$q.get(), fmt == nullptr ? nullptr : fmt->cstring().constData());");
             if (ok) {
+                Convert();
                 GetPtr();
             }
             return ok;
