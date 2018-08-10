@@ -37,8 +37,8 @@ Notes:
 Garbage Collector:
  - experimental support for the 'Boehm-Demers-Weiser' Garbage Collector
  - cs2cpp required option : --gc
- - source code : https://pquiring.github.io/QSharp/gc-7.2.2.tar.gz
- - binary for msvc x64 : https://pquiring.github.io/QSharp/gc-7.2.2-msvc-x64.zip
+ - source code : https://pquiring.github.io/QSharp/gc-7.6.6.tar.gz
+ - binary for msvc x64 : https://pquiring.github.io/QSharp/gc-7.6.6-msvc-x64.zip
 
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock
