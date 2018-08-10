@@ -2456,7 +2456,7 @@ namespace QSharpCompiler
                 case SyntaxKind.TypeOfExpression:
                     SyntaxNode typeOf = GetChildNode(node);
                     Type typeSymbol = new Type(typeOf);
-                    ob.Append("Qt::Core::Type(&$class_" + typeSymbol.Get_Symbol() + ")");
+                    ob.Append("new Qt::Core::Type(&$class_" + typeSymbol.Get_Symbol() + ")");
                     break;
                 case SyntaxKind.IsExpression:
                     SyntaxNode isObj = GetChildNode(node, 1);
@@ -2465,13 +2465,13 @@ namespace QSharpCompiler
                     expressionNode(isObj, ob);
                     ob.Append("->GetType()");
                     ob.Append("->IsDerivedFrom(");
-                    ob.Append("Qt::Core::Type(&$class_" + isTypeType.Get_Symbol() + "))");
+                    ob.Append("new Qt::Core::Type(&$class_" + isTypeType.Get_Symbol() + "))");
                     break;
                 case SyntaxKind.AsExpression:
                     SyntaxNode asObj = GetChildNode(node, 1);
                     SyntaxNode asType = GetChildNode(node, 2);
                     Type asTypeType = new Type(asType);
-                    ob.Append("(Qt::Core::Type(&$class_" + asTypeType.Get_Symbol() + ")");
+                    ob.Append("(new Qt::Core::Type(&$class_" + asTypeType.Get_Symbol() + ")");
                     ob.Append("->IsDerivedFrom(");
                     expressionNode(asObj, ob);
                     ob.Append("->GetType()) ? dynamic_cast<" + asTypeType.Get_Symbol() + ">(");
