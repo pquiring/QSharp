@@ -3660,6 +3660,13 @@ namespace QSharpCompiler
                     }
                     sb.Append(v.name);
                 }
+                if (!Static && !Property) {
+                    if (shared) {
+                        sb.Append(" = nullptr");
+                    } else {
+                        sb.Append(" = 0");
+                    }
+                }
                 sb.Append(";\r\n");
             }
             return sb.ToString();
