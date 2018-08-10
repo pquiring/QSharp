@@ -35,8 +35,10 @@ Notes:
    - don't recommend mingw anyways, it's generated code is very slow compared to msvc
 
 Garbage Collector:
- - please go to https://pquiring.github.io/QSharp/ to download source and pre-built library files.
+ - experimental support for the 'Boehm-Demers-Weiser' Garbage Collector
  - cs2cpp required option : --gc
+ - source code : https://pquiring.github.io/QSharp/gc-7.2.2.tar.gz
+ - binary for msvc x64 : https://pquiring.github.io/QSharp/gc-7.2.2-msvc-x64.zip
 
 C# features that differ:
  - lock () {} only works with Qt.Core.ThreadLock
@@ -122,7 +124,9 @@ To add reference to another library:
 To test C# compilation (not really necessary) (the /clp:NoSummary option avoids outputting errors/warnings twice)
   dotnet build /clp:NoSummary
 
-WebSite : github.com/pquiring/qsharp
+GitHub : https://github.com/pquiring/qsharp
+
+GitHub Pages : https://pquiring.github.io/QSharp/
 
 Author : Peter Quiring (pquiring@gmail.com)
 
