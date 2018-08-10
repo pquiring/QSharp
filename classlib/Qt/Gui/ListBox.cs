@@ -32,17 +32,17 @@ namespace Qt.Gui {
         }
         public String[] GetSelectedItems() {
             CPP.Add("QList<QListWidgetItem*> list = $q->selectedItems();");
-            CPP.Add("Qt::QSharp::FixedArray1D<Qt::Core::String*>* array;");
+            CPP.Add("Qt::QSharp::FixedArray<Qt::Core::String*>* array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("array = new Qt::QSharp::FixedArray1D<Qt::Core::String*>(cnt);");
+            CPP.Add("array = new Qt::QSharp::FixedArray<Qt::Core::String*>(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = new Qt::Core::String(list[idx]->text());}");
             return (String[])CPP.ReturnObject("array");
         }
         public int[] GetSelectedIndexes() {
             CPP.Add("QModelIndexList list = $q->selectionModel()->selectedIndexes();");
-            CPP.Add("Qt::QSharp::FixedArray1D<int>* array;");
+            CPP.Add("Qt::QSharp::FixedArray<int>* array;");
             CPP.Add("int cnt = list.count();");
-            CPP.Add("array = new Qt::QSharp::FixedArray1D<int>(cnt);");
+            CPP.Add("array = new Qt::QSharp::FixedArray<int>(cnt);");
             CPP.Add("for(int idx=0;idx<cnt;idx++) {array->at(idx) = list[idx].row();}");
             return (int[])CPP.ReturnObject("array");
         }

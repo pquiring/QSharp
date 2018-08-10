@@ -115,14 +115,14 @@ Qt::Core::String* $addstr(double x, Qt::Core::String* s2) {
 
 //QStringList <-> String[] conversions
 
-Qt::QSharp::FixedArray1D<Qt::Core::String*>* $QStringListToStringArray(QStringList list) {
+Qt::QSharp::FixedArray<Qt::Core::String*>* $QStringListToStringArray(QStringList list) {
   int cnt = list.count();
-  Qt::QSharp::FixedArray1D<Qt::Core::String*>* array = new Qt::QSharp::FixedArray1D<Qt::Core::String*>(cnt);
+  Qt::QSharp::FixedArray<Qt::Core::String*>* array = new Qt::QSharp::FixedArray<Qt::Core::String*>(cnt);
   for(int idx=0;idx<cnt;idx++) {array->at(idx) = new Qt::Core::String(list[idx]);}
   return array;
 }
 
-QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray1D<Qt::Core::String*>* array) {
+QStringList $StringArrayToQStringList(Qt::QSharp::FixedArray<Qt::Core::String*>* array) {
   QStringList list;
   int cnt = array->Length;
   for(int idx=0;idx<cnt;idx++) {list.append(array->at(idx)->qstring());}

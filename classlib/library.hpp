@@ -204,60 +204,6 @@ namespace std {
   };
 }
 
-namespace Qt { namespace QSharp {
-  template<typename T>
-  struct FixedData {
-    T *t;
-    int length;
-    bool alloced;
-    FixedData(int size) {
-      t = new T[size];
-      if (sizeof(T) <= 8) {
-        //clear primative data types only
-        std::memset(t, 0, size * sizeof(T));
-      }
-      length = size;
-      alloced = true;
-    }
-    FixedData(T *buf, int size) {
-      t = buf;
-      length = size;
-      alloced = false;	
-    }
-    FixedData(T *buf, int size, bool copy) {
-      if (copy) {
-        t = new T[size];
-        std::memcpy(t, buf, size * sizeof(T));
-        length = size;
-        alloced = true;
-      } else {
-        t = buf;
-        length = size;
-        alloced = false;	
-      }
-    }
-    FixedData(std::initializer_list<T> list) {
-      length = (int)list.size();
-      t = new T[length];
-      alloced = true;
-      const T *src = list.begin();
-      for(int a=0;a<length;a++) {
-        t[a] = src[a];
-      }
-    }
-    T& operator[](int idx) {
-      return t[idx];
-    }
-    ~FixedData() {
-      if (alloced) {
-        delete[] t;
-        t = nullptr;
-        alloced = false;
-      }
-    }
-  };
-}}
-
 //reflection data
 struct $field {
   $field(const char *name) {

@@ -804,7 +804,7 @@ namespace QSharpCompiler
 
         private String writeInvokeMain(String name) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Qt::QSharp::FixedArray1D<Qt::Core::String*> *args = new Qt::QSharp::FixedArray1D<Qt::Core::String*>(argc-1);\r\n");
+            sb.Append("Qt::QSharp::FixedArray<Qt::Core::String*> *args = new Qt::QSharp::FixedArray<Qt::Core::String*>(argc-1);\r\n");
             sb.Append("for(int a=1;a<argc;a++) {args->at(a-1) = new Qt::Core::String(argv[a]);}\r\n");
             if (!Program.debug) {
                 sb.Append("try {\r\n");
@@ -2498,25 +2498,30 @@ namespace QSharpCompiler
 
         private void arrayInitNode(SyntaxNode node, OutputBuffer ob, String type, int dims) {
             IEnumerable<SyntaxNode> list = node.ChildNodes();
-            bool first = true;
-            if (dims < 1 || dims > 3) {
-                Console.WriteLine("Error:Array Dimensions not supported:" + dims);
-                WriteFileLine(node);
-                errors++;
-            }
-            ob.Append("new Qt::QSharp::FixedArray" + dims + "D<");
-            ob.Append(type);
-            ob.Append(">");
-            ob.Append("(std::initializer_list<");
-            dims--;
-            if (dims > 0) {
-                ob.Append("Qt::QSharp::FixedArray" + dims + "D<");
+            ob.Append(" new ");
+            for(int a=0;a<dims;a++) {
+                ob.Append("Qt::QSharp::FixedArray<");
             }
             ob.Append(type);
-            if (dims > 0) {
+            for(int a=0;a<dims;a++) {
+                if (a > 0) ob.Append("*");
                 ob.Append(">");
             }
+            ob.Append("(std::initializer_list<");
+            dims--;
+            for(int a=0;a<dims;a++) {
+                ob.Append("Qt::QSharp::FixedArray<");
+            }
+            ob.Append(type);
+            for(int a=0;a<dims;a++) {
+                if (a > 0) ob.Append("*");
+                ob.Append(">");
+            }
+            if (dims > 0) {
+                ob.Append("*");
+            }
             ob.Append(">{");
+            bool first = true;
             foreach(var elem in list) {
                 if (!first) ob.Append(","); else first = false;
                 expressionNode(elem, ob);
@@ -2779,16 +2784,22 @@ namespace QSharpCompiler
                 arrayInitNode(initList, ob, dataType.GetTypeDeclaration(false), dims);
                 return;
             }
-            if (typeNode == null || sizeNode == null) {
+            if (typeNode == null || sizeNode == null || dims == 0) {
                 Console.WriteLine("Error:Invalid ArrayCreationExpression : " + typeNode + " : " + sizeNode);
                 WriteFileLine(node);
                 errors++;
                 return;
             }
-            ob.Append("new Qt::QSharp::FixedArray" + dims + "D<");
+            ob.Append(" new ");
+            for(int a=0;a<dims;a++) {
+                ob.Append("Qt::QSharp::FixedArray<");
+            }
             Type type = new Type(typeNode);
             ob.Append(type.GetTypeDeclaration());
-            ob.Append(">");
+            for(int a=0;a<dims;a++) {
+                if (a > 0) ob.Append("*");
+                ob.Append(">");
+            }
             ob.Append("(");
             expressionNode(sizeNode, ob);
             ob.Append(")");
@@ -3579,12 +3590,18 @@ namespace QSharpCompiler
         public string GetTypeDeclaration(bool inc_arrays = true) {
             StringBuilder sb = new StringBuilder();
             if (inc_arrays && arrays > 0) {
-                sb.Append("Qt::QSharp::FixedArray" + arrays + "D<");
+                for(int a=0;a<arrays;a++) {
+                    sb.Append("Qt::QSharp::FixedArray<");
+                }
             }
             sb.Append(GetCPPType());
             if (ptr || shared) sb.Append("*");
             if (inc_arrays && arrays > 0) {
-                sb.Append(">*");
+                for(int a=0;a<arrays;a++) {
+                    if (a > 0) sb.Append("*");
+                    sb.Append(">");
+                }
+                sb.Append("*");
             }
             return sb.ToString();
         }
