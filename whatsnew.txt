@@ -2,9 +2,13 @@ What's new
 ==========
 
 Aug 10, 2018 : 0.17
+ - removed shared_ptr as it was extremely slow
+ - tried to implement my own garbage collector called gc_ptr but still had performance issues
  - now supports either self-managed or garbage collected memory management
-   - see [AutoMemoryPool] to assist self-managed methods
- - new mutex that is both recursive and allows wait() and notfiy() functions
+   - see Object.Delete() and [AutoMemoryPool] attribute to assist in self-managed methods
+     or
+   - requires the 'Boehm-Demers-Weiser' Garbage Collector
+ - new mutex that is both recursive and allows wait() and notify() functions
  - removed ffmpeg, will use Qt Media instead
  - many bugs fixed
 

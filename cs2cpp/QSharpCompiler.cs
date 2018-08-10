@@ -3164,7 +3164,7 @@ namespace QSharpCompiler
                     }
                 }
             }
-            if (_new == null) {
+            if (_new == null || Abstract) {
                 sb.Append(",[] () {return nullptr;}");
             } else {
                 sb.Append(",[] () {return new " + this.Namespace + "::" + this.fullname + "();}");
