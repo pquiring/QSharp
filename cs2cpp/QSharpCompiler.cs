@@ -2214,8 +2214,9 @@ namespace QSharpCompiler
                         ob.Append("::");
                         expressionNode(right, ob, true);
                     } else {
+                        ob.Append("$check(");
                         expressionNode(left, ob);
-                        ob.Append("->");
+                        ob.Append(")->");
                         expressionNode(right, ob, true);
                     }
                     break;
