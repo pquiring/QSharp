@@ -93,6 +93,8 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QLocalSocket>
+#include <QtNetwork/QLocalServer>
 
 #include <QtWebSockets/QWebSocket>
 #include <QtWebSockets/QWebSocketServer>
