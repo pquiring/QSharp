@@ -88,11 +88,17 @@ namespace Qt.Core {
         public Compress(ByteArrayStream input) {
             CPP.Add("$base(new QuaZIODevice($check(input)->$value()));");
         }
+        public void Flush() {
+            CPP.Add("$d()->flush();");
+        }
     }
     [CPPClass("QuaZIODevice* $d() {return dynamic_cast<QuaZIODevice*>($q.get());}")]
     public class Decompress : IOStream {
         public Decompress(ByteArrayStream input) {
             CPP.Add("$base(new QuaZIODevice($check(input)->$value()));");
+        }
+        public void Flush() {
+            CPP.Add("$d()->flush();");
         }
     }
 }
