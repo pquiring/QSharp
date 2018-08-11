@@ -83,6 +83,21 @@ namespace Qt.Core {
         }
         public void Reset() {}
     }
+    /** Compress IOStream
+
+    Example:
+
+    byte[] compress(byte[] input) {
+        ByteArrayStream bas = new ByteArrayStream(2048);
+        bas.Open(OpenMode.WriteOnly);
+        Compress compress = new Compress(bas);
+        compress.Open(OpenMode.WriteOnly);
+        compress.Write(input);
+        compress.Flush();
+        return bas.GetData().ToArray(bas.GetPosition());
+    }
+
+     */
     [CPPClass("QuaZIODevice* $d() {return dynamic_cast<QuaZIODevice*>($q.get());}")]
     public class Compress : IOStream {
         public Compress(ByteArrayStream input) {
@@ -92,13 +107,22 @@ namespace Qt.Core {
             CPP.Add("$d()->flush();");
         }
     }
+    /** Decompress IOStream
+
+    Example:
+
+    byte[] decompress(byte[] input) {
+        ByteArrayStream bas = new ByteArrayStream(input);
+        byte[] output = new byte[1024];
+        int size = Decompress.Read(output);
+        return Arrays<byte>.CopyOf(output, 0, size);
+    }
+
+     */
     [CPPClass("QuaZIODevice* $d() {return dynamic_cast<QuaZIODevice*>($q.get());}")]
     public class Decompress : IOStream {
         public Decompress(ByteArrayStream input) {
             CPP.Add("$base(new QuaZIODevice($check(input)->$value()));");
-        }
-        public void Flush() {
-            CPP.Add("$d()->flush();");
         }
     }
 }

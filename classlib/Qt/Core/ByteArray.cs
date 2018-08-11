@@ -9,6 +9,9 @@ namespace Qt.Core {
         public ByteArray() {
             CPP.Add("$q = new QByteArray();");
         }
+        public ByteArray(int size) {
+            CPP.Add("$q = new QByteArray(size, (char)0);");
+        }
         public ByteArray(byte[] array) {
             CPP.Add("$check(array);");
             CPP.Add("int length = array->Length;");
@@ -39,8 +42,16 @@ namespace Qt.Core {
         public byte[] ToArray() {
             return (byte[])CPP.ReturnObject("new Qt::QSharp::FixedArray<uint8>((uint8*)$q->data(), $q->size(), true)");
         }
+        public byte[] ToArray(int size) {
+            int bufsiz = GetSize();
+            if (size > bufsiz) size = bufsiz;
+            return (byte[])CPP.ReturnObject("new Qt::QSharp::FixedArray<uint8>((uint8*)$q->data(), size, true)");
+        }
         public void Clear() {
             CPP.Add("$q->clear();");
+        }
+        public int GetSize() {
+            return CPP.ReturnInt("$q->size()");
         }
         public void SetSize(int size) {
             CPP.Add("$q->resize(size);");
