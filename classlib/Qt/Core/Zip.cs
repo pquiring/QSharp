@@ -113,7 +113,10 @@ namespace Qt.Core {
 
     byte[] decompress(byte[] input) {
         ByteArrayStream bas = new ByteArrayStream(input);
+        bas.Open(OpemMode.ReadOnly);
         byte[] output = new byte[1024];
+        Decompress decompress = new Decompress(bas);
+        decompress.Open(OpenMode.ReadOnly);
         int size = Decompress.Read(output);
         return Arrays<byte>.CopyOf(output, 0, size);
     }
