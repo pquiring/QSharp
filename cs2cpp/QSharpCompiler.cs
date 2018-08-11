@@ -580,7 +580,7 @@ namespace QSharpCompiler
             int cnt = clss.Count;
             for(int idx1=0;idx1<cnt;idx1++) {
                 Class cls1 = clss[idx1];
-                if (cls1.nsfullname == "Qt::QSharp::FixedChecks") {
+                if (cls1.nsfullname == "Qt::Core::ThreadLock") {
                     clss.RemoveAt(idx1);
                     clss.Insert(0, cls1);
                     break;
@@ -3327,13 +3327,13 @@ namespace QSharpCompiler
                 if (method.omitBody) continue;
                 if (method.type.isAbstract) {
                     //C++ allows abstract methods to be defined and can be called
-                    //need to add return 0/nullptr unless type == void
+                    //Need to invoke virtual function without scope specifier (BUG : Need to remove scope specifier in the first place)
                     if (method.type.GetCSType() == "void") {
-                        //do nothing
+                        method.Append("{" + method.name + method.GetArgsNames() + ";}");
                     } else if (method.type.isPrimative) {
-                        method.Append("{return 0;}");
+                        method.Append("{return " + method.name + method.GetArgsNames() + ";}");
                     } else {
-                        method.Append("{return nullptr;}");
+                        method.Append("{return " + method.name + method.GetArgsNames() + ";}");
                     }
                 }
                 if (method.version != null) {
@@ -3555,11 +3555,11 @@ namespace QSharpCompiler
                 case "long": return "int64";
                 case "ulong": return "uint64";
                 case "char": return "char16";
-                case "string": return "Qt::Core::String";
+                case "string":
                 case "System::string":
                 case "Qt::Core::string":
                     return "Qt::Core::String";
-                case "object": return "Qt::Core::Object";
+                case "object":
                 case "System::object":
                 case "Qt::Core::object":
                     return "Qt::Core::Object";
@@ -3713,6 +3713,17 @@ namespace QSharpCompiler
                         sb.Append(arg.name.src.ToString());
                     }
                 }
+            }
+            sb.Append(")");
+            return sb.ToString();
+        }
+        public string GetArgsNames() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("(");
+            bool first = true;
+            foreach(var arg in args) {
+                if (!first) sb.Append(","); else first = false;
+                sb.Append(arg.name.name);
             }
             sb.Append(")");
             return sb.ToString();
