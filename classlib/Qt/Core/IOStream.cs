@@ -12,12 +12,12 @@ namespace Qt.Core {
         public bool Open(OpenMode mode) {return CPP.ReturnBool("$q->open((QIODevice::OpenMode)mode)");}
         public void Close() {CPP.Add("$q->close();");}
         public int Read(byte[] data, int offset = 0, int length = -1) {
-            if (length == -1) length = data.Length;
+            if (length == -1) length = data.Length - offset;
             CPP.Add("$check(data, offset, length);");
             return CPP.ReturnInt("$q->read((char*)data->data() + offset, length)");
         }
         public int Write(byte[] data, int offset = 0, int length = -1) {
-            if (length == -1) length = data.Length;
+            if (length == -1) length = data.Length - offset;
             CPP.Add("$check(data, offset, length);");
             return CPP.ReturnInt("$q->write((char*)data->data() + offset, length)");
         }
@@ -30,15 +30,17 @@ namespace Qt.Core {
         public ByteArray ReadAll() {
             return (ByteArray)CPP.ReturnObject("new ByteArray($q->readAll())");
         }
-        public bool ReadAll(byte[] buf, int pos = 0, int length = -1) {
+        public int ReadAll(byte[] buf, int pos = 0, int length = -1) {
             if (length == -1) length = buf.Length - pos;
+            int total = 0;
             while (length > 0) {
                 int read = Read(buf, pos, length);
-                if (read < 0) return false;
+                if (read <= 0) return total;
                 pos += read;
                 length -= read;
+                total += read;
             }
-            return true;
+            return total;
         }
         public int GetAvailable() {
             return CPP.ReturnInt("$q->bytesAvailable()");
