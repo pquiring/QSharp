@@ -394,7 +394,7 @@ void Vector<T>::add(int idx, T value) {
 template <class T>
 T Vector<T>::removeAt(int idx) {
   T ret = data[idx];
-  data.remove(data.begin() + idx);
+  data.erase(data.begin() + idx);
   return ret;
 }
 
@@ -516,6 +516,7 @@ class Map {
         if (sort(p->k, k) == 0) {
           pairs.removeAt(a);
           delete p;
+          return;
         }
       }
     }
