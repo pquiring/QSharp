@@ -11,7 +11,7 @@ namespace Qt.Network {
         private ByteArray data;
         private WebMethod method = WebMethod.Get;
         private Url url;
-        private Map<String, String> args = new Map<String, String>();
+        private Map<String, String> args = new Map<String, String>((String k1, String k2) => {return 0;});
         public WebRequest(Url url) {
             SetUrl(url);
         }

@@ -51,7 +51,7 @@ public class Tag {
     private Timer timer;
     private Reader reader;
     private TagListener listener;
-    private Map<String, Object> user = new Map<String, Object>();
+    private Map<String, Object> user = new Map<String, Object>((String k1, String k2) => {return 0;});
     private Tag parent;
     private int childIdx;
     private ThreadLock tlock = new ThreadLock();

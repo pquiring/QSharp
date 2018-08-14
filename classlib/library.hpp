@@ -149,6 +149,8 @@ namespace Qt { namespace Network {
 
 namespace Qt { namespace QSharp {
   template<typename T>
+  struct FixedArray;
+  template<typename T>
   struct Property {
     T $value;
     std::function<T(void)> _get;
@@ -458,5 +460,74 @@ template <class T>
 T* Vector<T>::get() {
   return data.data();
 }
+
+template <class K, class V>
+class Map {
+  private:
+    struct Pair {K k; V v;};
+    Vector<Pair*> pairs;
+  public:
+    typedef std::function<int(K k1,K k2)> sortType;
+    sortType sort;
+    Map(sortType sort) {this->sort = sort;}
+    //TODO : create a fast find() function and keep pairs sorted
+    void insert(K k, V v) {
+      int size = pairs.size();
+      for(int a=0;a<size;a++) {
+        Pair *p = pairs.get(a);
+        if (sort(p->k, k) == 0) {
+          //replace v
+          p->v = v;
+          return;
+        }
+      }
+      Pair *p = new Pair();
+      p->k = k;
+      p->v = v;
+      pairs.add(p);
+    }
+    V value(K k) {
+      int size = pairs.size();
+      for(int a=0;a<size;a++) {
+        Pair *p = pairs.get(a);
+        if (sort(p->k, k) == 0) {
+          return p->v;
+        }
+      }
+      return V();
+    }
+    int size() {
+      return pairs.size();
+    }
+    bool contains(K k) {
+      int size = pairs.size();
+      for(int a=0;a<size;a++) {
+        Pair *p = pairs.get(a);
+        if (sort(p->k, k) == 0) {
+          return true;
+        }
+      }
+      return false;
+    }
+    void remove(K k) {
+      int size = pairs.size();
+      for(int a=0;a<size;a++) {
+        Pair *p = pairs.get(a);
+        if (sort(p->k, k) == 0) {
+          pairs.removeAt(a);
+          delete p;
+        }
+      }
+    }
+    void clear() {
+      while (pairs.size() > 0) {
+        Pair *p = pairs.get(0);
+        pairs.removeAt(0);
+        delete p;
+      }
+    }
+    Qt::QSharp::FixedArray<K>* keys();
+    Qt::QSharp::FixedArray<V>* values();
+};
 
 }

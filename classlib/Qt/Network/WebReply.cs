@@ -12,7 +12,7 @@ namespace Qt.Network {
             CPP.Add("$base(reply);");
         }
         private ByteArray data;
-        private Map<String, String> args = new Map<String, String>();
+        private Map<String, String> args = new Map<String, String>((String k1, String k2) => {return 0;});
         private void GetArgs(String[] kv) {
             for(int a=0;a<kv.Length;a++) {
                 int idx = kv[a].IndexOf('=');

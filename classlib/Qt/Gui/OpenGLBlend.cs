@@ -35,7 +35,7 @@ public class OpenGL_BLEND : OpenGLConstants {
     private float[] org = new float[3];
     private bool haveDups;
 
-    private Map<long, BlendChunk> chunks = new Map<long, BlendChunk>();
+    private Map<long, BlendChunk> chunks = new Map<long, BlendChunk>((long k1, long k2) => {return 0;});
 
     private const int ID_ME = 0x454d;    //ME (mesh)
     private const int ID_OB = 0x424f;    //OB (bobject)

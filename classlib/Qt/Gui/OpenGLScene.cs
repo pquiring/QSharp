@@ -83,8 +83,8 @@ public class OpenGLScene : OpenGLFunctions {
     public void reset() {
         if (tl != null) ReleaseTextures();
         ml = new List<OpenGLModel>();
-        tl = new Map<String, OpenGLTexture>();
-        mtl = new Map<String, OpenGLModel>();
+        tl = new Map<String, OpenGLTexture>((String k1, String k2) => {return 0;});
+        mtl = new Map<String, OpenGLModel>(null);
     }
     private void ReleaseTextures() {
         OpenGLTexture[] ts = tl.Values();

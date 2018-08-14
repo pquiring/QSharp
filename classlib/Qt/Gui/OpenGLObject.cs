@@ -28,9 +28,9 @@ public class OpenGLObject : OpenGLFunctions {
         frameIndex = 0;
         vpl = new Array<float>();
         vil = new Array<int>();
-        tl = new Map<int, OpenGLTranslate>();
-        rl = new Map<int, OpenGLRotate>();
-        sl = new Map<int, OpenGLScale>();
+        tl = new Map<int, OpenGLTranslate>((int k1, int k2) => {return 0;});
+        rl = new Map<int, OpenGLRotate>((int k1, int k2) => {return 0;});
+        sl = new Map<int, OpenGLScale>((int k1, int k2) => {return 0;});
         color = new float[4];
         for(int a=0;a<4;a++) color[a] = 1.0f;
         visible = true;
