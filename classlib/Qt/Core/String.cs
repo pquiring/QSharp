@@ -131,6 +131,14 @@ namespace Qt.Core {
             return CPP.ReturnBool("$q->compare(*$check(s)->$q, Qt::CaseInsensitive) == 0");
         }
 
+        public int Compare(String s) {
+            return CPP.ReturnInt("$q->compare(*$check(s)->$q)");
+        }
+
+        public int CompareIgnoreCase(String s) {
+            return CPP.ReturnInt("$q->compare(*$check(s)->$q, Qt::CaseInsensitive)");
+        }
+
         public bool Contains(String s) {
             return CPP.ReturnBool("$q->contains(*$check(s)->$q)");
         }
