@@ -4,9 +4,7 @@
 #define int64 _w_int64
 
 #include <QtCore/qmath.h>
-#include <QtCore/QVector>
 #include <QtCore/QList>
-#include <QtCore/QMap>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
