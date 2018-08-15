@@ -1,7 +1,7 @@
 What's new
 ==========
 
-Aug ?, 2018 : 0.19
+Aug 15, 2018 : 0.19
  - many bugs squashed
    - Qt.Core.Map<> was not working
 
