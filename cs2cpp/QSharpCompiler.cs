@@ -21,7 +21,7 @@ namespace QSharpCompiler
         public static bool printTree = false;
         public static bool printToString = false;
         public static bool printTokens = false;
-        public static string version = "0.19.1";
+        public static string version = "0.20";
         public static bool library;
         public static bool shared;
         public static bool service;

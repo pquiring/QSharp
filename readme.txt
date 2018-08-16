@@ -130,6 +130,6 @@ GitHub Pages : https://pquiring.github.io/QSharp/
 
 Author : Peter Quiring (pquiring@gmail.com)
 
-Version 0.19
+Version 0.20
 
-Released Aug 15, 2018
+Released Aug 16, 2018

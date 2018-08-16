@@ -1,6 +1,10 @@
 What's new
 ==========
 
+Aug 16, 2018 : 0.20
+ - fixed virtual and hidden members to properly override base methods
+   C++ requires "using base::member;" when a method is overloaded but another version is called from a base class.
+
 Aug 15, 2018 : 0.19
  - many bugs squashed
    - Qt.Core.Map<> was not working
