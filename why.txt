@@ -8,7 +8,8 @@ I tried to learn C# but found that it's performance was 12x slower!  Ouch.
 Both have a very slow interfacing to native code. (gcj was a great idea but died too young)
 But at least the C# language had everything I wanted like unsigned data types.  Java didn't which resulted in execessive type casting.
 They added Integer.toUnsignedString() but that was too little too late.
-Java's bytecode is better than C# though.  For example C# uses a generic 'add' IL code for all data types.  This means the JIT has to determine at runtime whether it's a int, float or double add.  Another bad design.
+Java's bytecode is better than C# though.  For example C# uses a generic 'add' IL code for all data types.
+This means the JIT has to determine at runtime whether it's a int, float or double add.  Another bad design.
 Both Java and C# class libraries are somewhat lacking in certain areas.
 I thought of switching back to C++ but the complexity of C++ has increased over the years to where I consider C++ to be machine code itself.  Just look at the Qt headers!
 
@@ -16,5 +17,4 @@ So my solution was to convert C# to C++ and use the amazing Qt library as it's c
 I tried many different types of conversions and it seemed like everything was a dead end.
 Until I tried one last time using Roslyn's SyntaxNodes and that seems to work fine.
 
-The only thing Qt is missing is Zip support but Quazip fills that hole nicely.
-And Cipher (AES) support but found some C++ source on that.
+Qt is missing a few components but source code can be found to fill those small holes. (QuaZip, AES, etc.)

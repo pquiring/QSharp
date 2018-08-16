@@ -1123,7 +1123,6 @@ namespace QSharpCompiler
                     case SyntaxKind.StructDeclaration:
                         Class _otter = cls;
                         Class _inner = new Class();
-                        _inner.node = child;
                         _otter.inners.Add(_inner);
                         _inner.outter = _otter;
                         classNode(child, _inner, _otter, node.Kind() == SyntaxKind.InterfaceDeclaration);
