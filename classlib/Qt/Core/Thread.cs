@@ -15,7 +15,9 @@ namespace Qt.Core {
         public void Start() {
             CPP.Add("$q->start();");
         }
-        public virtual void Run() {}
+        public virtual void Run() {
+            Console.WriteLine("Error:Qt.Core.Thread.Run() executed!");
+        }
         public void Join() {
             CPP.Add("$q->wait();");
         }
