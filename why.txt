@@ -11,7 +11,8 @@ They added Integer.toUnsignedString() but that was too little too late.
 Java's bytecode is better than C# though.  For example C# uses a generic 'add' IL code for all data types.
 This means the JIT has to determine at runtime whether it's a int, float or double add.  Another bad design.
 Both Java and C# class libraries are somewhat lacking in certain areas.
-I thought of switching back to C++ but the complexity of C++ has increased over the years to where I consider C++ to be machine code itself.  Just look at the Qt headers!
+I thought of switching back to C++ but the complexity of C++ has increased over the years to the point where C++ looks like machine code.
+Just look at the Qt headers!
 
 So my solution was to convert C# to C++ and use the amazing Qt library as it's classlib.  This was not easy.
 I tried many different types of conversions and it seemed like everything was a dead end.
