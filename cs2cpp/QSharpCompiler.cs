@@ -21,7 +21,7 @@ namespace QSharpCompiler
         public static bool printTree = false;
         public static bool printToString = false;
         public static bool printTokens = false;
-        public static string version = "0.19";
+        public static string version = "0.19.1";
         public static bool library;
         public static bool shared;
         public static bool service;
@@ -1057,6 +1057,8 @@ namespace QSharpCompiler
 
         private void classNode(SyntaxNode node, Class inner, Class outter, bool Interface) {
             cls = inner;
+            cls.node = node;
+            cls.model = file.model;
             cls.fullname = outter.fullname;
             if (cls.fullname.Length > 0) {
                 cls.fullname += "::";
@@ -1121,6 +1123,7 @@ namespace QSharpCompiler
                     case SyntaxKind.StructDeclaration:
                         Class _otter = cls;
                         Class _inner = new Class();
+                        _inner.node = child;
                         _otter.inners.Add(_inner);
                         _inner.outter = _otter;
                         classNode(child, _inner, _otter, node.Kind() == SyntaxKind.InterfaceDeclaration);
@@ -1609,14 +1612,16 @@ namespace QSharpCompiler
             if (name != null) {
                 method.name = name;
             } else {
+                method.node = node;
+                method.symbol = file.model.GetDeclaredSymbol(node);
                 if (dtor) {
                     method.name = "~" + cls.name;
                     method.type.set("");
                 } else {
                     if (isOperator) {
-                        method.name = ConvertOperatorName(file.model.GetDeclaredSymbol(node).Name);
+                        method.name = ConvertOperatorName(method.symbol.Name);
                     } else {
-                        method.name = ConvertName(file.model.GetDeclaredSymbol(node).Name);
+                        method.name = ConvertName(method.symbol.Name);
                     }
                 }
             }
@@ -2697,6 +2702,25 @@ namespace QSharpCompiler
             return type.ToString() == "ushort";
         }
 
+        //returns true if member hides base class member with same name
+        public static bool isNew(Class cls, String member) {
+            INamedTypeSymbol type = (INamedTypeSymbol)cls.model.GetDeclaredSymbol(cls.node);
+            if (type == null) {
+                return false;
+            }
+            type = type.BaseType;
+            while (type != null) {
+                ImmutableArray<ISymbol> members = type.GetMembers();
+                foreach(var m in members) {
+                    if (m.Name.Equals(member)) {
+                        return true;
+                    }
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
+
         private void binaryNode(SyntaxNode node, string op) {
             expressionNode(GetChildNode(node, 1));
             method.Append(op);
@@ -2897,7 +2921,7 @@ namespace QSharpCompiler
             if (New) {
                 method.Append("(new ");
             }
-            expressionNode(id);
+            expressionNode(id, !New);
             method.Append("(");
             outArgList(args);
             method.Append(")");
@@ -3055,6 +3079,8 @@ namespace QSharpCompiler
         public string nsfullname = "";  //namespace + fullname
         public bool hasctor;
         public bool isInterface;
+        public SyntaxNode node;
+        public SemanticModel model;
         public List<Type> bases = new List<Type>();
         public List<string> cppbases = new List<string>();
         public List<Type> ifaces = new List<Type>();
@@ -3062,6 +3088,7 @@ namespace QSharpCompiler
         public List<Method> methods = new List<Method>();
         public List<Enum> enums = new List<Enum>();
         public List<Class> inners = new List<Class>();
+        public List<string> usingBaseMembers = new List<string>();
         public Class outter;
         public int lockCnt;
         public int finallyCnt;
@@ -3298,6 +3325,19 @@ namespace QSharpCompiler
             }
             foreach(var method in methods) {
                 if (method.isDelegate) continue;
+                if (bases.Count > 0) {
+                    if (method.type.isOverride || Generate.isNew(this, method.name) ) {
+                        if (!usingBaseMembers.Contains(method.name)) {
+                            usingBaseMembers.Add(method.name);
+                            //need to add using base::name so it does not hide base versions
+                            sb.Append("using ");
+                            sb.Append(bases[0].GetCPPType());
+                            sb.Append("::");
+                            sb.Append(method.name);
+                            sb.Append(";\r\n");
+                        }
+                    }
+                }
                 if (method.version != null) {
                     sb.Append("#if QT_VERSION >= " + method.version + "\r\n");
                 }
@@ -3551,15 +3591,17 @@ namespace QSharpCompiler
                 SyntaxNode typeArgList = Generate.GetChildNode(node);
                 int idx1 = type.IndexOf('<');
                 int idx2 = type.LastIndexOf(">");
-                type = type.Substring(0, idx1+1) + type.Substring(idx2);
-                String args = "";
-                bool first = true;
-                foreach(var child in typeArgList.ChildNodes()) {
-                    Type t = new Type(child);
-                    if (first) {first = false;} else {args += ",";}
-                    args += t.GetTypeDeclaration();
+                if (idx1 != -1 && idx2 != -1) {
+                    type = type.Substring(0, idx1+1) + type.Substring(idx2);
+                    String args = "";
+                    bool first = true;
+                    foreach(var child in typeArgList.ChildNodes()) {
+                        Type t = new Type(child);
+                        if (first) {first = false;} else {args += ",";}
+                        args += t.GetTypeDeclaration();
+                    }
+                    type = type.Insert(idx1+1, args);
                 }
-                type = type.Insert(idx1+1, args);
             }
         }
         public void setTypes() {
@@ -3736,6 +3778,8 @@ namespace QSharpCompiler
         public int Length() {return src.Length;}
         public void Append(String str) {src.Append(str);}
         public String name;
+        public SyntaxNode node;
+        public ISymbol symbol;
 
         public bool ctor;
         public bool isDelegate;
@@ -3752,6 +3796,7 @@ namespace QSharpCompiler
         public int[] switchIDs = new int[32];  //up to 32 nested switch statements
         public int currentSwitch = -1;
         public int nextSwitchID = 0;
+
         public string GetArgs(bool decl) {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
